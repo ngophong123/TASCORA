@@ -1,0 +1,15 @@
+# Development Dockerfile for all monorepo apps
+FROM node:20-alpine
+
+# Setup pnpm
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+WORKDIR /app
+
+# The context is the root of the project
+# For dev, we usually mount the whole directory via volumes in docker-compose.
+# We just need a base image with pnpm ready.
+
+CMD ["sh", "-c", "pnpm install && pnpm run dev"]

@@ -1,0 +1,46 @@
+# Multi-stage production build template for Next.js / Node.js
+# Note: This is a placeholder structure to be refined per app in the monorepo.
+
+# --- Stage 1: Base & Install ---
+FROM node:20-alpine AS builder
+# Setup pnpm
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+WORKDIR /app
+
+# Copy lockfile and package configs
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+# Use pnpm fetch to cache dependencies
+RUN pnpm fetch
+
+# Copy the rest of the source code
+COPY . .
+
+# Install dependencies (offline mode from fetch cache)
+RUN pnpm install --offline --frozen-lockfile
+
+# Build the specific app (e.g. web or api)
+# ARG APP_NAME=web
+# RUN pnpm --filter "./apps/${APP_NAME}" build
+
+# --- Stage 2: Production Image ---
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+# Setup non-root user for security
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+USER nextjs
+
+# Set production environment
+ENV NODE_ENV=production
+
+# Copy built artifacts from builder
+# COPY --from=builder /app/apps/web/dist ./dist
+# COPY --from=builder /app/apps/web/package.json ./package.json
+# COPY --from=builder /app/node_modules ./node_modules
+
+EXPOSE 3000
+CMD ["npm", "start"]

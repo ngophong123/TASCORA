@@ -1,0 +1,97 @@
+services:
+  # --- Infrastructure ---
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: taskora
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: taskoradb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - taskora-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskora -d taskoradb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6300:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - taskora-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # --- Applications (Placeholders for dev) ---
+  web:
+    build:
+      context: .
+      dockerfile: docker/development/Dockerfile.dev
+    command: pnpm --filter "./apps/web" dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - taskora-network
+    depends_on:
+      - api
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/development/Dockerfile.dev
+    command: pnpm --filter "./apps/api" dev
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - DATABASE_URL=postgresql://taskora:password@postgres:5432/taskoradb?schema=public
+      - REDIS_URL=redis://redis:6379
+    networks:
+      - taskora-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/development/Dockerfile.dev
+    command: sh -c "echo 'Worker placeholder' && tail -f /dev/null"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - DATABASE_URL=postgresql://taskora:password@postgres:5432/taskoradb?schema=public
+      - REDIS_URL=redis://redis:6379
+    networks:
+      - taskora-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  taskora-network:
+    driver: bridge

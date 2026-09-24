@@ -1,0 +1,704 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- ENUMS ---
+
+enum UserRole {
+  BUYER
+  SELLER
+  ADMIN
+}
+
+enum AccountStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  BANNED
+  PENDING_VERIFICATION
+}
+
+enum SellerStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+enum VerificationStatus {
+  NOT_SUBMITTED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum ServiceStatus {
+  DRAFT
+  PUBLISHED
+  PAUSED
+  REJECTED
+}
+
+enum PackageType {
+  BASIC
+  STANDARD
+  PREMIUM
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  IN_PROGRESS
+  IN_REVISION
+  DELIVERED
+  COMPLETED
+  CANCELLED
+  DISPUTED
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+enum PayoutStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum NotificationType {
+  ORDER_UPDATE
+  NEW_MESSAGE
+  SYSTEM_ALERT
+}
+
+enum SellerLevel {
+  NEW_SELLER
+  LEVEL_1
+  LEVEL_2
+  TOP_RATED
+}
+
+enum WalletTransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  PAYMENT
+  REFUND
+  EARNING
+}
+
+// --- MODELS ---
+
+model User {
+  id        String        @id @default(cuid())
+  email     String        @unique
+  password  String
+  role      UserRole      @default(BUYER)
+  status    AccountStatus @default(PENDING_VERIFICATION)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  sessions             UserSession[]
+  refreshTokens        RefreshToken[]
+  emailVerifications   EmailVerification[]
+  passwordResetTokens  PasswordResetToken[]
+
+  buyerProfile         BuyerProfile?
+  sellerProfile        SellerProfile?
+  buyerOrders          Order[]       @relation("BuyerOrders")
+  buyerReviews         Review[]      
+  
+  // Phase 15
+  conversationsAsP1    Conversation[] @relation("Participant1")
+  conversationsAsP2    Conversation[] @relation("Participant2")
+  messagesSent         Message[]
+
+  // Phase 18
+  favorites            Favorite[]
+
+  // Phase 20
+  notifications        Notification[]
+
+  // Phase 29
+  wallet               Wallet?
+
+  @@map("users")
+}
+
+model UserSession {
+  id           String   @id @default(cuid())
+  userId       String
+  refreshToken String?
+  deviceInfo   String?
+  ipAddress    String?
+  revoked      Boolean  @default(false)
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  lastActivity DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("user_sessions")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  revoked   Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model EmailVerification {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String?
+
+  @@index([email])
+  @@map("email_verifications")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  used      Boolean  @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("password_reset_tokens")
+}
+
+model BuyerProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  firstName String?
+  lastName  String?
+  avatar    String?
+  bio       String?
+  country   String?
+  timezone  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("buyer_profiles")
+}
+
+model SellerProfile {
+  id                 String             @id @default(cuid())
+  userId             String             @unique
+  firstName          String?
+  lastName           String?
+  avatar             String?
+  bio                String?
+  country            String?
+  timezone           String?
+  professionalTitle  String?
+  hourlyRate         Decimal?           @db.Decimal(10, 2)
+  status             SellerStatus       @default(DRAFT)
+  verificationStatus VerificationStatus @default(NOT_SUBMITTED)
+  level              SellerLevel        @default(NEW_SELLER)
+  onboardingStep     Int                @default(1)
+  languages          String[]
+  skills             String[]
+  experience         Json?
+  availability       String?
+  stripeAccountId    String?            @unique 
+  ratingAverage      Float              @default(0.0) 
+  ratingCount        Int                @default(0)   
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  portfolioItems       PortfolioItem[]
+  identityVerification IdentityVerification?
+  services             Service[]
+  orders               Order[]
+  payouts              Payout[]              
+  reviews              Review[]              
+  coupons              Coupon[]
+
+  @@map("seller_profiles")
+}
+
+model PortfolioItem {
+  id              String        @id @default(cuid())
+  sellerProfileId String
+  title           String
+  description     String?
+  fileUrl         String?
+  linkUrl         String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  sellerProfile SellerProfile @relation(fields: [sellerProfileId], references: [id], onDelete: Cascade)
+
+  @@index([sellerProfileId])
+  @@map("portfolio_items")
+}
+
+model IdentityVerification {
+  id              String        @id @default(cuid())
+  sellerProfileId String        @unique
+  documentType    String
+  documentUrl     String
+  selfieUrl       String?
+  submittedAt     DateTime      @default(now())
+  reviewedAt      DateTime?
+  comments        String?
+
+  sellerProfile SellerProfile @relation(fields: [sellerProfileId], references: [id], onDelete: Cascade)
+
+  @@map("identity_verifications")
+}
+
+// --- PHASE 10: SERVICE CATALOG ---
+
+model Category {
+  id          String     @id @default(cuid())
+  name        String
+  slug        String     @unique
+  description String?
+  parentId    String?
+  parent      Category?  @relation("SubCategories", fields: [parentId], references: [id])
+  children    Category[] @relation("SubCategories")
+  services    Service[]
+
+  @@map("categories")
+}
+
+model Service {
+  id              String        @id @default(cuid())
+  sellerProfileId String
+  categoryId      String
+  title           String
+  description     String
+  status          ServiceStatus @default(DRAFT)
+  ratingAverage   Float         @default(0.0) 
+  ratingCount     Int           @default(0)   
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  seller          SellerProfile       @relation(fields: [sellerProfileId], references: [id], onDelete: Cascade)
+  category        Category            @relation(fields: [categoryId], references: [id])
+  packages        ServicePackage[]
+  images          ServiceImage[]
+  faqs            ServiceFAQ[]
+  requirements    ServiceRequirement[]
+  tags            ServiceTag[]
+  orders          Order[]
+  reviews         Review[]            
+  favorites       Favorite[]
+
+  @@index([sellerProfileId])
+  @@index([categoryId])
+  @@map("services")
+}
+
+model ServicePackage {
+  id            String      @id @default(cuid())
+  serviceId     String
+  type          PackageType
+  title         String
+  description   String
+  price         Decimal     @db.Decimal(10, 2)
+  deliveryDays  Int
+  revisions     Int
+  features      String[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  orders  Order[]
+
+  @@unique([serviceId, type])
+  @@map("service_packages")
+}
+
+model ServiceImage {
+  id        String   @id @default(cuid())
+  serviceId String
+  url       String
+  isPrimary Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@map("service_images")
+}
+
+model ServiceFAQ {
+  id        String   @id @default(cuid())
+  serviceId String
+  question  String
+  answer    String
+  order     Int      @default(0)
+
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@map("service_faqs")
+}
+
+model ServiceRequirement {
+  id          String   @id @default(cuid())
+  serviceId   String
+  description String
+  isRequired  Boolean  @default(true)
+  order       Int      @default(0)
+
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@map("service_requirements")
+}
+
+model SearchTag {
+  id       String       @id @default(cuid())
+  name     String       @unique
+  services ServiceTag[]
+
+  @@map("search_tags")
+}
+
+model ServiceTag {
+  serviceId String
+  tagId     String
+
+  service Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  tag     SearchTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([serviceId, tagId])
+  @@map("service_tags")
+}
+
+// --- PHASE 12: ORDER SYSTEM ---
+
+model Order {
+  id              String      @id @default(cuid())
+  buyerId         String      
+  sellerId        String      
+  serviceId       String
+  packageId       String
+  amount          Decimal     @db.Decimal(10, 2)
+  status          OrderStatus @default(PENDING)
+  deliveryDate    DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Phase 21: Coupon
+  couponId        String?
+  discountAmount  Decimal?    @default(0)
+  coupon          Coupon?     @relation(fields: [couponId], references: [id])
+
+  buyer           User            @relation("BuyerOrders", fields: [buyerId], references: [id])
+  seller          SellerProfile   @relation(fields: [sellerId], references: [id])
+  service         Service         @relation(fields: [serviceId], references: [id])
+  package         ServicePackage  @relation(fields: [packageId], references: [id])
+
+  items           OrderItem[]
+  requirements    OrderRequirement[]
+  deliveries      OrderDelivery[]
+  revisions       OrderRevision[]
+  activities      OrderActivity[]
+  transactions    Transaction[]   
+  escrow          Escrow?         
+  review          Review?         
+  
+  // Phase 15
+  conversation    Conversation?
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  description String
+  quantity    Int      @default(1)
+  price       Decimal  @db.Decimal(10, 2)
+
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_items")
+}
+
+model OrderRequirement {
+  id          String   @id @default(cuid())
+  orderId     String
+  question    String
+  answer      String
+  files       String[]
+
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_requirements")
+}
+
+model OrderDelivery {
+  id          String   @id @default(cuid())
+  orderId     String
+  message     String
+  files       String[]
+  createdAt   DateTime @default(now())
+
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  revisions   OrderRevision[]
+
+  @@map("order_deliveries")
+}
+
+model OrderRevision {
+  id              String        @id @default(cuid())
+  orderId         String
+  orderDeliveryId String
+  message         String
+  createdAt       DateTime      @default(now())
+
+  order           Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  delivery        OrderDelivery @relation(fields: [orderDeliveryId], references: [id], onDelete: Cascade)
+
+  @@map("order_revisions")
+}
+
+model OrderActivity {
+  id          String   @id @default(cuid())
+  orderId     String
+  type        String   
+  description String
+  createdAt   DateTime @default(now())
+
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_activities")
+}
+
+// --- PHASE 13: PAYMENT SYSTEM ---
+
+model Transaction {
+  id              String            @id @default(cuid())
+  orderId         String
+  stripePaymentId String?           @unique
+  amount          Decimal           @db.Decimal(10, 2)
+  currency        String            @default("usd")
+  status          TransactionStatus @default(PENDING)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  order           Order             @relation(fields: [orderId], references: [id])
+  escrow          Escrow?
+
+  @@map("transactions")
+}
+
+model Escrow {
+  id            String   @id @default(cuid())
+  transactionId String   @unique
+  orderId       String   @unique
+  amount        Decimal  @db.Decimal(10, 2)
+  released      Boolean  @default(false)
+  releasedAt    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  order         Order       @relation(fields: [orderId], references: [id])
+  payout        Payout?
+
+  @@map("escrows")
+}
+
+model Payout {
+  id              String       @id @default(cuid())
+  sellerProfileId String
+  escrowId        String       @unique
+  amount          Decimal      @db.Decimal(10, 2)
+  stripePayoutId  String?
+  status          PayoutStatus @default(PENDING)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  seller          SellerProfile @relation(fields: [sellerProfileId], references: [id])
+  escrow          Escrow        @relation(fields: [escrowId], references: [id])
+
+  @@map("payouts")
+}
+
+// --- PHASE 14: REVIEW & RATING SYSTEM ---
+
+model Review {
+  id             String   @id @default(cuid())
+  orderId        String   @unique
+  serviceId      String
+  buyerId        String
+  sellerId       String
+  rating         Float    
+  communication  Int      
+  serviceQuality Int      
+  recommend      Int      
+  comment        String
+  sellerReply    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  order          Order         @relation(fields: [orderId], references: [id])
+  service        Service       @relation(fields: [serviceId], references: [id])
+  buyer          User          @relation(fields: [buyerId], references: [id])
+  seller         SellerProfile @relation(fields: [sellerId], references: [id])
+
+  @@map("reviews")
+}
+
+// --- PHASE 15: MESSAGING SYSTEM ---
+
+model Conversation {
+  id             String    @id @default(cuid())
+  participant1Id String    
+  participant2Id String    
+  orderId        String?   @unique 
+  lastMessageAt  DateTime  @default(now())
+  
+  unreadCount1   Int       @default(0) 
+  unreadCount2   Int       @default(0)
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  participant1   User      @relation("Participant1", fields: [participant1Id], references: [id])
+  participant2   User      @relation("Participant2", fields: [participant2Id], references: [id])
+  order          Order?    @relation(fields: [orderId], references: [id])
+  messages       Message[]
+
+  @@unique([participant1Id, participant2Id, orderId])
+  @@map("conversations")
+}
+
+model Message {
+  id             String   @id @default(cuid())
+  conversationId String
+  senderId       String
+  content        String
+  attachmentUrl  String?
+  isRead         Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User         @relation(fields: [senderId], references: [id])
+
+  @@map("messages")
+}
+
+// --- PHASE 18: FAVORITES ---
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  serviceId String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, serviceId])
+  @@map("favorites")
+}
+
+// --- PHASE 20: NOTIFICATIONS ---
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
+  data      Json?            
+  createdAt DateTime         @default(now())
+
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("notifications")
+}
+
+// --- PHASE 21: COUPONS ---
+
+model Coupon {
+  id               String        @id @default(cuid())
+  code             String
+  sellerId         String
+  discountPercent  Float         // e.g. 10 for 10%
+  maxUses          Int           @default(100)
+  usedCount        Int           @default(0)
+  expiresAt        DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  seller           SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  orders           Order[]
+
+  @@unique([sellerId, code])
+  @@map("coupons")
+}
+
+// --- PHASE 29: WALLET SYSTEM ---
+
+model Wallet {
+  id               String              @id @default(cuid())
+  userId           String              @unique
+  balance          Decimal             @db.Decimal(10, 2) @default(0)
+  pendingClearance Decimal             @db.Decimal(10, 2) @default(0)
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  user             User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions     WalletTransaction[]
+
+  @@map("wallets")
+}
+
+model WalletTransaction {
+  id          String                @id @default(cuid())
+  walletId    String
+  amount      Decimal               @db.Decimal(10, 2)
+  type        WalletTransactionType
+  status      TransactionStatus     @default(PENDING)
+  description String?
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  wallet      Wallet                @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  @@index([walletId])
+  @@map("wallet_transactions")
+}
