@@ -13,7 +13,6 @@ import {
   Image as ImageIcon,
   Plus,
   Trash2,
-  HelpCircle,
   ShieldCheck,
   CheckCircle2,
   Loader2,
@@ -47,21 +46,24 @@ export function GigWizard() {
     tiers: {
       basic: {
         title: "Starter Boilerplate",
-        description: "App Router scaffolding with strict TypeScript, Tailwind CSS, and Docker configs.",
+        description:
+          "App Router scaffolding with strict TypeScript, Tailwind CSS, and Docker configs.",
         price: 250,
         deliveryDays: 2,
         revisions: "2",
       },
       standard: {
         title: "Full Production Setup",
-        description: "PostgreSQL, Prisma ORM, Redis caching, JWT auth, and Stripe webhook handling.",
+        description:
+          "PostgreSQL, Prisma ORM, Redis caching, JWT auth, and Stripe webhook handling.",
         price: 450,
         deliveryDays: 4,
         revisions: "4",
       },
       premium: {
         title: "Enterprise Architecture",
-        description: "Kubernetes configs, multi-tenancy, CI/CD telemetry, and 30 days priority support.",
+        description:
+          "Kubernetes configs, multi-tenancy, CI/CD telemetry, and 30 days priority support.",
         price: 950,
         deliveryDays: 7,
         revisions: "Unlimited",
@@ -76,7 +78,8 @@ export function GigWizard() {
     faqs: [
       {
         question: "Do you include automated CI/CD pipelines?",
-        answer: "Yes, GitHub Actions workflows for automated linting, test suites, and staging deploys are provided in all tiers.",
+        answer:
+          "Yes, GitHub Actions workflows for automated linting, test suites, and staging deploys are provided in all tiers.",
       },
     ],
     coverImage:
@@ -144,9 +147,7 @@ export function GigWizard() {
             </button>
           </Link>
           <div>
-            <h1 className="text-xl font-semibold text-[#0B0B14]">
-              Create a New Service
-            </h1>
+            <h1 className="text-xl font-semibold text-[#0B0B14]">Create a New Service</h1>
             <p className="text-xs text-[#6B6B7B]">
               Step {currentStep} of {STEPS.length} — {STEPS[currentStep - 1]?.label}
             </p>
@@ -192,6 +193,7 @@ export function GigWizard() {
               <button
                 key={step.id}
                 onClick={() => setCurrentStep(step.id)}
+                data-testid={`wizard-step-${step.id}`}
                 className="flex flex-col items-center gap-1.5 z-10 group"
               >
                 <div
@@ -199,13 +201,14 @@ export function GigWizard() {
                     isDone
                       ? "bg-blue-600 text-white shadow-xs"
                       : isCurrent
-                      ? "bg-white text-blue-700 ring-2 ring-blue-600 shadow-sm"
-                      : "bg-[#F4F4F8] text-[#6B6B7B]"
+                        ? "bg-white text-blue-700 ring-2 ring-blue-600 shadow-sm"
+                        : "bg-[#F4F4F8] text-[#6B6B7B]"
                   }`}
                 >
                   {isDone ? <Check className="h-4 w-4" /> : <Icon className="h-3.5 w-3.5" />}
                 </div>
                 <span
+                  data-testid="wizard-step-label"
                   className={`text-[11px] font-medium hidden sm:block ${
                     isCurrent ? "text-blue-900 font-semibold" : "text-[#6B6B7B]"
                   }`}
@@ -242,6 +245,7 @@ export function GigWizard() {
                     type="text"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    data-testid="wizard-gig-title-input"
                     className="w-full rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] px-3.5 py-2.5 text-xs text-[#0B0B14] placeholder:text-[#6B6B7B] outline-none focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
@@ -331,9 +335,7 @@ export function GigWizard() {
         {currentStep === 2 && (
           <div className="space-y-5">
             <div>
-              <h2 className="text-base font-semibold text-[#0B0B14]">
-                Scope & Pricing Tiers
-              </h2>
+              <h2 className="text-base font-semibold text-[#0B0B14]">Scope & Pricing Tiers</h2>
               <p className="text-xs text-[#6B6B7B]">
                 Configure 3 transparent pricing packages with clear turnaround and revisions.
               </p>
@@ -402,7 +404,10 @@ export function GigWizard() {
                           ...formData,
                           tiers: {
                             ...formData.tiers,
-                            basic: { ...formData.tiers.basic, deliveryDays: Number(e.target.value) },
+                            basic: {
+                              ...formData.tiers.basic,
+                              deliveryDays: Number(e.target.value),
+                            },
                           },
                         })
                       }
@@ -493,7 +498,10 @@ export function GigWizard() {
                           ...formData,
                           tiers: {
                             ...formData.tiers,
-                            standard: { ...formData.tiers.standard, deliveryDays: Number(e.target.value) },
+                            standard: {
+                              ...formData.tiers.standard,
+                              deliveryDays: Number(e.target.value),
+                            },
                           },
                         })
                       }
@@ -584,7 +592,10 @@ export function GigWizard() {
                           ...formData,
                           tiers: {
                             ...formData.tiers,
-                            premium: { ...formData.tiers.premium, deliveryDays: Number(e.target.value) },
+                            premium: {
+                              ...formData.tiers.premium,
+                              deliveryDays: Number(e.target.value),
+                            },
                           },
                         })
                       }
@@ -692,8 +703,11 @@ export function GigWizard() {
                       value={faq.question}
                       onChange={(e) => {
                         const updated = [...formData.faqs]
-                        updated[index].question = e.target.value
-                        setFormData({ ...formData, faqs: updated })
+                        const targetFaq = updated[index]
+                        if (targetFaq) {
+                          targetFaq.question = e.target.value
+                          setFormData({ ...formData, faqs: updated })
+                        }
                       }}
                       className="w-full rounded-lg border border-[rgba(15,15,30,0.1)] bg-white px-2.5 py-1.5 text-xs text-[#0B0B14]"
                     />
@@ -702,8 +716,11 @@ export function GigWizard() {
                       value={faq.answer}
                       onChange={(e) => {
                         const updated = [...formData.faqs]
-                        updated[index].answer = e.target.value
-                        setFormData({ ...formData, faqs: updated })
+                        const targetFaq = updated[index]
+                        if (targetFaq) {
+                          targetFaq.answer = e.target.value
+                          setFormData({ ...formData, faqs: updated })
+                        }
                       }}
                       className="w-full rounded-lg border border-[rgba(15,15,30,0.1)] bg-white p-2 text-xs text-[#0B0B14]"
                     />
@@ -718,9 +735,7 @@ export function GigWizard() {
         {currentStep === 4 && (
           <div className="space-y-5">
             <div>
-              <h2 className="text-base font-semibold text-[#0B0B14]">
-                Showcase & Gallery
-              </h2>
+              <h2 className="text-base font-semibold text-[#0B0B14]">Showcase & Gallery</h2>
               <p className="text-xs text-[#6B6B7B]">
                 Upload high-resolution service previews and link portfolio repositories.
               </p>
@@ -774,12 +789,13 @@ export function GigWizard() {
                   <span className="text-[10px] font-semibold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full">
                     {formData.category}
                   </span>
-                  <h3 className="text-sm font-bold text-[#0B0B14] mt-1">
-                    {formData.title}
-                  </h3>
+                  <h3 className="text-sm font-bold text-[#0B0B14] mt-1">{formData.title}</h3>
                   <div className="flex items-center gap-3 text-xs text-[#6B6B7B] mt-2">
                     <span>
-                      Starting at <strong className="text-blue-700 font-mono font-bold">${formData.tiers.basic.price}</strong>
+                      Starting at{" "}
+                      <strong className="text-blue-700 font-mono font-bold">
+                        ${formData.tiers.basic.price}
+                      </strong>
                     </span>
                     <span>•</span>
                     <span>{formData.tags.length} Search Tags</span>
@@ -790,15 +806,21 @@ export function GigWizard() {
               <div className="grid grid-cols-3 gap-3 pt-3 border-t border-blue-100 text-xs">
                 <div>
                   <span className="text-[#6B6B7B] block text-[10px]">Basic Tier</span>
-                  <span className="font-mono font-semibold text-[#0B0B14]">${formData.tiers.basic.price}</span>
+                  <span className="font-mono font-semibold text-[#0B0B14]">
+                    ${formData.tiers.basic.price}
+                  </span>
                 </div>
                 <div>
                   <span className="text-[#6B6B7B] block text-[10px]">Standard Tier</span>
-                  <span className="font-mono font-semibold text-[#0B0B14]">${formData.tiers.standard.price}</span>
+                  <span className="font-mono font-semibold text-[#0B0B14]">
+                    ${formData.tiers.standard.price}
+                  </span>
                 </div>
                 <div>
                   <span className="text-[#6B6B7B] block text-[10px]">Premium Tier</span>
-                  <span className="font-mono font-semibold text-[#0B0B14]">${formData.tiers.premium.price}</span>
+                  <span className="font-mono font-semibold text-[#0B0B14]">
+                    ${formData.tiers.premium.price}
+                  </span>
                 </div>
               </div>
             </div>
@@ -806,7 +828,8 @@ export function GigWizard() {
             <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 p-3 rounded-xl border border-emerald-200">
               <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
               <span>
-                Standard escrow protection and automated milestone invoicing are activated for this gig.
+                Standard escrow protection and automated milestone invoicing are activated for this
+                gig.
               </span>
             </div>
           </div>
@@ -819,6 +842,7 @@ export function GigWizard() {
             variant="outline"
             disabled={currentStep === 1}
             onClick={() => setCurrentStep((prev) => Math.max(1, prev - 1))}
+            data-testid="wizard-prev-btn"
             className="text-xs text-[#4B4B5C] border-[rgba(15,15,30,0.12)] hover:bg-[#F4F4F8] disabled:opacity-30"
           >
             <ArrowLeft className="h-3.5 w-3.5 mr-1" /> Previous
@@ -828,6 +852,7 @@ export function GigWizard() {
             <Button
               type="button"
               onClick={() => setCurrentStep((prev) => Math.min(5, prev + 1))}
+              data-testid="wizard-next-btn"
               className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 h-9 rounded-xl flex items-center gap-1.5 shadow-sm"
             >
               <span>Continue</span>
@@ -838,6 +863,7 @@ export function GigWizard() {
               type="button"
               onClick={handlePublish}
               disabled={isSubmitting}
+              data-testid="wizard-publish-btn"
               className="bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white text-xs font-bold px-6 h-9 rounded-xl flex items-center gap-1.5 shadow-sm"
             >
               {isSubmitting ? (

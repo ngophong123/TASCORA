@@ -9,7 +9,8 @@ export const createCoupon = async (req: AuthRequest, res: Response, next: NextFu
     
     // Simple validation
     if (!code || !discountPercent) {
-      return res.status(400).json({ success: false, error: 'Code and discountPercent are required' });
+      res.status(400).json({ success: false, error: 'Code and discountPercent are required' });
+      return;
     }
 
     const coupon = await CouponService.createCoupon(userId, {
@@ -43,7 +44,8 @@ export const validateCoupon = async (req: AuthRequest, res: Response, next: Next
   try {
     const { code, serviceId } = req.body;
     if (!code || !serviceId) {
-      return res.status(400).json({ success: false, error: 'Code and serviceId are required' });
+      res.status(400).json({ success: false, error: 'Code and serviceId are required' });
+      return;
     }
 
     const result = await CouponService.validateCoupon(code, serviceId);

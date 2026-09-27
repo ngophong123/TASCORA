@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useTranslations } from "next-intl"
+import { cn } from "@/lib/utils"
 
 // Fallback curated service details
 const FALLBACK_SERVICE_DETAIL = {
@@ -33,7 +34,8 @@ const FALLBACK_SERVICE_DETAIL = {
       profile: {
         firstName: "Alexandre",
         lastName: "Moreau",
-        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+        avatar:
+          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
         bio: "Principal Software Architect with 12+ years of experience designing high-throughput distributed systems, Next.js applications, and secure microservices.",
         country: "France",
       },
@@ -48,9 +50,15 @@ const FALLBACK_SERVICE_DETAIL = {
     memberSince: "2023",
   },
   images: [
-    { url: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80" },
-    { url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop&q=80" },
-    { url: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&auto=format&fit=crop&q=80" },
+    {
+      url: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80",
+    },
+    {
+      url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop&q=80",
+    },
+    {
+      url: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&auto=format&fit=crop&q=80",
+    },
   ],
   description: `Are you seeking a high-throughput, enterprise-grade Next.js 15 and Node.js architecture engineered for production scale?
 
@@ -69,7 +77,8 @@ I specialize in building bulletproof full-stack platforms adhering to Clean Arch
       price: 250,
       deliveryDays: 3,
       revisions: 2,
-      description: "Ideal for early-stage MVPs or technical audits. Clean project scaffold with Next.js 15 and database configuration.",
+      description:
+        "Ideal for early-stage MVPs or technical audits. Clean project scaffold with Next.js 15 and database configuration.",
       features: [
         "Core Next.js 15 Scaffold",
         "Prisma ORM & PostgreSQL Setup",
@@ -84,7 +93,8 @@ I specialize in building bulletproof full-stack platforms adhering to Clean Arch
       price: 450,
       deliveryDays: 5,
       revisions: 4,
-      description: "Comprehensive production setup with full API integration, Redis caching, and real-time Socket.io.",
+      description:
+        "Comprehensive production setup with full API integration, Redis caching, and real-time Socket.io.",
       features: [
         "Everything in Basic",
         "pnpm Monorepo Configuration",
@@ -101,7 +111,8 @@ I specialize in building bulletproof full-stack platforms adhering to Clean Arch
       price: 850,
       deliveryDays: 7,
       revisions: 99,
-      description: "Full-scale deployment with CI/CD, Docker production image, automated unit tests, and 30 days post-launch support.",
+      description:
+        "Full-scale deployment with CI/CD, Docker production image, automated unit tests, and 30 days post-launch support.",
       features: [
         "Everything in Standard",
         "Docker Production Multi-Stage Build",
@@ -115,17 +126,29 @@ I specialize in building bulletproof full-stack platforms adhering to Clean Arch
   reviews: [
     {
       id: "rev-1",
-      buyer: { name: "Marcus Thorne", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80", country: "United Kingdom" },
+      buyer: {
+        name: "Marcus Thorne",
+        avatar:
+          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+        country: "United Kingdom",
+      },
       rating: 5,
       date: "2 weeks ago",
-      comment: "Alexandre delivered an exceptional codebase. The architecture is clean, maintainable, and performs flawlessly under load. Will certainly hire again.",
+      comment:
+        "Alexandre delivered an exceptional codebase. The architecture is clean, maintainable, and performs flawlessly under load. Will certainly hire again.",
     },
     {
       id: "rev-2",
-      buyer: { name: "Sarah Lin", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80", country: "United States" },
+      buyer: {
+        name: "Sarah Lin",
+        avatar:
+          "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80",
+        country: "United States",
+      },
       rating: 5,
       date: "1 month ago",
-      comment: "Outstanding communication and profound technical depth. The Next.js 15 setup saved our engineering team weeks of trial and error.",
+      comment:
+        "Outstanding communication and profound technical depth. The Next.js 15 setup saved our engineering team weeks of trial and error.",
     },
   ],
   faqs: [
@@ -140,6 +163,21 @@ I specialize in building bulletproof full-stack platforms adhering to Clean Arch
   ],
 }
 
+const SERVICE_ADDONS = [
+  {
+    id: "express-delivery",
+    name: "24-Hour Express Delivery",
+    price: 50,
+    description: "Prioritize project delivery within 24 hours",
+  },
+  {
+    id: "extra-revision",
+    name: "Additional Code Audit & Revision Round",
+    price: 35,
+    description: "Deep architectural & vulnerability review",
+  },
+]
+
 export default function ServiceDetailPage() {
   const t = useTranslations("serviceDetail")
   const params = useParams()
@@ -148,9 +186,13 @@ export default function ServiceDetailPage() {
 
   const [service, setService] = React.useState(FALLBACK_SERVICE_DETAIL)
   const [selectedImageIndex, setSelectedImageIndex] = React.useState(0)
-  const [selectedPackageTier, setSelectedPackageTier] = React.useState<"BASIC" | "STANDARD" | "PREMIUM">("STANDARD")
+  const [selectedPackageTier, setSelectedPackageTier] = React.useState<
+    "BASIC" | "STANDARD" | "PREMIUM"
+  >("STANDARD")
+  const [selectedAddons, setSelectedAddons] = React.useState<string[]>([])
   const [isFavorite, setIsFavorite] = React.useState(false)
   const [orderModalOpen, setOrderModalOpen] = React.useState(false)
+  const [orderSuccess, setOrderSuccess] = React.useState(false)
 
   // Fetch from API
   React.useEffect(() => {
@@ -173,7 +215,8 @@ export default function ServiceDetailPage() {
                 ...FALLBACK_SERVICE_DETAIL.seller,
                 ...(apiData.seller || {}),
               },
-              packages: apiData.packages?.length > 0 ? apiData.packages : FALLBACK_SERVICE_DETAIL.packages,
+              packages:
+                apiData.packages?.length > 0 ? apiData.packages : FALLBACK_SERVICE_DETAIL.packages,
               images: apiData.images?.length > 0 ? apiData.images : FALLBACK_SERVICE_DETAIL.images,
             })
           }
@@ -182,18 +225,29 @@ export default function ServiceDetailPage() {
         // Fallback works automatically
       }
     }
-    loadService()
+    void loadService()
   }, [serviceId])
 
   const currentPackage =
-    service.packages.find((p) => p.type === selectedPackageTier) || service.packages[0]
+    service.packages.find((p) => p.type === selectedPackageTier) ??
+    service.packages[0] ??
+    FALLBACK_SERVICE_DETAIL.packages[0]!
+
+  const toggleAddon = (id: string) => {
+    setSelectedAddons((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    )
+  }
+
+  const addonsTotal = selectedAddons.reduce((sum, id) => {
+    const addon = SERVICE_ADDONS.find((a) => a.id === id)
+    return sum + (addon ? addon.price : 0)
+  }, 0)
+
+  const computedTotal = currentPackage.price + addonsTotal
 
   const handleStartOrder = () => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
-    if (!token) {
-      router.push(`/login?redirect=/services/${serviceId}`)
-      return
-    }
+    setOrderSuccess(false)
     setOrderModalOpen(true)
   }
 
@@ -201,11 +255,18 @@ export default function ServiceDetailPage() {
     <div className="container mx-auto px-4 md:px-8 py-10 min-h-screen">
       {/* Breadcrumb Navigation */}
       <nav className="flex items-center gap-2 text-xs text-text-muted mb-6">
-        <Link href="/" className="hover:text-text-primary transition-colors">{t("breadcrumbHome")}</Link>
+        <Link href="/" className="hover:text-text-primary transition-colors">
+          {t("breadcrumbHome")}
+        </Link>
         <ChevronRight className="h-3.5 w-3.5" />
-        <Link href="/explore" className="hover:text-text-primary transition-colors">{t("breadcrumbExplore")}</Link>
+        <Link href="/explore" className="hover:text-text-primary transition-colors">
+          {t("breadcrumbExplore")}
+        </Link>
         <ChevronRight className="h-3.5 w-3.5" />
-        <Link href={`/explore?category=${service.category?.slug || ""}`} className="hover:text-text-primary transition-colors">
+        <Link
+          href={`/explore?category=${service.category?.slug || ""}`}
+          className="hover:text-text-primary transition-colors"
+        >
           {service.category?.name || "Professional"}
         </Link>
         <ChevronRight className="h-3.5 w-3.5" />
@@ -221,11 +282,16 @@ export default function ServiceDetailPage() {
             <div className="flex items-center gap-2 mb-3">
               <Badge variant="luxury">{service.category?.name}</Badge>
               <Badge variant="outline" className="border-border text-text-muted">
-                {service.seller.level === "TOP_RATED" ? t("topRatedTalent") : t("verifiedSpecialist")}
+                {service.seller.level === "TOP_RATED"
+                  ? t("topRatedTalent")
+                  : t("verifiedSpecialist")}
               </Badge>
             </div>
 
-            <h1 className="font-display text-2xl sm:text-3xl md:text-4xl text-text-primary font-medium leading-snug">
+            <h1
+              data-testid="service-title"
+              className="font-display text-2xl sm:text-3xl md:text-4xl text-text-primary font-medium leading-snug"
+            >
               {service.title}
             </h1>
 
@@ -238,7 +304,7 @@ export default function ServiceDetailPage() {
                   className="h-8 w-8 rounded-full object-cover border border-border"
                 />
                 <div>
-                  <span className="font-medium text-text-primary block">
+                  <span data-testid="seller-name" className="font-medium text-text-primary block">
                     {service.seller.user.profile.firstName} {service.seller.user.profile.lastName}
                   </span>
                   <span className="text-[11px] text-text-muted">{service.seller.title}</span>
@@ -250,7 +316,9 @@ export default function ServiceDetailPage() {
               <div className="flex items-center gap-1 text-amber-500 font-semibold">
                 <Star className="h-4 w-4 fill-current" />
                 <span>{service.ratingAverage}</span>
-                <span className="text-text-muted font-normal">{t("reviewsCount", { count: service.ratingCount })}</span>
+                <span className="text-text-muted font-normal">
+                  {t("reviewsCount", { count: service.ratingCount })}
+                </span>
               </div>
 
               <span className="text-border">•</span>
@@ -306,7 +374,11 @@ export default function ServiceDetailPage() {
                         : "border-border opacity-60 hover:opacity-100"
                     }`}
                   >
-                    <img src={img.url} alt={`Preview ${index}`} className="h-full w-full object-cover" />
+                    <img
+                      src={img.url}
+                      alt={`Preview ${index}`}
+                      className="h-full w-full object-cover"
+                    />
                   </button>
                 ))}
               </div>
@@ -315,7 +387,9 @@ export default function ServiceDetailPage() {
 
           {/* Service Description */}
           <div className="rounded-2xl border border-border bg-surface p-7 space-y-6">
-            <h2 className="font-display text-xl text-text-primary font-medium">{t("aboutService")}</h2>
+            <h2 className="font-display text-xl text-text-primary font-medium">
+              {t("aboutService")}
+            </h2>
             <div className="prose max-w-none text-sm leading-relaxed text-text-secondary whitespace-pre-line">
               {service.description}
             </div>
@@ -323,8 +397,10 @@ export default function ServiceDetailPage() {
 
           {/* About The Seller */}
           <div className="rounded-2xl border border-border bg-surface p-7 space-y-6">
-            <h2 className="font-display text-xl text-text-primary font-medium">{t("aboutSpecialist")}</h2>
-            
+            <h2 className="font-display text-xl text-text-primary font-medium">
+              {t("aboutSpecialist")}
+            </h2>
+
             <div className="flex flex-col sm:flex-row items-start gap-5">
               <img
                 src={service.seller.user.profile.avatar}
@@ -349,15 +425,23 @@ export default function ServiceDetailPage() {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-border/50 text-xs">
               <div className="p-3 rounded-xl bg-slate-50 border border-border">
                 <span className="text-text-muted block text-[10px] uppercase">{t("location")}</span>
-                <span className="font-medium text-text-primary">{service.seller.user.profile.country || "Global"}</span>
+                <span className="font-medium text-text-primary">
+                  {service.seller.user.profile.country || "Global"}
+                </span>
               </div>
               <div className="p-3 rounded-xl bg-slate-50 border border-border">
-                <span className="text-text-muted block text-[10px] uppercase">{t("memberSince")}</span>
+                <span className="text-text-muted block text-[10px] uppercase">
+                  {t("memberSince")}
+                </span>
                 <span className="font-medium text-text-primary">{service.seller.memberSince}</span>
               </div>
               <div className="p-3 rounded-xl bg-slate-50 border border-border">
-                <span className="text-text-muted block text-[10px] uppercase">{t("ordersDelivered")}</span>
-                <span className="font-medium text-text-primary">{service.seller.completedOrders}+</span>
+                <span className="text-text-muted block text-[10px] uppercase">
+                  {t("ordersDelivered")}
+                </span>
+                <span className="font-medium text-text-primary">
+                  {service.seller.completedOrders}+
+                </span>
               </div>
               <div className="p-3 rounded-xl bg-slate-50 border border-border">
                 <span className="text-text-muted block text-[10px] uppercase">{t("rating")}</span>
@@ -373,26 +457,37 @@ export default function ServiceDetailPage() {
           <div className="rounded-2xl border border-border bg-surface p-7 space-y-6">
             <div className="flex items-center justify-between pb-4 border-b border-border/50">
               <div>
-                <h2 className="font-display text-xl text-text-primary font-medium">{t("clientReviews")}</h2>
-                <p className="text-xs text-text-muted mt-0.5">
-                  {t("clientReviewsSubtext")}
-                </p>
+                <h2 className="font-display text-xl text-text-primary font-medium">
+                  {t("clientReviews")}
+                </h2>
+                <p className="text-xs text-text-muted mt-0.5">{t("clientReviewsSubtext")}</p>
               </div>
               <div className="flex items-center gap-1.5 text-amber-500 font-semibold text-lg">
                 <Star className="h-5 w-5 fill-current" />
                 <span>{service.ratingAverage}</span>
-                <span className="text-xs text-text-muted font-normal">{t("reviewsCount", { count: service.ratingCount })}</span>
+                <span className="text-xs text-text-muted font-normal">
+                  {t("reviewsCount", { count: service.ratingCount })}
+                </span>
               </div>
             </div>
 
             <div className="space-y-5">
               {service.reviews.map((rev) => (
-                <div key={rev.id} className="p-4 rounded-xl bg-slate-50 border border-border space-y-2">
+                <div
+                  key={rev.id}
+                  className="p-4 rounded-xl bg-slate-50 border border-border space-y-2"
+                >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <img src={rev.buyer.avatar} alt={rev.buyer.name} className="h-8 w-8 rounded-full object-cover" />
+                      <img
+                        src={rev.buyer.avatar}
+                        alt={rev.buyer.name}
+                        className="h-8 w-8 rounded-full object-cover"
+                      />
                       <div>
-                        <span className="font-medium text-xs text-text-primary block">{rev.buyer.name}</span>
+                        <span className="font-medium text-xs text-text-primary block">
+                          {rev.buyer.name}
+                        </span>
                         <span className="text-[10px] text-text-muted">{rev.buyer.country}</span>
                       </div>
                     </div>
@@ -412,7 +507,9 @@ export default function ServiceDetailPage() {
           {/* FAQ Accordion */}
           {service.faqs && service.faqs.length > 0 && (
             <div className="rounded-2xl border border-border bg-surface p-7 space-y-4">
-              <h2 className="font-display text-xl text-text-primary font-medium mb-4">{t("faq")}</h2>
+              <h2 className="font-display text-xl text-text-primary font-medium mb-4">
+                {t("faq")}
+              </h2>
               <div className="space-y-3">
                 {service.faqs.map((faq, idx) => (
                   <div key={idx} className="p-4 rounded-xl bg-slate-50 border border-border">
@@ -433,8 +530,9 @@ export default function ServiceDetailPage() {
               {(["BASIC", "STANDARD", "PREMIUM"] as const).map((tier) => (
                 <button
                   key={tier}
+                  data-testid={`package-tab-${tier.toLowerCase()}`}
                   onClick={() => setSelectedPackageTier(tier)}
-                  className={`py-2 rounded-lg text-xs font-semibold transition-all ${
+                  className={`py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                     selectedPackageTier === tier
                       ? "bg-blue-600 text-white shadow"
                       : "text-text-muted hover:text-text-primary"
@@ -447,15 +545,18 @@ export default function ServiceDetailPage() {
 
             {/* Tier Overview */}
             <div className="flex items-baseline justify-between">
-              <h3 className="font-display text-lg text-text-primary font-medium">{currentPackage.name}</h3>
-              <span className="font-sans text-3xl font-bold text-text-primary tracking-tight">
+              <h3 className="font-display text-lg text-text-primary font-medium">
+                {currentPackage.name}
+              </h3>
+              <span
+                data-testid="package-price"
+                className="font-sans text-3xl font-bold text-text-primary tracking-tight"
+              >
                 ${currentPackage.price}
               </span>
             </div>
 
-            <p className="text-xs text-text-muted leading-relaxed">
-              {currentPackage.description}
-            </p>
+            <p className="text-xs text-text-muted leading-relaxed">{currentPackage.description}</p>
 
             {/* Delivery & Revisions Badge */}
             <div className="grid grid-cols-2 gap-3 py-3 border-y border-border/50 text-xs">
@@ -465,7 +566,11 @@ export default function ServiceDetailPage() {
               </div>
               <div className="flex items-center gap-2 text-text-secondary">
                 <RotateCcw className="h-4 w-4 text-blue-600" />
-                <span>{currentPackage.revisions >= 90 ? t("unlimitedRevisions") : t("revisionsCount", { count: currentPackage.revisions })}</span>
+                <span>
+                  {currentPackage.revisions >= 90
+                    ? t("unlimitedRevisions")
+                    : t("revisionsCount", { count: currentPackage.revisions })}
+                </span>
               </div>
             </div>
 
@@ -474,7 +579,7 @@ export default function ServiceDetailPage() {
               <span className="text-[11px] font-semibold uppercase tracking-wider text-text-muted block">
                 {t("deliverablesIncluded")}
               </span>
-              <ul className="space-y-2 text-xs text-text-secondary">
+              <ul data-testid="package-features" className="space-y-2 text-xs text-text-secondary">
                 {currentPackage.features.map((feat, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
@@ -484,13 +589,68 @@ export default function ServiceDetailPage() {
               </ul>
             </div>
 
+            {/* Add-ons */}
+            <div className="space-y-2.5 pt-2 border-t border-border/50">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-text-muted block">
+                Upgrade Deliverables
+              </span>
+              <div className="space-y-2">
+                {SERVICE_ADDONS.map((addon) => {
+                  const isChecked = selectedAddons.includes(addon.id)
+                  return (
+                    <label
+                      key={addon.id}
+                      data-testid={`addon-item-${addon.id}`}
+                      className={cn(
+                        "flex items-start justify-between p-2.5 rounded-xl border text-xs cursor-pointer select-none transition-all",
+                        isChecked
+                          ? "border-blue-600 bg-blue-50/60 ring-1 ring-blue-600"
+                          : "border-border hover:bg-slate-50"
+                      )}
+                    >
+                      <div className="flex items-start gap-2.5">
+                        <input
+                          type="checkbox"
+                          data-testid={`addon-checkbox-${addon.id}`}
+                          checked={isChecked}
+                          onChange={() => toggleAddon(addon.id)}
+                          className="mt-0.5 rounded border-border text-blue-600 focus:ring-blue-500"
+                        />
+                        <div>
+                          <span className="font-semibold text-text-primary block">
+                            {addon.name}
+                          </span>
+                          <span className="text-[11px] text-text-muted">{addon.description}</span>
+                        </div>
+                      </div>
+                      <span className="font-semibold text-text-primary shrink-0 ml-2 font-mono">
+                        +${addon.price}
+                      </span>
+                    </label>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Total Computed Price */}
+            <div className="flex items-center justify-between pt-2 border-t border-border">
+              <span className="text-xs font-semibold text-text-primary">Computed Total:</span>
+              <span
+                data-testid="order-total-price"
+                className="text-2xl font-bold font-mono text-blue-700"
+              >
+                ${computedTotal}
+              </span>
+            </div>
+
             {/* Action Buttons */}
             <div className="space-y-3 pt-2">
               <Button
+                data-testid="continue-order-btn"
                 onClick={handleStartOrder}
-                className="w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white py-3 font-semibold shadow-lg shadow-blue-600/20 gap-2 transition-all"
+                className="w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white py-3 font-semibold shadow-lg shadow-blue-600/20 gap-2 transition-all cursor-pointer"
               >
-                <span>{t("continueOrder", { price: currentPackage.price })}</span>
+                <span>{t("continueOrder", { price: computedTotal })}</span>
                 <ArrowRight className="h-4 w-4" />
               </Button>
 
@@ -511,59 +671,120 @@ export default function ServiceDetailPage() {
                 <ShieldCheck className="h-4 w-4 text-emerald-500" />
                 <span>{t("escrowMilestone")}</span>
               </div>
-              <p className="text-[10px] text-text-muted mt-0.5">
-                {t("escrowGuaranteeNote")}
-              </p>
+              <p className="text-[10px] text-text-muted mt-0.5">{t("escrowGuaranteeNote")}</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Mock Order Modal Confirmation */}
+      {/* Mock Order Drawer Confirmation */}
       {orderModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="max-w-md w-full rounded-2xl border border-border bg-white p-6 space-y-6 shadow-2xl animate-in zoom-in-95">
+        <div
+          data-testid="checkout-drawer-backdrop"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+        >
+          <div
+            data-testid="checkout-drawer"
+            className="max-w-md w-full rounded-2xl border border-border bg-white p-6 space-y-6 shadow-2xl animate-in zoom-in-95"
+          >
             <div className="flex items-center justify-between pb-3 border-b border-border">
-              <h3 className="font-display text-lg text-text-primary font-medium">{t("orderConfirmation")}</h3>
+              <h3 className="font-display text-lg text-text-primary font-medium">
+                {t("orderConfirmation")}
+              </h3>
               <Badge variant="luxury">{selectedPackageTier}</Badge>
             </div>
 
-            <div className="space-y-3 text-xs text-text-secondary">
-              <p className="text-text-primary font-medium text-sm">{service.title}</p>
-              <div className="p-3 rounded-xl bg-slate-50 border border-border flex justify-between items-center">
-                <span>Package: {currentPackage.name}</span>
-                <span className="font-bold text-text-primary text-base">${currentPackage.price}</span>
+            {orderSuccess ? (
+              <div
+                data-testid="checkout-success"
+                className="p-6 rounded-xl bg-emerald-50 border border-emerald-200 text-center space-y-3"
+              >
+                <div className="h-12 w-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="h-6 w-6" />
+                </div>
+                <h4 className="font-bold text-emerald-900 text-base">
+                  Order Confirmed Successfully!
+                </h4>
+                <p className="text-xs text-emerald-700">
+                  Your milestone escrow contract has been activated for{" "}
+                  <strong>${computedTotal}</strong>. The freelancer has been notified.
+                </p>
+                <div className="pt-2">
+                  <Button
+                    size="sm"
+                    data-testid="view-order-dashboard-btn"
+                    onClick={() => {
+                      setOrderModalOpen(false)
+                      router.push("/dashboard/orders")
+                    }}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs cursor-pointer"
+                  >
+                    View in Dashboard
+                  </Button>
+                </div>
               </div>
-              <div className="p-3 rounded-xl bg-slate-50 border border-border flex justify-between items-center">
-                <span>{t("estimatedDelivery")}</span>
-                <span className="text-text-primary">{t("businessDays", { days: currentPackage.deliveryDays })}</span>
-              </div>
-              <div className="flex items-center gap-2 text-emerald-600 text-[11px] pt-1">
-                <Lock className="h-3.5 w-3.5" />
-                <span>{t("protectedEscrow")}</span>
-              </div>
-            </div>
+            ) : (
+              <>
+                <div className="space-y-3 text-xs text-text-secondary">
+                  <p className="text-text-primary font-medium text-sm">{service.title}</p>
+                  <div className="p-3 rounded-xl bg-slate-50 border border-border flex justify-between items-center">
+                    <span>Package: {currentPackage.name}</span>
+                    <span className="font-bold text-text-primary text-base">
+                      ${currentPackage.price}
+                    </span>
+                  </div>
+                  {selectedAddons.length > 0 && (
+                    <div className="p-3 rounded-xl bg-slate-50 border border-border space-y-1">
+                      <span className="font-medium text-text-primary block">Add-ons Selected:</span>
+                      {selectedAddons.map((id) => {
+                        const addon = SERVICE_ADDONS.find((a) => a.id === id)
+                        return (
+                          <div
+                            key={id}
+                            className="flex justify-between text-[11px] text-text-muted"
+                          >
+                            <span>+ {addon?.name}</span>
+                            <span className="font-mono">+${addon?.price}</span>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
+                  <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 flex justify-between items-center">
+                    <span className="font-bold text-blue-900">Total Billed:</span>
+                    <span
+                      data-testid="drawer-total-price"
+                      className="font-bold text-blue-700 text-lg font-mono"
+                    >
+                      ${computedTotal}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-emerald-600 text-[11px] pt-1">
+                    <Lock className="h-3.5 w-3.5" />
+                    <span>{t("protectedEscrow")}</span>
+                  </div>
+                </div>
 
-            <div className="flex gap-3 pt-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setOrderModalOpen(false)}
-                className="flex-1 text-xs"
-              >
-                Cancel
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => {
-                  alert("Order created successfully! Redirecting to orders dashboard.")
-                  router.push("/dashboard/orders")
-                }}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold"
-              >
-                {t("confirmAndPay")}
-              </Button>
-            </div>
+                <div className="flex gap-3 pt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setOrderModalOpen(false)}
+                    className="flex-1 text-xs cursor-pointer"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    size="sm"
+                    data-testid="confirm-checkout-btn"
+                    onClick={() => setOrderSuccess(true)}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold cursor-pointer"
+                  >
+                    {t("confirmAndPay")}
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

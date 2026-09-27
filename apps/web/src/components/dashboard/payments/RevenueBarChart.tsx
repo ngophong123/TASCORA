@@ -1,22 +1,8 @@
 "use client"
 
 import * as React from "react"
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from "recharts"
-import {
-  TrendingUp,
-  BarChart3,
-  Calendar,
-  Sparkles,
-  ArrowUpRight,
-} from "lucide-react"
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts"
+import { TrendingUp, BarChart3 } from "lucide-react"
 import { type RevenueMonthPoint } from "@/data/dashboard/payments"
 import { cn } from "@/lib/utils"
 
@@ -36,7 +22,10 @@ export function RevenueBarChart({ data, className }: RevenueBarChartProps) {
   // Calculate stats
   const totalGross = React.useMemo(() => data.reduce((acc, d) => acc + d.gross, 0), [data])
   const avgMonthly = Math.round(totalGross / (data.length || 1))
-  const bestMonth = data.reduce((max, d) => (d.gross > max.gross ? d : max), data[0] || { month: "Aug", gross: 0 })
+  const bestMonth = data.reduce(
+    (max, d) => (d.gross > max.gross ? d : max),
+    data[0] || { month: "Aug", gross: 0 }
+  )
 
   return (
     <div
@@ -130,16 +119,8 @@ export function RevenueBarChart({ data, className }: RevenueBarChartProps) {
       <div className="h-[280px] w-full pt-4">
         {mounted ? (
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={data}
-              margin={{ top: 10, right: 10, left: -15, bottom: 0 }}
-              barGap={4}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                vertical={false}
-                stroke="rgba(15,15,30,0.06)"
-              />
+            <BarChart data={data} margin={{ top: 10, right: 10, left: -15, bottom: 0 }} barGap={4}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(15,15,30,0.06)" />
               <XAxis
                 dataKey="month"
                 stroke="#6B6B7B"
@@ -158,8 +139,9 @@ export function RevenueBarChart({ data, className }: RevenueBarChartProps) {
               />
               <Tooltip
                 content={({ active, payload }) => {
-                  if (active && payload && payload.length) {
-                    const d = payload[0].payload as RevenueMonthPoint
+                  const firstPayload = payload?.[0]
+                  if (active && firstPayload) {
+                    const d = firstPayload.payload as RevenueMonthPoint
                     return (
                       <div className="bg-white p-3 rounded-xl border border-[rgba(15,15,30,0.12)] shadow-lg space-y-1.5 min-w-[170px]">
                         <div className="flex items-center justify-between pb-1 border-b border-[rgba(15,15,30,0.06)]">
@@ -194,18 +176,8 @@ export function RevenueBarChart({ data, className }: RevenueBarChartProps) {
                   return null
                 }}
               />
-              <Bar
-                dataKey="gross"
-                fill="#2563EB"
-                radius={[6, 6, 0, 0]}
-                maxBarSize={36}
-              />
-              <Bar
-                dataKey="net"
-                fill="#BFDBFE"
-                radius={[6, 6, 0, 0]}
-                maxBarSize={36}
-              />
+              <Bar dataKey="gross" fill="#2563EB" radius={[6, 6, 0, 0]} maxBarSize={36} />
+              <Bar dataKey="net" fill="#BFDBFE" radius={[6, 6, 0, 0]} maxBarSize={36} />
             </BarChart>
           </ResponsiveContainer>
         ) : (

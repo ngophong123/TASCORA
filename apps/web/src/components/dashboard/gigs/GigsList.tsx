@@ -5,19 +5,14 @@ import { Link } from "@/i18n/routing"
 import {
   Search,
   Plus,
-  MoreVertical,
-  Eye,
   Edit3,
   PauseCircle,
   PlayCircle,
   Trash2,
-  ExternalLink,
   Star,
   TrendingUp,
   ShoppingBag,
   DollarSign,
-  Layers,
-  Sparkles,
   ArrowUpRight,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -33,7 +28,9 @@ export function GigsList({ initialGigs }: GigsListProps) {
   const { showToast } = useDashboard()
   const [gigs, setGigs] = React.useState<DashboardGig[]>(initialGigs)
   const [search, setSearch] = React.useState("")
-  const [statusFilter, setStatusFilter] = React.useState<"all" | "active" | "draft" | "paused">("all")
+  const [statusFilter, setStatusFilter] = React.useState<"all" | "active" | "draft" | "paused">(
+    "all"
+  )
 
   const handleToggleStatus = (gigId: string) => {
     setGigs((prev) =>
@@ -94,7 +91,9 @@ export function GigsList({ initialGigs }: GigsListProps) {
 
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-[rgba(15,15,30,0.08)] shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex items-center justify-between">
           <div>
-            <span className="text-xs text-[#6B6B7B] block font-medium">Lifetime Catalog Revenue</span>
+            <span className="text-xs text-[#6B6B7B] block font-medium">
+              Lifetime Catalog Revenue
+            </span>
             <span className="text-2xl font-bold font-mono text-[#0B0B14] mt-1 block">
               ${totalRevenue.toLocaleString()}
             </span>
@@ -106,7 +105,9 @@ export function GigsList({ initialGigs }: GigsListProps) {
 
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-[rgba(15,15,30,0.08)] shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex items-center justify-between">
           <div>
-            <span className="text-xs text-[#6B6B7B] block font-medium">Marketplace Impressions</span>
+            <span className="text-xs text-[#6B6B7B] block font-medium">
+              Marketplace Impressions
+            </span>
             <span className="text-2xl font-bold font-mono text-[#0B0B14] mt-1 block">
               {totalImpressions.toLocaleString()}
             </span>
@@ -161,8 +162,14 @@ export function GigsList({ initialGigs }: GigsListProps) {
           {(
             [
               { id: "all", label: `All Gigs (${gigs.length})` },
-              { id: "active", label: `Active (${gigs.filter((g) => g.status === "active").length})` },
-              { id: "paused", label: `Paused (${gigs.filter((g) => g.status === "paused").length})` },
+              {
+                id: "active",
+                label: `Active (${gigs.filter((g) => g.status === "active").length})`,
+              },
+              {
+                id: "paused",
+                label: `Paused (${gigs.filter((g) => g.status === "paused").length})`,
+              },
               { id: "draft", label: `Draft (${gigs.filter((g) => g.status === "draft").length})` },
             ] as const
           ).map((tab) => (
@@ -184,9 +191,7 @@ export function GigsList({ initialGigs }: GigsListProps) {
         <div className="divide-y divide-[rgba(15,15,30,0.04)]">
           {filteredGigs.length === 0 ? (
             <div className="py-16 text-center space-y-3">
-              <p className="text-xs text-[#6B6B7B]">
-                No gigs found matching your filter criteria.
-              </p>
+              <p className="text-xs text-[#6B6B7B]">No gigs found matching your filter criteria.</p>
               <Link href="/dashboard/gigs/new">
                 <Button variant="outline" size="sm" className="text-xs text-blue-700">
                   Create your first gig
@@ -223,7 +228,12 @@ export function GigsList({ initialGigs }: GigsListProps) {
                     </h4>
 
                     <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#6B6B7B]">
-                      <span>Starting at <strong className="font-mono text-[#0B0B14] font-bold">${gig.startingPrice}</strong></span>
+                      <span>
+                        Starting at{" "}
+                        <strong className="font-mono text-[#0B0B14] font-bold">
+                          ${gig.startingPrice}
+                        </strong>
+                      </span>
                       <span>•</span>
                       <span>Updated {gig.updatedAt}</span>
                     </div>
@@ -233,25 +243,33 @@ export function GigsList({ initialGigs }: GigsListProps) {
                 {/* Center: Analytics Metrics */}
                 <div className="grid grid-cols-4 gap-4 px-2 md:px-6 py-2 md:py-0 border-y md:border-y-0 md:border-x border-[rgba(15,15,30,0.06)] text-center shrink-0">
                   <div>
-                    <span className="text-[10px] text-[#6B6B7B] block uppercase tracking-wider">Impressions</span>
+                    <span className="text-[10px] text-[#6B6B7B] block uppercase tracking-wider">
+                      Impressions
+                    </span>
                     <span className="font-mono text-xs font-semibold text-[#0B0B14]">
                       {gig.stats.impressions.toLocaleString()}
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-[#6B6B7B] block uppercase tracking-wider">Clicks</span>
+                    <span className="text-[10px] text-[#6B6B7B] block uppercase tracking-wider">
+                      Clicks
+                    </span>
                     <span className="font-mono text-xs font-semibold text-[#0B0B14]">
                       {gig.stats.clicks.toLocaleString()}
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-[#6B6B7B] block uppercase tracking-wider">Orders</span>
+                    <span className="text-[10px] text-[#6B6B7B] block uppercase tracking-wider">
+                      Orders
+                    </span>
                     <span className="font-mono text-xs font-semibold text-blue-700">
                       {gig.stats.orders}
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-[#6B6B7B] block uppercase tracking-wider">Revenue</span>
+                    <span className="text-[10px] text-[#6B6B7B] block uppercase tracking-wider">
+                      Revenue
+                    </span>
                     <span className="font-mono text-xs font-bold text-emerald-600">
                       ${gig.stats.revenue.toLocaleString()}
                     </span>

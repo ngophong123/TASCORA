@@ -36,7 +36,7 @@ export const getMySales = async (req: AuthRequest, res: Response, next: NextFunc
 export const updateOrderStatus = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!.userId;
-    const orderId = req.params.id;
+    const orderId = req.params.id!;
     const { status, message } = req.body;
     const order = await OrderService.updateOrderStatus(userId, orderId, status, message);
     res.status(200).json({ success: true, data: order });

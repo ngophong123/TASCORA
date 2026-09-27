@@ -1,26 +1,14 @@
 "use client"
 
 import * as React from "react"
-import { useTranslations } from "next-intl"
 import { motion } from "framer-motion"
 import { STATS_DATA } from "@/data/stats"
 import { AnimatedCounter } from "@/components/ui/AnimatedCounter"
-import {
-  staggerContainerVariants,
-  staggerChildCardVariants,
-  EASE_OUT_EXPO,
-} from "@/lib/motion"
+import { staggerContainerVariants, staggerChildCardVariants, EASE_OUT_EXPO } from "@/lib/motion"
 
-const FLOAT_CLASSES = [
-  "animate-float-1",
-  "animate-float-2",
-  "animate-float-3",
-  "animate-float-2",
-]
+const FLOAT_CLASSES = ["animate-float-1", "animate-float-2", "animate-float-3", "animate-float-2"]
 
 export function Stats() {
-  const t = useTranslations("stats")
-
   return (
     <section className="py-14 sm:py-20 md:py-28 border-b border-[rgba(15,15,30,0.08)] bg-[#FFFFFF] relative overflow-hidden">
       {/* Subtle ambient lighting: soft multi-hue blend (blue + violet) for depth */}
@@ -59,7 +47,7 @@ export function Stats() {
 
                 {/* Label */}
                 <p className="text-[10px] sm:text-xs md:text-sm font-semibold text-[#4B4B5C] group-hover:text-[#0B0B14] uppercase tracking-wider transition-colors">
-                  {t.has(stat.id as any) ? t(stat.id as any) : stat.label}
+                  {stat.label}
                 </p>
               </div>
             </motion.div>

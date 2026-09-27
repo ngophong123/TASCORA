@@ -4,13 +4,9 @@ import * as React from "react"
 import {
   Search,
   Download,
-  Filter,
   ArrowUpRight,
   ArrowDownLeft,
-  Clock,
-  CheckCircle2,
   FileText,
-  ExternalLink,
   ShieldCheck,
   RotateCcw,
 } from "lucide-react"
@@ -121,12 +117,8 @@ export function TransactionsTable({
       {/* Table Toolbar */}
       <div className="p-4 sm:p-5 border-b border-[rgba(15,15,30,0.06)] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h3 className="text-base font-semibold text-[#0B0B14] tracking-tight">
-            {title}
-          </h3>
-          <p className="text-xs text-[#6B6B7B] mt-0.5">
-            {subtitle}
-          </p>
+          <h3 className="text-base font-semibold text-[#0B0B14] tracking-tight">{title}</h3>
+          <p className="text-xs text-[#6B6B7B] mt-0.5">{subtitle}</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
@@ -168,7 +160,7 @@ export function TransactionsTable({
         ).map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setSelectedType(tab.id as any)}
+            onClick={() => setSelectedType(tab.id)}
             className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
               selectedType === tab.id
                 ? "bg-white text-blue-700 shadow-xs border border-[rgba(15,15,30,0.08)]"
@@ -206,10 +198,7 @@ export function TransactionsTable({
               filteredTransactions.map((tx) => {
                 const isPositive = tx.amount > 0
                 return (
-                  <tr
-                    key={tx.id}
-                    className="hover:bg-[#FAFAFC] transition-colors group"
-                  >
+                  <tr key={tx.id} className="hover:bg-[#FAFAFC] transition-colors group">
                     {/* ID */}
                     <td className="py-3.5 px-4 sm:px-5 font-mono text-[11px] font-semibold text-blue-700 whitespace-nowrap">
                       {tx.id}
@@ -222,15 +211,11 @@ export function TransactionsTable({
                     </td>
 
                     {/* Type Badge */}
-                    <td className="py-3.5 px-3 whitespace-nowrap">
-                      {renderTypeBadge(tx.type)}
-                    </td>
+                    <td className="py-3.5 px-3 whitespace-nowrap">{renderTypeBadge(tx.type)}</td>
 
                     {/* Description & Order */}
                     <td className="py-3.5 px-4 max-w-xs">
-                      <p className="font-medium text-[#0B0B14] truncate">
-                        {tx.description}
-                      </p>
+                      <p className="font-medium text-[#0B0B14] truncate">{tx.description}</p>
                       {tx.counterpartName && (
                         <p className="text-[11px] text-[#6B6B7B] mt-0.5">
                           Counterpart: <span className="text-[#4B4B5C]">{tx.counterpartName}</span>
@@ -252,9 +237,7 @@ export function TransactionsTable({
                     <td className="py-3.5 px-4 sm:px-5 text-right whitespace-nowrap">
                       <span
                         className={`font-mono text-xs font-bold ${
-                          isPositive
-                            ? "text-emerald-600"
-                            : "text-[#0B0B14]"
+                          isPositive ? "text-emerald-600" : "text-[#0B0B14]"
                         }`}
                       >
                         {isPositive ? "+" : ""}${Math.abs(tx.amount).toFixed(2)}

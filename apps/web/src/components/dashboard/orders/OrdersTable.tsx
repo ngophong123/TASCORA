@@ -5,18 +5,7 @@ import { useDashboard } from "@/context/DashboardContext"
 import { type DashboardOrder } from "@/data/dashboard/orders"
 import { StatusBadge } from "@/components/ui/StatusBadge"
 import { motion } from "framer-motion"
-import {
-  Search,
-  X,
-  ArrowUpDown,
-  Clock,
-  ArrowRight,
-  Eye,
-  ChevronLeft,
-  ChevronRight,
-  CheckCircle2,
-  Package,
-} from "lucide-react"
+import { Search, X, Clock, ArrowRight, Eye, ChevronLeft, ChevronRight, Package } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface OrdersTableProps {
@@ -115,6 +104,9 @@ export function OrdersTable({ onSelectOrder }: OrdersTableProps) {
             <button
               key={tab.id}
               type="button"
+              role="tab"
+              aria-selected={isActive}
+              data-testid={`order-tab-${tab.id}`}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
                 "relative flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap select-none",
@@ -127,9 +119,7 @@ export function OrdersTable({ onSelectOrder }: OrdersTableProps) {
               <span
                 className={cn(
                   "px-2 py-0.5 rounded-full text-[10px] font-mono font-bold transition-colors",
-                  isActive
-                    ? "bg-blue-100 text-blue-800"
-                    : "bg-[#F4F4F8] text-[#8B8B9B]"
+                  isActive ? "bg-blue-100 text-blue-800" : "bg-[#F4F4F8] text-[#8B8B9B]"
                 )}
               >
                 {tab.count}
@@ -172,12 +162,10 @@ export function OrdersTable({ onSelectOrder }: OrdersTableProps) {
 
         {/* Sort selector */}
         <div className="flex items-center gap-2 shrink-0">
-          <span className="text-xs text-[#6B6B7B] font-medium hidden sm:inline">
-            Sort by:
-          </span>
+          <span className="text-xs text-[#6B6B7B] font-medium hidden sm:inline">Sort by:</span>
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
+            onChange={(e) => setSortBy(e.target.value as "newest" | "amount_desc" | "amount_asc")}
             className="h-10 px-3 rounded-xl border border-[rgba(15,15,30,0.12)] bg-white text-xs font-semibold text-[#0B0B14] focus:border-blue-600 focus:outline-none shadow-2xs cursor-pointer"
           >
             <option value="newest">Newest First</option>
@@ -215,7 +203,7 @@ export function OrdersTable({ onSelectOrder }: OrdersTableProps) {
           <>
             {/* Desktop Table View (>= md) */}
             <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-left text-xs">
+              <table data-testid="orders-table" className="w-full text-left text-xs">
                 <thead>
                   <tr className="border-b border-[rgba(15,15,30,0.06)] bg-[#FAFAFC] text-[11px] font-semibold text-[#6B6B7B] uppercase tracking-wider">
                     <th className="py-3 px-4">Order ID & Scope</th>
@@ -230,11 +218,14 @@ export function OrdersTable({ onSelectOrder }: OrdersTableProps) {
                 <tbody className="divide-y divide-[rgba(15,15,30,0.05)]">
                   {paginatedOrders.map((order) => {
                     const counterpart = isClient ? order.freelancer : order.client
-                    const approvedCount = order.milestones.filter((m) => m.status === "completed").length
+                    const approvedCount = order.milestones.filter(
+                      (m) => m.status === "completed"
+                    ).length
 
                     return (
                       <tr
                         key={order.id}
+                        data-testid={`order-row-${order.id}`}
                         onClick={() => onSelectOrder(order)}
                         className="hover:bg-[#FAFAFC] transition-colors cursor-pointer group"
                       >
@@ -266,7 +257,11 @@ export function OrdersTable({ onSelectOrder }: OrdersTableProps) {
                                 {counterpart.name}
                               </span>
                               <span className="text-[10px] text-[#6B6B7B] block truncate">
-                                {"title" in counterpart ? counterpart.title : ("company" in counterpart ? counterpart.company : "")}
+                                {"title" in counterpart
+                                  ? counterpart.title
+                                  : "company" in counterpart
+                                    ? counterpart.company
+                                    : ""}
                               </span>
                             </div>
                           </div>
@@ -334,6 +329,7 @@ export function OrdersTable({ onSelectOrder }: OrdersTableProps) {
                 return (
                   <div
                     key={order.id}
+                    data-testid={`order-card-${order.id}`}
                     onClick={() => onSelectOrder(order)}
                     className="p-3.5 space-y-3 hover:bg-[#FAFAFC] rounded-xl transition-colors cursor-pointer"
                   >
@@ -349,9 +345,7 @@ export function OrdersTable({ onSelectOrder }: OrdersTableProps) {
                       <StatusBadge status={order.status} />
                     </div>
 
-                    <h4 className="text-xs font-bold text-[#0B0B14] leading-snug">
-                      {order.title}
-                    </h4>
+                    <h4 className="text-xs font-bold text-[#0B0B14] leading-snug">{order.title}</h4>
 
                     <div className="flex items-center justify-between text-xs pt-1">
                       <div className="flex items-center gap-2">
@@ -360,9 +354,7 @@ export function OrdersTable({ onSelectOrder }: OrdersTableProps) {
                           alt={counterpart.name}
                           className="w-6 h-6 rounded-full object-cover border"
                         />
-                        <span className="font-semibold text-[#0B0B14]">
-                          {counterpart.name}
-                        </span>
+                        <span className="font-semibold text-[#0B0B14]">{counterpart.name}</span>
                       </div>
                       <span className="font-mono font-bold text-sm text-[#0B0B14]">
                         ${order.totalAmount}.00

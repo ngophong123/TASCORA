@@ -1,15 +1,14 @@
 "use client"
 
 import * as React from "react"
-import { useSearchParams, useRouter, usePathname } from "next/navigation"
-import { MOCK_GIGS, type Gig, type SellerLevel } from "@/data/gigs"
+import { useSearchParams } from "next/navigation"
+import { useRouter, usePathname } from "@/i18n/routing"
+import { MOCK_GIGS, type SellerLevel } from "@/data/gigs"
 import {
   PRICE_BOUNDS,
   FILTER_CATEGORIES,
   DELIVERY_OPTIONS,
   SELLER_LEVEL_OPTIONS,
-  RATING_OPTIONS,
-  type SortOption,
 } from "@/data/serviceFilterOptions"
 
 export interface ServiceFilterState {
@@ -49,8 +48,10 @@ export function useServiceFilters() {
     const subCategory = searchParams.get("subCategory") || ""
     const minPriceParam = searchParams.get("minPrice")
     const maxPriceParam = searchParams.get("maxPrice")
-    const minPrice = minPriceParam !== null ? Math.max(PRICE_BOUNDS.min, Number(minPriceParam)) : PRICE_BOUNDS.min
-    const maxPrice = maxPriceParam !== null ? Math.min(PRICE_BOUNDS.max, Number(maxPriceParam)) : PRICE_BOUNDS.max
+    const minPrice =
+      minPriceParam !== null ? Math.max(PRICE_BOUNDS.min, Number(minPriceParam)) : PRICE_BOUNDS.min
+    const maxPrice =
+      maxPriceParam !== null ? Math.min(PRICE_BOUNDS.max, Number(maxPriceParam)) : PRICE_BOUNDS.max
 
     const delivery = searchParams.get("delivery") || "any"
 
@@ -69,7 +70,9 @@ export function useServiceFilters() {
     const proOnly = searchParams.get("proOnly") === "true"
 
     const sortParam = searchParams.get("sort") as ServiceFilterState["sort"]
-    const sort = ["recommended", "rating_desc", "newest", "price_asc", "price_desc"].includes(sortParam)
+    const sort = ["recommended", "rating_desc", "newest", "price_asc", "price_desc"].includes(
+      sortParam
+    )
       ? sortParam
       : "recommended"
 
@@ -99,11 +102,18 @@ export function useServiceFilters() {
 
   // Push URL update helper
   const updateUrl = React.useCallback(
-    (newParams: Record<string, string | number | boolean | null | undefined | string[]>, resetPage = true) => {
+    (
+      newParams: Record<string, string | number | boolean | null | undefined | string[]>,
+      resetPage = true
+    ) => {
       const current = new URLSearchParams(searchParams.toString())
 
       if (resetPage && !("page" in newParams)) {
         current.delete("page")
+      }
+
+      if ("category" in newParams && !("subCategory" in newParams)) {
+        current.delete("subCategory")
       }
 
       Object.entries(newParams).forEach(([key, val]) => {
@@ -223,9 +233,7 @@ export function useServiceFilters() {
 
     // Languages
     if (filters.languages.length > 0) {
-      result = result.filter((g) =>
-        g.seller.languages.some((l) => filters.languages.includes(l))
-      )
+      result = result.filter((g) => g.seller.languages.some((l) => filters.languages.includes(l)))
     }
 
     // Toggles

@@ -1,21 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {
-  User,
-  Shield,
-  Bell,
-  CreditCard,
-  Camera,
-  CheckCircle2,
-  Lock,
-  Smartphone,
-  Globe,
-  Save,
-  Key,
-  Trash2,
-  Mail,
-} from "lucide-react"
+import { User, Shield, Bell, CreditCard, Camera, Smartphone, Save } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/Switch"
 import { useDashboard } from "@/context/DashboardContext"
@@ -33,7 +19,9 @@ export default function SettingsPage() {
     fullName: isFreelancer ? "Alexandre Moreau" : "Marcus Thorne",
     displayName: isFreelancer ? "alexandre_dev" : "marcus_thorne",
     email: isFreelancer ? "alexandre@architech.io" : "marcus@fintechcorp.io",
-    title: isFreelancer ? "Senior Full-Stack Architect & AI Specialist" : "VP of Engineering at Fintech Corp",
+    title: isFreelancer
+      ? "Senior Full-Stack Architect & AI Specialist"
+      : "VP of Engineering at Fintech Corp",
     bio: isFreelancer
       ? "10+ years engineering enterprise Next.js, Node.js, and high-performance cloud architectures. Specialized in microservices and LLM pipelines."
       : "Building autonomous financial rails and modern banking infrastructure with top global specialists.",
@@ -92,7 +80,8 @@ export default function SettingsPage() {
           Account & Workspace Settings
         </h1>
         <p className="text-sm text-[#4B4B5C] mt-1">
-          Manage your personal profile, authentication credentials, security policies, and notifications.
+          Manage your personal profile, authentication credentials, security policies, and
+          notifications.
         </p>
       </div>
 
@@ -161,9 +150,7 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <h3 className="text-sm font-semibold text-[#0B0B14]">
-                  Profile Avatar
-                </h3>
+                <h3 className="text-sm font-semibold text-[#0B0B14]">Profile Avatar</h3>
                 <p className="text-xs text-[#6B6B7B] mt-0.5">
                   High-resolution photo helps build trust with prospective partners.
                 </p>
@@ -232,7 +219,9 @@ export default function SettingsPage() {
                     <input
                       type="number"
                       value={profile.hourlyRate}
-                      onChange={(e) => setProfile({ ...profile, hourlyRate: Number(e.target.value) })}
+                      onChange={(e) =>
+                        setProfile({ ...profile, hourlyRate: Number(e.target.value) })
+                      }
                       className="w-full rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] pl-7 pr-3 py-2 text-xs font-mono font-bold text-[#0B0B14] outline-none focus:bg-white focus:border-blue-500"
                     />
                   </div>
@@ -307,9 +296,7 @@ export default function SettingsPage() {
               <h3 className="text-xs font-semibold text-[#0B0B14]">Change Password</h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="text-[11px] text-[#6B6B7B] block mb-1">
-                    Current Password
-                  </label>
+                  <label className="text-[11px] text-[#6B6B7B] block mb-1">Current Password</label>
                   <input
                     type="password"
                     placeholder="••••••••••••"
@@ -317,9 +304,7 @@ export default function SettingsPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] text-[#6B6B7B] block mb-1">
-                    New Password
-                  </label>
+                  <label className="text-[11px] text-[#6B6B7B] block mb-1">New Password</label>
                   <input
                     type="password"
                     placeholder="••••••••••••"
@@ -351,9 +336,7 @@ export default function SettingsPage() {
 
             {/* Connected Accounts */}
             <div className="space-y-3 pt-3 border-t border-[rgba(15,15,30,0.06)]">
-              <h3 className="text-xs font-semibold text-[#0B0B14]">
-                Connected OAuth Accounts
-              </h3>
+              <h3 className="text-xs font-semibold text-[#0B0B14]">Connected OAuth Accounts</h3>
 
               <div className="flex items-center justify-between p-3 rounded-xl border border-[rgba(15,15,30,0.08)] bg-white">
                 <div className="flex items-center gap-3">
@@ -362,7 +345,9 @@ export default function SettingsPage() {
                   </svg>
                   <div>
                     <div className="text-xs font-semibold text-[#0B0B14]">GitHub</div>
-                    <div className="text-[11px] text-emerald-600">Connected as @alexandre-moreau</div>
+                    <div className="text-[11px] text-emerald-600">
+                      Connected as @alexandre-moreau
+                    </div>
                   </div>
                 </div>
                 <Button variant="outline" size="sm" className="text-xs text-[#4B4B5C] h-7 px-2.5">
@@ -379,9 +364,7 @@ export default function SettingsPage() {
         <div className="bg-white rounded-2xl border border-[rgba(15,15,30,0.08)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-6">
           <div className="flex items-center justify-between pb-3 border-b border-[rgba(15,15,30,0.06)]">
             <div>
-              <h2 className="text-base font-semibold text-[#0B0B14]">
-                Notification Rules
-              </h2>
+              <h2 className="text-base font-semibold text-[#0B0B14]">Notification Rules</h2>
               <p className="text-xs text-[#6B6B7B]">
                 Choose when and where you receive project alerts and communications.
               </p>
@@ -407,30 +390,30 @@ export default function SettingsPage() {
               </div>
               <Switch
                 checked={notifications.orderMilestones}
-                onCheckedChange={(val) => setNotifications({ ...notifications, orderMilestones: val })}
+                onCheckedChange={(val) =>
+                  setNotifications({ ...notifications, orderMilestones: val })
+                }
               />
             </div>
 
             <div className="flex items-center justify-between pt-3">
               <div>
-                <h4 className="text-xs font-semibold text-[#0B0B14]">
-                  Direct Chat Messages
-                </h4>
+                <h4 className="text-xs font-semibold text-[#0B0B14]">Direct Chat Messages</h4>
                 <p className="text-[11px] text-[#6B6B7B]">
                   Receive notifications for new messages in the 3-pane inbox.
                 </p>
               </div>
               <Switch
                 checked={notifications.directMessages}
-                onCheckedChange={(val) => setNotifications({ ...notifications, directMessages: val })}
+                onCheckedChange={(val) =>
+                  setNotifications({ ...notifications, directMessages: val })
+                }
               />
             </div>
 
             <div className="flex items-center justify-between pt-3">
               <div>
-                <h4 className="text-xs font-semibold text-[#0B0B14]">
-                  Weekly Performance Digest
-                </h4>
+                <h4 className="text-xs font-semibold text-[#0B0B14]">Weekly Performance Digest</h4>
                 <p className="text-[11px] text-[#6B6B7B]">
                   Consolidated email breakdown of earnings, impressions, and order views.
                 </p>
@@ -443,9 +426,7 @@ export default function SettingsPage() {
 
             <div className="flex items-center justify-between pt-3">
               <div>
-                <h4 className="text-xs font-semibold text-[#0B0B14]">
-                  Auditory Sound Effects
-                </h4>
+                <h4 className="text-xs font-semibold text-[#0B0B14]">Auditory Sound Effects</h4>
                 <p className="text-[11px] text-[#6B6B7B]">
                   Play gentle chime on incoming chat message.
                 </p>

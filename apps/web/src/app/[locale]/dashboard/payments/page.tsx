@@ -1,17 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {
-  CreditCard,
-  ShieldCheck,
-  TrendingUp,
-  Download,
-  Plus,
-  Receipt,
-  FileCheck,
-  DollarSign,
-  Briefcase,
-} from "lucide-react"
+import { ShieldCheck, Download, Plus, Receipt, DollarSign, Briefcase } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useDashboard } from "@/context/DashboardContext"
 import { ClientPaymentMethods } from "@/components/dashboard/payments/ClientPaymentMethods"
@@ -24,7 +14,7 @@ import {
 
 export default function PaymentsPage() {
   const { showToast } = useDashboard()
-  const [invoices, setInvoices] = React.useState<TransactionRecord[]>(CLIENT_INVOICES)
+  const [invoices] = React.useState<TransactionRecord[]>(CLIENT_INVOICES)
 
   const handleExportAnnualTax = () => {
     showToast({
@@ -99,7 +89,11 @@ export default function PaymentsPage() {
 
           <div className="mt-4">
             <h3 className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[#0B0B14]">
-              ${CLIENT_PAYMENTS_SUMMARY.totalSpent.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              $
+              {CLIENT_PAYMENTS_SUMMARY.totalSpent.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </h3>
             <p className="text-[11px] text-[#6B6B7B] mt-1">
               Total cleared payments across all milestones.
@@ -128,7 +122,11 @@ export default function PaymentsPage() {
 
           <div className="mt-4">
             <h3 className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[#0B0B14]">
-              ${CLIENT_PAYMENTS_SUMMARY.fundsInEscrow.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              $
+              {CLIENT_PAYMENTS_SUMMARY.fundsInEscrow.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </h3>
             <p className="text-[11px] text-[#6B6B7B] mt-1">
               Held until you approve milestone deliverables.
@@ -157,7 +155,11 @@ export default function PaymentsPage() {
 
           <div className="mt-4">
             <h3 className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[#0B0B14]">
-              ${CLIENT_PAYMENTS_SUMMARY.availableCredits.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              $
+              {CLIENT_PAYMENTS_SUMMARY.availableCredits.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </h3>
             <p className="text-[11px] text-[#6B6B7B] mt-1">
               Refund credits applicable to future milestones.

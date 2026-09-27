@@ -57,13 +57,16 @@ export function EnterpriseCode() {
   const [copied, setCopied] = React.useState(false)
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(CODE_SNIPPET)
+    void navigator.clipboard.writeText(CODE_SNIPPET)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
 
   return (
-    <section className="py-16 sm:py-24 md:py-36 border-b border-[rgba(15,15,30,0.08)] bg-[#FFFFFF] relative overflow-hidden" id="enterprise">
+    <section
+      className="py-16 sm:py-24 md:py-36 border-b border-[rgba(15,15,30,0.08)] bg-[#FFFFFF] relative overflow-hidden"
+      id="enterprise"
+    >
       {/* Ambient background lighting */}
       <div className="absolute top-1/2 -right-48 w-96 h-96 bg-blue-300/15 rounded-full blur-[160px] pointer-events-none" />
 
@@ -99,10 +102,7 @@ export function EnterpriseCode() {
             </motion.p>
 
             {/* Feature Bullets */}
-            <motion.div
-              className="space-y-4 pt-2"
-              variants={staggerContainerVariants}
-            >
+            <motion.div className="space-y-4 pt-2" variants={staggerContainerVariants}>
               {[
                 {
                   icon: ShieldCheck,
@@ -150,7 +150,10 @@ export function EnterpriseCode() {
               className="pt-4 flex items-center gap-4"
             >
               <Link href="/enterprise" className="w-full sm:w-auto">
-                <motion.div whileTap={buttonTapMotion.whileTap} className="w-full sm:w-auto inline-block">
+                <motion.div
+                  whileTap={buttonTapMotion.whileTap}
+                  className="w-full sm:w-auto inline-block"
+                >
                   <Button
                     variant="primary"
                     size="lg"
@@ -163,7 +166,6 @@ export function EnterpriseCode() {
                 </motion.div>
               </Link>
             </motion.div>
-
           </motion.div>
 
           {/* RIGHT COLUMN: Styled Fake Code Editor Window (Stripe Style) */}
@@ -175,7 +177,6 @@ export function EnterpriseCode() {
             variants={landingCardVariants}
           >
             <div className="rounded-2xl bg-[#0D0D12] border border-slate-800 shadow-[0_24px_70px_-15px_rgba(15,15,30,0.35),0_0_30px_-10px_rgba(37,99,235,0.2)] overflow-hidden">
-
               {/* macOS Window Title Bar */}
               <div className="flex items-center justify-between px-4 py-3 bg-[#14141C] border-b border-white/8">
                 <div className="flex items-center gap-2">
@@ -189,7 +190,9 @@ export function EnterpriseCode() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="text-[11px] font-mono text-[#71717A] hidden sm:inline">TypeScript</span>
+                  <span className="text-[11px] font-mono text-[#71717A] hidden sm:inline">
+                    TypeScript
+                  </span>
                   <button
                     type="button"
                     onClick={handleCopy}
@@ -197,28 +200,40 @@ export function EnterpriseCode() {
                     title={copied ? t("copiedButton") : t("copyButton")}
                     aria-label={copied ? t("copiedButton") : t("copyButton")}
                   >
-                    {copied ? <Check className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4" />}
+                    {copied ? (
+                      <Check className="h-4 w-4 text-emerald-400" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
                   </button>
                 </div>
               </div>
 
               {/* Code Area with Syntax Colors */}
               <div className="p-4 sm:p-6 font-mono text-[11px] sm:text-xs md:text-[13px] leading-relaxed overflow-x-auto text-[#D4D4D8] bg-[#0A0A0F]">
-                <div className="text-[#71717A] select-none mb-2">// 1. Initialize API request to lock dedicated escrow vault</div>
+                <div className="text-[#71717A] select-none mb-2">
+                  {"// 1. Initialize API request to lock dedicated escrow vault"}
+                </div>
                 <div>
-                  <span className="text-sky-400">const</span> response = <span className="text-sky-400">await</span>{" "}
+                  <span className="text-sky-400">const</span> response ={" "}
+                  <span className="text-sky-400">await</span>{" "}
                   <span className="text-blue-400">fetch</span>(
-                  <span className="text-emerald-400">&quot;https://api.tascora.com/v1/projects&quot;</span>, &#123;
+                  <span className="text-emerald-400">
+                    &quot;https://api.tascora.com/v1/projects&quot;
+                  </span>
+                  , &#123;
                 </div>
                 <div className="pl-4">
-                  <span className="text-[#A1A1AA]">method</span>: <span className="text-emerald-400">&quot;POST&quot;</span>,
+                  <span className="text-[#A1A1AA]">method</span>:{" "}
+                  <span className="text-emerald-400">&quot;POST&quot;</span>,
                 </div>
                 <div className="pl-4">
                   <span className="text-[#A1A1AA]">headers</span>: &#123;
                 </div>
                 <div className="pl-8">
                   <span className="text-emerald-400">&quot;Authorization&quot;</span>:{" "}
-                  <span className="text-emerald-400">&quot;Bearer tsk_live_9a8f2c3e4...&quot;</span>,
+                  <span className="text-emerald-400">&quot;Bearer tsk_live_9a8f2c3e4...&quot;</span>
+                  ,
                 </div>
                 <div className="pl-8">
                   <span className="text-emerald-400">&quot;Content-Type&quot;</span>:{" "}
@@ -226,11 +241,15 @@ export function EnterpriseCode() {
                 </div>
                 <div className="pl-4">&#125;,</div>
                 <div className="pl-4">
-                  <span className="text-[#A1A1AA]">body</span>: JSON.<span className="text-sky-400">stringify</span>(&#123;
+                  <span className="text-[#A1A1AA]">body</span>: JSON.
+                  <span className="text-sky-400">stringify</span>(&#123;
                 </div>
                 <div className="pl-8">
                   <span className="text-[#A1A1AA]">title</span>:{" "}
-                  <span className="text-emerald-400">&quot;AI Knowledge Graph Architecture&quot;</span>,
+                  <span className="text-emerald-400">
+                    &quot;AI Knowledge Graph Architecture&quot;
+                  </span>
+                  ,
                 </div>
                 <div className="pl-8">
                   <span className="text-[#A1A1AA]">escrowAmount</span>:{" "}
@@ -242,17 +261,20 @@ export function EnterpriseCode() {
                 <div className="pl-12">
                   &#123; <span className="text-[#A1A1AA]">name</span>:{" "}
                   <span className="text-emerald-400">&quot;Schema & Vector DB&quot;</span>,{" "}
-                  <span className="text-[#A1A1AA]">amount</span>: <span className="text-amber-400">1600</span> &#125;,
+                  <span className="text-[#A1A1AA]">amount</span>:{" "}
+                  <span className="text-amber-400">1600</span> &#125;,
                 </div>
                 <div className="pl-12">
                   &#123; <span className="text-[#A1A1AA]">name</span>:{" "}
                   <span className="text-emerald-400">&quot;Agent Tool Integration&quot;</span>,{" "}
-                  <span className="text-[#A1A1AA]">amount</span>: <span className="text-amber-400">2000</span> &#125;,
+                  <span className="text-[#A1A1AA]">amount</span>:{" "}
+                  <span className="text-amber-400">2000</span> &#125;,
                 </div>
                 <div className="pl-12">
                   &#123; <span className="text-[#A1A1AA]">name</span>:{" "}
                   <span className="text-emerald-400">&quot;Production QA & SLA&quot;</span>,{" "}
-                  <span className="text-[#A1A1AA]">amount</span>: <span className="text-amber-400">1200</span> &#125;
+                  <span className="text-[#A1A1AA]">amount</span>:{" "}
+                  <span className="text-amber-400">1200</span> &#125;
                 </div>
                 <div className="pl-8">],</div>
                 <div className="pl-8">
@@ -261,14 +283,18 @@ export function EnterpriseCode() {
                 </div>
                 <div className="pl-4">&#125;)</div>
                 <div>&#125;);</div>
-                <div className="mt-3 text-[#71717A]">// 2. Escrow contract generated & verified on network</div>
+                <div className="mt-3 text-[#71717A]">
+                  {"// 2. Escrow contract generated & verified on network"}
+                </div>
                 <div>
-                  <span className="text-sky-400">const</span> project = <span className="text-sky-400">await</span>{" "}
-                  response.<span className="text-blue-400">json</span>();
+                  <span className="text-sky-400">const</span> project ={" "}
+                  <span className="text-sky-400">await</span> response.
+                  <span className="text-blue-400">json</span>();
                 </div>
                 <div className="flex items-center gap-1">
                   console.<span className="text-blue-400">log</span>(
-                  <span className="text-emerald-400">&quot;Vault locked:&quot;</span>, project.escrowVaultId);
+                  <span className="text-emerald-400">&quot;Vault locked:&quot;</span>,
+                  project.escrowVaultId);
                   <span className="inline-block w-2 h-4 bg-blue-400 animate-pulse ml-1" />
                 </div>
               </div>
@@ -288,4 +314,3 @@ export function EnterpriseCode() {
     </section>
   )
 }
-

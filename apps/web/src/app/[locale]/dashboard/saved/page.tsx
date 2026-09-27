@@ -2,18 +2,7 @@
 
 import * as React from "react"
 import { Link } from "@/i18n/routing"
-import {
-  Bookmark,
-  Star,
-  Clock,
-  MapPin,
-  MessageSquare,
-  ArrowUpRight,
-  Trash2,
-  ExternalLink,
-  ShieldCheck,
-  Compass,
-} from "lucide-react"
+import { Bookmark, Star, MessageSquare, ArrowUpRight, Trash2, Compass } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useDashboard } from "@/context/DashboardContext"
 import {
@@ -62,7 +51,8 @@ export default function SavedPage() {
             </span>
           </div>
           <p className="text-sm text-[#4B4B5C] mt-1">
-            Keep track of verified top-rated specialists and curated service packages for upcoming projects.
+            Keep track of verified top-rated specialists and curated service packages for upcoming
+            projects.
           </p>
         </div>
 
@@ -126,9 +116,7 @@ export default function SavedPage() {
                       />
                       <div>
                         <div className="flex items-center gap-2">
-                          <h3 className="text-sm font-semibold text-[#0B0B14]">
-                            {spec.name}
-                          </h3>
+                          <h3 className="text-sm font-semibold text-[#0B0B14]">{spec.name}</h3>
                           <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200/60">
                             {spec.badge === "TOP_RATED" ? "Top Rated" : "Verified Pro"}
                           </span>
@@ -266,7 +254,10 @@ export default function SavedPage() {
 
                   <div className="flex items-center justify-between pt-2 border-t border-[rgba(15,15,30,0.06)]">
                     <span className="text-xs">
-                      From <strong className="font-mono font-bold text-[#0B0B14]">${gig.startingPrice}</strong>
+                      From{" "}
+                      <strong className="font-mono font-bold text-[#0B0B14]">
+                        ${gig.startingPrice}
+                      </strong>
                     </span>
 
                     <Link href={`/services/${gig.id}`}>

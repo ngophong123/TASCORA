@@ -11,34 +11,23 @@ import {
   ShieldCheck,
   ArrowLeft,
   ShoppingBag,
-  MoreVertical,
   Clock,
   Sparkles,
   FileCode,
   FileText,
   Archive,
   Download,
-  ExternalLink,
   ChevronRight,
   Info,
   Smile,
   X,
   Star,
-  CheckCircle2,
-  Calendar,
-  Layers,
   ArrowUpRight,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { StatusBadge } from "@/components/ui/StatusBadge"
 import { useDashboard } from "@/context/DashboardContext"
-import {
-  MOCK_CONVERSATIONS,
-  type Conversation,
-  type ChatMessage,
-  type MessageAttachment,
-} from "@/data/dashboard/messages"
+import { MOCK_CONVERSATIONS, type Conversation, type ChatMessage } from "@/data/dashboard/messages"
 
 function MessagesContent() {
   const searchParams = useSearchParams()
@@ -65,7 +54,7 @@ function MessagesContent() {
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
 
   const activeConv =
-    conversations.find((c) => c.id === selectedConvId) || conversations[0]
+    conversations.find((c) => c.id === selectedConvId) ?? conversations[0] ?? MOCK_CONVERSATIONS[0]!
 
   // Auto scroll message thread to bottom
   React.useEffect(() => {
@@ -74,9 +63,11 @@ function MessagesContent() {
 
   // Clear unread count when opening a conversation
   React.useEffect(() => {
-    if (activeConv && activeConv.unreadCount > 0) {
+    if (selectedConvId) {
       setConversations((prev) =>
-        prev.map((c) => (c.id === activeConv.id ? { ...c, unreadCount: 0 } : c))
+        prev.map((c) =>
+          c.id === selectedConvId && c.unreadCount > 0 ? { ...c, unreadCount: 0 } : c
+        )
       )
     }
   }, [selectedConvId])
@@ -129,7 +120,8 @@ function MessagesContent() {
           id: `reply-${Date.now()}`,
           senderId: activeConv.partner.id,
           senderName: activeConv.partner.name,
-          content: "Thanks for the update! I will incorporate this immediately into our deployment checklist.",
+          content:
+            "Thanks for the update! I will incorporate this immediately into our deployment checklist.",
           time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
           date: "Today",
           read: true,
@@ -292,6 +284,7 @@ function MessagesContent() {
                   <button
                     key={conv.id}
                     onClick={() => handleSelectConv(conv.id)}
+                    data-testid={`conversation-item-${conv.id}`}
                     className={`w-full text-left p-4 transition-all flex items-start gap-3 relative ${
                       isSelected
                         ? "bg-blue-50/70 border-l-[3px] border-blue-600"
@@ -335,9 +328,7 @@ function MessagesContent() {
                         </span>
                       </div>
 
-                      <p className="text-xs text-[#4B4B5C] truncate">
-                        {conv.lastMessage}
-                      </p>
+                      <p className="text-xs text-[#4B4B5C] truncate">{conv.lastMessage}</p>
                     </div>
 
                     {/* Unread badge */}
@@ -451,11 +442,9 @@ function MessagesContent() {
             {activeConv.messages.map((msg) => {
               const isMe = msg.senderId === "me"
               return (
-                <div
-                  key={msg.id}
-                  className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}
-                >
+                <div key={msg.id} className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
                   <div
+                    data-testid="chat-message-bubble"
                     className={`rounded-2xl px-4 py-3 max-w-[88%] sm:max-w-[72%] shadow-sm space-y-2 ${
                       isMe
                         ? "bg-gradient-to-r from-blue-600 to-sky-600 text-white rounded-tr-sm"
@@ -551,6 +540,7 @@ function MessagesContent() {
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   onKeyDown={handleKeyDown}
+                  data-testid="message-input"
                   rows={2}
                   placeholder={`Write a message to ${activeConv.partner.name}... (Enter to send, Shift+Enter for newline)`}
                   className="w-full bg-transparent p-3 text-xs sm:text-sm text-[#0B0B14] placeholder:text-[#6B6B7B] resize-none outline-none"
@@ -607,13 +597,16 @@ function MessagesContent() {
 
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] text-[#6B6B7B] hidden sm:inline">
-                      Press <kbd className="px-1 py-0.5 bg-[#EFEFF4] rounded text-[9px] font-mono">↵</kbd> to send
+                      Press{" "}
+                      <kbd className="px-1 py-0.5 bg-[#EFEFF4] rounded text-[9px] font-mono">↵</kbd>{" "}
+                      to send
                     </span>
 
                     <Button
                       type="submit"
                       size="sm"
                       disabled={!inputText.trim()}
+                      data-testid="send-message-btn"
                       className="h-8 px-3.5 bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white rounded-lg shadow-sm font-medium text-xs flex items-center gap-1.5 disabled:opacity-40"
                     >
                       <span>Send</span>
@@ -796,10 +789,7 @@ function MessagesContent() {
 
               {/* Context Actions */}
               <div className="pt-2 space-y-2">
-                <Link
-                  href={`/dashboard/orders?orderId=${activeConv.order.id}`}
-                  className="w-full"
-                >
+                <Link href={`/dashboard/orders?orderId=${activeConv.order.id}`} className="w-full">
                   <Button
                     variant="outline"
                     size="sm"

@@ -1,17 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {
-  X,
-  CreditCard,
-  Building2,
-  CheckCircle2,
-  ArrowRight,
-  ShieldCheck,
-  Zap,
-  Loader2,
-  Sparkles,
-} from "lucide-react"
+import { X, CreditCard, Building2, ArrowRight, Zap, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface WithdrawDialogProps {
@@ -57,8 +47,8 @@ export function WithdrawDialog({
         destination === "stripe"
           ? "Stripe Express •••• 4242"
           : destination === "bank"
-          ? "Bank of America ACH •••• 9104"
-          : "PayPal (alexandre.dev@example.com)"
+            ? "Bank of America ACH •••• 9104"
+            : "PayPal (alexandre.dev@example.com)"
 
       onConfirmWithdraw(parsedAmount, destName)
       setIsProcessing(false)
@@ -83,9 +73,7 @@ export function WithdrawDialog({
               <Zap className="h-4 w-4" />
             </span>
             <div>
-              <h2 className="text-base font-semibold text-[#0B0B14]">
-                Withdraw Available Funds
-              </h2>
+              <h2 className="text-base font-semibold text-[#0B0B14]">Withdraw Available Funds</h2>
               <p className="text-xs text-[#6B6B7B]">
                 Transfer cleared earnings directly to your verified payout destination.
               </p>
@@ -103,15 +91,14 @@ export function WithdrawDialog({
         <form onSubmit={handleSubmit} className="mt-5 space-y-5">
           {/* Destination Selector */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-[#0B0B14]">
-              Select Payout Method
-            </label>
+            <label className="text-xs font-semibold text-[#0B0B14]">Select Payout Method</label>
 
             <div className="space-y-2">
               {/* Stripe Express */}
-              <label
+              <button
+                type="button"
                 onClick={() => setDestination("stripe")}
-                className={`flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${
+                className={`w-full text-left flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${
                   destination === "stripe"
                     ? "border-blue-600 bg-blue-50/50 shadow-xs ring-1 ring-blue-600"
                     : "border-[rgba(15,15,30,0.1)] hover:bg-[#FAFAFC]"
@@ -133,12 +120,13 @@ export function WithdrawDialog({
                 <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                   Instant
                 </span>
-              </label>
+              </button>
 
               {/* Direct Bank ACH */}
-              <label
+              <button
+                type="button"
                 onClick={() => setDestination("bank")}
-                className={`flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${
+                className={`w-full text-left flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${
                   destination === "bank"
                     ? "border-blue-600 bg-blue-50/50 shadow-xs ring-1 ring-blue-600"
                     : "border-[rgba(15,15,30,0.1)] hover:bg-[#FAFAFC]"
@@ -160,7 +148,7 @@ export function WithdrawDialog({
                 <span className="text-[10px] font-medium text-[#6B6B7B] bg-[#F4F4F8] px-2 py-0.5 rounded-full">
                   1-2 Days
                 </span>
-              </label>
+              </button>
             </div>
           </div>
 
@@ -170,9 +158,7 @@ export function WithdrawDialog({
               <span className="font-semibold text-[#0B0B14]">Withdrawal Amount</span>
               <span className="text-[#6B6B7B]">
                 Available:{" "}
-                <strong className="text-[#0B0B14] font-mono">
-                  ${availableBalance.toFixed(2)}
-                </strong>
+                <strong className="text-[#0B0B14] font-mono">${availableBalance.toFixed(2)}</strong>
               </span>
             </div>
 

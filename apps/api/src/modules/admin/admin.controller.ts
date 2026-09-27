@@ -2,11 +2,11 @@ import { Response, NextFunction } from 'express';
 import { AuthRequest } from '../../middlewares/requireAuth';
 import { prisma } from '../../lib/prisma';
 
-export const requireAdminRole = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const requireAdminRole = (req: AuthRequest, res: Response, next: NextFunction): void | Response => {
   if (req.user?.role !== 'ADMIN') {
     return res.status(403).json({ success: false, error: 'Forbidden: Admins only' });
   }
-  next();
+  return next();
 };
 
 export const getAllUsers = async (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -52,7 +52,8 @@ export const banUser = async (req: AuthRequest, res: Response, next: NextFunctio
     const { status } = req.body; // BANNED or ACTIVE
 
     if (!['BANNED', 'ACTIVE', 'SUSPENDED'].includes(status)) {
-      return res.status(400).json({ success: false, error: 'Invalid status' });
+      res.status(400).json({ success: false, error: 'Invalid status' });
+      return;
     }
 
     const updatedUser = await prisma.user.update({

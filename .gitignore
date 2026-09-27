@@ -16,3 +16,10 @@ yarn-error.log*
 .vercel
 *.tsbuildinfo
 next-env.d.ts
+
+# Test & Audit Artifacts
+test-results/
+playwright-report/
+.lighthouseci/
+blob-report/
+

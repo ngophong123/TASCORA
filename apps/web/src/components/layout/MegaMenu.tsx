@@ -17,7 +17,6 @@ import {
   TrendingUp,
   Briefcase,
   ArrowRight,
-  ChevronRight,
 } from "lucide-react"
 import { MegaMenuColumn } from "@/data/navigation"
 import { Badge } from "@/components/ui/badge"
@@ -46,7 +45,10 @@ interface MegaMenuProps {
 export function MegaMenu({ columns, footerLink, onClose }: MegaMenuProps) {
   const t = useTranslations("nav")
   return (
-    <div className="w-[780px] rounded-2xl bg-white/98 backdrop-blur-2xl border border-[rgba(15,15,30,0.1)] p-6 shadow-[0_24px_60px_rgba(15,15,30,0.12),0_4px_20px_rgba(37,99,235,0.08)] animate-in fade-in slide-in-from-top-2 duration-200">
+    <div
+      data-testid="mega-menu-dropdown"
+      className="w-[780px] rounded-2xl bg-white/98 backdrop-blur-2xl border border-[rgba(15,15,30,0.1)] p-6 shadow-[0_24px_60px_rgba(15,15,30,0.12),0_4px_20px_rgba(37,99,235,0.08)] animate-in fade-in slide-in-from-top-2 duration-200"
+    >
       <div className="grid grid-cols-3 gap-6">
         {columns.map((col, colIdx) => (
           <div key={colIdx} className="flex flex-col space-y-3">
@@ -72,7 +74,11 @@ export function MegaMenu({ columns, footerLink, onClose }: MegaMenuProps) {
                           {item.title}
                         </span>
                         {item.badge && (
-                          <Badge variant="gradient" size="sm" className="px-1.5 py-0 text-[9px] uppercase tracking-wider">
+                          <Badge
+                            variant="gradient"
+                            size="sm"
+                            className="px-1.5 py-0 text-[9px] uppercase tracking-wider"
+                          >
                             {item.badge}
                           </Badge>
                         )}
@@ -91,9 +97,7 @@ export function MegaMenu({ columns, footerLink, onClose }: MegaMenuProps) {
 
       {footerLink && (
         <div className="mt-5 pt-4 border-t border-[rgba(15,15,30,0.08)] flex items-center justify-between px-2">
-          <span className="text-xs text-[#6B6B7B]">
-            {t("megaMenuFooterNote")}
-          </span>
+          <span className="text-xs text-[#6B6B7B]">{t("megaMenuFooterNote")}</span>
           <Link
             href={footerLink.href}
             onClick={onClose}

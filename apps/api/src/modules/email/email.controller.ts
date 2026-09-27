@@ -10,7 +10,8 @@ export const sendTestEmail = async (req: AuthRequest, res: Response, next: NextF
     const user = await prisma.user.findUnique({ where: { id: userId } });
     
     if (!user || !user.email) {
-      return res.status(400).json({ success: false, error: 'User email not found' });
+      res.status(400).json({ success: false, error: 'User email not found' });
+      return;
     }
 
     const info = await EmailService.sendTestEmail(user.email);

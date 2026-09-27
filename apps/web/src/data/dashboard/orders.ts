@@ -10,7 +10,7 @@ export interface OrderMilestone {
 export interface DeliveryFile {
   name: string
   size: string
-  type: "zip" | "pdf" | "figma" | "code" | "image"
+  type: "zip" | "pdf" | "figma" | "code" | "image" | "video"
 }
 
 export interface OrderDelivery {
@@ -70,17 +70,20 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     client: {
       name: "Marcus Thorne",
       email: "marcus@fintechcorp.io",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
       company: "Fintech Corp",
     },
     freelancer: {
       name: "Alexandre Moreau",
       title: "Senior Full-Stack Architect",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
       rating: 4.99,
       level: "TOP_RATED",
     },
-    requirements: "Deploy a scalable pnpm monorepo with Next.js 15 App Router, PostgreSQL with Prisma ORM, JWT authentication cookies, and Docker Compose development environment.",
+    requirements:
+      "Deploy a scalable pnpm monorepo with Next.js 15 App Router, PostgreSQL with Prisma ORM, JWT authentication cookies, and Docker Compose development environment.",
     milestones: [
       {
         id: "m-1",
@@ -132,17 +135,20 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     client: {
       name: "Sarah Lin",
       email: "sarah@saasly.com",
-      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&auto=format&fit=crop&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&auto=format&fit=crop&q=80",
       company: "SaaSly Inc.",
     },
     freelancer: {
       name: "Elena Rostova",
       title: "Principal UI/UX & Design Systems Lead",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
       rating: 4.98,
       level: "TOP_RATED",
     },
-    requirements: "Complete component system in Figma with auto-layout v5, light and dark theme variable tokens, responsive grid foundations, and button variants.",
+    requirements:
+      "Complete component system in Figma with auto-layout v5, light and dark theme variable tokens, responsive grid foundations, and button variants.",
     milestones: [
       {
         id: "m-1",
@@ -187,17 +193,20 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     client: {
       name: "David Sterling",
       email: "david@biotech-analytics.com",
-      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80",
       company: "BioTech Analytics",
     },
     freelancer: {
       name: "Dr. Priya Patel",
       title: "Staff AI & LLM Systems Architect",
-      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&auto=format&fit=crop&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&auto=format&fit=crop&q=80",
       rating: 4.99,
       level: "TOP_RATED",
     },
-    requirements: "End-to-end vector search pipeline for scientific literature, embedding chunking optimization, hybrid BM25 + dense vector reranking, and low-latency API.",
+    requirements:
+      "End-to-end vector search pipeline for scientific literature, embedding chunking optimization, hybrid BM25 + dense vector reranking, and low-latency API.",
     milestones: [
       {
         id: "m-1",
@@ -230,17 +239,20 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     client: {
       name: "Chloe Vance",
       email: "chloe@growthpulse.io",
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80",
       company: "GrowthPulse",
     },
     freelancer: {
       name: "Alexandre Moreau",
       title: "Senior Full-Stack Architect",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
       rating: 4.99,
       level: "TOP_RATED",
     },
-    requirements: "Sleek dark-to-light stripe style marketing homepage with interactive bento grid, scroll-driven storytelling, and mobile drawer.",
+    requirements:
+      "Sleek dark-to-light stripe style marketing homepage with interactive bento grid, scroll-driven storytelling, and mobile drawer.",
     milestones: [
       {
         id: "m-1",
@@ -265,7 +277,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
         note: "Hero section and animated bento grid completed with zero layout shifts.",
         submittedAt: "Sep 16, 2026",
         files: [
-          { name: "preview-deployment.mp4", size: "8.1 MB", type: "video" as any },
+          { name: "preview-deployment.mp4", size: "8.1 MB", type: "video" },
           { name: "components-hero.zip", size: "4.2 MB", type: "zip" },
         ],
       },
@@ -285,17 +297,20 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     client: {
       name: "Kenji Sato",
       email: "kenji@nexusgaming.jp",
-      avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=120&auto=format&fit=crop&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=120&auto=format&fit=crop&q=80",
       company: "Nexus Gaming",
     },
     freelancer: {
       name: "Lucas Vance",
       title: "Cloud Infrastructure Specialist",
-      avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&auto=format&fit=crop&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&auto=format&fit=crop&q=80",
       rating: 4.95,
       level: "LEVEL_2",
     },
-    requirements: "Query optimization for 50M+ rows table, index profiling, connection pooling with PgBouncer, and failover replication setup.",
+    requirements:
+      "Query optimization for 50M+ rows table, index profiling, connection pooling with PgBouncer, and failover replication setup.",
     milestones: [
       {
         id: "m-1",
@@ -341,17 +356,20 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     client: {
       name: "Marcus Thorne",
       email: "marcus@fintechcorp.io",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
       company: "Fintech Corp",
     },
     freelancer: {
       name: "Alexandre Moreau",
       title: "Senior Full-Stack Architect",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
       rating: 4.99,
       level: "TOP_RATED",
     },
-    requirements: "Client project scope changed towards web-only; full refund processed back to client escrow wallet without disputes.",
+    requirements:
+      "Client project scope changed towards web-only; full refund processed back to client escrow wallet without disputes.",
     milestones: [
       {
         id: "m-1",

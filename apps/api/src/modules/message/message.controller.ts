@@ -18,7 +18,7 @@ export const getMessages = async (req: AuthRequest, res: Response, next: NextFun
     const { conversationId } = req.params;
     const skip = parseInt(req.query.skip as string) || 0;
     const take = parseInt(req.query.take as string) || 50;
-    const messages = await MessageService.getMessages(conversationId, userId, skip, take);
+    const messages = await MessageService.getMessages(conversationId!, userId, skip, take);
     res.status(200).json({ success: true, data: messages });
   } catch (error) {
     next(error);

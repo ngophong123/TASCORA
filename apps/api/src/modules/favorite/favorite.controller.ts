@@ -5,7 +5,7 @@ import { FavoriteService } from './favorite.service';
 export const addFavorite = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!.userId;
-    const serviceId = req.params.serviceId;
+    const serviceId = req.params.serviceId!;
     const favorite = await FavoriteService.addFavorite(userId, serviceId);
     res.status(201).json({ success: true, data: favorite });
   } catch (error: any) {
@@ -19,7 +19,7 @@ export const addFavorite = async (req: AuthRequest, res: Response, next: NextFun
 export const removeFavorite = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!.userId;
-    const serviceId = req.params.serviceId;
+    const serviceId = req.params.serviceId!;
     await FavoriteService.removeFavorite(userId, serviceId);
     res.status(200).json({ success: true, message: 'Removed from favorites' });
   } catch (error: any) {

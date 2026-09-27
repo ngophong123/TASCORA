@@ -6,7 +6,7 @@ import { useDashboard } from "@/context/DashboardContext"
 import { type DashboardOrder } from "@/data/dashboard/orders"
 import { OrdersTable } from "@/components/dashboard/orders/OrdersTable"
 import { OrderDetailDrawer } from "@/components/dashboard/orders/OrderDetailDrawer"
-import { ShoppingBag, ShieldCheck, ChevronRight, Home, PlusCircle, Compass } from "lucide-react"
+import { ChevronRight, PlusCircle, Compass } from "lucide-react"
 
 export default function DashboardOrdersPage() {
   const { role, orders, selectedOrderId, setSelectedOrderId } = useDashboard()

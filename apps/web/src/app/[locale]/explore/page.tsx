@@ -3,16 +3,7 @@
 import * as React from "react"
 import { Link, useRouter } from "@/i18n/routing"
 import { useSearchParams } from "next/navigation"
-import {
-  Search,
-  Filter,
-  SlidersHorizontal,
-  Star,
-  Clock,
-  Heart,
-  X,
-  RotateCcw,
-} from "lucide-react"
+import { Search, Filter, SlidersHorizontal, Star, Clock, Heart, X, RotateCcw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useTranslations } from "next-intl"
@@ -27,14 +18,16 @@ const INITIAL_FALLBACK_SERVICES = [
     seller: {
       name: "Alexandre Moreau",
       title: "Senior Full-Stack Architect",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
       level: "TOP_RATED",
     },
     rating: 4.98,
     reviewCount: 42,
     startingPrice: 350,
     deliveryDays: 5,
-    coverImage: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80",
+    coverImage:
+      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80",
   },
   {
     id: "srv-2",
@@ -44,14 +37,16 @@ const INITIAL_FALLBACK_SERVICES = [
     seller: {
       name: "Helena Rostova",
       title: "Art Director & Brand Strategist",
-      avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80",
       level: "LEVEL_2",
     },
     rating: 5.0,
     reviewCount: 38,
     startingPrice: 280,
     deliveryDays: 4,
-    coverImage: "https://images.unsplash.com/photo-1600132806370-bf17e65e942f?w=600&auto=format&fit=crop&q=80",
+    coverImage:
+      "https://images.unsplash.com/photo-1600132806370-bf17e65e942f?w=600&auto=format&fit=crop&q=80",
   },
   {
     id: "srv-3",
@@ -61,14 +56,16 @@ const INITIAL_FALLBACK_SERVICES = [
     seller: {
       name: "Marcus Vance",
       title: "AI Engineer & Research Lead",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
       level: "TOP_RATED",
     },
     rating: 4.95,
     reviewCount: 29,
     startingPrice: 420,
     deliveryDays: 7,
-    coverImage: "https://images.unsplash.com/photo-1677442136019-21780efad99a?w=600&auto=format&fit=crop&q=80",
+    coverImage:
+      "https://images.unsplash.com/photo-1677442136019-21780efad99a?w=600&auto=format&fit=crop&q=80",
   },
   {
     id: "srv-4",
@@ -78,14 +75,16 @@ const INITIAL_FALLBACK_SERVICES = [
     seller: {
       name: "Sophia Lindqvist",
       title: "Growth Marketing Consultant",
-      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
       level: "LEVEL_2",
     },
     rating: 4.92,
     reviewCount: 51,
     startingPrice: 190,
     deliveryDays: 3,
-    coverImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&auto=format&fit=crop&q=80",
+    coverImage:
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&auto=format&fit=crop&q=80",
   },
   {
     id: "srv-5",
@@ -95,14 +94,16 @@ const INITIAL_FALLBACK_SERVICES = [
     seller: {
       name: "Dmitri Volkov",
       title: "Security Engineer & Ethical Hacker",
-      avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80",
       level: "TOP_RATED",
     },
     rating: 4.99,
     reviewCount: 64,
     startingPrice: 500,
     deliveryDays: 7,
-    coverImage: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80",
+    coverImage:
+      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80",
   },
   {
     id: "srv-6",
@@ -112,14 +113,16 @@ const INITIAL_FALLBACK_SERVICES = [
     seller: {
       name: "Chloe Dubois",
       title: "3D Motion Designer",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
       level: "LEVEL_2",
     },
     rating: 4.97,
     reviewCount: 33,
     startingPrice: 320,
     deliveryDays: 4,
-    coverImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80",
+    coverImage:
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80",
   },
 ]
 
@@ -196,30 +199,51 @@ function ExploreContent() {
         const res = await fetch(`${apiUrl}/api/v1/services?${params.toString()}`)
         if (res.ok) {
           const data = await res.json()
-          if (data.success && Array.isArray(data.data?.services) && data.data.services.length > 0) {
-            const mapped = data.data.services.map((item: any) => ({
-              id: item.id,
-              title: item.title,
-              category: item.category?.name || "Professional Service",
-              categoryId: item.categoryId || "other",
-              seller: {
-                name: item.seller?.user?.profile?.firstName
-                  ? `${item.seller.user.profile.firstName} ${item.seller.user.profile.lastName || ""}`.trim()
-                  : "Verified Specialist",
-                title: item.seller?.title || "Professional Specialist",
-                avatar: item.seller?.user?.profile?.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-                level: item.seller?.level || "NEW_SELLER",
-              },
-              rating: item.averageRating || 5.0,
-              reviewCount: item.totalReviews || 18,
-              startingPrice: item.packages?.[0]?.price || 150,
-              deliveryDays: item.packages?.[0]?.deliveryDays || 3,
-              coverImage: item.images?.[0] || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80",
-            }))
-            setServices(mapped)
-            setLoading(false)
-            return
-          }
+          const mapped = (
+            data.data.services as Array<{
+              id: string
+              title: string
+              category?: { name?: string }
+              categoryId?: string
+              seller?: {
+                title?: string
+                level?: string
+                user?: { profile?: { firstName?: string; lastName?: string; avatar?: string } }
+              }
+              images?: string[]
+              packages?: Array<{ price?: number; deliveryDays?: number }>
+              averageRating?: number
+              totalReviews?: number
+              ratingAverage?: number
+              ratingCount?: number
+              deliveryDays?: number
+            }>
+          ).map((item) => ({
+            id: item.id,
+            title: item.title,
+            category: item.category?.name || "Professional Service",
+            categoryId: item.categoryId || "other",
+            seller: {
+              name: item.seller?.user?.profile?.firstName
+                ? `${item.seller.user.profile.firstName} ${item.seller.user.profile.lastName || ""}`.trim()
+                : "Verified Specialist",
+              title: item.seller?.title || "Professional Specialist",
+              avatar:
+                item.seller?.user?.profile?.avatar ||
+                "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+              level: item.seller?.level || "NEW_SELLER",
+            },
+            rating: item.averageRating || 5.0,
+            reviewCount: item.totalReviews || 18,
+            startingPrice: item.packages?.[0]?.price || 150,
+            deliveryDays: item.packages?.[0]?.deliveryDays || 3,
+            coverImage:
+              item.images?.[0] ||
+              "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80",
+          }))
+          setServices(mapped)
+          setLoading(false)
+          return
         }
       } catch {
         // Fallback filter locally
@@ -228,9 +252,7 @@ function ExploreContent() {
       // Local filter fallback
       let filtered = [...INITIAL_FALLBACK_SERVICES]
       if (initialQ) {
-        filtered = filtered.filter((s) =>
-          s.title.toLowerCase().includes(initialQ.toLowerCase())
-        )
+        filtered = filtered.filter((s) => s.title.toLowerCase().includes(initialQ.toLowerCase()))
       }
       if (initialCategory && initialCategory !== "all") {
         filtered = filtered.filter((s) => s.categoryId === initialCategory)
@@ -256,7 +278,7 @@ function ExploreContent() {
       setLoading(false)
     }
 
-    fetchServices()
+    void fetchServices()
   }, [initialQ, initialCategory, initialSort, initialMinPrice, initialMaxPrice, initialRating])
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -294,7 +316,9 @@ function ExploreContent() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-border/50">
           <div>
             <div className="flex items-center gap-2 text-xs text-text-muted mb-1">
-              <Link href="/" className="hover:text-text-primary transition-colors">{t("breadcrumbHome")}</Link>
+              <Link href="/" className="hover:text-text-primary transition-colors">
+                {t("breadcrumbHome")}
+              </Link>
               <span>/</span>
               <span className="text-text-primary">{t("breadcrumbExplore")}</span>
             </div>
@@ -327,7 +351,11 @@ function ExploreContent() {
                 </button>
               )}
             </div>
-            <Button type="submit" size="sm" className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white">
+            <Button
+              type="submit"
+              size="sm"
+              className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white"
+            >
               {t("searchButton")}
             </Button>
           </form>
@@ -546,7 +574,12 @@ function ExploreContent() {
               <p className="text-xs sm:text-sm text-text-muted max-w-sm mb-6">
                 {t("noServicesSubtext")}
               </p>
-              <Button onClick={resetAllFilters} size="sm" variant="outline" className="rounded-full gap-2">
+              <Button
+                onClick={resetAllFilters}
+                size="sm"
+                variant="outline"
+                className="rounded-full gap-2"
+              >
                 <RotateCcw className="h-3.5 w-3.5" />
                 {t("clearAllFilters")}
               </Button>
@@ -600,8 +633,12 @@ function ExploreContent() {
                             className="h-7 w-7 rounded-full object-cover border border-border"
                           />
                           <div className="truncate text-xs">
-                            <p className="font-medium text-text-primary truncate">{service.seller.name}</p>
-                            <p className="text-[11px] text-text-muted truncate">{service.seller.title}</p>
+                            <p className="font-medium text-text-primary truncate">
+                              {service.seller.name}
+                            </p>
+                            <p className="text-[11px] text-text-muted truncate">
+                              {service.seller.title}
+                            </p>
                           </div>
                         </div>
 
@@ -617,7 +654,9 @@ function ExploreContent() {
                           <span className="inline-flex items-center gap-1 text-amber-500 font-semibold">
                             <Star className="h-3.5 w-3.5 fill-current" />
                             {service.rating}
-                            <span className="text-text-muted font-normal">({service.reviewCount})</span>
+                            <span className="text-text-muted font-normal">
+                              ({service.reviewCount})
+                            </span>
                           </span>
                           <span className="inline-flex items-center gap-1">
                             <Clock className="h-3.5 w-3.5 text-text-muted" />
@@ -626,8 +665,12 @@ function ExploreContent() {
                         </div>
 
                         <div className="text-right">
-                          <span className="text-[10px] uppercase tracking-wider text-text-muted block">{t("fromPrice")}</span>
-                          <span className="font-semibold text-text-primary text-base">${service.startingPrice}</span>
+                          <span className="text-[10px] uppercase tracking-wider text-text-muted block">
+                            {t("fromPrice")}
+                          </span>
+                          <span className="font-semibold text-text-primary text-base">
+                            ${service.startingPrice}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -675,7 +718,9 @@ function ExploreContent() {
                 </div>
 
                 <div>
-                  <h4 className="text-xs font-semibold uppercase text-text-muted mb-2">{t("priceRange")}</h4>
+                  <h4 className="text-xs font-semibold uppercase text-text-muted mb-2">
+                    {t("priceRange")}
+                  </h4>
                   <div className="flex gap-2">
                     <input
                       type="number"
@@ -729,7 +774,11 @@ function ExploreContent() {
 export default function ExplorePage() {
   const t = useTranslations("explorePage")
   return (
-    <React.Suspense fallback={<div className="container mx-auto p-12 text-center text-text-muted">{t("loading")}</div>}>
+    <React.Suspense
+      fallback={
+        <div className="container mx-auto p-12 text-center text-text-muted">{t("loading")}</div>
+      }
+    >
       <ExploreContent />
     </React.Suspense>
   )

@@ -41,7 +41,7 @@ export function LanguageSwitcher({
   const dropdownRef = React.useRef<HTMLDivElement>(null)
   const buttonRef = React.useRef<HTMLButtonElement>(null)
 
-  const activeLang = LANGUAGES.find((l) => l.code === currentLocale) || LANGUAGES[0]
+  const activeLang = LANGUAGES.find((l) => l.code === currentLocale) ?? LANGUAGES[0]!
 
   // Close on outside click
   React.useEffect(() => {
@@ -102,6 +102,7 @@ export function LanguageSwitcher({
       <button
         ref={buttonRef}
         type="button"
+        data-testid="language-switcher"
         onClick={() => setIsOpen((prev) => !prev)}
         onKeyDown={handleKeyDown}
         aria-haspopup="listbox"
@@ -110,7 +111,9 @@ export function LanguageSwitcher({
         className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-black/[0.04] active:bg-black/[0.06] rounded-xl border border-[rgba(15,15,30,0.08)] bg-white/70 backdrop-blur-md transition-all shadow-[0_1px_3px_rgba(15,15,30,0.04)] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
       >
         <Globe className="h-3.5 w-3.5 text-blue-600" />
-        <span>{compact ? activeLang.shortLabel : `${activeLang.flag} ${activeLang.shortLabel}`}</span>
+        <span>
+          {compact ? activeLang.shortLabel : `${activeLang.flag} ${activeLang.shortLabel}`}
+        </span>
         <ChevronDown
           className={`h-3 w-3 text-[#6B6B7B] transition-transform duration-200 ${
             isOpen ? "rotate-180 text-blue-600" : ""
@@ -127,6 +130,7 @@ export function LanguageSwitcher({
             transition={{ duration: 0.15, ease: "easeOut" }}
             role="listbox"
             tabIndex={-1}
+            data-testid="language-dropdown"
             className={`absolute ${
               align === "right" ? "right-0" : "left-0"
             } top-[calc(100%+6px)] z-50 min-w-[170px] p-1.5 bg-white/95 backdrop-blur-xl border border-[rgba(15,15,30,0.08)] rounded-2xl shadow-[0_10px_30px_-5px_rgba(15,15,30,0.12),0_4px_10px_-2px_rgba(15,15,30,0.06)] focus:outline-none`}
@@ -145,6 +149,7 @@ export function LanguageSwitcher({
                     key={lang.code}
                     type="button"
                     role="option"
+                    data-testid={`language-option-${lang.code}`}
                     aria-selected={isSelected}
                     onClick={() => handleSelectLanguage(lang.code)}
                     onMouseEnter={() => setActiveIndex(index)}
@@ -152,8 +157,8 @@ export function LanguageSwitcher({
                       isSelected
                         ? "bg-blue-50/90 text-blue-700 font-semibold"
                         : isFocused
-                        ? "bg-black/[0.04] text-[#0B0B14]"
-                        : "text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-black/[0.03]"
+                          ? "bg-black/[0.04] text-[#0B0B14]"
+                          : "text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-black/[0.03]"
                     }`}
                   >
                     <span className="flex items-center gap-2">

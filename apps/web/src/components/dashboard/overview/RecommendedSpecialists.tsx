@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Link } from "@/i18n/routing"
 import { type RecommendedSpecialist } from "@/data/dashboard/overview"
-import { Sparkles, Star, ArrowRight, ShieldCheck } from "lucide-react"
+import { Sparkles, Star, ArrowRight } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
@@ -12,10 +12,7 @@ interface RecommendedSpecialistsProps {
   className?: string
 }
 
-export function RecommendedSpecialists({
-  specialists,
-  className,
-}: RecommendedSpecialistsProps) {
+export function RecommendedSpecialists({ specialists, className }: RecommendedSpecialistsProps) {
   return (
     <div
       className={cn(
@@ -26,9 +23,7 @@ export function RecommendedSpecialists({
       <div className="flex items-center justify-between pb-4 border-b border-[rgba(15,15,30,0.06)] mb-4">
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-blue-600" />
-          <h3 className="text-sm font-bold text-[#0B0B14]">
-            Recommended Talent For You
-          </h3>
+          <h3 className="text-sm font-bold text-[#0B0B14]">Recommended Talent For You</h3>
         </div>
         <Link
           href="/services"
@@ -69,9 +64,7 @@ export function RecommendedSpecialists({
               </div>
 
               <h4 className="text-xs font-bold text-[#0B0B14]">{spec.name}</h4>
-              <p className="text-[11px] text-[#6B6B7B] line-clamp-1 mb-2">
-                {spec.title}
-              </p>
+              <p className="text-[11px] text-[#6B6B7B] line-clamp-1 mb-2">{spec.title}</p>
 
               {/* Rating & Rate */}
               <div className="flex items-center justify-between text-xs mb-3">

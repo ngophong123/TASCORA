@@ -1,27 +1,14 @@
 "use client"
 
 import * as React from "react"
-import {
-  CreditCard,
-  Plus,
-  Trash2,
-  CheckCircle2,
-  ShieldCheck,
-  Building,
-  FileCheck,
-} from "lucide-react"
+import { CreditCard, Plus, Trash2, ShieldCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  CLIENT_SAVED_PAYMENT_METHODS,
-  type PaymentMethodItem,
-} from "@/data/dashboard/payments"
+import { CLIENT_SAVED_PAYMENT_METHODS, type PaymentMethodItem } from "@/data/dashboard/payments"
 import { useDashboard } from "@/context/DashboardContext"
 
 export function ClientPaymentMethods() {
   const { showToast } = useDashboard()
-  const [methods, setMethods] = React.useState<PaymentMethodItem[]>(
-    CLIENT_SAVED_PAYMENT_METHODS
-  )
+  const [methods, setMethods] = React.useState<PaymentMethodItem[]>(CLIENT_SAVED_PAYMENT_METHODS)
 
   const handleSetDefault = (id: string) => {
     setMethods((prev) =>
@@ -51,9 +38,7 @@ export function ClientPaymentMethods() {
       <div className="lg:col-span-2 bg-white rounded-2xl border border-[rgba(15,15,30,0.08)] p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-[rgba(15,15,30,0.06)]">
           <div>
-            <h3 className="text-base font-semibold text-[#0B0B14]">
-              Saved Payment Methods
-            </h3>
+            <h3 className="text-base font-semibold text-[#0B0B14]">Saved Payment Methods</h3>
             <p className="text-xs text-[#6B6B7B]">
               Credit cards and digital wallets used for funding project escrow.
             </p>
@@ -134,9 +119,7 @@ export function ClientPaymentMethods() {
       {/* Right Col: Billing Entity & Tax Info */}
       <div className="bg-white rounded-2xl border border-[rgba(15,15,30,0.08)] p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-4">
         <div className="pb-3 border-b border-[rgba(15,15,30,0.06)]">
-          <h3 className="text-base font-semibold text-[#0B0B14]">
-            Billing & Tax Details
-          </h3>
+          <h3 className="text-base font-semibold text-[#0B0B14]">Billing & Tax Details</h3>
           <p className="text-xs text-[#6B6B7B]">
             Applied automatically to all verified invoice PDFs.
           </p>

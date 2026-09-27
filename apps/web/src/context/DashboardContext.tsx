@@ -30,12 +30,7 @@ interface DashboardContextType {
   setSelectedOrderId: (id: string | null) => void
   approveMilestone: (orderId: string, milestoneId: string) => void
   requestRevision: (orderId: string, note: string) => void
-  deliverWork: (
-    orderId: string,
-    milestoneId: string,
-    note: string,
-    files: DeliveryFile[]
-  ) => void
+  deliverWork: (orderId: string, milestoneId: string, note: string, files: DeliveryFile[]) => void
 }
 
 const DashboardContext = React.createContext<DashboardContextType | null>(null)
@@ -126,9 +121,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
 
   // Notification actions
   const markAsRead = React.useCallback((id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    )
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)))
   }, [])
 
   const markAllAsRead = React.useCallback(() => {
@@ -136,9 +129,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const unreadCount = React.useMemo(() => {
-    return notifications.filter(
-      (n) => !n.read && (n.role === "BOTH" || n.role === role)
-    ).length
+    return notifications.filter((n) => !n.read && (n.role === "BOTH" || n.role === role)).length
   }, [notifications, role])
 
   // Toast actions
@@ -146,17 +137,14 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     setToast(null)
   }, [])
 
-  const showToast = React.useCallback(
-    (item: Omit<ToastItem, "id">) => {
-      const id = `toast-${Date.now()}`
-      setToast({ ...item, id })
-      const duration = item.duration || 4000
-      setTimeout(() => {
-        setToast((current) => (current?.id === id ? null : current))
-      }, duration)
-    },
-    []
-  )
+  const showToast = React.useCallback((item: Omit<ToastItem, "id">) => {
+    const id = `toast-${Date.now()}`
+    setToast({ ...item, id })
+    const duration = item.duration || 4000
+    setTimeout(() => {
+      setToast((current) => (current?.id === id ? null : current))
+    }, duration)
+  }, [])
 
   // Order Actions
   const approveMilestone = React.useCallback(
@@ -166,10 +154,8 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
           if (order.id !== orderId) return order
 
           let allCompleted = true
-          let approvedAmount = 0
           const updatedMilestones = order.milestones.map((m, idx) => {
             if (m.id === milestoneId) {
-              approvedAmount = m.amount
               return { ...m, status: "completed" as const, approvedAt: "Today, just now" }
             }
             // If previous milestone completed and next was pending, advance it
@@ -289,7 +275,10 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
             milestoneId,
             note,
             submittedAt: "Today, just now",
-            files: files.length > 0 ? files : [{ name: "deliverables-package.zip", size: "18.4 MB", type: "zip" as const }],
+            files:
+              files.length > 0
+                ? files
+                : [{ name: "deliverables-package.zip", size: "18.4 MB", type: "zip" as const }],
           }
 
           return {
@@ -379,9 +368,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     ]
   )
 
-  return (
-    <DashboardContext.Provider value={value}>{children}</DashboardContext.Provider>
-  )
+  return <DashboardContext.Provider value={value}>{children}</DashboardContext.Provider>
 }
 
 export function useDashboard() {

@@ -1,15 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {
-  Wallet,
-  ArrowUpRight,
-  Download,
-  Calendar,
-  ShieldCheck,
-  TrendingUp,
-  Sparkles,
-} from "lucide-react"
+import { Wallet, ShieldCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useDashboard } from "@/context/DashboardContext"
 import { BalanceCards } from "@/components/dashboard/payments/BalanceCards"
@@ -32,9 +24,8 @@ export default function EarningsPage() {
   const [withdrawnTotal, setWithdrawnTotal] = React.useState(
     FREELANCER_EARNINGS_SUMMARY.withdrawnTotal
   )
-  const [transactions, setTransactions] = React.useState<TransactionRecord[]>(
-    FREELANCER_TRANSACTIONS
-  )
+  const [transactions, setTransactions] =
+    React.useState<TransactionRecord[]>(FREELANCER_TRANSACTIONS)
   const [isWithdrawOpen, setIsWithdrawOpen] = React.useState(false)
 
   const handleConfirmWithdraw = (amount: number, destination: string) => {
@@ -45,7 +36,11 @@ export default function EarningsPage() {
     // Add new transaction to list
     const newTx: TransactionRecord = {
       id: `TXN-${Math.floor(10000 + Math.random() * 90000)}`,
-      date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      date: new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }),
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       type: "WITHDRAWAL",
       description: `Direct Transfer Payout to ${destination}`,
@@ -80,7 +75,8 @@ export default function EarningsPage() {
             </span>
           </div>
           <p className="text-sm text-[#4B4B5C] mt-1">
-            Real-time accounting of cleared contract revenues, escrow holds, and direct bank transfers.
+            Real-time accounting of cleared contract revenues, escrow holds, and direct bank
+            transfers.
           </p>
         </div>
 

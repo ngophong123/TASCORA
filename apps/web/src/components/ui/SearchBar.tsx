@@ -40,8 +40,7 @@ export function SearchBar() {
     const lower = query.toLowerCase()
     return AUTOCOMPLETE_SUGGESTIONS.filter(
       (item) =>
-        item.text.toLowerCase().includes(lower) ||
-        item.category.toLowerCase().includes(lower)
+        item.text.toLowerCase().includes(lower) || item.category.toLowerCase().includes(lower)
     ).slice(0, 5)
   }, [query])
 
@@ -63,7 +62,7 @@ export function SearchBar() {
     if (targetQuery.trim()) params.set("q", targetQuery.trim())
     if (category !== "all") params.set("category", category)
     setShowDropdown(false)
-    router.push(`/explore?${params.toString()}`)
+    router.push(`/services?${params.toString()}`)
   }
 
   const handleSelectSuggestion = (text: string) => {
@@ -81,23 +80,38 @@ export function SearchBar() {
           "bg-white/95 backdrop-blur-xl border border-[rgba(15,15,30,0.12)]",
           "shadow-[0_8px_24px_-8px_rgba(15,15,30,0.12)]",
           "flex flex-col sm:flex-row items-center gap-2 transition-all duration-300",
-          isFocused ? "border-blue-600 ring-2 ring-blue-500/25 shadow-[0_12px_32px_-8px_rgba(37,99,235,0.25)]" : "hover:border-[rgba(15,15,30,0.2)]"
+          isFocused
+            ? "border-blue-600 ring-2 ring-blue-500/25 shadow-[0_12px_32px_-8px_rgba(37,99,235,0.25)]"
+            : "hover:border-[rgba(15,15,30,0.2)]"
         )}
       >
         {/* Category Selector on the Left */}
         <div className="relative flex items-center shrink-0 w-full sm:w-auto px-3 sm:px-2 border-b sm:border-b-0 sm:border-r border-[rgba(15,15,30,0.1)] pb-2 sm:pb-0">
           <select
+            data-testid="hero-category-select"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             className="w-full sm:w-auto appearance-none bg-transparent text-xs font-medium text-[#4B4B5C] hover:text-[#0B0B14] pr-7 pl-2 py-1.5 outline-none cursor-pointer transition-colors"
             aria-label={t("filterCategoryAria")}
           >
-            <option value="all" className="bg-white text-[#0B0B14]">{t("categoryAll")}</option>
-            <option value="programming" className="bg-white text-[#0B0B14]">{t("categoryProgramming")}</option>
-            <option value="design" className="bg-white text-[#0B0B14]">{t("categoryDesign")}</option>
-            <option value="ai" className="bg-white text-[#0B0B14]">{t("categoryAi")}</option>
-            <option value="marketing" className="bg-white text-[#0B0B14]">{t("categoryMarketing")}</option>
-            <option value="video" className="bg-white text-[#0B0B14]">{t("categoryVideo")}</option>
+            <option value="all" className="bg-white text-[#0B0B14]">
+              {t("categoryAll")}
+            </option>
+            <option value="programming" className="bg-white text-[#0B0B14]">
+              {t("categoryProgramming")}
+            </option>
+            <option value="design" className="bg-white text-[#0B0B14]">
+              {t("categoryDesign")}
+            </option>
+            <option value="ai" className="bg-white text-[#0B0B14]">
+              {t("categoryAi")}
+            </option>
+            <option value="marketing" className="bg-white text-[#0B0B14]">
+              {t("categoryMarketing")}
+            </option>
+            <option value="video" className="bg-white text-[#0B0B14]">
+              {t("categoryVideo")}
+            </option>
           </select>
           <ChevronDown className="pointer-events-none absolute right-2 h-3.5 w-3.5 text-[#6B6B7B]" />
         </div>
@@ -107,6 +121,7 @@ export function SearchBar() {
           <Search className="h-4 w-4 text-blue-600 shrink-0" />
           <input
             type="text"
+            data-testid="hero-search-input"
             value={query}
             onChange={(e) => {
               setQuery(e.target.value)
@@ -139,6 +154,7 @@ export function SearchBar() {
         <div className="w-full sm:w-auto px-1 sm:px-0">
           <Button
             type="submit"
+            data-testid="hero-search-submit"
             size="md"
             variant="primary"
             pill

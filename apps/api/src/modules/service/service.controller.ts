@@ -26,7 +26,7 @@ export const getMyServices = async (req: AuthRequest, res: Response, next: NextF
 export const updateService = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!.userId;
-    const serviceId = req.params.id;
+    const serviceId = req.params.id!;
     const service = await ServiceService.updateService(userId, serviceId, req.body);
     res.status(200).json({ success: true, data: service });
   } catch (error) {
@@ -37,7 +37,7 @@ export const updateService = async (req: AuthRequest, res: Response, next: NextF
 export const addPackage = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!.userId;
-    const serviceId = req.params.id;
+    const serviceId = req.params.id!;
     const pkg = await ServiceService.addPackage(userId, serviceId, req.body);
     res.status(200).json({ success: true, data: pkg });
   } catch (error) {
@@ -56,7 +56,7 @@ export const searchServices = async (req: AuthRequest, res: Response, next: Next
 
 export const getServiceById = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const service = await ServiceService.getServiceById(req.params.id);
+    const service = await ServiceService.getServiceById(req.params.id!);
     res.status(200).json({ success: true, data: service });
   } catch (error) {
     next(error);

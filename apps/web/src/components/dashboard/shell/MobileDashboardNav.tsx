@@ -141,9 +141,7 @@ export function MobileDashboardNav() {
                       <span className="text-xs font-bold text-[#0B0B14] block">
                         {role === "CLIENT" ? t("modeClient") : t("modeFreelancer")}
                       </span>
-                      <span className="text-[10px] text-[#6B6B7B]">
-                        Tap to switch
-                      </span>
+                      <span className="text-[10px] text-[#6B6B7B]">Tap to switch</span>
                     </div>
                   </div>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-100 text-blue-800">
@@ -161,9 +159,8 @@ export function MobileDashboardNav() {
                       ? pathname === "/dashboard"
                       : pathname.startsWith(item.href)
 
-                  const label = NAV_KEY_MAP[item.id] && t.has(NAV_KEY_MAP[item.id] as any)
-                    ? t(NAV_KEY_MAP[item.id] as any)
-                    : item.label
+                  const navKey = NAV_KEY_MAP[item.id] as Parameters<typeof t>[0] | undefined
+                  const label = navKey && t.has(navKey) ? t(navKey) : item.label
 
                   return (
                     <Link
@@ -179,10 +176,7 @@ export function MobileDashboardNav() {
                     >
                       <div className="flex items-center gap-3">
                         <Icon
-                          className={cn(
-                            "w-4 h-4",
-                            isActive ? "text-blue-600" : "text-[#6B6B7B]"
-                          )}
+                          className={cn("w-4 h-4", isActive ? "text-blue-600" : "text-[#6B6B7B]")}
                         />
                         <span>{label}</span>
                       </div>
@@ -236,13 +230,10 @@ export function MobileDashboardNav() {
         {bottomTabs.map((tab) => {
           const Icon = ICON_MAP[tab.iconName] || LayoutDashboard
           const isActive =
-            tab.href === "/dashboard"
-              ? pathname === "/dashboard"
-              : pathname.startsWith(tab.href)
+            tab.href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(tab.href)
 
-          const label = NAV_KEY_MAP[tab.id] && t.has(NAV_KEY_MAP[tab.id] as any)
-            ? t(NAV_KEY_MAP[tab.id] as any)
-            : tab.label
+          const navKey = NAV_KEY_MAP[tab.id] as Parameters<typeof t>[0] | undefined
+          const label = navKey && t.has(navKey) ? t(navKey) : tab.label
 
           return (
             <Link
@@ -250,9 +241,7 @@ export function MobileDashboardNav() {
               href={tab.href}
               className={cn(
                 "relative flex flex-col items-center justify-center py-1 px-2 rounded-xl text-[10px] font-semibold transition-colors flex-1",
-                isActive
-                  ? "text-blue-700"
-                  : "text-[#6B6B7B] hover:text-[#0B0B14]"
+                isActive ? "text-blue-700" : "text-[#6B6B7B] hover:text-[#0B0B14]"
               )}
             >
               <div className="relative">

@@ -5,18 +5,11 @@ import { Link } from "@/i18n/routing"
 import {
   DollarSign,
   ShoppingBag,
-  TrendingUp,
   Star,
   Plus,
-  ArrowRight,
-  Clock,
   CheckCircle2,
-  AlertCircle,
   Eye,
-  MessageSquare,
-  ShieldCheck,
   Award,
-  Settings,
   Sparkles,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -30,7 +23,7 @@ export default function SellerDashboard() {
     profileViews: 412,
     conversionRate: 6.8,
   })
-  const [loading, setLoading] = React.useState(true)
+  const [, setLoading] = React.useState(true)
 
   React.useEffect(() => {
     async function loadMetrics() {
@@ -54,7 +47,7 @@ export default function SellerDashboard() {
         setLoading(false)
       }
     }
-    loadMetrics()
+    void loadMetrics()
   }, [])
 
   return (
@@ -63,7 +56,9 @@ export default function SellerDashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-8 border-b border-border/50">
         <div>
           <div className="flex items-center gap-2 text-xs text-text-muted mb-1">
-            <Link href="/" className="hover:text-text-primary transition-colors">Home</Link>
+            <Link href="/" className="hover:text-text-primary transition-colors">
+              Home
+            </Link>
             <span>/</span>
             <span className="text-text-primary font-medium">Seller Studio</span>
           </div>
@@ -83,13 +78,20 @@ export default function SellerDashboard() {
 
         <div className="flex items-center gap-3">
           <Link href="/seller/services/new">
-            <Button size="sm" className="rounded-full bg-accent hover:bg-accent-hover text-white gap-1.5 shadow-md">
+            <Button
+              size="sm"
+              className="rounded-full bg-accent hover:bg-accent-hover text-white gap-1.5 shadow-md"
+            >
               <Plus className="h-3.5 w-3.5" />
               <span>Create New Service</span>
             </Button>
           </Link>
           <Link href="/dashboard">
-            <Button size="sm" variant="outline" className="rounded-full border-border bg-surface text-xs text-text-secondary hover:text-text-primary">
+            <Button
+              size="sm"
+              variant="outline"
+              className="rounded-full border-border bg-surface text-xs text-text-secondary hover:text-text-primary"
+            >
               Switch to Client Mode
             </Button>
           </Link>
@@ -130,15 +132,22 @@ export default function SellerDashboard() {
         ].map((stat, i) => {
           const Icon = stat.icon
           return (
-            <div key={i} className="rounded-2xl border border-border bg-surface p-5 flex flex-col justify-between shadow-sm">
+            <div
+              key={i}
+              className="rounded-2xl border border-border bg-surface p-5 flex flex-col justify-between shadow-sm"
+            >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">{stat.label}</span>
+                <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">
+                  {stat.label}
+                </span>
                 <div className="h-8 w-8 rounded-lg bg-surface-elevated flex items-center justify-center">
                   <Icon className={`h-4 w-4 ${stat.color}`} />
                 </div>
               </div>
               <div className="mt-4">
-                <span className="font-sans text-3xl font-bold text-text-primary tracking-tight">{stat.value}</span>
+                <span className="font-sans text-3xl font-bold text-text-primary tracking-tight">
+                  {stat.value}
+                </span>
                 <p className="text-[11px] text-text-secondary mt-1">{stat.sub}</p>
               </div>
             </div>
@@ -153,10 +162,13 @@ export default function SellerDashboard() {
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-accent" />
-              <h3 className="font-display text-lg text-text-primary font-medium">Progress to Top Rated Status</h3>
+              <h3 className="font-display text-lg text-text-primary font-medium">
+                Progress to Top Rated Status
+              </h3>
             </div>
             <p className="text-xs text-text-muted max-w-xl">
-              Maintain a 4.9+ rating and complete 2 more escrow deliveries to qualify for Top Rated badge and priority marketplace placement.
+              Maintain a 4.9+ rating and complete 2 more escrow deliveries to qualify for Top Rated
+              badge and priority marketplace placement.
             </p>
           </div>
           <div className="flex items-center gap-4">
@@ -178,8 +190,12 @@ export default function SellerDashboard() {
           <div className="rounded-2xl border border-border bg-surface p-6">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="font-display text-xl text-text-primary font-medium">Order Execution Pipeline</h2>
-                <p className="text-xs text-text-muted mt-0.5">Manage deliverables and submit revisions to clients</p>
+                <h2 className="font-display text-xl text-text-primary font-medium">
+                  Order Execution Pipeline
+                </h2>
+                <p className="text-xs text-text-muted mt-0.5">
+                  Manage deliverables and submit revisions to clients
+                </p>
               </div>
               <Badge variant="luxury">3 Active</Badge>
             </div>
@@ -224,18 +240,37 @@ export default function SellerDashboard() {
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-mono font-bold text-accent">{order.id}</span>
-                      <Badge variant={order.badgeVariant as any}>{order.statusLabel}</Badge>
+                      <Badge
+                        variant={
+                          order.badgeVariant as
+                            | "default"
+                            | "secondary"
+                            | "outline"
+                            | "success"
+                            | "warning"
+                            | "luxury"
+                            | "cyan"
+                            | "gradient"
+                        }
+                      >
+                        {order.statusLabel}
+                      </Badge>
                     </div>
-                    <h4 className="font-medium text-sm text-text-primary line-clamp-1">{order.service}</h4>
+                    <h4 className="font-medium text-sm text-text-primary line-clamp-1">
+                      {order.service}
+                    </h4>
                     <p className="text-xs text-text-muted">
-                      Client: <span className="text-text-primary font-medium">{order.client}</span> • <span className="text-emerald-600 font-semibold">{order.price}</span>
+                      Client: <span className="text-text-primary font-medium">{order.client}</span>{" "}
+                      • <span className="text-emerald-600 font-semibold">{order.price}</span>
                     </p>
                   </div>
 
                   <div className="flex items-center gap-3">
                     <div className="text-right hidden sm:block">
                       <span className="text-[10px] text-text-muted uppercase block">Deadline</span>
-                      <span className="text-xs text-text-primary font-medium">{order.deadline}</span>
+                      <span className="text-xs text-text-primary font-medium">
+                        {order.deadline}
+                      </span>
                     </div>
                     <Link href={`/dashboard/messages?orderId=${order.id}`}>
                       <Button size="sm" variant="outline" className="text-xs border-border">
@@ -243,7 +278,10 @@ export default function SellerDashboard() {
                       </Button>
                     </Link>
                     {order.status === "IN_PROGRESS" && (
-                      <Button size="sm" className="text-xs bg-accent hover:bg-accent-hover text-white">
+                      <Button
+                        size="sm"
+                        className="text-xs bg-accent hover:bg-accent-hover text-white"
+                      >
                         Deliver Work
                       </Button>
                     )}
@@ -258,8 +296,13 @@ export default function SellerDashboard() {
         <div className="space-y-6">
           <div className="rounded-2xl border border-border bg-surface p-6 space-y-4 shadow-sm">
             <div className="flex items-center justify-between">
-              <h3 className="font-display text-lg text-text-primary font-medium">My Active Services</h3>
-              <Link href="/seller/services/new" className="text-xs text-accent hover:underline flex items-center gap-1 font-medium">
+              <h3 className="font-display text-lg text-text-primary font-medium">
+                My Active Services
+              </h3>
+              <Link
+                href="/seller/services/new"
+                className="text-xs text-accent hover:underline flex items-center gap-1 font-medium"
+              >
                 <Plus className="h-3 w-3" />
                 New
               </Link>
@@ -282,15 +325,26 @@ export default function SellerDashboard() {
                   status: "Active",
                 },
               ].map((srv, idx) => (
-                <div key={idx} className="p-3.5 rounded-xl bg-surface-elevated border border-border space-y-2">
+                <div
+                  key={idx}
+                  className="p-3.5 rounded-xl bg-surface-elevated border border-border space-y-2"
+                >
                   <div className="flex items-start justify-between gap-2">
-                    <h4 className="text-xs font-medium text-text-primary line-clamp-2 leading-snug">{srv.title}</h4>
-                    <Badge variant="success" className="text-[10px]">Published</Badge>
+                    <h4 className="text-xs font-medium text-text-primary line-clamp-2 leading-snug">
+                      {srv.title}
+                    </h4>
+                    <Badge variant="success" className="text-[10px]">
+                      Published
+                    </Badge>
                   </div>
                   <div className="flex items-center justify-between text-[11px] text-text-muted pt-1 border-t border-border/40">
-                    <span>From <strong className="text-text-primary">{srv.startingPrice}</strong></span>
+                    <span>
+                      From <strong className="text-text-primary">{srv.startingPrice}</strong>
+                    </span>
                     <span className="flex items-center gap-2">
-                      <span className="flex items-center gap-1"><Eye className="h-3 w-3" /> {srv.views}</span>
+                      <span className="flex items-center gap-1">
+                        <Eye className="h-3 w-3" /> {srv.views}
+                      </span>
                       <span>•</span>
                       <span>{srv.orders} sold</span>
                     </span>
@@ -308,9 +362,12 @@ export default function SellerDashboard() {
 
           {/* Quick Guidance */}
           <div className="rounded-2xl border border-border bg-surface p-6 space-y-3 text-xs shadow-sm">
-            <h4 className="font-semibold text-text-primary uppercase tracking-wider text-[11px]">Seller Protection</h4>
+            <h4 className="font-semibold text-text-primary uppercase tracking-wider text-[11px]">
+              Seller Protection
+            </h4>
             <p className="text-text-muted leading-relaxed">
-              All deliveries require client confirmation or auto-complete after 72 hours under Phase 26 automated worker rules. Escrow payments guarantee your payout.
+              All deliveries require client confirmation or auto-complete after 72 hours under Phase
+              26 automated worker rules. Escrow payments guarantee your payout.
             </p>
           </div>
         </div>

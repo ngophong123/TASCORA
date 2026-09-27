@@ -24,17 +24,35 @@ export function Navbar() {
   const pathname = usePathname()
   const t = useTranslations("nav")
 
-  // Suppress marketing navbar on dashboard routes (including localized routes like /vi/dashboard)
-  if (pathname?.includes("/dashboard")) {
-    return null
-  }
-
   const [isScrolled, setIsScrolled] = React.useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
   const [activeMenu, setActiveMenu] = React.useState<"explore" | "categories" | null>(null)
   const [user, setUser] = React.useState<{ email?: string; role?: string } | null>(null)
   const [mounted, setMounted] = React.useState(false)
   const menuTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
+  const navRef = React.useRef<HTMLElement | null>(null)
+
+  // Close mega menu on Escape key or outside click
+  React.useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setActiveMenu(null)
+      }
+    }
+    function handleClickOutside(e: MouseEvent) {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setActiveMenu(null)
+      }
+    }
+    if (activeMenu) {
+      document.addEventListener("keydown", handleKeyDown)
+      document.addEventListener("mousedown", handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown)
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [activeMenu])
 
   React.useEffect(() => {
     setMounted(true)
@@ -60,7 +78,7 @@ export function Navbar() {
     localStorage.removeItem("token")
     localStorage.removeItem("user")
     setUser(null)
-    window.location.href = "/"
+    window.location.replace("/")
   }
 
   const handleMouseEnter = (menu: "explore" | "categories") => {
@@ -74,8 +92,14 @@ export function Navbar() {
     }, 150)
   }
 
+  // Suppress marketing navbar on dashboard routes (including localized routes like /vi/dashboard)
+  if (pathname?.includes("/dashboard")) {
+    return null
+  }
+
   return (
     <header
+      ref={navRef}
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${
         isScrolled
           ? "bg-white/80 backdrop-blur-xl border-b border-[rgba(15,15,30,0.08)] shadow-[0_4px_20px_-4px_rgba(15,15,30,0.06)]"
@@ -85,7 +109,11 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto flex h-16 sm:h-20 items-center justify-between px-4 sm:px-6 md:px-8">
         {/* Left: TASCORA Wordmark */}
         <div className="flex items-center gap-10">
-          <Link href="/" className="group flex items-center gap-2.5 outline-none select-none">
+          <Link
+            href="/"
+            data-testid="navbar-brand"
+            className="group flex items-center gap-2.5 outline-none select-none"
+          >
             <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-blue-600 via-blue-500 to-sky-400 p-[1px] shadow-[0_2px_10px_rgba(37,99,235,0.3)] group-hover:shadow-[0_4px_16px_rgba(37,99,235,0.5)] transition-all">
               <div className="h-full w-full bg-white rounded-[11px] flex items-center justify-center">
                 <span className="font-bold text-sm bg-gradient-to-r from-blue-700 to-sky-600 bg-clip-text text-transparent">
@@ -94,7 +122,10 @@ export function Navbar() {
               </div>
             </div>
             <span className="text-xl font-semibold tracking-tight text-[#0B0B14] group-hover:text-blue-950 transition-colors">
-              TASCOR<span className="bg-gradient-to-r from-blue-600 via-blue-500 to-sky-400 bg-clip-text text-transparent font-bold">A</span>
+              TASCOR
+              <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-sky-400 bg-clip-text text-transparent font-bold">
+                A
+              </span>
             </span>
           </Link>
 
@@ -108,6 +139,8 @@ export function Navbar() {
             >
               <button
                 type="button"
+                data-testid="mega-menu-trigger"
+                onClick={() => setActiveMenu("explore")}
                 className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors cursor-pointer ${
                   activeMenu === "explore"
                     ? "text-blue-700 bg-blue-50/80"
@@ -184,22 +217,24 @@ export function Navbar() {
               </AnimatePresence>
             </div>
 
-
             {/* Regular Links */}
             <Link
               href="#how-it-works"
+              data-testid="nav-link-how-it-works"
               className="px-3 py-2 text-sm font-medium text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-black/[0.03] rounded-lg transition-colors"
             >
               {t("howItWorks")}
             </Link>
             <Link
               href="/register?role=seller"
+              data-testid="nav-link-for-freelancers"
               className="px-3 py-2 text-sm font-medium text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-black/[0.03] rounded-lg transition-colors"
             >
               {t("forFreelancers")}
             </Link>
             <Link
               href="#enterprise"
+              data-testid="nav-link-enterprise"
               className="px-3 py-2 text-sm font-medium text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-black/[0.03] rounded-lg transition-colors"
             >
               {t("enterprise")}
@@ -232,7 +267,7 @@ export function Navbar() {
               >
                 <MessageSquare className="h-4 w-4" />
               </Link>
-              <Link href="/dashboard">
+              <Link href="/dashboard" data-testid="nav-link-dashboard">
                 <Button variant="secondary" size="sm" pill>
                   <LayoutDashboard className="h-3.5 w-3.5 text-blue-600" />
                   <span>{t("dashboard")}</span>
@@ -255,11 +290,12 @@ export function Navbar() {
             <div className="hidden sm:flex items-center gap-3">
               <Link
                 href="/login"
+                data-testid="nav-link-signin"
                 className="text-sm font-medium text-[#4B4B5C] hover:text-[#0B0B14] transition-colors px-2 py-1"
               >
                 {t("signIn")}
               </Link>
-              <Link href="/register">
+              <Link href="/register" data-testid="nav-link-join">
                 <Button variant="primary" size="md" pill className="px-5">
                   <span>{t("joinTascora")}</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -270,8 +306,9 @@ export function Navbar() {
 
           {/* Mobile Hamburger Toggle */}
           <button
+            data-testid="mobile-menu-toggle"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-xl text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-[#F4F4F8] transition-colors"
+            className="lg:hidden p-2 rounded-xl text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-[#F4F4F8] transition-colors cursor-pointer"
             aria-label={t("toggleMenu")}
             aria-expanded={mobileMenuOpen}
           >
@@ -284,15 +321,31 @@ export function Navbar() {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
+            data-testid="mobile-drawer"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.22, ease: EASE_OUT_EXPO }}
             className="lg:hidden fixed inset-x-0 top-16 sm:top-20 bottom-0 bg-white/98 backdrop-blur-2xl border-b border-[rgba(15,15,30,0.1)] z-50 overflow-y-auto px-6 py-8 flex flex-col justify-between"
           >
-            <nav className="flex flex-col space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[rgba(15,15,30,0.06)]">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#6B6B7B]">
+                Navigation
+              </span>
+              <button
+                type="button"
+                data-testid="mobile-drawer-close"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-1.5 rounded-lg text-[#6B6B7B] hover:text-[#0B0B14] hover:bg-[#F4F4F8] cursor-pointer"
+                aria-label="Close menu"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <nav className="flex flex-col space-y-4 pt-2">
               <Link
                 href="/explore"
+                data-testid="mobile-nav-link-explore"
                 onClick={() => setMobileMenuOpen(false)}
                 className="text-lg font-medium text-[#0B0B14] hover:text-blue-700 flex items-center justify-between py-2 border-b border-[rgba(15,15,30,0.06)]"
               >
@@ -375,4 +428,3 @@ export function Navbar() {
     </header>
   )
 }
-

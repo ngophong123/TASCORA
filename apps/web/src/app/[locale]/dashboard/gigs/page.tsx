@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Link } from "@/i18n/routing"
-import { Plus, Briefcase, Sparkles, ShieldCheck } from "lucide-react"
+import { Plus, Briefcase } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { GigsList } from "@/components/dashboard/gigs/GigsList"
 import { INITIAL_GIGS } from "@/data/dashboard/gigs"
@@ -23,15 +23,14 @@ export default function MyGigsPage() {
             </span>
           </div>
           <p className="text-sm text-[#4B4B5C] mt-1">
-            Manage your service offerings, tiered pricing structures, marketplace impressions, and client conversion rates.
+            Manage your service offerings, tiered pricing structures, marketplace impressions, and
+            client conversion rates.
           </p>
         </div>
 
         <div className="flex items-center gap-2.5">
           <Link href="/dashboard/gigs/new">
-            <Button
-              className="bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white font-medium text-xs shadow-sm h-9 px-4 rounded-xl flex items-center gap-1.5"
-            >
+            <Button className="bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white font-medium text-xs shadow-sm h-9 px-4 rounded-xl flex items-center gap-1.5">
               <Plus className="h-4 w-4" />
               <span>Create New Gig</span>
             </Button>

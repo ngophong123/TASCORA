@@ -46,12 +46,7 @@ interface StepItemProps {
   onActivate: (idx: number) => void
 }
 
-function StepItem({
-  step,
-  index,
-  isActive,
-  onActivate,
-}: StepItemProps) {
+function StepItem({ step, index, isActive, onActivate }: StepItemProps) {
   const itemRef = React.useRef<HTMLDivElement>(null)
   const isInCenterView = useInView(itemRef, {
     margin: "-15% 0px -30% 0px",
@@ -111,9 +106,7 @@ function StepItem({
       <h3 className="text-xl sm:text-2xl font-semibold text-[#0B0B14] mb-2 group-hover:text-blue-950 transition-colors">
         {step.title}
       </h3>
-      <p className="text-sm text-[#4B4B5C] leading-relaxed mb-4">
-        {step.description}
-      </p>
+      <p className="text-sm text-[#4B4B5C] leading-relaxed mb-4">{step.description}</p>
 
       {/* Bullet Highlights */}
       <div className="space-y-2 pt-3 border-t border-[rgba(15,15,30,0.06)]">
@@ -137,7 +130,9 @@ export function StorySteps() {
   const t = useTranslations("story")
   const tCommon = useTranslations("common")
   const [activeStep, setActiveStep] = React.useState(0)
-  const [activePackage, setActivePackage] = React.useState<"basic" | "standard" | "premium">("standard")
+  const [activePackage, setActivePackage] = React.useState<"basic" | "standard" | "premium">(
+    "standard"
+  )
   const shouldReduceMotion = useReducedMotion()
 
   const stepsContainerRef = React.useRef<HTMLDivElement>(null)
@@ -157,11 +152,7 @@ export function StorySteps() {
       badge: t("step1Badge"),
       title: t("step1Title"),
       description: t("step1Desc"),
-      benefits: [
-        t("step1B1"),
-        t("step1B2"),
-        t("step1B3"),
-      ],
+      benefits: [t("step1B1"), t("step1B2"), t("step1B3")],
     },
     {
       id: "step-2",
@@ -169,11 +160,7 @@ export function StorySteps() {
       badge: t("step2Badge"),
       title: t("step2Title"),
       description: t("step2Desc"),
-      benefits: [
-        t("step2B1"),
-        t("step2B2"),
-        t("step2B3"),
-      ],
+      benefits: [t("step2B1"), t("step2B2"), t("step2B3")],
     },
     {
       id: "step-3",
@@ -181,28 +168,21 @@ export function StorySteps() {
       badge: t("step3Badge"),
       title: t("step3Title"),
       description: t("step3Desc"),
-      benefits: [
-        t("step3B1"),
-        t("step3B2"),
-        t("step3B3"),
-      ],
+      benefits: [t("step3B1"), t("step3B2"), t("step3B3")],
     },
   ]
 
   const mockupAnimationVariants = {
-    initial: shouldReduceMotion
-      ? { opacity: 0 }
-      : { opacity: 0, y: 14, filter: "blur(4px)" },
-    animate: shouldReduceMotion
-      ? { opacity: 1 }
-      : { opacity: 1, y: 0, filter: "blur(0px)" },
-    exit: shouldReduceMotion
-      ? { opacity: 0 }
-      : { opacity: 0, y: -14, filter: "blur(4px)" },
+    initial: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 14, filter: "blur(4px)" },
+    animate: shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, filter: "blur(0px)" },
+    exit: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -14, filter: "blur(4px)" },
   }
 
   return (
-    <section className="py-16 sm:py-24 md:py-36 border-b border-[rgba(15,15,30,0.08)] bg-[#FFFFFF] relative overflow-hidden" id="how-it-works">
+    <section
+      className="py-16 sm:py-24 md:py-36 border-b border-[rgba(15,15,30,0.08)] bg-[#FFFFFF] relative overflow-hidden"
+      id="how-it-works"
+    >
       {/* Background ambient lighting: Blue + soft Teal blend */}
       <div className="absolute top-1/3 -left-48 w-96 h-96 bg-blue-400/10 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-1/3 -right-48 w-96 h-96 bg-teal-400/10 rounded-full blur-[140px] pointer-events-none" />
@@ -280,11 +260,11 @@ export function StorySteps() {
                   <div className="h-3 w-3 rounded-full bg-amber-500/80" />
                   <div className="h-3 w-3 rounded-full bg-emerald-500/80" />
                   <span className="ml-2 font-mono text-[11px] text-[#6B6B7B]">
-                    tascora.app/workflow/{STEPS[activeStep].id}
+                    tascora.app/workflow/{STEPS[activeStep]?.id ?? ""}
                   </span>
                 </div>
                 <Badge variant="secondary" size="sm">
-                  {STEPS[activeStep].badge}
+                  {STEPS[activeStep]?.badge ?? ""}
                 </Badge>
               </div>
 
@@ -303,15 +283,21 @@ export function StorySteps() {
                       className="space-y-4"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-semibold text-[#0B0B14]">Filters Active (3)</span>
-                        <span className="text-xs text-blue-700 font-mono font-semibold">142 Matches Found</span>
+                        <span className="text-xs font-semibold text-[#0B0B14]">
+                          Filters Active (3)
+                        </span>
+                        <span className="text-xs text-blue-700 font-mono font-semibold">
+                          142 Matches Found
+                        </span>
                       </div>
 
                       {/* Mock Filter Chips */}
                       <div className="grid grid-cols-3 gap-2">
                         <div className="p-2.5 rounded-xl bg-[#FAFAFC] border border-blue-200">
                           <span className="text-[10px] text-[#6B6B7B] block">Budget</span>
-                          <span className="text-xs font-semibold text-[#0B0B14]">$250 - $1,000</span>
+                          <span className="text-xs font-semibold text-[#0B0B14]">
+                            $250 - $1,000
+                          </span>
                         </div>
                         <div className="p-2.5 rounded-xl bg-[#FAFAFC] border border-blue-200">
                           <span className="text-[10px] text-[#6B6B7B] block">Turnaround</span>
@@ -337,7 +323,9 @@ export function StorySteps() {
                                 Full-Stack Next.js 15 & AI Engine
                                 <ShieldCheck className="h-3 w-3 text-emerald-600" />
                               </p>
-                              <p className="text-[11px] text-[#6B6B7B]">Alexandre Moreau • Top Rated</p>
+                              <p className="text-[11px] text-[#6B6B7B]">
+                                Alexandre Moreau • Top Rated
+                              </p>
                             </div>
                           </div>
                           <div className="text-right">
@@ -393,12 +381,17 @@ export function StorySteps() {
                               Alexandre Moreau
                               <ShieldCheck className="h-3.5 w-3.5 text-blue-600" />
                             </h4>
-                            <span className="text-xs font-bold text-emerald-600 font-mono">$95/hr</span>
+                            <span className="text-xs font-bold text-emerald-600 font-mono">
+                              $95/hr
+                            </span>
                           </div>
-                          <p className="text-xs text-[#4B4B5C]">Senior Full-Stack Architect • Paris, FR</p>
+                          <p className="text-xs text-[#4B4B5C]">
+                            Senior Full-Stack Architect • Paris, FR
+                          </p>
                           <div className="flex items-center gap-2 mt-1 text-[11px] text-[#6B6B7B]">
                             <span className="text-amber-600 font-semibold flex items-center gap-0.5">
-                              <Star className="h-3 w-3 fill-amber-400 text-amber-500" /> 5.0 (128 reviews)
+                              <Star className="h-3 w-3 fill-amber-400 text-amber-500" /> 5.0 (128
+                              reviews)
                             </span>
                             <span>•</span>
                             <span className="text-emerald-600 font-medium">100% Job Success</span>
@@ -408,21 +401,27 @@ export function StorySteps() {
 
                       {/* Verified Skills */}
                       <div className="flex flex-wrap gap-1.5 pt-1">
-                        {["Next.js 15", "TypeScript", "LangChain", "PostgreSQL", "Docker", "Tailwind"].map(
-                          (skill) => (
-                            <span
-                              key={skill}
-                              className="px-2 py-0.5 rounded-md bg-[#F4F4F8] border border-[rgba(15,15,30,0.08)] text-[11px] font-medium text-[#4B4B5C]"
-                            >
-                              {skill}
-                            </span>
-                          )
-                        )}
+                        {[
+                          "Next.js 15",
+                          "TypeScript",
+                          "LangChain",
+                          "PostgreSQL",
+                          "Docker",
+                          "Tailwind",
+                        ].map((skill) => (
+                          <span
+                            key={skill}
+                            className="px-2 py-0.5 rounded-md bg-[#F4F4F8] border border-[rgba(15,15,30,0.08)] text-[11px] font-medium text-[#4B4B5C]"
+                          >
+                            {skill}
+                          </span>
+                        ))}
                       </div>
 
                       {/* Client Testimonial Quote */}
                       <div className="p-3.5 rounded-xl bg-[#FAFAFC] border border-[rgba(15,15,30,0.08)] text-xs text-[#4B4B5C] italic">
-                        &quot;Alexandre built our entire enterprise Next.js and AI backend 2 days ahead of deadline. Flawless communication.&quot;
+                        &quot;Alexandre built our entire enterprise Next.js and AI backend 2 days
+                        ahead of deadline. Flawless communication.&quot;
                         <div className="text-[10px] text-[#6B6B7B] not-italic mt-1 font-medium">
                           — VP of Product, Series A FinTech
                         </div>
@@ -458,8 +457,8 @@ export function StorySteps() {
                             {tier === "basic"
                               ? t("previewPackageBasic")
                               : tier === "standard"
-                              ? t("previewPackageStandard")
-                              : t("previewPackagePremium")}
+                                ? t("previewPackageStandard")
+                                : t("previewPackagePremium")}
                           </button>
                         ))}
                       </div>
@@ -483,15 +482,21 @@ export function StorySteps() {
                         <div className="space-y-2 text-xs">
                           <div className="flex items-center justify-between text-[#4B4B5C]">
                             <span className="flex items-center gap-1.5 font-medium">
-                              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Milestone 1: Schema & Wireframes
+                              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Milestone 1:
+                              Schema & Wireframes
                             </span>
-                            <span className="text-emerald-700 font-mono font-semibold">Released</span>
+                            <span className="text-emerald-700 font-mono font-semibold">
+                              Released
+                            </span>
                           </div>
                           <div className="flex items-center justify-between text-[#0B0B14] font-medium">
                             <span className="flex items-center gap-1.5">
-                              <Clock className="h-3.5 w-3.5 text-blue-600" /> Milestone 2: Core Engine & API
+                              <Clock className="h-3.5 w-3.5 text-blue-600" /> Milestone 2: Core
+                              Engine & API
                             </span>
-                            <span className="text-blue-700 font-mono font-semibold">In Progress</span>
+                            <span className="text-blue-700 font-mono font-semibold">
+                              In Progress
+                            </span>
                           </div>
                           <div className="flex items-center justify-between text-[#6B6B7B]">
                             <span className="flex items-center gap-1.5">
@@ -505,7 +510,9 @@ export function StorySteps() {
                       {/* Escrow Guarantee Pill */}
                       <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center gap-2.5 text-xs text-emerald-800">
                         <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
-                        <span className="font-medium">Funds held in cryptographic escrow until final milestone approval.</span>
+                        <span className="font-medium">
+                          Funds held in cryptographic escrow until final milestone approval.
+                        </span>
                       </div>
                     </motion.div>
                   )}
@@ -537,4 +544,3 @@ export function StorySteps() {
     </section>
   )
 }
-

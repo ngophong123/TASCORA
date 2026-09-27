@@ -8,7 +8,6 @@ import {
   RATING_OPTIONS,
   LANGUAGE_OPTIONS,
   PRICE_BOUNDS,
-  type FilterCategory,
 } from "@/data/serviceFilterOptions"
 import { type ServiceFilterState } from "@/hooks/useServiceFilters"
 import { type SellerLevel } from "@/data/gigs"
@@ -21,9 +20,7 @@ import {
   Check,
   Star,
   Zap,
-  Clock,
   ShieldCheck,
-  Globe2,
   SlidersHorizontal,
   Code2,
   Palette,
@@ -94,14 +91,13 @@ export function ServiceFilterSidebar({
       <div className="flex items-center justify-between pb-4 mb-4 border-b border-[rgba(15,15,30,0.08)]">
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="w-4 h-4 text-blue-600" />
-          <h2 className="text-sm font-semibold text-[#0B0B14] uppercase tracking-wider">
-            Filters
-          </h2>
+          <h2 className="text-sm font-semibold text-[#0B0B14] uppercase tracking-wider">Filters</h2>
         </div>
 
         {hasActiveFilters && (
           <button
             type="button"
+            data-testid="clear-all-filters"
             onClick={clearAllFilters}
             className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-800 transition-colors"
           >
@@ -195,10 +191,7 @@ export function ServiceFilterSidebar({
               {/* All Categories Option */}
               <button
                 type="button"
-                onClick={() => {
-                  setFilter("category", "all")
-                  setFilter("subCategory", "")
-                }}
+                onClick={() => setFilter("category", "all")}
                 className={cn(
                   "flex items-center justify-between w-full px-2.5 py-1.5 rounded-lg text-xs transition-colors",
                   filters.category === "all" || !filters.category
@@ -219,15 +212,8 @@ export function ServiceFilterSidebar({
                   <div key={cat.id} className="space-y-1">
                     <button
                       type="button"
-                      onClick={() => {
-                        if (isSelected) {
-                          setFilter("category", "all")
-                          setFilter("subCategory", "")
-                        } else {
-                          setFilter("category", cat.slug)
-                          setFilter("subCategory", "")
-                        }
-                      }}
+                      data-testid={`filter-category-${cat.slug}`}
+                      onClick={() => setFilter("category", isSelected ? "all" : cat.slug)}
                       className={cn(
                         "flex items-center justify-between w-full px-2.5 py-1.5 rounded-lg text-xs transition-all",
                         isSelected
@@ -236,7 +222,12 @@ export function ServiceFilterSidebar({
                       )}
                     >
                       <div className="flex items-center gap-2 truncate">
-                        <IconComponent className={cn("w-3.5 h-3.5 shrink-0", isSelected ? "text-blue-600" : "text-[#6B6B7B]")} />
+                        <IconComponent
+                          className={cn(
+                            "w-3.5 h-3.5 shrink-0",
+                            isSelected ? "text-blue-600" : "text-[#6B6B7B]"
+                          )}
+                        />
                         <span className="truncate">{cat.name}</span>
                       </div>
                       <span className="text-[11px] text-[#6B6B7B] ml-2 shrink-0">{cat.count}</span>
@@ -321,7 +312,9 @@ export function ServiceFilterSidebar({
           {openSections.delivery && (
             <div className="space-y-1 mt-1">
               {DELIVERY_OPTIONS.map((opt) => {
-                const isSelected = filters.delivery === opt.id || (opt.id === "any" && (!filters.delivery || filters.delivery === "any"))
+                const isSelected =
+                  filters.delivery === opt.id ||
+                  (opt.id === "any" && (!filters.delivery || filters.delivery === "any"))
                 return (
                   <label
                     key={opt.id}
@@ -449,6 +442,7 @@ export function ServiceFilterSidebar({
                 return (
                   <label
                     key={opt.id}
+                    data-testid={`filter-rating-${opt.minRating}`}
                     className={cn(
                       "flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs cursor-pointer select-none transition-colors",
                       isSelected

@@ -1,16 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {
-  Wallet,
-  Clock,
-  ArrowUpRight,
-  ShieldCheck,
-  CreditCard,
-  CheckCircle2,
-  TrendingUp,
-  Sparkles,
-} from "lucide-react"
+import { Wallet, Clock, ArrowUpRight, ShieldCheck, CheckCircle2, TrendingUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface BalanceCardsProps {
@@ -51,7 +42,11 @@ export function BalanceCards({
 
           <div className="mt-4">
             <h3 className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[#0B0B14]">
-              ${availableBalance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              $
+              {availableBalance.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </h3>
             <p className="text-[11px] text-[#6B6B7B] mt-1">
               Cleared funds ready for instant transfer.
@@ -88,7 +83,11 @@ export function BalanceCards({
 
           <div className="mt-4">
             <h3 className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[#0B0B14]">
-              ${pendingClearance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              $
+              {pendingClearance.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </h3>
             <p className="text-[11px] text-[#6B6B7B] mt-1">
               Under standard escrow hold after milestone approval.
@@ -120,7 +119,11 @@ export function BalanceCards({
 
           <div className="mt-4">
             <h3 className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[#0B0B14]">
-              ${withdrawnTotal.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              $
+              {withdrawnTotal.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </h3>
             <p className="text-[11px] text-[#6B6B7B] mt-1">
               Lifetime total paid out to verified bank accounts.
@@ -151,7 +154,11 @@ export function BalanceCards({
 
           <div className="mt-4">
             <h3 className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[#0B0B14]">
-              ${inEscrowActive.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              $
+              {inEscrowActive.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </h3>
             <p className="text-[11px] text-[#6B6B7B] mt-1">
               Protected client funds for active milestones.

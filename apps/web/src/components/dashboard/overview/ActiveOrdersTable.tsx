@@ -4,15 +4,7 @@ import * as React from "react"
 import { Link } from "@/i18n/routing"
 import { type ActiveOrderRow } from "@/data/dashboard/overview"
 import { StatusBadge } from "@/components/ui/StatusBadge"
-import {
-  ArrowRight,
-  ArrowUpRight,
-  Clock,
-  Layers,
-  CheckCircle2,
-  FileCheck,
-  Send,
-} from "lucide-react"
+import { ArrowRight, ArrowUpRight, Clock, Layers } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface ActiveOrdersTableProps {
@@ -22,12 +14,7 @@ interface ActiveOrdersTableProps {
   className?: string
 }
 
-export function ActiveOrdersTable({
-  orders,
-  role,
-  onActionClick,
-  className,
-}: ActiveOrdersTableProps) {
+export function ActiveOrdersTable({ orders, role, className }: ActiveOrdersTableProps) {
   return (
     <div
       className={cn(
@@ -75,16 +62,11 @@ export function ActiveOrdersTable({
           </thead>
           <tbody className="divide-y divide-[rgba(15,15,30,0.04)]">
             {orders.map((order) => (
-              <tr
-                key={order.id}
-                className="hover:bg-[#FAFAFC] transition-colors group"
-              >
+              <tr key={order.id} className="hover:bg-[#FAFAFC] transition-colors group">
                 {/* Order ID & Service */}
                 <td className="py-3.5 px-3 max-w-xs">
                   <div className="space-y-0.5">
-                    <span className="font-mono text-xs font-bold text-[#0B0B14]">
-                      {order.id}
-                    </span>
+                    <span className="font-mono text-xs font-bold text-[#0B0B14]">{order.id}</span>
                     <p className="text-xs font-semibold text-[#4B4B5C] truncate block">
                       {order.title}
                     </p>
@@ -136,9 +118,7 @@ export function ActiveOrdersTable({
 
                 {/* Amount */}
                 <td className="py-3.5 px-3 text-right">
-                  <span className="font-mono font-bold text-sm text-[#0B0B14]">
-                    {order.amount}
-                  </span>
+                  <span className="font-mono font-bold text-sm text-[#0B0B14]">{order.amount}</span>
                 </td>
 
                 {/* Status */}
@@ -167,15 +147,11 @@ export function ActiveOrdersTable({
         {orders.map((order) => (
           <div key={order.id} className="py-4 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="font-mono text-xs font-bold text-[#0B0B14]">
-                {order.id}
-              </span>
+              <span className="font-mono text-xs font-bold text-[#0B0B14]">{order.id}</span>
               <StatusBadge status={order.status} />
             </div>
 
-            <h4 className="text-xs font-bold text-[#0B0B14]">
-              {order.title}
-            </h4>
+            <h4 className="text-xs font-bold text-[#0B0B14]">{order.title}</h4>
 
             <div className="flex items-center justify-between text-xs">
               <div className="flex items-center gap-2">
@@ -188,18 +164,14 @@ export function ActiveOrdersTable({
                   {order.counterpartName}
                 </span>
               </div>
-              <span className="font-mono font-bold text-sm text-[#0B0B14]">
-                {order.amount}
-              </span>
+              <span className="font-mono font-bold text-sm text-[#0B0B14]">{order.amount}</span>
             </div>
 
             {/* Progress */}
             <div className="space-y-1">
               <div className="flex items-center justify-between text-[10px] text-[#6B6B7B]">
                 <span>{order.currentMilestone}</span>
-                <span className="font-mono font-bold text-blue-700">
-                  {order.progressPercent}%
-                </span>
+                <span className="font-mono font-bold text-blue-700">{order.progressPercent}%</span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-[#EAEAF0] overflow-hidden">
                 <div

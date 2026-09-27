@@ -16,7 +16,6 @@ import {
   Wallet,
   ArrowRightLeft,
   PlusCircle,
-  ExternalLink,
   X,
   Compass,
 } from "lucide-react"
@@ -199,14 +198,10 @@ export function CommandPalette() {
         setCommandPaletteOpen(false)
       } else if (e.key === "ArrowDown") {
         e.preventDefault()
-        setSelectedIndex((prev) =>
-          prev < filteredCommands.length - 1 ? prev + 1 : 0
-        )
+        setSelectedIndex((prev) => (prev < filteredCommands.length - 1 ? prev + 1 : 0))
       } else if (e.key === "ArrowUp") {
         e.preventDefault()
-        setSelectedIndex((prev) =>
-          prev > 0 ? prev - 1 : filteredCommands.length - 1
-        )
+        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : filteredCommands.length - 1))
       } else if (e.key === "Enter" && filteredCommands.length > 0) {
         e.preventDefault()
         const selected = filteredCommands[selectedIndex]
@@ -306,9 +301,7 @@ export function CommandPalette() {
                         <div
                           className={cn(
                             "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors",
-                            isSelected
-                              ? "bg-blue-600 text-white"
-                              : "bg-[#F4F4F8] text-[#6B6B7B]"
+                            isSelected ? "bg-blue-600 text-white" : "bg-[#F4F4F8] text-[#6B6B7B]"
                           )}
                         >
                           <Icon className="w-4 h-4" />

@@ -43,8 +43,10 @@ function LoginForm() {
 
       // Redirect
       window.location.href = redirect
-    } catch (err: any) {
-      setError(err.message || "Failed to sign in. Please verify your credentials.")
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error ? err.message : "Failed to sign in. Please verify your credentials."
+      )
     } finally {
       setLoading(false)
     }
@@ -66,9 +68,7 @@ function LoginForm() {
           <h2 className="font-display text-2xl font-medium text-text-primary tracking-tight">
             {t("welcomeBack")}
           </h2>
-          <p className="mt-2 text-xs text-text-secondary">
-            {t("loginSubtext")}
-          </p>
+          <p className="mt-2 text-xs text-text-secondary">{t("loginSubtext")}</p>
         </div>
 
         {/* Error Alert */}
@@ -138,8 +138,11 @@ function LoginForm() {
 
         {/* Footer */}
         <div className="text-center pt-4 border-t border-border/50 text-xs text-text-muted">
-          <span>{t("noAccount")}{" "}</span>
-          <Link href="/register" className="text-blue-600 font-semibold hover:underline transition-colors">
+          <span>{t("noAccount")} </span>
+          <Link
+            href="/register"
+            className="text-blue-600 font-semibold hover:underline transition-colors"
+          >
             {t("createAccount")}
           </Link>
         </div>
@@ -151,7 +154,11 @@ function LoginForm() {
 export default function LoginPage() {
   const t = useTranslations("auth")
   return (
-    <React.Suspense fallback={<div className="container mx-auto p-12 text-center text-text-muted">{t("authLoading")}</div>}>
+    <React.Suspense
+      fallback={
+        <div className="container mx-auto p-12 text-center text-text-muted">{t("authLoading")}</div>
+      }
+    >
       <LoginForm />
     </React.Suspense>
   )

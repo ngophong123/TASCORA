@@ -15,7 +15,7 @@ export const createReview = async (req: AuthRequest, res: Response, next: NextFu
 export const replyToReview = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const sellerId = req.user!.userId;
-    const reviewId = req.params.id;
+    const reviewId = req.params.id!;
     const { reply } = req.body;
     const review = await ReviewService.replyToReview(sellerId, reviewId, reply);
     res.status(200).json({ success: true, data: review });
@@ -27,7 +27,7 @@ export const replyToReview = async (req: AuthRequest, res: Response, next: NextF
 export const getServiceReviews = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { serviceId } = req.params;
-    const reviews = await ReviewService.getServiceReviews(serviceId);
+    const reviews = await ReviewService.getServiceReviews(serviceId!);
     res.status(200).json({ success: true, data: reviews });
   } catch (error) {
     next(error);

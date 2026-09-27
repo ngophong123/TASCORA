@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Link } from "@/i18n/routing"
 import { useDashboard } from "@/context/DashboardContext"
-import { type DashboardOrder, type OrderMilestone, type DeliveryFile } from "@/data/dashboard/orders"
+import { type DashboardOrder, type DeliveryFile } from "@/data/dashboard/orders"
 import { StatusBadge } from "@/components/ui/StatusBadge"
 import { motion, AnimatePresence } from "framer-motion"
 import {
@@ -16,15 +16,12 @@ import {
   Send,
   RotateCcw,
   MessageSquare,
-  AlertCircle,
-  Sparkles,
   Paperclip,
   Check,
   Layers,
   FileArchive,
   FileCode,
   File,
-  Eye,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -45,7 +42,7 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
   // Form inputs
   const [revisionNotes, setRevisionNotes] = React.useState("")
   const [deliveryNotes, setDeliveryNotes] = React.useState("")
-  const [uploadedFileName, setUploadedFileName] = React.useState("production-build-v1.zip")
+  const [uploadedFileName] = React.useState("production-build-v1.zip")
 
   // Lock body scroll when drawer is open
   React.useEffect(() => {
@@ -62,7 +59,13 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
   // Escape key listener
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen && !approveDialogOpen && !revisionDialogOpen && !deliverDialogOpen) {
+      if (
+        e.key === "Escape" &&
+        isOpen &&
+        !approveDialogOpen &&
+        !revisionDialogOpen &&
+        !deliverDialogOpen
+      ) {
         onClose()
       }
     }
@@ -98,7 +101,7 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
 
   const handleDeliverySubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!deliveryNotes.trim()) return
+    if (!deliveryNotes.trim() || !activeMilestone) return
     deliverWork(order.id, activeMilestone.id, deliveryNotes, [
       { name: uploadedFileName, size: "16.4 MB", type: "zip" },
     ])
@@ -147,6 +150,7 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
               role="dialog"
               aria-modal="true"
               aria-label={`Order Details: ${order.id}`}
+              data-testid="order-detail-drawer"
             >
               {/* 1. Drawer Header */}
               <div className="flex items-center justify-between px-6 py-4 border-b border-[rgba(15,15,30,0.08)] bg-[#FAFAFC] shrink-0">
@@ -165,6 +169,7 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
                   onClick={onClose}
                   className="p-1.5 rounded-lg text-[#6B6B7B] hover:text-[#0B0B14] hover:bg-black/[0.04] transition-colors"
                   aria-label="Close drawer"
+                  data-testid="order-detail-drawer-close"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -201,7 +206,11 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
                         {counterpart.name}
                       </span>
                       <span className="text-[11px] text-[#6B6B7B] block truncate">
-                        {"title" in counterpart ? counterpart.title : ("company" in counterpart ? counterpart.company : "")}
+                        {"title" in counterpart
+                          ? counterpart.title
+                          : "company" in counterpart
+                            ? counterpart.company
+                            : ""}
                       </span>
                     </div>
                   </div>
@@ -242,7 +251,8 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
                             isCompleted && "bg-emerald-50/40 border-emerald-200/80",
                             isInReview && "bg-blue-50/60 border-blue-200 shadow-xs",
                             isInProgress && "bg-blue-50/40 border-blue-200",
-                            milestone.status === "pending" && "bg-[#FAFAFC] border-[rgba(15,15,30,0.06)] opacity-70"
+                            milestone.status === "pending" &&
+                              "bg-[#FAFAFC] border-[rgba(15,15,30,0.06)] opacity-70"
                           )}
                         >
                           <div className="flex items-center justify-between gap-2 mb-1">
@@ -402,7 +412,7 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
                           className="flex-1 h-11 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-xs font-semibold rounded-xl shadow-md hover:from-emerald-700 hover:to-teal-700 transition-all flex items-center justify-center gap-2"
                         >
                           <Check className="w-4 h-4" />
-                          <span>Approve & Release ${activeMilestone.amount}</span>
+                          <span>Approve & Release ${activeMilestone?.amount ?? 0}</span>
                         </button>
                       </>
                     ) : order.status === "completed" ? (
@@ -437,7 +447,7 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
                           <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping" />
                           <span>Deliverable submitted. Awaiting client approval.</span>
                         </span>
-                        <span className="font-mono font-bold">${activeMilestone.amount}</span>
+                        <span className="font-mono font-bold">${activeMilestone?.amount ?? 0}</span>
                       </div>
                     ) : (
                       <button
@@ -446,7 +456,7 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
                         className="w-full h-11 bg-gradient-to-r from-blue-600 to-sky-600 text-white text-xs font-semibold rounded-xl shadow-md hover:from-blue-700 hover:to-sky-700 transition-all flex items-center justify-center gap-2"
                       >
                         <Send className="w-4 h-4" />
-                        <span>Deliver Milestone Work (${activeMilestone.amount})</span>
+                        <span>Deliver Milestone Work (${activeMilestone?.amount ?? 0})</span>
                       </button>
                     )}
                   </div>
@@ -486,7 +496,8 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
                   ${activeMilestone?.amount}.00
                 </strong>{" "}
                 from escrow to {order.freelancer.name} for{" "}
-                <em>&ldquo;{activeMilestone?.title}&rdquo;</em>. This action is final and confirms your satisfaction with the submitted deliverables.
+                <em>&ldquo;{activeMilestone?.title}&rdquo;</em>. This action is final and confirms
+                your satisfaction with the submitted deliverables.
               </p>
               <div className="flex items-center gap-3 pt-2">
                 <button
@@ -526,9 +537,7 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
               exit={{ scale: 0.95, opacity: 0 }}
               className="relative w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl z-10 space-y-4"
             >
-              <h3 className="text-base font-bold text-[#0B0B14]">
-                Request Revision
-              </h3>
+              <h3 className="text-base font-bold text-[#0B0B14]">Request Revision</h3>
               <p className="text-xs text-[#6B6B7B]">
                 Explain what adjustments or additions are required before milestone approval.
               </p>
@@ -579,9 +588,7 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
               exit={{ scale: 0.95, opacity: 0 }}
               className="relative w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl z-10 space-y-4"
             >
-              <h3 className="text-base font-bold text-[#0B0B14]">
-                Deliver Milestone Work
-              </h3>
+              <h3 className="text-base font-bold text-[#0B0B14]">Deliver Milestone Work</h3>
               <p className="text-xs text-[#6B6B7B]">
                 Submit your deliverable files and add delivery notes for{" "}
                 <em>&ldquo;{activeMilestone?.title}&rdquo;</em>.

@@ -50,8 +50,10 @@ export function StarProofBar() {
               </div>
               <p className="text-xs text-[#4B4B5C] mt-0.5">
                 {t.rich("reviewsSubtext", {
-                  count: () => (
-                    <strong className="text-[#0B0B14]">{t("reviewsCountBold")}</strong>
+                  count: (
+                    <strong key="count" className="text-[#0B0B14]">
+                      {t("reviewsCountBold")}
+                    </strong>
                   ),
                 })}
               </p>
@@ -78,4 +80,3 @@ export function StarProofBar() {
     </section>
   )
 }
-

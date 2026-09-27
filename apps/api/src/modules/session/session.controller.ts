@@ -15,7 +15,7 @@ export const getSessions = async (req: AuthRequest, res: Response, next: NextFun
 export const revokeSession = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!.userId;
-    const sessionId = req.params.id;
+    const sessionId = req.params.id!;
     await SessionService.revokeSession(userId, sessionId);
     res.status(200).json({ success: true, message: 'Session revoked successfully' });
   } catch (error) {

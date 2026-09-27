@@ -56,6 +56,7 @@ export function StatCard({ data, className }: StatCardProps) {
 
   return (
     <div
+      data-testid={`stat-card-${data.id}`}
       className={cn(
         "relative p-5 rounded-2xl bg-white border border-[rgba(15,15,30,0.08)] shadow-xs hover:border-[rgba(15,15,30,0.16)] hover:shadow-sm transition-all duration-200 flex flex-col justify-between group overflow-hidden",
         className
@@ -79,17 +80,17 @@ export function StatCard({ data, className }: StatCardProps) {
       {/* Middle row: Big Value & Sparkline */}
       <div className="flex items-end justify-between gap-3 mt-4">
         <div>
-          <span className="text-2xl sm:text-3xl font-extrabold text-[#0B0B14] font-mono tracking-tight">
+          <span
+            data-testid="stat-card-value"
+            className="text-2xl sm:text-3xl font-extrabold text-[#0B0B14] font-mono tracking-tight"
+          >
             {data.value}
           </span>
         </div>
 
         {/* Mini Sparkline */}
         <div className="w-20 h-7 shrink-0" aria-hidden="true">
-          <svg
-            viewBox={`0 0 ${width} ${height}`}
-            className="w-full h-full overflow-visible"
-          >
+          <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full overflow-visible">
             <defs>
               <linearGradient id={`grad-${data.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#2563EB" stopOpacity="0.25" />

@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Link } from "@/i18n/routing"
 import { motion } from "framer-motion"
-import { Star, Heart, ShieldCheck, Sparkles, CheckCircle2 } from "lucide-react"
+import { Star, Heart, ShieldCheck } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import type { Gig, SellerLevel } from "@/data/gigs"
@@ -15,7 +15,10 @@ interface GigCardProps {
   priority?: boolean
 }
 
-const LEVEL_BADGE_MAP: Record<SellerLevel, { label: string; variant: "default" | "secondary" | "luxury" | "gradient" }> = {
+const LEVEL_BADGE_MAP: Record<
+  SellerLevel,
+  { label: string; variant: "default" | "secondary" | "luxury" | "gradient" }
+> = {
   TOP_RATED: { label: "Top Rated", variant: "gradient" },
   LEVEL_2: { label: "Level 2", variant: "luxury" },
   LEVEL_1: { label: "Level 1", variant: "secondary" },
@@ -36,20 +39,26 @@ export function GigCard({ gig, view = "grid", className }: GigCardProps) {
   if (view === "list") {
     return (
       <div
+        data-testid="gig-card"
         className={cn(
           "group relative rounded-2xl border border-[rgba(15,15,30,0.08)] bg-white p-4 sm:p-5 shadow-sm transition-all duration-300 hover:border-blue-300 hover:shadow-[0_12px_36px_-10px_rgba(37,99,235,0.15)] hover:-translate-y-0.5 flex flex-col sm:flex-row gap-5",
           className
         )}
       >
         {/* Clickable Link Container */}
-        <Link href={`/services/${gig.id}`} className="absolute inset-0 z-0 rounded-2xl" aria-label={gig.title} />
+        <Link
+          href={`/services/${gig.id}`}
+          data-testid="gig-card-link"
+          className="absolute inset-0 z-20 rounded-2xl"
+          aria-label={gig.title}
+        />
 
         {/* Cover Preview Tile */}
-        <div className="relative w-full sm:w-60 h-44 sm:h-auto rounded-xl overflow-hidden shrink-0 border border-[rgba(15,15,30,0.06)] bg-[#FAFAFC]">
+        <div className="relative w-full sm:w-60 h-44 sm:h-auto rounded-xl overflow-hidden shrink-0 border border-[rgba(15,15,30,0.06)] bg-[#FAFAFC] pointer-events-none">
           {/* Generated CSS Gradient Background */}
           <div
             className={cn(
-              "absolute inset-0 bg-gradient-to-tr transition-transform duration-500 group-hover:scale-105",
+              "absolute inset-0 bg-gradient-to-tr transition-transform duration-500 group-hover:scale-105 pointer-events-none",
               gig.coverGradient
             )}
           />
@@ -75,7 +84,7 @@ export function GigCard({ gig, view = "grid", className }: GigCardProps) {
             type="button"
             onClick={handleFavoriteClick}
             aria-label={isFavorite ? "Remove from saved" : "Save service"}
-            className="absolute top-3 right-3 z-20 h-8 w-8 rounded-full bg-white/90 backdrop-blur-md border border-[rgba(15,15,30,0.08)] flex items-center justify-center text-[#6B6B7B] shadow-sm transition-transform active:scale-90 hover:bg-white hover:text-rose-500 cursor-pointer"
+            className="absolute top-3 right-3 z-30 h-8 w-8 rounded-full bg-white/90 backdrop-blur-md border border-[rgba(15,15,30,0.08)] flex items-center justify-center text-[#6B6B7B] shadow-sm transition-transform active:scale-90 hover:bg-white hover:text-rose-500 cursor-pointer pointer-events-auto"
           >
             <motion.div
               animate={isFavorite ? { scale: [1, 1.4, 1] } : { scale: 1 }}
@@ -173,7 +182,9 @@ export function GigCard({ gig, view = "grid", className }: GigCardProps) {
 
             <div className="text-right">
               <span className="text-[10px] text-[#6B6B7B] uppercase block">Starting at</span>
-              <span className="text-base font-bold text-[#0B0B14] font-mono">${gig.startingPrice}</span>
+              <span className="text-base font-bold text-[#0B0B14] font-mono">
+                ${gig.startingPrice}
+              </span>
             </div>
           </div>
         </div>
@@ -184,21 +195,27 @@ export function GigCard({ gig, view = "grid", className }: GigCardProps) {
   // Grid View (Default)
   return (
     <div
+      data-testid="gig-card"
       className={cn(
         "group relative rounded-2xl border border-[rgba(15,15,30,0.08)] bg-white p-3.5 sm:p-4 shadow-sm transition-all duration-300 hover:border-blue-300 hover:shadow-[0_12px_36px_-10px_rgba(37,99,235,0.18)] hover:-translate-y-1 flex flex-col justify-between",
         className
       )}
     >
       {/* Clickable Card Link Container */}
-      <Link href={`/services/${gig.id}`} className="absolute inset-0 z-0 rounded-2xl" aria-label={gig.title} />
+      <Link
+        href={`/services/${gig.id}`}
+        data-testid="gig-card-link"
+        className="absolute inset-0 z-20 rounded-2xl"
+        aria-label={gig.title}
+      />
 
       <div>
         {/* Cover Preview Area */}
-        <div className="relative w-full h-44 sm:h-48 rounded-xl overflow-hidden mb-3.5 border border-[rgba(15,15,30,0.06)] bg-[#FAFAFC]">
+        <div className="relative w-full h-44 sm:h-48 rounded-xl overflow-hidden mb-3.5 border border-[rgba(15,15,30,0.06)] bg-[#FAFAFC] pointer-events-none">
           {/* Dynamic Generated CSS Gradient */}
           <div
             className={cn(
-              "absolute inset-0 bg-gradient-to-tr transition-transform duration-500 group-hover:scale-105",
+              "absolute inset-0 bg-gradient-to-tr transition-transform duration-500 group-hover:scale-105 pointer-events-none",
               gig.coverGradient
             )}
           />
@@ -224,7 +241,7 @@ export function GigCard({ gig, view = "grid", className }: GigCardProps) {
             type="button"
             onClick={handleFavoriteClick}
             aria-label={isFavorite ? "Remove from saved" : "Save service"}
-            className="absolute top-3 right-3 z-20 h-8 w-8 rounded-full bg-white/90 backdrop-blur-md border border-[rgba(15,15,30,0.08)] flex items-center justify-center text-[#6B6B7B] shadow-sm transition-transform active:scale-90 hover:bg-white hover:text-rose-500 cursor-pointer"
+            className="absolute top-3 right-3 z-30 h-8 w-8 rounded-full bg-white/90 backdrop-blur-md border border-[rgba(15,15,30,0.08)] flex items-center justify-center text-[#6B6B7B] shadow-sm transition-transform active:scale-90 hover:bg-white hover:text-rose-500 cursor-pointer pointer-events-auto"
           >
             <motion.div
               animate={isFavorite ? { scale: [1, 1.4, 1] } : { scale: 1 }}
@@ -297,7 +314,9 @@ export function GigCard({ gig, view = "grid", className }: GigCardProps) {
         </div>
 
         <div className="text-right">
-          <span className="text-[10px] text-[#6B6B7B] uppercase font-mono block leading-none mb-0.5">From</span>
+          <span className="text-[10px] text-[#6B6B7B] uppercase font-mono block leading-none mb-0.5">
+            From
+          </span>
           <span className="text-sm font-bold text-[#0B0B14] font-mono">${gig.startingPrice}</span>
         </div>
       </div>

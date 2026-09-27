@@ -3,99 +3,146 @@
 import * as React from "react"
 import { Link } from "@/i18n/routing"
 import { useParams } from "next/navigation"
-import {
-  Star,
-  ShieldCheck,
-  Award,
-  MessageSquare,
-  ChevronRight,
-  Globe,
-} from "lucide-react"
+import { Star, ShieldCheck, Award, MessageSquare, ChevronRight, Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+interface ServiceItem {
+  id: string
+  title: string
+  category: string
+  cover: string
+  rating: number
+  reviews: number
+  startingPrice: number
+  deliveryDays?: number
+}
 
-const FREELANCER_PROFILES: Record<string, any> = {
-  "alexandre": {
-    id: "alexandre",
-    name: "Alexandre Moreau",
-    title: "Senior Full-Stack Architect & Distributed Systems Engineer",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80",
-    cover: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200&auto=format&fit=crop&q=80",
-    level: "TOP_RATED",
-    country: "France (UTC+2)",
-    languages: ["English (Fluent)", "French (Native)"],
-    memberSince: "March 2023",
-    ratingAverage: 4.99,
-    ratingCount: 114,
-    completedOrders: 114,
-    responseTimeHours: 1,
-    hourlyRate: "$95/hr",
-    bio: `Principal Software Architect with over a decade of hands-on experience designing resilient distributed systems, Next.js 15 enterprise platforms, and high-performance backend microservices.
+interface ReviewItem {
+  buyer: string
+  company: string
+  rating: number
+  date: string
+  comment: string
+}
+
+interface FreelancerDetail {
+  id: string
+  name: string
+  title: string
+  avatar: string
+  cover: string
+  level: string
+  country: string
+  languages: string[]
+  memberSince: string
+  ratingAverage: number
+  ratingCount: number
+  completedOrders: number
+  responseTimeHours?: number
+  hourlyRate: string
+  bio: string
+  skills: string[]
+  services: ServiceItem[]
+  reviews: ReviewItem[]
+}
+
+const DEFAULT_PROFILE: FreelancerDetail = {
+  id: "alexandre",
+  name: "Alexandre Moreau",
+  title: "Senior Full-Stack Architect & Distributed Systems Engineer",
+  avatar:
+    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80",
+  cover:
+    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200&auto=format&fit=crop&q=80",
+  level: "TOP_RATED",
+  country: "France (UTC+2)",
+  languages: ["English (Fluent)", "French (Native)"],
+  memberSince: "March 2023",
+  ratingAverage: 4.99,
+  ratingCount: 114,
+  completedOrders: 114,
+  responseTimeHours: 1,
+  hourlyRate: "$95/hr",
+  bio: `Principal Software Architect with over a decade of hands-on experience designing resilient distributed systems, Next.js 15 enterprise platforms, and high-performance backend microservices.
 
 I partner with visionary startups and established product teams to construct scalable architectures that endure rapid traffic spikes, pass stringent security audits, and empower developers with enjoyable codebases.`,
-    skills: [
-      "Next.js 15 & React 19",
-      "TypeScript",
-      "Node.js & Express",
-      "PostgreSQL & Prisma ORM",
-      "Redis Caching",
-      "Docker & Kubernetes",
-      "Stripe Integration",
-      "Clean Architecture",
-    ],
-    services: [
-      {
-        id: "srv-1",
-        title: "Full-Stack Next.js 15 & Node.js Production Architecture",
-        category: "Programming & Tech",
-        startingPrice: 350,
-        deliveryDays: 5,
-        rating: 4.98,
-        reviews: 42,
-        cover: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80",
-      },
-      {
-        id: "srv-5",
-        title: "Enterprise Cybersecurity Audit & Penetration Testing",
-        category: "Programming & Tech",
-        startingPrice: 500,
-        deliveryDays: 7,
-        rating: 4.99,
-        reviews: 64,
-        cover: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80",
-      },
-    ],
-    reviews: [
-      {
-        buyer: "Marcus Thorne",
-        company: "Fintech UK",
-        rating: 5,
-        date: "2 weeks ago",
-        comment: "Alexandre delivered an exceptional monorepo architecture. Highly structured, well-documented, and production-tested.",
-      },
-      {
-        buyer: "Sophia Chen",
-        company: "Acro Cloud",
-        rating: 5,
-        date: "1 month ago",
-        comment: "Flawless communication and deep technical expertise. The Next.js 15 SSR setup was delivered ahead of schedule.",
-      },
-    ],
-  },
+  skills: [
+    "Next.js 15 & React 19",
+    "TypeScript",
+    "Node.js & Express",
+    "PostgreSQL & Prisma ORM",
+    "Redis Caching",
+    "Docker & Kubernetes",
+    "Stripe Integration",
+    "Clean Architecture",
+  ],
+  services: [
+    {
+      id: "srv-1",
+      title: "Full-Stack Next.js 15 & Node.js Production Architecture",
+      category: "Programming & Tech",
+      startingPrice: 350,
+      deliveryDays: 5,
+      rating: 4.98,
+      reviews: 42,
+      cover:
+        "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80",
+    },
+    {
+      id: "srv-5",
+      title: "Enterprise Cybersecurity Audit & Penetration Testing",
+      category: "Programming & Tech",
+      startingPrice: 500,
+      deliveryDays: 7,
+      rating: 4.99,
+      reviews: 64,
+      cover:
+        "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80",
+    },
+  ],
+  reviews: [
+    {
+      buyer: "Marcus Thorne",
+      company: "Fintech UK",
+      rating: 5,
+      date: "2 weeks ago",
+      comment:
+        "Alexandre delivered an exceptional monorepo architecture. Highly structured, well-documented, and production-tested.",
+    },
+    {
+      buyer: "Sophia Chen",
+      company: "Acro Cloud",
+      rating: 5,
+      date: "1 month ago",
+      comment:
+        "Flawless communication and deep technical expertise. The Next.js 15 SSR setup was delivered ahead of schedule.",
+    },
+  ],
+}
+
+const FREELANCER_PROFILES: Record<string, FreelancerDetail> = {
+  alexandre: DEFAULT_PROFILE,
 }
 
 export default function FreelancerProfilePage() {
   const params = useParams()
   const id = params.id as string
-  const profile = FREELANCER_PROFILES[id] || FREELANCER_PROFILES["alexandre"]
+  const profile = id && FREELANCER_PROFILES[id] ? FREELANCER_PROFILES[id]! : DEFAULT_PROFILE
 
   return (
     <div className="container mx-auto px-4 md:px-8 py-10 min-h-screen">
       {/* Breadcrumbs */}
       <nav className="flex items-center gap-2 text-xs text-text-muted mb-6">
-        <Link href="/" className="hover:text-text-primary transition-colors">Home</Link>
+        <Link href="/" className="hover:text-text-primary transition-colors">
+          Home
+        </Link>
         <ChevronRight className="h-3.5 w-3.5" />
-        <Link href="/explore?type=freelancers" className="hover:text-text-primary transition-colors">Talent Directory</Link>
+        <Link
+          href="/explore?type=freelancers"
+          className="hover:text-text-primary transition-colors"
+        >
+          Talent Directory
+        </Link>
         <ChevronRight className="h-3.5 w-3.5" />
         <span className="text-text-primary">{profile.name}</span>
       </nav>
@@ -133,7 +180,9 @@ export default function FreelancerProfilePage() {
                   <span className="flex items-center gap-1 text-amber-500 font-semibold">
                     <Star className="h-3.5 w-3.5 fill-current" />
                     {profile.ratingAverage}
-                    <span className="text-text-muted font-normal">({profile.ratingCount} reviews)</span>
+                    <span className="text-text-muted font-normal">
+                      ({profile.ratingCount} reviews)
+                    </span>
                   </span>
                   <span>•</span>
                   <span>{profile.completedOrders} orders completed</span>
@@ -170,7 +219,9 @@ export default function FreelancerProfilePage() {
             </div>
             <div className="p-3.5 rounded-xl bg-slate-50 border border-border">
               <span className="text-[10px] uppercase text-text-muted block">Escrow Deliveries</span>
-              <span className="font-medium text-text-primary">{profile.completedOrders} Milestone Verified</span>
+              <span className="font-medium text-text-primary">
+                {profile.completedOrders} Milestone Verified
+              </span>
             </div>
           </div>
         </div>
@@ -182,7 +233,9 @@ export default function FreelancerProfilePage() {
         <div className="lg:col-span-2 space-y-10">
           {/* Bio Card */}
           <div className="rounded-2xl border border-border bg-white p-8 space-y-4">
-            <h2 className="font-display text-xl text-text-primary font-medium">About My Practice</h2>
+            <h2 className="font-display text-xl text-text-primary font-medium">
+              About My Practice
+            </h2>
             <div className="text-sm leading-relaxed text-text-secondary whitespace-pre-line">
               {profile.bio}
             </div>
@@ -195,7 +248,7 @@ export default function FreelancerProfilePage() {
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {profile.services.map((srv: any) => (
+              {profile.services.map((srv) => (
                 <Link
                   key={srv.id}
                   href={`/services/${srv.id}`}
@@ -225,7 +278,9 @@ export default function FreelancerProfilePage() {
                       </span>
                       <div className="text-right">
                         <span className="text-[10px] text-text-muted block">From</span>
-                        <span className="font-semibold text-text-primary text-sm">${srv.startingPrice}</span>
+                        <span className="font-semibold text-text-primary text-sm">
+                          ${srv.startingPrice}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -236,13 +291,20 @@ export default function FreelancerProfilePage() {
 
           {/* Client Reviews */}
           <div className="rounded-2xl border border-border bg-white p-8 space-y-6">
-            <h2 className="font-display text-xl text-text-primary font-medium">Verified Client Reviews</h2>
+            <h2 className="font-display text-xl text-text-primary font-medium">
+              Verified Client Reviews
+            </h2>
             <div className="space-y-4">
-              {profile.reviews.map((rev: any, idx: number) => (
-                <div key={idx} className="p-4 rounded-xl bg-slate-50 border border-border space-y-2">
+              {profile.reviews.map((rev, idx: number) => (
+                <div
+                  key={idx}
+                  className="p-4 rounded-xl bg-slate-50 border border-border space-y-2"
+                >
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="text-xs font-semibold text-text-primary block">{rev.buyer}</span>
+                      <span className="text-xs font-semibold text-text-primary block">
+                        {rev.buyer}
+                      </span>
                       <span className="text-[10px] text-text-muted">{rev.company}</span>
                     </div>
                     <div className="flex items-center gap-1 text-amber-500 text-xs">
@@ -263,7 +325,9 @@ export default function FreelancerProfilePage() {
         <div className="space-y-6">
           {/* Skills Badges */}
           <div className="rounded-2xl border border-border bg-white p-6 space-y-4">
-            <h3 className="font-display text-lg text-text-primary font-medium">Verified Expertise</h3>
+            <h3 className="font-display text-lg text-text-primary font-medium">
+              Verified Expertise
+            </h3>
             <div className="flex flex-wrap gap-2">
               {profile.skills.map((skill: string) => (
                 <span
@@ -296,7 +360,8 @@ export default function FreelancerProfilePage() {
               <span>Escrow Milestone Protection</span>
             </div>
             <p className="text-text-muted leading-relaxed">
-              When working with this specialist, your payments are securely vaulted until deliverables are received and approved by you.
+              When working with this specialist, your payments are securely vaulted until
+              deliverables are received and approved by you.
             </p>
           </div>
         </div>

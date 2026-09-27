@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Link } from "@/i18n/routing"
 import { useTranslations } from "next-intl"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { useServiceFilters } from "@/hooks/useServiceFilters"
 import { FILTER_CATEGORIES } from "@/data/serviceFilterOptions"
 import { GigCard } from "@/components/ui/GigCard"
@@ -54,7 +54,6 @@ function ServicesContent() {
     toggleLevel,
     toggleLanguage,
     clearAllFilters,
-    filteredGigs,
     paginatedGigs,
     totalResults,
     totalPages,
@@ -221,10 +220,7 @@ function ServicesContent() {
           {/* Right Column: Listing & Results */}
           <main className="flex-1 min-w-0">
             {/* Active Filter Chips Bar */}
-            <ActiveFilterChips
-              chips={activeFilterChips}
-              onClearAll={clearAllFilters}
-            />
+            <ActiveFilterChips chips={activeFilterChips} onClearAll={clearAllFilters} />
 
             {/* Shimmer Skeleton or Empty State or Active Results */}
             {isTransitioning ? (
@@ -259,16 +255,8 @@ function ServicesContent() {
                   }
                 >
                   {paginatedGigs.map((gig, idx) => (
-                    <motion.div
-                      key={gig.id}
-                      variants={itemVariants}
-                      layout
-                    >
-                      <GigCard
-                        gig={gig}
-                        view={filters.view}
-                        priority={idx < 6}
-                      />
+                    <motion.div key={gig.id} variants={itemVariants} layout>
+                      <GigCard gig={gig} view={filters.view} priority={idx < 6} />
                     </motion.div>
                   ))}
                 </motion.div>

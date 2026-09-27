@@ -20,7 +20,7 @@ import { ActiveOrdersTable } from "@/components/dashboard/overview/ActiveOrdersT
 import { ActivityFeed } from "@/components/dashboard/overview/ActivityFeed"
 import { ProfileStrengthCard } from "@/components/dashboard/overview/ProfileStrengthCard"
 import { RecommendedSpecialists } from "@/components/dashboard/overview/RecommendedSpecialists"
-import { Sparkles, ShoppingBag, PlusCircle, Compass } from "lucide-react"
+import { Sparkles, PlusCircle, Compass } from "lucide-react"
 
 export default function DashboardOverviewPage() {
   const { role } = useDashboard()
@@ -89,25 +89,18 @@ export default function DashboardOverviewPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* Active Orders Table (2/3 width) */}
         <div className="lg:col-span-2">
-          <ActiveOrdersTable
-            orders={orders}
-            role={role}
-          />
+          <ActiveOrdersTable orders={orders} role={role} />
         </div>
 
         {/* Right Side Column (1/3 width): Profile Strength or Activity Feed */}
         <div className="space-y-6">
-          {isFreelancer && (
-            <ProfileStrengthCard checklist={PROFILE_CHECKLIST} />
-          )}
+          {isFreelancer && <ProfileStrengthCard checklist={PROFILE_CHECKLIST} />}
           <ActivityFeed activities={RECENT_ACTIVITIES} />
         </div>
       </div>
 
       {/* 5. Client Mode Only: Recommended Specialists Showcase */}
-      {!isFreelancer && (
-        <RecommendedSpecialists specialists={RECOMMENDED_SPECIALISTS} />
-      )}
+      {!isFreelancer && <RecommendedSpecialists specialists={RECOMMENDED_SPECIALISTS} />}
     </div>
   )
 }

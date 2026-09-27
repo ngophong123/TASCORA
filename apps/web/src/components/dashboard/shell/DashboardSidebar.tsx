@@ -102,13 +102,10 @@ export function DashboardSidebar() {
         {navItems.map((item) => {
           const Icon = NAV_ICON_MAP[item.iconName] || LayoutDashboard
           const isActive =
-            item.href === "/dashboard"
-              ? pathname === "/dashboard"
-              : pathname.startsWith(item.href)
+            item.href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(item.href)
 
-          const label = NAV_KEY_MAP[item.id] && t.has(NAV_KEY_MAP[item.id] as any)
-            ? t(NAV_KEY_MAP[item.id] as any)
-            : item.label
+          const navKey = NAV_KEY_MAP[item.id] as Parameters<typeof t>[0] | undefined
+          const label = navKey && t.has(navKey) ? t(navKey) : item.label
 
           return (
             <Link
@@ -134,15 +131,11 @@ export function DashboardSidebar() {
               <Icon
                 className={cn(
                   "w-4 h-4 shrink-0 transition-colors",
-                  isActive
-                    ? "text-blue-700"
-                    : "text-[#6B6B7B] group-hover:text-blue-600"
+                  isActive ? "text-blue-700" : "text-[#6B6B7B] group-hover:text-blue-600"
                 )}
               />
 
-              {!sidebarCollapsed && (
-                <span className="truncate flex-1">{label}</span>
-              )}
+              {!sidebarCollapsed && <span className="truncate flex-1">{label}</span>}
 
               {/* Badge Counter */}
               {!sidebarCollapsed && item.badge !== undefined && (
@@ -177,7 +170,8 @@ export function DashboardSidebar() {
                 <span>Escrow Protection</span>
               </div>
               <p className="text-[11px] text-[#6B6B7B] leading-relaxed">
-                100% of your deposits are safely held in milestone escrow until deliverables are approved.
+                100% of your deposits are safely held in milestone escrow until deliverables are
+                approved.
               </p>
               <div className="pt-1">
                 <Link

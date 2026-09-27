@@ -40,7 +40,7 @@ function RegisterForm() {
 
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"
-      
+
       // 1. Call Register API
       const res = await fetch(`${apiUrl}/api/v1/auth/register`, {
         method: "POST",
@@ -88,8 +88,10 @@ function RegisterForm() {
       setTimeout(() => {
         router.push(role === "seller" ? "/seller/dashboard" : "/dashboard")
       }, 1500)
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred during registration.")
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error ? err.message : "An unexpected error occurred during registration."
+      )
     } finally {
       setLoading(false)
     }
@@ -109,9 +111,7 @@ function RegisterForm() {
           <h2 className="font-display text-2xl sm:text-3xl font-medium text-text-primary tracking-tight">
             {t("joinTitle")}
           </h2>
-          <p className="mt-2 text-xs text-text-secondary">
-            {t("joinSubtext")}
-          </p>
+          <p className="mt-2 text-xs text-text-secondary">{t("joinSubtext")}</p>
         </div>
 
         {/* Role Selection Tabs */}
@@ -228,22 +228,27 @@ function RegisterForm() {
             </div>
           </div>
 
-          <p className="text-[11px] text-text-muted pt-1">
-            {t("termsAgree")}
-          </p>
+          <p className="text-[11px] text-text-muted pt-1">{t("termsAgree")}</p>
 
           <Button
             type="submit"
             disabled={loading || success}
             className="w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white py-3 font-semibold shadow-lg shadow-blue-600/20 transition-all"
           >
-            {loading ? t("creatingAccount") : role === "seller" ? t("createSellerAccount") : t("createClientAccount")}
+            {loading
+              ? t("creatingAccount")
+              : role === "seller"
+                ? t("createSellerAccount")
+                : t("createClientAccount")}
           </Button>
         </form>
 
         <div className="text-center pt-4 border-t border-border/50 text-xs text-text-muted">
-          <span>{t("haveAccount")}{" "}</span>
-          <Link href="/login" className="text-blue-600 font-semibold hover:underline transition-colors">
+          <span>{t("haveAccount")} </span>
+          <Link
+            href="/login"
+            className="text-blue-600 font-semibold hover:underline transition-colors"
+          >
             {t("signIn")}
           </Link>
         </div>
@@ -255,7 +260,11 @@ function RegisterForm() {
 export default function RegisterPage() {
   const t = useTranslations("auth")
   return (
-    <React.Suspense fallback={<div className="container mx-auto p-12 text-center text-text-muted">{t("regLoading")}</div>}>
+    <React.Suspense
+      fallback={
+        <div className="container mx-auto p-12 text-center text-text-muted">{t("regLoading")}</div>
+      }
+    >
       <RegisterForm />
     </React.Suspense>
   )
