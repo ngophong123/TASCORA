@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test"
-import { ServicesPage } from "./pages/ServicesPage"
+import { ServicesPage } from "../pages/ServicesPage"
 
 test.describe("Search and Filter Flows", () => {
   test("hero search on homepage redirects to /services with query param", async ({ page }) => {

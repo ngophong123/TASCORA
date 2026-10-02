@@ -17,8 +17,8 @@ export default defineConfig({
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
+  /* Anti-flaky policy: 0 retries locally to surface true errors immediately; max 1 retry on CI */
+  retries: process.env.CI ? 1 : 0,
   /* Limit workers to 2 to prevent Next.js dev server cold-compile overload */
   workers: 2,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */

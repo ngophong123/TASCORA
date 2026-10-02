@@ -2632,7 +2632,47 @@ Then wait for the next phase.
 
 TASKORA employs an enterprise-grade automated quality assurance toolchain to prevent regressions across code quality, types, user journeys, accessibility, and web vitals performance.
 
-### 1. Code Quality & Formatting
+### 1. The 4-Tier Testing Model (Enterprise QA Strategy)
+
+TASCORA implements a hierarchical, risk-driven testing model to balance lightning-fast feedback during active coding with rock-solid reliability before production deployment:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 1. FAST DEV LOOP (<15s)  : pnpm test:quick                  │
+│    Typecheck (tsc) + Lint (ESLint strict) + Vitest (unit)   │
+├─────────────────────────────────────────────────────────────┤
+│ 2. FEATURE QA (15-30s)   : pnpm test:feature <spec-path>    │
+│    Targeted Playwright E2E spec for current feature branch  │
+├─────────────────────────────────────────────────────────────┤
+│ 3. FULL INTEGRATION (2m) : pnpm test:full                   │
+│    Type + Lint + Unit + 26 E2E Tests (Chromium) + Build     │
+├─────────────────────────────────────────────────────────────┤
+│ 4. RELEASE QA (5m+)      : pnpm test:release                │
+│    Cross-Browser E2E + Lighthouse CI + WCAG 2.1 AA Audits   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### Daily Command Quick-Sheet:
+
+```bash
+# Tier 1: Run continuously while coding (Typecheck + Lint + Unit tests in <1s)
+pnpm test:quick
+
+# Tier 2: Run after editing a specific feature (e.g. Search, Order, Responsive)
+pnpm test:feature tests/e2e/search-and-filter.spec.ts --project=chromium
+pnpm test:feature tests/e2e/gig-detail-and-order.spec.ts --project=chromium
+
+# Tier 3: Run before git push or opening a PR (Comprehensive local validation)
+pnpm test:full
+
+# Tier 4: Run before deployment / release tag / portfolio showcase
+pnpm test:release
+
+# Unit test interactive watch mode
+pnpm test:unit:watch
+```
+
+### 2. Code Quality & Formatting
 
 ```bash
 # Run strict TypeScript typecheck (zero tolerance for type errors or any leaks)
@@ -2641,17 +2681,18 @@ pnpm typecheck
 # Run strict ESLint validation (zero warnings, zero errors)
 pnpm lint:strict
 
-# Automatically format all staged files using Prettier
-pnpm exec prettier --write "apps/web/src/**/*.{ts,tsx}"
+# Run Vitest fast unit tests
+pnpm test:unit
 ```
 
-### 2. End-to-End (E2E) Testing with Playwright
+### 3. End-to-End (E2E) Testing with Playwright
 
 Playwright tests user flows against an active or automatically spawned local server:
 
 ```bash
 # Run all E2E tests headless on Chromium
 pnpm test:e2e --project=chromium
+
 
 # Run all E2E tests across both desktop and mobile viewports
 pnpm test:e2e
@@ -2666,17 +2707,22 @@ pnpm exec playwright test --headed
 pnpm test:e2e:report
 ```
 
-#### Test Suite Structure:
+#### Test Suite Structure (Domain-Driven Organization):
 
-- `tests/e2e/navigation.spec.ts`: Page loads, desktop mega menu interaction, mobile hamburger drawer, and footer links.
-- `tests/e2e/search-and-filter.spec.ts`: Hero search redirect, category/rating filtering, clear filters, and pagination.
-- `tests/e2e/gig-detail-and-order.spec.ts`: Service detail view, package tier switching, dynamic add-ons calculation, and escrow checkout modal.
-- `tests/e2e/dashboard-flows.spec.ts`: Metric stat cards, order status filter tabs, order detail drawer, chat messaging, and gig creation wizard.
-- `tests/e2e/language-switch.spec.ts`: Seamless EN/VI locale switching, keyboard dismiss, and route path persistence.
-- `tests/e2e/accessibility.spec.ts`: Automated WCAG 2.1 AA audits via `@axe-core/playwright` ensuring 0 critical or serious violations.
-- `tests/e2e/responsive.spec.ts`: Cross-device verification across mobile (375x667), tablet (768x1024), and desktop (1280x800) with zero horizontal overflow.
+- **Auth Domain (`tests/e2e/auth/`)**:
+  - `auth-flows.spec.ts`: Sign-in form rendering, password visibility toggle, buyer vs seller role switching on registration, and validation guards.
+- **Marketplace Domain (`tests/e2e/marketplace/`)**:
+  - `navigation.spec.ts`: Page loads, desktop mega menu interaction, mobile hamburger drawer, and footer links.
+  - `search-and-filter.spec.ts`: Hero search redirect, category/rating filtering, clear filters, and pagination.
+  - `gig-detail-and-order.spec.ts`: Service detail view, package tier switching, dynamic add-ons calculation, and escrow checkout modal.
+- **Dashboard Domain (`tests/e2e/dashboard/`)**:
+  - `dashboard-flows.spec.ts`: Metric stat cards, order status filter tabs, order detail drawer, chat messaging, and gig creation wizard.
+- **System & Quality Domain (`tests/e2e/system/`)**:
+  - `language-switch.spec.ts`: Seamless EN/VI locale switching, keyboard dismiss, and route path persistence.
+  - `accessibility.spec.ts`: Automated WCAG 2.1 AA audits via `@axe-core/playwright` ensuring 0 critical or serious violations.
+  - `responsive.spec.ts`: Cross-device verification across mobile (375x667), tablet (768x1024), and desktop (1280x800) with zero horizontal overflow.
 
-### 3. Lighthouse CI Performance & Audits
+### 4. Lighthouse CI Performance & Audits
 
 Lighthouse CI validates performance, SEO, accessibility, and best practices:
 
@@ -2698,7 +2744,7 @@ pnpm lhci:desktop
 - **SEO**: $\ge 90\%$ (Fail on error)
 - **Performance**: $\ge 80\%$ (Warning threshold), $\ge 65\%$ (Minimum threshold)
 
-### 4. Git Pre-Commit Hooks & Continuous Integration
+### 5. Git Pre-Commit Hooks & Continuous Integration
 
 - **Husky & lint-staged**: Automatically executes on `git commit`, running `eslint --fix` and `prettier --write` only on staged files before allowing commits.
 - **GitHub Actions (`.github/workflows/quality.yml`)**:

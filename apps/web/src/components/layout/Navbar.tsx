@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Link, usePathname } from "@/i18n/routing"
+import { Link, usePathname, useRouter } from "@/i18n/routing"
 import { useTranslations } from "next-intl"
 import { motion, AnimatePresence } from "framer-motion"
 import {
@@ -17,11 +17,14 @@ import {
 import { Button } from "@/components/ui/button"
 import { MegaMenu } from "./MegaMenu"
 import { LanguageSwitcher } from "./LanguageSwitcher"
+import { useLenis } from "./SmoothScrollProvider"
 import { EXPLORE_SERVICES_MENU, CATEGORIES_MENU } from "@/data/navigation"
 import { EASE_OUT_EXPO } from "@/lib/motion"
 
 export function Navbar() {
   const pathname = usePathname()
+  const router = useRouter()
+  const lenis = useLenis()
   const t = useTranslations("nav")
 
   const [isScrolled, setIsScrolled] = React.useState(false)
@@ -92,6 +95,30 @@ export function Navbar() {
     }, 150)
   }
 
+  const handleNavAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    const isHome = pathname === "/" || pathname === ""
+
+    if (isHome) {
+      e.preventDefault()
+      if (targetId === "for-freelancers") {
+        window.dispatchEvent(new CustomEvent("switch-audience-tab", { detail: "freelancers" }))
+      }
+      const el = document.getElementById(targetId)
+      if (el) {
+        if (lenis) {
+          lenis.scrollTo(el, { offset: -80, duration: 1.1 })
+        } else {
+          const top = el.getBoundingClientRect().top + window.scrollY - 80
+          window.scrollTo({ top, behavior: "smooth" })
+        }
+        window.history.pushState(null, "", `#${targetId}`)
+      }
+    } else {
+      e.preventDefault()
+      router.push(`/#${targetId}`)
+    }
+  }
+
   // Suppress marketing navbar on dashboard routes (including localized routes like /vi/dashboard)
   if (pathname?.includes("/dashboard")) {
     return null
@@ -159,10 +186,10 @@ export function Navbar() {
               <AnimatePresence>
                 {activeMenu === "explore" && (
                   <motion.div
-                    initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                    initial={{ opacity: 0, y: -4, scale: 0.98 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 4, scale: 0.98 }}
-                    transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
+                    exit={{ opacity: 0, y: -4, scale: 0.98 }}
+                    transition={{ duration: 0.18, ease: EASE_OUT_EXPO }}
                     className="absolute top-[calc(100%+8px)] left-0 z-50"
                   >
                     <MegaMenu
@@ -201,10 +228,10 @@ export function Navbar() {
               <AnimatePresence>
                 {activeMenu === "categories" && (
                   <motion.div
-                    initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                    initial={{ opacity: 0, y: -4, scale: 0.98 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 4, scale: 0.98 }}
-                    transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
+                    exit={{ opacity: 0, y: -4, scale: 0.98 }}
+                    transition={{ duration: 0.18, ease: EASE_OUT_EXPO }}
                     className="absolute top-[calc(100%+8px)] -left-20 z-50"
                   >
                     <MegaMenu
@@ -217,25 +244,28 @@ export function Navbar() {
               </AnimatePresence>
             </div>
 
-            {/* Regular Links */}
+            {/* Regular Links with Smooth Scroll & Fallback Navigation */}
             <Link
-              href="#how-it-works"
+              href="/#how-it-works"
               data-testid="nav-link-how-it-works"
-              className="px-3 py-2 text-sm font-medium text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-black/[0.03] rounded-lg transition-colors"
+              onClick={(e) => handleNavAnchorClick(e, "how-it-works")}
+              className="px-3 py-2 text-sm font-medium text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-black/[0.03] rounded-lg transition-colors cursor-pointer"
             >
               {t("howItWorks")}
             </Link>
             <Link
-              href="/register?role=seller"
+              href="/#for-freelancers"
               data-testid="nav-link-for-freelancers"
-              className="px-3 py-2 text-sm font-medium text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-black/[0.03] rounded-lg transition-colors"
+              onClick={(e) => handleNavAnchorClick(e, "for-freelancers")}
+              className="px-3 py-2 text-sm font-medium text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-black/[0.03] rounded-lg transition-colors cursor-pointer"
             >
               {t("forFreelancers")}
             </Link>
             <Link
-              href="#enterprise"
+              href="/#enterprise"
               data-testid="nav-link-enterprise"
-              className="px-3 py-2 text-sm font-medium text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-black/[0.03] rounded-lg transition-colors"
+              onClick={(e) => handleNavAnchorClick(e, "enterprise")}
+              className="px-3 py-2 text-sm font-medium text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-black/[0.03] rounded-lg transition-colors cursor-pointer"
             >
               {t("enterprise")}
             </Link>
@@ -361,22 +391,31 @@ export function Navbar() {
                 <ArrowRight className="h-4 w-4 text-blue-600" />
               </Link>
               <Link
-                href="#how-it-works"
-                onClick={() => setMobileMenuOpen(false)}
+                href="/#how-it-works"
+                onClick={(e) => {
+                  setMobileMenuOpen(false)
+                  handleNavAnchorClick(e, "how-it-works")
+                }}
                 className="text-lg font-medium text-[#4B4B5C] hover:text-[#0B0B14] py-2 border-b border-[rgba(15,15,30,0.06)]"
               >
                 {t("howItWorks")}
               </Link>
               <Link
-                href="/register?role=seller"
-                onClick={() => setMobileMenuOpen(false)}
+                href="/#for-freelancers"
+                onClick={(e) => {
+                  setMobileMenuOpen(false)
+                  handleNavAnchorClick(e, "for-freelancers")
+                }}
                 className="text-lg font-medium text-[#4B4B5C] hover:text-[#0B0B14] py-2 border-b border-[rgba(15,15,30,0.06)]"
               >
                 {t("forFreelancers")}
               </Link>
               <Link
-                href="#enterprise"
-                onClick={() => setMobileMenuOpen(false)}
+                href="/#enterprise"
+                onClick={(e) => {
+                  setMobileMenuOpen(false)
+                  handleNavAnchorClick(e, "enterprise")
+                }}
                 className="text-lg font-medium text-[#4B4B5C] hover:text-[#0B0B14] py-2 border-b border-[rgba(15,15,30,0.06)]"
               >
                 {t("enterprise")}

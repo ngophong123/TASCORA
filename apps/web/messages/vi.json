@@ -21,7 +21,80 @@
     "viewAllSpecializedServices": "Xem tất cả dịch vụ chuyên môn",
     "browseAllCategoryDisciplines": "Duyệt toàn bộ các lĩnh vực chuyên ngành",
     "goToDashboard": "Vào Bảng điều khiển",
-    "megaMenuFooterNote": "Khám phá hơn 5.000+ chuyên gia đã xác thực với bảo đảm thanh toán escrow."
+    "megaMenuFooterNote": "Khám phá hơn 5.000+ chuyên gia đã xác thực với bảo đảm thanh toán escrow.",
+    "badgeHot": "Nổi bật",
+    "megaMenu": {
+      "columns": {
+        "engineeringCloud": "Kỹ thuật & Đám mây",
+        "aiDataSystems": "Hệ thống AI & Dữ liệu",
+        "designProductCraft": "Thiết kế & Sản phẩm",
+        "technical": "Công nghệ & Kỹ thuật",
+        "creative": "Sáng tạo & Nghệ thuật",
+        "growthStrategy": "Tăng trưởng & Chiến lược"
+      },
+      "items": {
+        "fullStack": {
+          "title": "Phát triển Full-Stack",
+          "description": "Kiến trúc Next.js, React, Node.js và TypeScript hiện đại."
+        },
+        "cloudDevOps": {
+          "title": "Hạ tầng Đám mây & DevOps",
+          "description": "Docker, Kubernetes, AWS và quy trình CI/CD không gián đoạn."
+        },
+        "smartContracts": {
+          "title": "Hợp đồng thông minh & Web3",
+          "description": "Kiểm toán hợp đồng Solidity và kiến trúc giao thức."
+        },
+        "aiAgents": {
+          "title": "AI Agent tự hành",
+          "description": "Quy trình AI Agent tuỳ chỉnh với LangChain, AutoGen và công cụ mở rộng."
+        },
+        "llmRag": {
+          "title": "Tinh chỉnh LLM & RAG",
+          "description": "Cơ sở dữ liệu vector, embeddings và hệ thống truy xuất tri thức doanh nghiệp."
+        },
+        "computerVision": {
+          "title": "Thị giác máy tính & Âm thanh",
+          "description": "Mô hình AI đa phương thức cho nhận diện hình ảnh và giọng nói."
+        },
+        "designSystems": {
+          "title": "Hệ thống thiết kế & UI/UX",
+          "description": "Bộ token Figma, component chuẩn trợ năng và quy trình SaaS chuyên sâu."
+        },
+        "brandIdentity": {
+          "title": "Bộ nhận diện thương hiệu",
+          "description": "Logo độc quyền, hướng dẫn typography và cẩm nang thương hiệu hoàn chỉnh."
+        },
+        "motion3d": {
+          "title": "Chuyển động 3D & Render sản phẩm",
+          "description": "Cinema4D, Blender và trải nghiệm tương tác WebGL chân thực."
+        },
+        "catProgramming": {
+          "title": "Lập trình & Công nghệ",
+          "description": "1.240+ lập trình viên và kỹ sư phần mềm chuyên sâu."
+        },
+        "catAi": {
+          "title": "Trí tuệ nhân tạo & ML",
+          "description": "640+ chuyên gia nghiên cứu thuật toán và tự động hoá."
+        },
+        "catDesign": {
+          "title": "Đồ họa & Thiết kế",
+          "description": "980+ nghệ sĩ thiết kế số và giám đốc nghệ thuật sáng tạo."
+        },
+        "catVideo": {
+          "title": "Video & Hoạt hình",
+          "description": "410+ nhà làm phim hoạt họa và biên tập video thương mại."
+        },
+        "catMarketing": {
+          "title": "Tiếp thị kỹ thuật số",
+          "description": "810+ chuyên gia SEO kỹ thuật và tăng trưởng chuyển đổi."
+        },
+        "catBusiness": {
+          "title": "Tư vấn doanh nghiệp",
+          "description": "520+ cố vấn chiến lược và chuyên gia điều hành doanh nghiệp."
+        }
+      }
+    }
   },
   "search": {
     "placeholder": "Tìm 'Lập trình viên Next.js' hoặc 'Hệ thống thiết kế SaaS'...",
@@ -32,6 +105,7 @@
     "categoryMarketing": "Tiếp thị số",
     "categoryVideo": "Video & Hoạt họa",
     "searchButton": "Tìm kiếm",
+    "searching": "Đang tìm kiếm...",
     "clearSearch": "Xóa tìm kiếm",
     "suggestedMatches": "Gợi ý phù hợp",
     "popularLabel": "Phổ biến:",
@@ -73,7 +147,7 @@
   "starProof": {
     "ratingScore": "4.98 / 5.0",
     "verifiedReviews": "Đánh giá xác thực",
-    "reviewsSubtext": "Hơn {count} được thẩm định bởi các nhà sáng lập & giám đốc công nghệ.",
+    "reviewsSubtext": "Hơn <bold>{count}</bold> được thẩm định bởi các nhà sáng lập & giám đốc công nghệ.",
     "reviewsCountBold": "3,800+ mốc dự án hoàn tất",
     "escrowProtection": "100% Bảo vệ ký quỹ Escrow",
     "onTimeCompletion": "99.4% Bàn giao đúng hạn",

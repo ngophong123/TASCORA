@@ -1,47 +1,51 @@
-import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { notFound } from "next/navigation";
-import { NextIntlClientProvider } from "next-intl";
-import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
-import { routing } from "@/i18n/routing";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { SmoothScrollProvider } from "@/components/layout/SmoothScrollProvider";
-import { ScrollProgressBar } from "@/components/layout/ScrollProgressBar";
-import "../globals.css";
+import type { Metadata, Viewport } from "next"
+import { Geist, Geist_Mono } from "next/font/google"
+import { notFound } from "next/navigation"
+import { NextIntlClientProvider } from "next-intl"
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server"
+import { routing } from "@/i18n/routing"
+import { Navbar } from "@/components/layout/Navbar"
+import { Footer } from "@/components/layout/Footer"
+import { SmoothScrollProvider } from "@/components/layout/SmoothScrollProvider"
+import { ScrollProgressBar } from "@/components/layout/ScrollProgressBar"
+import { NavigationProgressBar } from "@/components/layout/NavigationProgressBar"
+import { PageTransition } from "@/components/layout/PageTransition"
+import "../globals.css"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin", "vietnamese"],
   display: "swap",
-});
+})
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin", "vietnamese"],
   display: "swap",
-});
+})
 
 export const viewport: Viewport = {
   themeColor: "#FFFFFF",
   width: "device-width",
   initialScale: 1,
-};
+}
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale: string }>
 }): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "metadata" });
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: "metadata" })
 
-  const canonicalUrl = locale === "en" ? "https://tascora.com" : `https://tascora.com/${locale}`;
+  const canonicalUrl = locale === "en" ? "https://tascora.com" : `https://tascora.com/${locale}`
 
   return {
     title: t("title"),
     description: t("description"),
-    keywords: t("keywords").split(",").map((k) => k.trim()),
+    keywords: t("keywords")
+      .split(",")
+      .map((k) => k.trim()),
     authors: [{ name: "TASCORA Inc." }],
     alternates: {
       canonical: canonicalUrl,
@@ -64,32 +68,32 @@ export async function generateMetadata({
       title: t("title"),
       description: t("description"),
     },
-  };
+  }
 }
 
 export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
+  return routing.locales.map((locale) => ({ locale }))
 }
 
 export default async function LocaleLayout({
   children,
   params,
 }: {
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
+  children: React.ReactNode
+  params: Promise<{ locale: string }>
 }) {
-  const { locale } = await params;
+  const { locale } = await params
 
   // Validate that the incoming locale is supported
   if (!routing.locales.includes(locale as "en" | "vi")) {
-    notFound();
+    notFound()
   }
 
   // Enable static rendering
-  setRequestLocale(locale);
+  setRequestLocale(locale)
 
   // Load all messages for the current locale
-  const messages = await getMessages();
+  const messages = await getMessages()
 
   return (
     <html
@@ -100,13 +104,16 @@ export default async function LocaleLayout({
       <body className="font-sans antialiased min-h-screen flex flex-col bg-[#FFFFFF] text-[#0B0B14] selection:bg-blue-500/20 selection:text-blue-900">
         <ScrollProgressBar />
         <NextIntlClientProvider messages={messages}>
+          <NavigationProgressBar />
           <SmoothScrollProvider>
             <Navbar />
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 flex flex-col">
+              <PageTransition>{children}</PageTransition>
+            </main>
             <Footer />
           </SmoothScrollProvider>
         </NextIntlClientProvider>
       </body>
     </html>
-  );
+  )
 }

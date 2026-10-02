@@ -154,7 +154,7 @@ function RegisterForm() {
         </div>
 
         {error && (
-          <div className="p-3.5 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-500 text-xs">
+          <div className="p-3.5 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-500 text-xs animate-micro-shake">
             {error}
           </div>
         )}
@@ -179,7 +179,7 @@ function RegisterForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t("emailPlaceholder")}
-                className="w-full rounded-xl border border-border bg-white pl-10 pr-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted outline-none focus:border-blue-600/60 transition-colors"
+                className="w-full rounded-xl border border-border bg-white pl-10 pr-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted outline-none input-premium focus:border-blue-600"
               />
             </div>
           </div>
@@ -197,7 +197,7 @@ function RegisterForm() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Min 8 chars"
-                  className="w-full rounded-xl border border-border bg-white pl-10 pr-10 py-2.5 text-sm text-text-primary placeholder:text-text-muted outline-none focus:border-blue-600/60 transition-colors"
+                  className="w-full rounded-xl border border-border bg-white pl-10 pr-10 py-2.5 text-sm text-text-primary placeholder:text-text-muted outline-none input-premium focus:border-blue-600"
                 />
                 <button
                   type="button"
@@ -222,7 +222,7 @@ function RegisterForm() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Repeat password"
-                  className="w-full rounded-xl border border-border bg-white pl-10 pr-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted outline-none focus:border-blue-600/60 transition-colors"
+                  className="w-full rounded-xl border border-border bg-white pl-10 pr-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted outline-none input-premium focus:border-blue-600"
                 />
               </div>
             </div>
@@ -233,13 +233,14 @@ function RegisterForm() {
           <Button
             type="submit"
             disabled={loading || success}
-            className="w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white py-3 font-semibold shadow-lg shadow-blue-600/20 transition-all"
+            isLoading={loading}
+            loadingText={t("creatingAccount")}
+            isSuccess={success}
+            successText={t("regSuccess")}
+            isError={!!error}
+            className="w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white py-3 font-semibold shadow-lg shadow-blue-600/20"
           >
-            {loading
-              ? t("creatingAccount")
-              : role === "seller"
-                ? t("createSellerAccount")
-                : t("createClientAccount")}
+            {role === "seller" ? t("createSellerAccount") : t("createClientAccount")}
           </Button>
         </form>
 

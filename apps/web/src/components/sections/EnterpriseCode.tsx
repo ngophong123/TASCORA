@@ -149,7 +149,7 @@ export function EnterpriseCode() {
               custom={0.2}
               className="pt-4 flex items-center gap-4"
             >
-              <Link href="/enterprise" className="w-full sm:w-auto">
+              <Link href="/register?role=client&plan=enterprise" className="w-full sm:w-auto">
                 <motion.div
                   whileTap={buttonTapMotion.whileTap}
                   className="w-full sm:w-auto inline-block"

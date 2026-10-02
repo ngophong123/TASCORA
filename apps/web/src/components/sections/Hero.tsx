@@ -4,15 +4,7 @@ import * as React from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import { Link } from "@/i18n/routing"
 import { useTranslations } from "next-intl"
-import {
-  ArrowRight,
-  Sparkles,
-  ShieldCheck,
-  Star,
-  CheckCircle2,
-  Clock,
-  Lock,
-} from "lucide-react"
+import { ArrowRight, Sparkles, ShieldCheck, Star, CheckCircle2, Clock, Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { SearchBar } from "@/components/ui/SearchBar"
@@ -60,7 +52,7 @@ export function Hero() {
                 transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
               >
                 <Link
-                  href="#how-it-works"
+                  href="/#how-it-works"
                   className="group inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50/90 border border-blue-200/80 hover:border-blue-300 backdrop-blur-md mb-8 transition-all duration-300 hover:scale-[1.02] shadow-sm"
                 >
                   <span className="relative flex h-2 w-2">
@@ -116,13 +108,23 @@ export function Hero() {
                 className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-2 w-full sm:w-auto"
               >
                 <Link href="/explore" className="w-full sm:w-auto">
-                  <Button variant="primary" size="lg" pill className="w-full sm:w-auto justify-center px-8 shadow-lg">
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    pill
+                    className="w-full sm:w-auto justify-center px-8 shadow-lg"
+                  >
                     <span>{t("ctaHire")}</span>
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
                 <Link href="/register?role=seller" className="w-full sm:w-auto">
-                  <Button variant="secondary" size="lg" pill className="w-full sm:w-auto justify-center px-8">
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                    pill
+                    className="w-full sm:w-auto justify-center px-8"
+                  >
                     {t("ctaBecomeFreelancer")}
                   </Button>
                 </Link>
@@ -208,7 +210,9 @@ export function Hero() {
                             {t("mockupAuthorName")}
                             <ShieldCheck className="h-3 w-3 text-blue-600 shrink-0" />
                           </p>
-                          <p className="text-[10px] text-[#4B4B5C] truncate">{t("mockupAuthorTitle")}</p>
+                          <p className="text-[10px] text-[#4B4B5C] truncate">
+                            {t("mockupAuthorTitle")}
+                          </p>
                         </div>
                       </div>
 
@@ -223,8 +227,12 @@ export function Hero() {
                           <Clock className="h-3 w-3" /> {t("mockupDelivery")}
                         </span>
                         <div>
-                          <span className="text-[#6B6B7B] text-[10px] mr-1 uppercase">{t("mockupFrom")}</span>
-                          <span className="font-bold text-[#0B0B14] text-sm font-mono">{t("mockupPrice")}</span>
+                          <span className="text-[#6B6B7B] text-[10px] mr-1 uppercase">
+                            {t("mockupFrom")}
+                          </span>
+                          <span className="font-bold text-[#0B0B14] text-sm font-mono">
+                            {t("mockupPrice")}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -250,16 +258,20 @@ export function Hero() {
                           <div className="h-6 w-6 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700">
                             <Lock className="h-3 w-3" />
                           </div>
-                          <span className="text-xs font-semibold text-[#0B0B14]">{t("mockupEscrowTitle")}</span>
+                          <span className="text-xs font-semibold text-[#0B0B14]">
+                            {t("mockupEscrowTitle")}
+                          </span>
                         </div>
-                        <Badge variant="luxury" size="sm" className="text-[10px] py-0 px-2 font-mono">
+                        <Badge
+                          variant="luxury"
+                          size="sm"
+                          className="text-[10px] py-0 px-2 font-mono"
+                        >
                           {t("mockupPhase")}
                         </Badge>
                       </div>
 
-                      <p className="text-xs font-medium text-[#4B4B5C] mb-1">
-                        {t("mockupTask")}
-                      </p>
+                      <p className="text-xs font-medium text-[#4B4B5C] mb-1">{t("mockupTask")}</p>
                       <div className="flex items-center justify-between text-[10px] text-[#6B6B7B] mb-2 font-mono">
                         <span>{t("mockupProgress")}</span>
                         <span className="text-blue-700 font-semibold">{t("mockupDue")}</span>
@@ -300,11 +312,16 @@ export function Hero() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <p className="text-xs font-semibold text-[#0B0B14]">{t("mockupPaymentReleased")}</p>
+                          <p className="text-xs font-semibold text-[#0B0B14]">
+                            {t("mockupPaymentReleased")}
+                          </p>
                           <span className="text-[10px] text-[#6B6B7B]">{t("mockupJustNow")}</span>
                         </div>
                         <p className="text-[11px] text-[#4B4B5C] truncate mt-0.5">
-                          <span className="text-emerald-700 font-semibold font-mono">+$1,450.00</span> {t("mockupPaymentSent")}
+                          <span className="text-emerald-700 font-semibold font-mono">
+                            +$1,450.00
+                          </span>{" "}
+                          {t("mockupPaymentSent")}
                         </p>
                         <div className="flex items-center gap-1 text-[9px] text-blue-700 mt-1 font-semibold">
                           <ShieldCheck className="h-3 w-3" />
@@ -316,7 +333,6 @@ export function Hero() {
                 </motion.div>
               </motion.div>
             </div>
-
           </div>
         </div>
       </GradientBackground>

@@ -20,6 +20,24 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
+import { getGigById, getGigBySlug, type GigAddon } from "@/data/gigs"
+import { getReviewsByGigId } from "@/data/reviews"
+
+// Default service add-ons
+const SERVICE_ADDONS: GigAddon[] = [
+  {
+    id: "express-delivery",
+    name: "24-Hour Express Delivery",
+    price: 50,
+    description: "Prioritize project delivery within 24 hours",
+  },
+  {
+    id: "extra-revision",
+    name: "Additional Code Audit & Revision Round",
+    price: 35,
+    description: "Deep architectural & vulnerability review",
+  },
+]
 
 // Fallback curated service details
 const FALLBACK_SERVICE_DETAIL = {
@@ -161,22 +179,68 @@ I specialize in building bulletproof full-stack platforms adhering to Clean Arch
       a: "Yes. Standard and Premium packages can be customized for AWS ECS, Vercel, Fly.io, or self-hosted Docker environments.",
     },
   ],
+  addons: SERVICE_ADDONS,
 }
 
-const SERVICE_ADDONS = [
-  {
-    id: "express-delivery",
-    name: "24-Hour Express Delivery",
-    price: 50,
-    description: "Prioritize project delivery within 24 hours",
-  },
-  {
-    id: "extra-revision",
-    name: "Additional Code Audit & Revision Round",
-    price: 35,
-    description: "Deep architectural & vulnerability review",
-  },
-]
+function getServiceDetailFromGig(gigIdOrSlug: string) {
+  const matchedGig = getGigById(gigIdOrSlug) || getGigBySlug(gigIdOrSlug)
+  const gigReviews = getReviewsByGigId(matchedGig ? matchedGig.id : gigIdOrSlug)
+
+  if (!matchedGig) {
+    return {
+      ...FALLBACK_SERVICE_DETAIL,
+      reviews: gigReviews.length > 0 ? gigReviews : FALLBACK_SERVICE_DETAIL.reviews,
+    }
+  }
+
+  const nameParts = matchedGig.seller.name.split(" ")
+  const firstName = nameParts[0] || "Specialist"
+  const lastName = nameParts.slice(1).join(" ") || ""
+
+  return {
+    id: matchedGig.id,
+    title: matchedGig.title,
+    category: { name: matchedGig.categoryName, slug: matchedGig.categorySlug },
+    ratingAverage: matchedGig.rating,
+    ratingCount: matchedGig.reviewsCount,
+    seller: {
+      id: matchedGig.seller.id,
+      user: {
+        profile: {
+          firstName,
+          lastName,
+          avatar:
+            matchedGig.seller.avatar ||
+            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+          bio: `${matchedGig.seller.name} is a verified ${matchedGig.seller.level} specialist on TASCORA from ${matchedGig.seller.country}.`,
+          country: matchedGig.seller.country,
+        },
+        email: `${matchedGig.seller.name.toLowerCase().replace(/[^a-z0-9]/g, "")}@tascora.com`,
+      },
+      level: matchedGig.seller.level,
+      title: `${matchedGig.subCategoryName} Specialist`,
+      ratingAverage: matchedGig.rating,
+      ratingCount: matchedGig.reviewsCount,
+      completedOrders: matchedGig.stats?.orders || 24,
+      responseTimeHours: 1,
+      memberSince: matchedGig.createdAt
+        ? new Date(matchedGig.createdAt).getFullYear().toString()
+        : "2024",
+    },
+    images:
+      matchedGig.gallery && matchedGig.gallery.length > 0
+        ? matchedGig.gallery.map((g) => ({ url: g.url }))
+        : FALLBACK_SERVICE_DETAIL.images,
+    description: matchedGig.description,
+    packages: matchedGig.packages,
+    addons: matchedGig.addons && matchedGig.addons.length > 0 ? matchedGig.addons : SERVICE_ADDONS,
+    reviews: gigReviews.length > 0 ? gigReviews : FALLBACK_SERVICE_DETAIL.reviews,
+    faqs:
+      matchedGig.faqs && matchedGig.faqs.length > 0
+        ? matchedGig.faqs
+        : FALLBACK_SERVICE_DETAIL.faqs,
+  }
+}
 
 export default function ServiceDetailPage() {
   const t = useTranslations("serviceDetail")
@@ -184,15 +248,53 @@ export default function ServiceDetailPage() {
   const router = useRouter()
   const serviceId = params.id as string
 
-  const [service, setService] = React.useState(FALLBACK_SERVICE_DETAIL)
+  const fallbackDetail = React.useMemo(() => getServiceDetailFromGig(serviceId), [serviceId])
+  const [service, setService] = React.useState(fallbackDetail)
   const [selectedImageIndex, setSelectedImageIndex] = React.useState(0)
+
+  const availableTiers = React.useMemo(() => {
+    return (["BASIC", "STANDARD", "PREMIUM"] as const).filter((tier) =>
+      service.packages.some((p) => p.type === tier)
+    )
+  }, [service.packages])
+
   const [selectedPackageTier, setSelectedPackageTier] = React.useState<
     "BASIC" | "STANDARD" | "PREMIUM"
-  >("STANDARD")
+  >(() => {
+    const hasStandard = fallbackDetail.packages.some((p) => p.type === "STANDARD")
+    const firstType = fallbackDetail.packages[0]?.type
+    if (hasStandard) return "STANDARD"
+    if (firstType === "BASIC" || firstType === "STANDARD" || firstType === "PREMIUM")
+      return firstType
+    return "BASIC"
+  })
+
   const [selectedAddons, setSelectedAddons] = React.useState<string[]>([])
   const [isFavorite, setIsFavorite] = React.useState(false)
   const [orderModalOpen, setOrderModalOpen] = React.useState(false)
   const [orderSuccess, setOrderSuccess] = React.useState(false)
+  const [isCheckingOut, setIsCheckingOut] = React.useState(false)
+  const [showAllReviews, setShowAllReviews] = React.useState(false)
+
+  // Reset indices and update service on param change
+  const prevServiceIdRef = React.useRef(serviceId)
+  React.useEffect(() => {
+    if (prevServiceIdRef.current !== serviceId) {
+      prevServiceIdRef.current = serviceId
+      setService(fallbackDetail)
+      setSelectedImageIndex(0)
+      setSelectedAddons([])
+      const hasStandard = fallbackDetail.packages.some((p) => p.type === "STANDARD")
+      const firstType = fallbackDetail.packages[0]?.type
+      if (hasStandard) {
+        setSelectedPackageTier("STANDARD")
+      } else if (firstType === "BASIC" || firstType === "STANDARD" || firstType === "PREMIUM") {
+        setSelectedPackageTier(firstType)
+      } else {
+        setSelectedPackageTier("BASIC")
+      }
+    }
+  }, [serviceId, fallbackDetail])
 
   // Fetch from API
   React.useEffect(() => {
@@ -205,19 +307,18 @@ export default function ServiceDetailPage() {
           if (data.success && data.data) {
             const apiData = data.data
             setService({
-              ...FALLBACK_SERVICE_DETAIL,
+              ...fallbackDetail,
               id: apiData.id,
               title: apiData.title,
-              description: apiData.description || FALLBACK_SERVICE_DETAIL.description,
+              description: apiData.description || fallbackDetail.description,
               ratingAverage: apiData.ratingAverage || 5.0,
               ratingCount: apiData.ratingCount || 12,
               seller: {
-                ...FALLBACK_SERVICE_DETAIL.seller,
+                ...fallbackDetail.seller,
                 ...(apiData.seller || {}),
               },
-              packages:
-                apiData.packages?.length > 0 ? apiData.packages : FALLBACK_SERVICE_DETAIL.packages,
-              images: apiData.images?.length > 0 ? apiData.images : FALLBACK_SERVICE_DETAIL.images,
+              packages: apiData.packages?.length > 0 ? apiData.packages : fallbackDetail.packages,
+              images: apiData.images?.length > 0 ? apiData.images : fallbackDetail.images,
             })
           }
         }
@@ -226,12 +327,15 @@ export default function ServiceDetailPage() {
       }
     }
     void loadService()
-  }, [serviceId])
+  }, [serviceId, fallbackDetail])
 
   const currentPackage =
     service.packages.find((p) => p.type === selectedPackageTier) ??
     service.packages[0] ??
     FALLBACK_SERVICE_DETAIL.packages[0]!
+
+  const availableAddons: GigAddon[] =
+    service.addons && service.addons.length > 0 ? service.addons : SERVICE_ADDONS
 
   const toggleAddon = (id: string) => {
     setSelectedAddons((prev) =>
@@ -240,7 +344,7 @@ export default function ServiceDetailPage() {
   }
 
   const addonsTotal = selectedAddons.reduce((sum, id) => {
-    const addon = SERVICE_ADDONS.find((a) => a.id === id)
+    const addon = availableAddons.find((a: GigAddon) => a.id === id)
     return sum + (addon ? addon.price : 0)
   }, 0)
 
@@ -472,7 +576,7 @@ export default function ServiceDetailPage() {
             </div>
 
             <div className="space-y-5">
-              {service.reviews.map((rev) => (
+              {(showAllReviews ? service.reviews : service.reviews.slice(0, 4)).map((rev) => (
                 <div
                   key={rev.id}
                   className="p-4 rounded-xl bg-slate-50 border border-border space-y-2"
@@ -499,8 +603,31 @@ export default function ServiceDetailPage() {
                     </div>
                   </div>
                   <p className="text-xs text-text-secondary leading-relaxed pt-1">{rev.comment}</p>
+                  {Boolean("sellerResponse" in rev && rev.sellerResponse) ? (
+                    <div className="mt-2.5 p-3 rounded-lg bg-blue-50/60 border border-blue-100/80 text-xs space-y-1">
+                      <div className="flex items-center gap-1.5 text-blue-900 font-semibold text-[11px]">
+                        <span>Response from seller</span>
+                      </div>
+                      <p className="text-text-secondary text-[11px] leading-relaxed">
+                        {(rev as { sellerResponse?: { comment: string } }).sellerResponse?.comment}
+                      </p>
+                    </div>
+                  ) : null}
                 </div>
               ))}
+
+              {service.reviews.length > 4 && (
+                <button
+                  type="button"
+                  data-testid="show-more-reviews-btn"
+                  onClick={() => setShowAllReviews(!showAllReviews)}
+                  className="w-full py-2.5 rounded-xl border border-border text-xs font-semibold text-text-secondary hover:bg-slate-50 transition-colors cursor-pointer"
+                >
+                  {showAllReviews
+                    ? "Show fewer reviews"
+                    : `Show all ${service.reviews.length} reviews`}
+                </button>
+              )}
             </div>
           </div>
 
@@ -526,8 +653,15 @@ export default function ServiceDetailPage() {
         <div className="lg:col-span-1">
           <div className="sticky top-24 rounded-2xl border border-border bg-surface p-6 shadow-xl space-y-6">
             {/* Package Tabs */}
-            <div className="grid grid-cols-3 rounded-xl border border-border bg-slate-100 p-1">
-              {(["BASIC", "STANDARD", "PREMIUM"] as const).map((tier) => (
+            <div
+              className={cn(
+                "grid rounded-xl border border-border bg-slate-100 p-1",
+                availableTiers.length === 1 && "grid-cols-1",
+                availableTiers.length === 2 && "grid-cols-2",
+                availableTiers.length >= 3 && "grid-cols-3"
+              )}
+            >
+              {availableTiers.map((tier) => (
                 <button
                   key={tier}
                   data-testid={`package-tab-${tier.toLowerCase()}`}
@@ -567,9 +701,10 @@ export default function ServiceDetailPage() {
               <div className="flex items-center gap-2 text-text-secondary">
                 <RotateCcw className="h-4 w-4 text-blue-600" />
                 <span>
-                  {currentPackage.revisions >= 90
+                  {currentPackage.revisions === "unlimited" ||
+                  Number(currentPackage.revisions) >= 90
                     ? t("unlimitedRevisions")
-                    : t("revisionsCount", { count: currentPackage.revisions })}
+                    : t("revisionsCount", { count: Number(currentPackage.revisions) })}
                 </span>
               </div>
             </div>
@@ -590,47 +725,49 @@ export default function ServiceDetailPage() {
             </div>
 
             {/* Add-ons */}
-            <div className="space-y-2.5 pt-2 border-t border-border/50">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-text-muted block">
-                Upgrade Deliverables
-              </span>
-              <div className="space-y-2">
-                {SERVICE_ADDONS.map((addon) => {
-                  const isChecked = selectedAddons.includes(addon.id)
-                  return (
-                    <label
-                      key={addon.id}
-                      data-testid={`addon-item-${addon.id}`}
-                      className={cn(
-                        "flex items-start justify-between p-2.5 rounded-xl border text-xs cursor-pointer select-none transition-all",
-                        isChecked
-                          ? "border-blue-600 bg-blue-50/60 ring-1 ring-blue-600"
-                          : "border-border hover:bg-slate-50"
-                      )}
-                    >
-                      <div className="flex items-start gap-2.5">
-                        <input
-                          type="checkbox"
-                          data-testid={`addon-checkbox-${addon.id}`}
-                          checked={isChecked}
-                          onChange={() => toggleAddon(addon.id)}
-                          className="mt-0.5 rounded border-border text-blue-600 focus:ring-blue-500"
-                        />
-                        <div>
-                          <span className="font-semibold text-text-primary block">
-                            {addon.name}
-                          </span>
-                          <span className="text-[11px] text-text-muted">{addon.description}</span>
+            {availableAddons.length > 0 && (
+              <div className="space-y-2.5 pt-2 border-t border-border/50">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-text-muted block">
+                  Upgrade Deliverables
+                </span>
+                <div className="space-y-2">
+                  {availableAddons.map((addon: GigAddon) => {
+                    const isChecked = selectedAddons.includes(addon.id)
+                    return (
+                      <label
+                        key={addon.id}
+                        data-testid={`addon-item-${addon.id}`}
+                        className={cn(
+                          "flex items-start justify-between p-2.5 rounded-xl border text-xs cursor-pointer select-none transition-all",
+                          isChecked
+                            ? "border-blue-600 bg-blue-50/60 ring-1 ring-blue-600"
+                            : "border-border hover:bg-slate-50"
+                        )}
+                      >
+                        <div className="flex items-start gap-2.5">
+                          <input
+                            type="checkbox"
+                            data-testid={`addon-checkbox-${addon.id}`}
+                            checked={isChecked}
+                            onChange={() => toggleAddon(addon.id)}
+                            className="mt-0.5 rounded border-border text-blue-600 focus:ring-blue-500"
+                          />
+                          <div>
+                            <span className="font-semibold text-text-primary block">
+                              {addon.name}
+                            </span>
+                            <span className="text-[11px] text-text-muted">{addon.description}</span>
+                          </div>
                         </div>
-                      </div>
-                      <span className="font-semibold text-text-primary shrink-0 ml-2 font-mono">
-                        +${addon.price}
-                      </span>
-                    </label>
-                  )
-                })}
+                        <span className="font-semibold text-text-primary shrink-0 ml-2 font-mono">
+                          +${addon.price}
+                        </span>
+                      </label>
+                    )
+                  })}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Total Computed Price */}
             <div className="flex items-center justify-between pt-2 border-t border-border">
@@ -769,6 +906,7 @@ export default function ServiceDetailPage() {
                   <Button
                     variant="outline"
                     size="sm"
+                    disabled={isCheckingOut}
                     onClick={() => setOrderModalOpen(false)}
                     className="flex-1 text-xs cursor-pointer"
                   >
@@ -777,7 +915,14 @@ export default function ServiceDetailPage() {
                   <Button
                     size="sm"
                     data-testid="confirm-checkout-btn"
-                    onClick={() => setOrderSuccess(true)}
+                    isLoading={isCheckingOut}
+                    loadingText="Đang xử lý..."
+                    onClick={async () => {
+                      setIsCheckingOut(true)
+                      await new Promise((res) => setTimeout(res, 400))
+                      setIsCheckingOut(false)
+                      setOrderSuccess(true)
+                    }}
                     className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold cursor-pointer"
                   >
                     {t("confirmAndPay")}

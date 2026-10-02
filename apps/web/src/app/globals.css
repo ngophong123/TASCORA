@@ -391,9 +391,208 @@
   }
 }
 
+/* ==========================================================================
+   TASCORA Micro-Interactions & Loading Animations
+   ========================================================================== */
+
+/* Shimmer gradient animation */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
+  background-color: #f1f2f6;
+}
+
+.animate-shimmer::after {
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.65) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer 1.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  content: "";
+  pointer-events: none;
+}
+
+/* Success Checkmark micro-animation: scale(0.7) -> scale(1.1) -> scale(1) */
+@keyframes checkPop {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-check-pop {
+  animation: checkPop 320ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Error Micro-Shake: translateX(-3px) -> 3px -> -2px -> 0 (280ms) */
+@keyframes microShake {
+  0% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-3px);
+  }
+  45% {
+    transform: translateX(3px);
+  }
+  70% {
+    transform: translateX(-2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-micro-shake {
+  animation: microShake 280ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+/* Dropdown entrance: opacity 0->1, translateY(-4px)->0, scale(0.98)->1 */
+@keyframes dropdownIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-dropdown-in {
+  animation: dropdownIn 180ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Input Micro-Interactions */
+.input-premium {
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.input-premium:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.input-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+
+/* ==========================================================================
+   MOBILE & TOUCH TACTILE MICRO-INTERACTIONS
+   Provides instantaneous, snappy physical feedback when tapping on any
+   interactive element on mobile devices.
+   ========================================================================== */
+
+/* 1. Global Touch Optimization: remove default Android/iOS tap gray flash,
+      eliminate 300ms double-tap delay */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a,
+input,
+select,
+textarea,
+summary,
+[role="button"],
+[role="tab"],
+[tabindex="0"] {
+  touch-action: manipulation;
+}
+
+/* 2. Mobile Touch Screen Active Press Effect */
+@media (max-width: 768px), (hover: none) and (pointer: coarse) {
+  /* Buttons & Action Elements */
+  button:not(:disabled):active,
+  [role="button"]:not([aria-disabled="true"]):active,
+  [role="tab"]:active,
+  .btn:active,
+  .touch-feedback:active {
+    transform: scale(0.955);
+    opacity: 0.9;
+    transition: transform 70ms cubic-bezier(0.2, 0.8, 0.4, 1), opacity 70ms ease;
+  }
+
+  /* Navigation & Drawer Links */
+  header a:active,
+  nav a:active,
+  [data-testid="mobile-drawer"] a:active {
+    transform: scale(0.975);
+    background-color: rgba(37, 99, 235, 0.08);
+    transition: transform 70ms ease, background-color 70ms ease;
+  }
+
+  /* Prevent double scaling when Link wraps Button */
+  a:has(button):active {
+    transform: none !important;
+    background-color: transparent !important;
+  }
+
+  /* Prevent text jumping on paragraph inline links */
+  p a:active,
+  span a:active {
+    transform: none;
+    text-decoration: underline;
+  }
+
+  /* Cards, Gig Tiles, Bento & Categories */
+  [data-testid*="card"]:active,
+  [data-testid*="gig"]:active,
+  [data-testid*="category"]:active,
+  .card-touch:active,
+  article:active {
+    transform: scale(0.985);
+    filter: brightness(0.97);
+    transition: transform 70ms cubic-bezier(0.2, 0.8, 0.4, 1), filter 70ms ease;
+  }
+
+  /* Interactive Chips, Badges, Filter Pills */
+  [data-testid*="chip"]:active,
+  [data-testid*="pill"]:active,
+  [data-testid*="filter"]:active,
+  .badge-touch:active {
+    transform: scale(0.94);
+    opacity: 0.85;
+    transition: transform 60ms ease, opacity 60ms ease;
+  }
+}
+
 /* Reduced motion accessibility */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto !important;
+  }
+  .animate-shimmer::after {
+    display: none !important;
+  }
+  .animate-check-pop,
+  .animate-micro-shake,
+  .animate-dropdown-in {
+    animation: none !important;
+    transform: none !important;
   }
 }

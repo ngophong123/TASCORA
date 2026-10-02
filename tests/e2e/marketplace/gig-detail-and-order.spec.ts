@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test"
-import { ServicesPage } from "./pages/ServicesPage"
-import { GigDetailPage } from "./pages/GigDetailPage"
+import { ServicesPage } from "../pages/ServicesPage"
+import { GigDetailPage } from "../pages/GigDetailPage"
 
 test.describe("Gig Detail and Order Flows", () => {
   test("navigating from services listing to gig detail displays correct service info", async ({ page }) => {
@@ -8,10 +8,8 @@ test.describe("Gig Detail and Order Flows", () => {
     await servicesPage.goto()
 
     // Get the first gig card and click its link
-    const firstCard = servicesPage.gigCards.first()
-    await expect(firstCard).toBeVisible()
-
-    const cardLink = firstCard.getByTestId("gig-card-link")
+    const cardLink = page.getByTestId("gig-card-link").first()
+    await expect(cardLink).toBeVisible()
     await cardLink.click()
 
     // URL should now be on /services/[id]

@@ -41,6 +41,15 @@ jobs:
       - name: Run strict ESLint validation
         run: pnpm lint:strict
 
+      - name: Run fast Vitest unit tests
+        run: pnpm test:unit
+
+      - name: Run API contract integration tests
+        run: pnpm test:api
+
+      - name: Run Application security audit tests
+        run: pnpm test:security
+
   e2e-tests:
     name: Playwright E2E Tests
     needs: lint-and-typecheck

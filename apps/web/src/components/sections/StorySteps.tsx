@@ -1,14 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {
-  motion,
-  AnimatePresence,
-  useScroll,
-  useSpring,
-  useInView,
-  useReducedMotion,
-} from "framer-motion"
+import { motion, AnimatePresence, useScroll, useSpring, useInView } from "framer-motion"
 import { useTranslations } from "next-intl"
 import {
   Star,
@@ -133,7 +126,6 @@ export function StorySteps() {
   const [activePackage, setActivePackage] = React.useState<"basic" | "standard" | "premium">(
     "standard"
   )
-  const shouldReduceMotion = useReducedMotion()
 
   const stepsContainerRef = React.useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({
@@ -173,9 +165,9 @@ export function StorySteps() {
   ]
 
   const mockupAnimationVariants = {
-    initial: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 14, filter: "blur(4px)" },
-    animate: shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, filter: "blur(0px)" },
-    exit: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -14, filter: "blur(4px)" },
+    initial: { opacity: 0, y: 14, filter: "blur(4px)" },
+    animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+    exit: { opacity: 0, y: -14, filter: "blur(4px)" },
   }
 
   return (
@@ -270,7 +262,7 @@ export function StorySteps() {
 
               {/* Dynamic Content Switching with Framer Motion AnimatePresence */}
               <div className="relative flex-1 z-10">
-                <AnimatePresence mode="wait">
+                <AnimatePresence mode="wait" initial={false}>
                   {/* STEP A: SEARCH & FILTER UI */}
                   {activeStep === 0 && (
                     <motion.div

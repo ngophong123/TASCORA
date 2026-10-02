@@ -33,6 +33,7 @@ export function SearchBar() {
   const [category, setCategory] = React.useState("all")
   const [isFocused, setIsFocused] = React.useState(false)
   const [showDropdown, setShowDropdown] = React.useState(false)
+  const [isSearching, setIsSearching] = React.useState(false)
   const wrapperRef = React.useRef<HTMLDivElement>(null)
 
   const filteredSuggestions = React.useMemo(() => {
@@ -57,12 +58,18 @@ export function SearchBar() {
 
   const handleSubmit = (e?: React.FormEvent, customQuery?: string) => {
     if (e) e.preventDefault()
+    if (isSearching) return
+    setIsSearching(true)
     const targetQuery = customQuery !== undefined ? customQuery : query
     const params = new URLSearchParams()
     if (targetQuery.trim()) params.set("q", targetQuery.trim())
     if (category !== "all") params.set("category", category)
     setShowDropdown(false)
     router.push(`/services?${params.toString()}`)
+    // Reset loading state after transition initiates
+    setTimeout(() => {
+      setIsSearching(false)
+    }, 1200)
   }
 
   const handleSelectSuggestion = (text: string) => {
@@ -118,7 +125,12 @@ export function SearchBar() {
 
         {/* Search Input in Middle */}
         <div className="relative flex items-center flex-1 w-full px-3 gap-2.5">
-          <Search className="h-4 w-4 text-blue-600 shrink-0" />
+          <Search
+            className={cn(
+              "h-4 w-4 shrink-0 transition-all duration-200",
+              isSearching ? "text-blue-500 animate-spin" : "text-blue-600"
+            )}
+          />
           <input
             type="text"
             data-testid="hero-search-input"
@@ -135,7 +147,7 @@ export function SearchBar() {
             placeholder={t("placeholder")}
             className="w-full bg-transparent border-none outline-none text-sm sm:text-base text-[#0B0B14] placeholder:text-[#6B6B7B] py-1.5"
           />
-          {query && (
+          {query && !isSearching && (
             <button
               type="button"
               onClick={() => {
@@ -158,6 +170,8 @@ export function SearchBar() {
             size="md"
             variant="primary"
             pill
+            isLoading={isSearching}
+            loadingText={t("searching")}
             className="w-full sm:w-auto px-7 shadow-md"
           >
             <span>{t("searchButton")}</span>

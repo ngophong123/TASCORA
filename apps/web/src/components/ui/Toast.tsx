@@ -36,10 +36,11 @@ export function ToastContainer() {
       <AnimatePresence>
         <motion.div
           key={toast.id}
-          initial={{ opacity: 0, y: 16, scale: 0.95 }}
+          role="status"
+          initial={{ opacity: 0, y: 12, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 12, scale: 0.95 }}
-          transition={{ duration: 0.2 }}
+          exit={{ opacity: 0, y: 8, scale: 0.98 }}
+          transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
           className={cn(
             "pointer-events-auto flex items-start gap-3 p-4 rounded-2xl border shadow-xl max-w-sm w-full",
             borderColors[type]
@@ -50,9 +51,7 @@ export function ToastContainer() {
           <div className="flex-1 min-w-0">
             <h4 className="text-xs font-semibold text-[#0B0B14]">{toast.title}</h4>
             {toast.message && (
-              <p className="text-[11px] text-[#6B6B7B] mt-0.5 leading-relaxed">
-                {toast.message}
-              </p>
+              <p className="text-[11px] text-[#6B6B7B] mt-0.5 leading-relaxed">{toast.message}</p>
             )}
           </div>
 

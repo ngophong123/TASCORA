@@ -4,13 +4,7 @@ import * as React from "react"
 import { Link } from "@/i18n/routing"
 import { useTranslations } from "next-intl"
 import { motion, AnimatePresence } from "framer-motion"
-import {
-  CheckCircle2,
-  ArrowRight,
-  Briefcase,
-  Sparkles,
-  Users,
-} from "lucide-react"
+import { CheckCircle2, ArrowRight, Briefcase, Sparkles, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
@@ -26,8 +20,36 @@ export function AudienceTabs() {
   const t = useTranslations("audience")
   const [activeTab, setActiveTab] = React.useState<"clients" | "freelancers">("clients")
 
+  React.useEffect(() => {
+    const handleHash = () => {
+      if (window.location.hash === "#for-freelancers" || window.location.hash === "#freelancers") {
+        setActiveTab("freelancers")
+      } else if (window.location.hash === "#for-clients" || window.location.hash === "#clients") {
+        setActiveTab("clients")
+      }
+    }
+
+    const handleCustom = (e: Event) => {
+      const customEvent = e as CustomEvent<"clients" | "freelancers">
+      if (customEvent.detail === "freelancers" || customEvent.detail === "clients") {
+        setActiveTab(customEvent.detail)
+      }
+    }
+
+    handleHash()
+    window.addEventListener("hashchange", handleHash)
+    window.addEventListener("switch-audience-tab", handleCustom)
+    return () => {
+      window.removeEventListener("hashchange", handleHash)
+      window.removeEventListener("switch-audience-tab", handleCustom)
+    }
+  }, [])
+
   return (
-    <section className="py-16 sm:py-24 md:py-36 border-b border-[rgba(15,15,30,0.08)] bg-[#FAFAFC] relative overflow-hidden">
+    <section
+      id="for-freelancers"
+      className="py-16 sm:py-24 md:py-36 border-b border-[rgba(15,15,30,0.08)] bg-[#FAFAFC] relative overflow-hidden"
+    >
       {/* Background ambient radial lighting */}
       <div className="absolute top-1/2 -left-48 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-[160px] pointer-events-none" />
 
@@ -124,10 +146,7 @@ export function AudienceTabs() {
                     {t("clientsTitlePrefix")}{" "}
                     <span className="text-accent-gradient">{t("clientsTitleHighlight")}</span>
                   </motion.h3>
-                  <p className="text-base text-[#4B4B5C] leading-relaxed">
-                    {t("clientsDesc")}
-                  </p>
-
+                  <p className="text-base text-[#4B4B5C] leading-relaxed">{t("clientsDesc")}</p>
 
                   <div className="space-y-4 pt-4 border-t border-[rgba(15,15,30,0.08)]">
                     {[
@@ -150,7 +169,9 @@ export function AudienceTabs() {
                         </div>
                         <div>
                           <h4 className="text-sm font-semibold text-[#0B0B14]">{item.title}</h4>
-                          <p className="text-xs text-[#4B4B5C] mt-0.5 leading-relaxed">{item.desc}</p>
+                          <p className="text-xs text-[#4B4B5C] mt-0.5 leading-relaxed">
+                            {item.desc}
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -254,10 +275,7 @@ export function AudienceTabs() {
                     {t("freelancersTitlePrefix")}{" "}
                     <span className="text-accent-gradient">{t("freelancersTitleHighlight")}</span>
                   </motion.h3>
-                  <p className="text-base text-[#4B4B5C] leading-relaxed">
-                    {t("freelancersDesc")}
-                  </p>
-
+                  <p className="text-base text-[#4B4B5C] leading-relaxed">{t("freelancersDesc")}</p>
 
                   <div className="space-y-4 pt-4 border-t border-[rgba(15,15,30,0.08)]">
                     {[
@@ -280,7 +298,9 @@ export function AudienceTabs() {
                         </div>
                         <div>
                           <h4 className="text-sm font-semibold text-[#0B0B14]">{item.title}</h4>
-                          <p className="text-xs text-[#4B4B5C] mt-0.5 leading-relaxed">{item.desc}</p>
+                          <p className="text-xs text-[#4B4B5C] mt-0.5 leading-relaxed">
+                            {item.desc}
+                          </p>
                         </div>
                       </div>
                     ))}

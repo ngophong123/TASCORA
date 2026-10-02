@@ -32,7 +32,14 @@ export class GigDetailPage {
 
   async selectPackageTier(tier: "basic" | "standard" | "premium") {
     const tab = this.page.getByTestId(`package-tab-${tier}`)
+    await tab.scrollIntoViewIfNeeded()
     await tab.click()
+    const targetSubstring = tier === "basic" ? "250" : tier === "standard" ? "450" : "850"
+    try {
+      await expect(this.packagePrice).toContainText(targetSubstring, { timeout: 1500 })
+    } catch {
+      await tab.click()
+    }
   }
 
   async toggleAddon(addonId: string) {

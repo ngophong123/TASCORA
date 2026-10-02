@@ -167,12 +167,12 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="#how-it-works" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="/#how-it-works" className="hover:text-[#0B0B14] transition-colors">
                   {t("linkMilestoneEscrow")}
                 </Link>
               </li>
               <li>
-                <Link href="#enterprise" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="/#enterprise" className="hover:text-[#0B0B14] transition-colors">
                   {t("linkEnterpriseWorkspaces")}
                 </Link>
               </li>
@@ -204,12 +204,12 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="#how-it-works" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="/#how-it-works" className="hover:text-[#0B0B14] transition-colors">
                   {t("linkSellerHandbook")}
                 </Link>
               </li>
               <li>
-                <Link href="#how-it-works" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="/#how-it-works" className="hover:text-[#0B0B14] transition-colors">
                   {t("linkPayoutGuarantee")}
                 </Link>
               </li>
