@@ -4,6 +4,7 @@ import { OrderService } from '../order/order.service';
 import { balances, basis, entry, financialTx, requestKey } from './domain';
 import { cents, money } from './money';
 import { requireFinancialAdmin } from './refund.service';
+import { assertPaymentsEnabled } from '../../lib/payment-provider';
 
 // No real payout implementation exists. Only a configured, independently
 // validated adapter may supply authoritative external outcomes.
@@ -14,6 +15,7 @@ export interface PayoutProvider {
 export const unavailablePayoutProvider: PayoutProvider = { available: false, submit: async () => { throw new HttpError(503, 'Payout provider validation required'); } };
 export class PayoutService {
   static async request(sellerUserId: string, orderId: string, key: string) {
+    assertPaymentsEnabled();
     requestKey.parse(key);
     return financialTx(async tx => {
       const order = await OrderService.load(tx, orderId);
@@ -33,6 +35,7 @@ export class PayoutService {
   }
   static async process(adminId: string, payoutId: string, provider = unavailablePayoutProvider) {
     await requireFinancialAdmin(adminId);
+    assertPaymentsEnabled();
     if (!provider.available) throw new HttpError(503, 'Payout provider validation required');
     const reserved = await financialTx(async tx => {
       const found = await tx.payout.findUnique({ where: { id: payoutId }, include: { escrow: true } });

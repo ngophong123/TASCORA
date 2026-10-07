@@ -7,6 +7,7 @@ import { stripe, assertProviderConfigured } from '../payment/payment.service';
 import { OrderService } from '../order/order.service';
 import { basis, balances, entry, financialTx, requestKey, reasonSchema, type Tx } from './domain';
 import { cents, money, split } from './money';
+import { assertPaymentsEnabled } from '../../lib/payment-provider';
 
 const providerRefund = z.object({ id: z.string().min(1), object: z.literal('refund'), amount: z.number().int().positive().safe(), currency: z.literal('usd'), payment_intent: z.string().min(1), status: z.enum(['pending', 'requires_action', 'succeeded', 'failed', 'canceled']), metadata: z.object({ refundId: z.string().min(1), orderId: z.string().min(1) }) });
 export async function requireFinancialAdmin(userId: string) {
@@ -15,6 +16,7 @@ export async function requireFinancialAdmin(userId: string) {
 }
 export class RefundService {
   static async request(userId: string, orderId: string, amount: string | undefined, reason: string, key: string) {
+    assertPaymentsEnabled();
     requestKey.parse(key); reasonSchema.parse(reason); const minor = amount === undefined ? null : cents(amount);
     const user = await prisma.user.findUnique({ where: { id: userId }, select: { role: true, status: true } });
     const admin = user?.role === 'ADMIN' && user.status === 'ACTIVE';
@@ -22,6 +24,7 @@ export class RefundService {
     return financialTx(tx => this.reserve(tx, userId, orderId, minor, reason, key, admin), orderId);
   }
   static async reserve(tx: Tx, actor: string, orderId: string, minor: number | null, reason: string, key: string, admin: boolean) {
+    assertPaymentsEnabled();
     const order = await OrderService.load(tx, orderId);
     if (!admin && order.buyerId !== actor) throw new HttpError(404, 'Order not found');
     const prior = await tx.refund.findUnique({ where: { orderId_requestKey: { orderId, requestKey: key } } });
@@ -63,6 +66,7 @@ export class RefundService {
     return financialTx(tx => this.apply(tx, providerRefund.parse(provider)), reserved.refund.orderId);
   }
   static async apply(tx: Tx, provider: z.infer<typeof providerRefund>) {
+    assertPaymentsEnabled();
     const order = await OrderService.load(tx, provider.metadata.orderId);
     const refund = await tx.refund.findUnique({ where: { id: provider.metadata.refundId } });
     if (!refund || refund.orderId !== order.id) throw new HttpError(409, 'Refund record not available');
@@ -89,6 +93,7 @@ export class RefundService {
     return tx.refund.update({ where: { id: refund.id }, data: { status, stripeRefundId: provider.id } });
   }
   static async handleEvent(event: Stripe.Event) {
+    assertPaymentsEnabled();
     const parsed = providerRefund.safeParse(event.data.object);
     if (!parsed.success) throw new HttpError(400, 'Malformed refund event');
     const hash = crypto.createHash('sha256').update(JSON.stringify(event.data.object)).digest('hex');

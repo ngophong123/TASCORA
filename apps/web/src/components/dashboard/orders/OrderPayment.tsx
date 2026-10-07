@@ -1,8 +1,11 @@
 "use client"
 import { useEffect, useRef, useState } from "react"
-import { loadStripe, type Stripe, type StripeElements } from "@stripe/stripe-js"
+import { loadStripe } from "@stripe/stripe-js/pure"
+import type { Stripe, StripeElements } from "@stripe/stripe-js"
 import { requestData, jsonRequest } from "@/lib/marketplace"
+import { usePaymentCapability, paymentsUnavailableMessage } from "@/hooks/usePaymentCapability"
 export function OrderPayment({ orderId, refresh }: { orderId: string; refresh: () => void }) {
+  const payments = usePaymentCapability()
   const [secret, setSecret] = useState(""),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
@@ -12,7 +15,7 @@ export function OrderPayment({ orderId, refresh }: { orderId: string; refresh: (
     elements = useRef<StripeElements | null>(null)
   const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
   useEffect(() => {
-    if (!secret || !key) return
+    if (!payments.available || !secret || !key) return
     let active = true
     let destroy: (() => void) | undefined
     void loadStripe(key)
@@ -34,8 +37,9 @@ export function OrderPayment({ orderId, refresh }: { orderId: string; refresh: (
       provider.current = null
       elements.current = null
     }
-  }, [secret, key])
+  }, [secret, key, payments.available])
   async function initiate() {
+    if (!payments.available) return
     setBusy(true)
     setError("")
     try {
@@ -51,7 +55,7 @@ export function OrderPayment({ orderId, refresh }: { orderId: string; refresh: (
     }
   }
   async function confirm() {
-    if (!provider.current || !elements.current) return
+    if (!payments.available || !provider.current || !elements.current) return
     setBusy(true)
     setError("")
     try {
@@ -71,8 +75,8 @@ export function OrderPayment({ orderId, refresh }: { orderId: string; refresh: (
       setBusy(false)
     }
   }
-  if (!/^pk_(test|live)_/.test(key))
-    return <p>Online payment form unavailable until the provider publishable key is configured.</p>
+  if (!payments.available) return <p role="status">{payments.message}</p>
+  if (!/^pk_(test|live)_/.test(key)) return <p role="status">{paymentsUnavailableMessage}</p>
   return (
     <div className="space-y-2">
       <p role="status">{status}</p>

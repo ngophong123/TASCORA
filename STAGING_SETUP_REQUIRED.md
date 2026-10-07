@@ -1,5 +1,48 @@
 # TASCORA Staging Setup Required
 
+## Current operator setup: non-payment Render staging
+
+This section supersedes earlier resource-creation/Stripe-unblocking steps below. PostgreSQL resource prepared: YES (Neon). Redis resource prepared: YES (Layerbase). Private S3-compatible storage prepared: YES (Backblaze B2). SMTP sandbox prepared: YES (Mailtrap Email Sandbox). These are operator-reported RESOURCE PREPARED facts, not HOSTED VALIDATION results. Hosted deployment validation: NOT YET RUN. Stripe provider validation: BLOCKED. External payouts: DISABLED. No resource connection or credential inspection performed in this task.
+
+### Render settings verified against this monorepo
+
+- Root directory: repository root (leave the optional subdirectory field empty).
+- Branch: feat/seed-data. Local changes must first be reviewed and deliberately made available to Render by the operator; no push performed here.
+- Build: `pnpm install --frozen-lockfile --prod=false && pnpm db:generate && pnpm --filter @taskora/api build`.
+- Start: `pnpm --filter @taskora/api start`.
+- Use the pinned pnpm 12.4.1 and Node 22 runtime. Root db:generate runs Prisma client generation; API build runs TypeScript into apps/api/dist; start runs node dist/index.js from the API workspace. These commands do not run migrations or seeds. The exact hosted install/build/start sequence has NOT run on Render.
+- Health check: /health for genuine PostgreSQL/Redis dependency readiness. /health/live is available separately for process liveness. Disabled payments are reported unavailable, never healthy.
+- Keep one API instance; Socket.IO uses an in-memory adapter and rate limits are process-local. Set ENABLE_CRON=false for initial staging smoke; enable on exactly one owner only when isolated scheduler validation is separately authorized. In-process jobs require an awake API and do not establish scheduler SLA.
+- Disable automatic deployment and do not click deployment/create actions as part of this configuration-only task. Do not purchase compute or other services.
+
+The API binds Number(PORT) on 0.0.0.0, matching [Render port binding](https://render.com/docs/web-services#port-binding). Render terminates HTTPS before forwarding HTTP; Secure cookies remain determined by NODE_ENV=production. The existing Socket.IO server shares that HTTP listener; [Render supports WebSockets](https://render.com/docs/websocket), but upgrade/fallback/reconnect/cross-origin behavior is not yet exercised. Exact CORS origins are required. TRUST_PROXY must contain only a verified proxy IP/CIDR topology; no blanket true, wildcard or invented trusted subnet. Leave it unset until verified if necessary (client IP rate limits then see the proxy; address correctness remains a hosted validation item). See [Express proxy guidance](https://expressjs.com/en/guide/behind-proxies/).
+
+### Configure privately in the staging API secret manager
+
+WHAT: intentional disabled payment provider, existing isolated dependencies and exact HTTPS frontend origin.
+WHY: run genuine non-payment marketplace validation while Stripe is legitimately unavailable.
+WHERE: Render staging API runtime environment; public frontend settings separately at frontend build time.
+VARIABLES:
+
+- APP_ENV: staging; NODE_ENV: production; PAYMENTS_PROVIDER: disabled.
+- DATABASE_URL; REDIS_URL; JWT_ACCESS_SECRET: dedicated staging secrets only.
+- STORAGE_PROVIDER: s3; STORAGE_BUCKET; STORAGE_REGION; STORAGE_ENDPOINT; STORAGE_ACCESS_KEY; STORAGE_SECRET_KEY; STORAGE_FORCE_PATH_STYLE only if required by the S3-compatible provider. Use the operator's private bucket/restricted credentials and HTTPS endpoint; do not make the bucket public.
+- SMTP_HOST; SMTP_PORT; SMTP_SECURE; SMTP_USER; SMTP_PASSWORD; SMTP_FROM: Mailtrap Email Sandbox only, designated sandbox recipients.
+- WEB_URL; CORS_ORIGINS: exact staging frontend HTTPS origins. COOKIE_SAME_SITE: lax for same-site HTTPS, none for separate sites; browser third-party-cookie restrictions still need testing. Cookies stay Secure/HttpOnly/host-only/auth-path scoped.
+- TRUST_PROXY only after topology verification; ENABLE_CRON: false initially; PORT supplied by Render.
+- Leave STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET and NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY unset in disabled mode. No fake keys, accounts, unsigned webhooks or substituted success. If legitimate Stripe TEST access becomes available later, opt into stripe mode and configure legitimate TEST keys/signing secret; this remains blocked now.
+- PLATFORM_FEE_PERCENT and ORDER_AUTO_COMPLETE_HOURS are optional validated overrides; omit to preserve default 10% and 72 hours.
+
+Frontend build: NEXT_PUBLIC_API_URL and NEXT_PUBLIC_WEB_URL must be explicit staging HTTPS origins. No publishable key in disabled mode. Browser capability comes from the API; no frontend fake-payment flag. Rebuild when public origins change. Do not embed server secrets.
+
+VERIFY: confirm staging-only project/database/instance/bucket/mailbox identity and secret-manager configuration without sharing values. A later authorized hosted smoke must verify /health/live, genuine /health DB/Redis checks with payments disabled, capabilities, login/refresh/logout/CORS/socket, catalog/profile/favorites/chat/uploads and sandbox verification email. Disabled financial endpoints must return 503 and no financial state changes.
+
+WHAT CODEX SHOULD RUN AFTERWARD: only after separate explicit hosted staging/deployment authorization, recheck non-secret destination provenance, review staging-only migration status/plan before any database write, run Render build/start and non-payment hosted smoke plus fail-closed endpoint checks. Do not reset/drop/truncate/seed the Neon database. This task does not authorize database access or deployment. No Stripe validation can be claimed; no external payouts can be enabled.
+
+Exact next manual step: privately configure/review these Render environment/build/start settings and frontend origins, without deploying or disclosing credentials; confirm configuration completion. Then separately authorize isolated hosted deployment/validation and the database migration plan.
+
+## Earlier phase setup instructions (historical; current instructions above take precedence)
+
 Do not paste secrets into chat. Configure an isolated staging secret manager/process environment; leave the existing .env untouched. No production destination, database, Redis, bucket, Stripe account objects, cookie host or webhook endpoint may be reused. Do not purchase infrastructure automatically. Confirm setup completion and provide only non-secret resource/provenance information.
 
 ## Common runtime and provenance

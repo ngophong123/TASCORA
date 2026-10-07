@@ -4,12 +4,18 @@ import { PaymentService } from './payment.service';
 import Stripe from 'stripe';
 import { isProduction } from '../../lib/config';
 import { HttpError } from '../../lib/errors';
+import { assertPaymentsEnabled } from '../../lib/payment-provider';
 
 export const createIntent = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try { const result = await PaymentService.createPaymentIntent(req.user!.userId, req.body.orderId); res.json({ success: true, data: result }); }
   catch (error) { next(error); }
 };
 export const handleWebhook = async (req: Request, res: Response, _next: NextFunction) => {
+  try { assertPaymentsEnabled(); }
+  catch (error) {
+    if (error instanceof HttpError) { res.status(error.status).json({ success: false, error: { code: error.code, message: error.message } }); return; }
+    res.status(503).json({ success: false, error: { code: 'PAYMENT_PROVIDER_UNAVAILABLE', message: 'Payments are temporarily unavailable in this environment.' } }); return;
+  }
   let event: Stripe.Event;
   try {
     const signature = req.headers['stripe-signature'];

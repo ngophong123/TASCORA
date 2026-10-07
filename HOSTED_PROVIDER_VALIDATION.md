@@ -1,5 +1,34 @@
 # TASCORA Hosted Provider Validation
 
+## Current phase: explicit payments-disabled hosted staging preparation
+
+Date: 2026-10-07. This section supersedes earlier missing-resource/setup assumptions below; earlier evidence is retained as history.
+
+| Category                | Current evidence                                                                                                                                      |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| LOCAL VALIDATION        | Disabled-provider guards/configuration/UI implemented; regression results below                                                                       |
+| RESOURCE PREPARED       | Operator reports dedicated Neon PostgreSQL, Layerbase Redis, private Backblaze B2 S3-compatible storage and Mailtrap Email Sandbox prepared privately |
+| HOSTED VALIDATION       | NOT YET RUN; none of these resources accessed or validated in this task                                                                               |
+| PROVIDER VALIDATION     | Stripe BLOCKER; no legitimate Stripe account/TEST keys/webhook secret available; no alternative/fake provider success                                 |
+| FULL RELEASE VALIDATION | NOT READY; fresh full release matrix and genuine hosted/provider evidence remain                                                                      |
+| PRODUCTION VALIDATION   | NOT TESTED; no production access/deployment authorized                                                                                                |
+
+PostgreSQL resource prepared: YES. Redis resource prepared: YES. Private S3-compatible storage prepared: YES (dedicated tascora-staging bucket, operator-reported ca-east-006 region). SMTP sandbox prepared: YES. Stripe provider validation: BLOCKED. External payouts: DISABLED. Hosted deployment validation: NOT YET RUN. Resource existence is not validation.
+
+Explicit configuration: APP_ENV=staging + NODE_ENV=production + PAYMENTS_PROVIDER=disabled. There is no automatic disabled default: omitted provider remains stripe. Only explicit staging may disable payments; APP_ENV=production or an unlabelled production runtime rejects disabled startup. Stripe mode retains mandatory key/webhook configuration and staging TEST-only checks. Storage, database, Redis, JWT, SMTP, exact HTTPS origins and Secure cookie requirements remain enforced. Credentials were not read, printed, tested or configured; existing .env was not read or modified.
+
+Disabled mode returns HTTP 503 / PAYMENT_PROVIDER_UNAVAILABLE for intent creation/cancellation, payment/refund event processing, refund requests/processing, payout requests/processing, buyer refund resolution and provider reconciliation. Guards precede financial writes/provider calls; authentication/admin middleware remains in place. No simulated IDs, payment, refund, payout or funded order. Internal funded-order domain rules/ledger/default 10% fee/default 72 hours/locks/snapshots/bounds are retained. An ordinary order API may still create a server-priced PENDING record; that is not a payment and cannot become PAID through a user status mutation. The UI disables new checkout in unavailable mode.
+
+GET /api/v1/payments/capabilities exposes only provider/status/availability and explicitly false provider-validation/external-payout capability. GET /health performs real DB/Redis probes and includes payments.status=disabled, provider=disabled, available=false. It can return 200 for healthy non-payment staging dependencies; database/Redis probe failure returns generic 503. GET /health/live is process liveness. Stripe status configured, when enabled, is configuration only, never a provider-health PASS. These endpoints do not certify release readiness.
+
+Frontend fails closed while capability is loading/missing/disabled; browsing and non-payment controls remain usable. Checkout, payment form, refund/cancellation-provider actions, payout reservations and admin provider actions are gated, with professional unavailable copy. Stripe.js uses its pure loader and is not loaded in disabled mode. Backend stable unavailable errors map to the same public message.
+
+Local current-source results: initial unit/API/security run 158 PASS (21 files); final affected four-file rerun 49 PASS after strengthened buyer-resolution/webhook/Redis-failure coverage. Backend typecheck/lint/build PASS; frontend typecheck/strict lint/production build PASS (42 static pages plus dynamic routes), with reserved test public origins and no publishable key. Affected production-artifact browser tests 15 PASS, retries 0, exit 0: 12 disabled-provider checkout/payment/refund/seller/admin controls plus 3 existing revision/redelivery cases across Chromium/WebKit/Mobile Chrome. Owned preview helper stopped. No application test failures. No schema/migration edits, DB validation rerun, hosted connection, real provider call, deployment or push. Existing Next middleware/Edge runtime deprecation warnings remain.
+
+Render commands verified against root/workspace/API scripts; see STAGING_SETUP_REQUIRED.md. All existing hosted gate BLOCKER entries below remain unvalidated; resource preparation is not hosted PASS. Current Stripe blocker cannot be resolved by fake business/account information. Non-payment Render staging configuration may proceed privately after local checks; deployment and migration execution require a separate explicit operator action.
+
+## Earlier hosted-preparation evidence (historical)
+
 Date: 2026-10-07. Evidence categories: LOCAL VALIDATION; HOSTED STAGING VALIDATION; PROVIDER TEST-MODE VALIDATION; PRODUCTION VALIDATION. PASS applies only to the explicitly stated category and scope. Current hosted gates are BLOCKER (blocked), never inferred from local tests.
 
 Previous baseline: FINANCIAL SYSTEM READY FOR HOSTED PROVIDER VALIDATION; TASCORA NOT READY FOR DEPLOYMENT. Retained: 10% fee, 72-hour default, authoritative prices/snapshots, safe arithmetic, DB locks/idempotency/authorization/immutable ledger, refund bounds and internal payout accounting; 142 local tests, 32 DB tests on EACH of two clean disposable databases, both type/lint/build checks and affected Chromium/WebKit/mobile proofs. Previous genuine Stripe/payout gaps remain.

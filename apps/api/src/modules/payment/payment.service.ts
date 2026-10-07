@@ -5,10 +5,12 @@ import crypto from 'node:crypto';
 import { HttpError } from '../../lib/errors';
 import { basis, entry, financialTx, lockOrder } from '../financial/domain';
 import { cents, assertPaymentAmount } from '../financial/money';
+import { assertPaymentsEnabled, paymentProvider } from '../../lib/payment-provider';
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_unconfigured', { maxNetworkRetries: 2, timeout: 10000 });
+export const stripe = new Stripe((paymentProvider() === 'stripe' ? process.env.STRIPE_SECRET_KEY : undefined) || 'sk_test_unconfigured', { maxNetworkRetries: 2, timeout: 10000 });
 export const amountInCents = cents;
 export function assertProviderConfigured() {
+  assertPaymentsEnabled();
   if (!/^(sk|rk)_(test|live)_/.test(process.env.STRIPE_SECRET_KEY || '')) throw new HttpError(503, 'Payments are not configured');
   if ((process.env.NODE_ENV === 'test' || process.env.APP_ENV === 'staging') && !/^(sk|rk)_test_/.test(process.env.STRIPE_SECRET_KEY || '')) throw new HttpError(503, 'Test/staging mode requires test Stripe credentials');
 }
@@ -54,6 +56,7 @@ export class PaymentService {
   }
 
   static async handleWebhookEvent(event: Stripe.Event) {
+    assertPaymentsEnabled();
     if (!event.id || !event.data?.object || !event.type) throw new HttpError(400, 'Malformed webhook event');
     if (['refund.created', 'refund.updated', 'refund.failed'].includes(event.type)) {
       const { RefundService } = await import('../financial/refund.service');

@@ -4,7 +4,9 @@ import { useDashboard } from "@/context/DashboardContext"
 import { requestData, jsonRequest, uploadFile, downloadUpload } from "@/lib/marketplace"
 import { OrderPayment } from "./OrderPayment"
 import { ApiState } from "@/components/feedback/ApiState"
+import { usePaymentCapability } from "@/hooks/usePaymentCapability"
 export function OrderActions({ orderId }: { orderId: string }) {
+  const payments = usePaymentCapability()
   const { rawOrders, reloadOrders, role, account } = useDashboard()
   const order = rawOrders.find((o) => o.id === orderId)
   const [busy, setBusy] = useState(false),
@@ -55,7 +57,7 @@ export function OrderActions({ orderId }: { orderId: string }) {
             Cancel unpaid order
           </button>
           <button
-            disabled={busy}
+            disabled={busy || !payments.available}
             className="rounded border px-3 py-2"
             onClick={() => void action(`/api/v1/financial/orders/${orderId}/cancel-payment`, {})}
           >
@@ -193,7 +195,7 @@ export function OrderActions({ orderId }: { orderId: string }) {
             />
           </label>
           <button
-            disabled={busy || outstandingRefund || note.trim().length < 3}
+            disabled={busy || !payments.available || outstandingRefund || note.trim().length < 3}
             onClick={() =>
               void action(`/api/v1/financial/orders/${orderId}/refunds`, {
                 reason: note,
@@ -205,6 +207,7 @@ export function OrderActions({ orderId }: { orderId: string }) {
             Request full refund before work starts
           </button>
           <p>Administrator processing and provider confirmation are required.</p>
+          {!payments.available && <p role="status">{payments.message}</p>}
         </div>
       )}
       {order.dispute && (

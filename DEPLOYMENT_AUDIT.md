@@ -1,5 +1,30 @@
 # TASCORA Production Deployment Audit
 
+## Current handoff — payments-disabled staging preparation (2026-10-07)
+
+Supersedes earlier missing-resource/required-Stripe-for-staging assumptions; all previous local financial/DB/browser evidence retained. Branch feat/seed-data. Operator reports Neon PostgreSQL, Layerbase Redis, private Backblaze B2 and Mailtrap sandbox resources PREPARED. No hosted resource accessed/validated in this task. Stripe remains BLOCKED because legitimate account/TEST keys are unavailable; no fake account/credential/provider success. External payouts remain DISABLED.
+
+Implemented explicit APP_ENV=staging + NODE_ENV=production + PAYMENTS_PROVIDER=disabled. Disabled startup is rejected outside explicit staging; omitted provider defaults stripe, and staging stripe still requires TEST keys/signing secret. Non-payment production runtime checks (S3/JWT/SMTP/DB/Redis/exact HTTPS/cookies) retained; production Stripe format validation strengthened. No schema/migration change.
+
+Provider-dependent creation/cancellation/refund/event/reconciliation/payout and buyer refund-resolution paths fail closed with 503 / PAYMENT_PROVIDER_UNAVAILABLE before writes/provider calls. Public capabilities and /health expose disabled payments without secrets; /health performs DB/Redis probes, /health/live is separate process liveness. Disabled configuration does not claim provider health or release readiness. UI capability loading/unavailable state gates checkout/payment/refund/payout/admin actions; Stripe script uses pure loader and does not load when disabled. Existing funded-order accounting/domain/security protections retained; plain order creation remains only PENDING and cannot fake funding.
+
+Executed: initial full unit/API/security regression 158 PASS / 21 files; final affected 49 PASS / 4 files after final buyer-resolution/signed-disabled-webhook/Redis-failure strengthening. Both frontend/backend typecheck/lint/production builds PASS; frontend 42 static pages plus dynamic routes. Build used reserved test HTTPS public origins with no publishable key, no hosted secrets. Production artifact browser checks: 9 PASS disabled checkout/pending payment/refund scenarios + 6 PASS seller/admin disabled controls and existing revision/redelivery regression across Chromium/WebKit/Mobile Chrome; retries 0, exit 0. Total 15 PASS. No application/test failures. Existing Next middleware/Edge deprecation warnings retained. Firefox known runtime issue not rerun. No expensive DB rerun/full release matrix.
+
+Files: API new lib/payment-provider.ts and lib/health.ts; config.ts, server.ts, payment service/controller/route, refund/payout/dispute services. Frontend new usePaymentCapability hook; service checkout page, OrderPayment/OrderActions, FinancialAdminPanel, LiveEarnings, marketplace error mapping. Tests: new API provider-disabled and browser payments-disabled specs, production-config tests, live-fixtures capabilities. Templates and HOSTED_PROVIDER_VALIDATION/STAGING_SETUP_REQUIRED plus four handoff/audits updated. Unknown debug.log has tooling/runtime modifications and is preserved; it is not a deliberate source change for this task.
+
+Render root/workspace/API commands verified: repository root; build pnpm install --frozen-lockfile --prod=false && pnpm db:generate && pnpm --filter @taskora/api build; start pnpm --filter @taskora/api start. API uses PORT/0.0.0.0. Configure pinned pnpm/Node, exact staging HTTPS origins, Secure cookies and only verified TRUST_PROXY topology; one replica, ENABLE_CRON=false initially. Hosted TLS/cookies/CORS/socket/storage/mail/scheduler/recovery and migration state still require separately authorized genuine validation. Render-hosted install/build/start NOT RUN.
+
+Existing .env was neither read nor modified; no hosted credentials inspected, database accessed/mutated, migration/seed/reset, deployment, purchase, push or real payment/refund/payout. Task-owned preview helper stopped after tests; no owned task operation remains running.
+
+Exact next step: operator privately configures/reviews Render staging environment and frontend build origins per STAGING_SETUP_REQUIRED.md, without deploying or sending secrets. Confirm completion, then separately authorize staging deployment/hosted validation and a staging-only migration plan. Do not ask for Stripe keys as an unblock requirement for non-payment staging.
+
+FINANCIAL SYSTEM: LOCAL IMPLEMENTATION PRESERVED; DISABLED-PROVIDER MODE LOCALLY VALIDATED.
+HOSTED RESOURCE PREPARATION: PREPARED (OPERATOR-REPORTED), NOT HOSTED VALIDATED.
+STRIPE PROVIDER VALIDATION: BLOCKED.
+RENDER STAGING CONFIGURATION: READY TO CONFIGURE; NOT DEPLOYED.
+FULL RELEASE VALIDATION: NOT READY.
+TASCORA DEPLOYMENT READINESS: NOT READY FOR PRODUCTION.
+
 ## Hosted provider / staging phase — 2026-10-07
 
 Current phase completed safe repository/static/local preparation; no genuine hosted or Stripe TEST provider validation performed. See HOSTED_PROVIDER_VALIDATION.md and STAGING_SETUP_REQUIRED.md. All 19 hosted/provider gates BLOCKER: no positively identified isolated hosted resources/credentials/endpoints; existing .env targets not used. Docker Engine unavailable. Baseline financial implementation and 32 DB tests on each of two disposable DBs preserved, not repeated.

@@ -28,6 +28,7 @@ import { handleWebhook } from './modules/payment/payment.controller';
 import http from 'http';
 import { uploadRouter } from './modules/upload/upload.route';
 import { initSocket } from './lib/socket';
+import { healthRouter } from './lib/health';
 
 
 const logger = pino();
@@ -69,20 +70,9 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Healthcheck endpoint
-app.get('/health', async (req, res) => {
-  try {
-    // Check DB
-    await prisma.$queryRaw`SELECT 1`;
-    // Check Redis
-    await redis.ping();
-    
-    res.status(200).json({ status: 'ok', db: 'ok', redis: 'ok' });
-  } catch (error) {
-    logger.error('Healthcheck failed', error);
-    res.status(500).json({ status: 'error' });
-  }
-});
+// Dependency readiness remains genuine; intentional staging payment disablement
+// does not stop non-payment flows. Provider configuration is not provider health.
+app.use(healthRouter({ database: () => prisma.$queryRaw`SELECT 1`, redis: () => redis.ping() }));
 
 // Routes
 app.use('/api/v1/uploads', uploadRouter());

@@ -37,6 +37,7 @@ export const test = base.extend<{ marketplace: ReturnType<typeof createStore> }>
       const headers = { 'Access-Control-Allow-Origin': req.headers().origin || 'http://localhost:3000', 'Access-Control-Allow-Credentials': 'true', 'Access-Control-Allow-Headers': 'Authorization,Content-Type,X-CSRF-Protection', 'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS' };
       const send = (data: unknown, status = 200) => route.fulfill({ status, headers, json: { success: status < 400, data, ...(status >= 400 ? { error: 'Fixture request rejected' } : {}) } });
       if (method === 'OPTIONS') { await route.fulfill({ status: 204, headers }); return; }
+      if (path === '/payments/capabilities') { await send({ provider: 'stripe', status: 'configured', available: true, providerValidated: false, externalPayoutsAvailable: false }); return; }
       const actor = req.headers().authorization?.replace('Bearer e2e-', '') || 'buyer';
       const me = state.users.find(user => user.id === actor) || state.users[0]!;
       const body = ['POST','PUT'].includes(method) && req.headers()['content-type']?.includes('application/json') ? req.postDataJSON() || {} : {};

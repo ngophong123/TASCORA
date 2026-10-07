@@ -2,6 +2,7 @@
 
 import { requestData, jsonRequest, imageUrl, profileName, type Service } from "@/lib/marketplace"
 import { useApiResource } from "@/hooks/useApiResource"
+import { usePaymentCapability } from "@/hooks/usePaymentCapability"
 import { ApiState } from "@/components/feedback/ApiState"
 import * as React from "react"
 import { Link, useRouter } from "@/i18n/routing"
@@ -41,6 +42,7 @@ export default function ServiceDetailPage() {
   return <ServiceDetailContent key={resource.data.id} record={resource.data} />
 }
 function ServiceDetailContent({ record }: { record: Service }) {
+  const payments = usePaymentCapability()
   const t = useTranslations("serviceDetail")
   const router = useRouter()
   const service = React.useMemo(
@@ -122,12 +124,13 @@ function ServiceDetailContent({ record }: { record: Service }) {
     }
   }
   const handleStartOrder = () => {
+    if (!payments.available) return
     setActionError("")
     setOrderSuccess(false)
     setOrderModalOpen(true)
   }
   async function createOrder() {
-    if (isCheckingOut || orderSuccess) return
+    if (!payments.available || isCheckingOut || orderSuccess) return
     setIsCheckingOut(true)
     setActionError("")
     if (!checkout.current || checkout.current.packageId !== currentPackage.id)
@@ -581,8 +584,10 @@ function ServiceDetailContent({ record }: { record: Service }) {
 
             {/* Action Buttons */}
             <div className="space-y-3 pt-2">
+              {!payments.available && <p role="status">{payments.message}</p>}
               <Button
                 data-testid="continue-order-btn"
+                disabled={!payments.available}
                 onClick={handleStartOrder}
                 className="w-full rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600 hover:from-indigo-500 hover:via-violet-500 hover:to-blue-500 text-white py-3.5 font-semibold shadow-lg shadow-indigo-500/25 gap-2 transition-all cursor-pointer active:scale-[0.98]"
               >
@@ -646,6 +651,7 @@ function ServiceDetailContent({ record }: { record: Service }) {
           </Link>
           <Button
             onClick={handleStartOrder}
+            disabled={!payments.available}
             className="h-11 px-5 rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600 hover:from-indigo-500 hover:via-violet-500 hover:to-blue-500 text-white font-semibold shadow-lg shadow-indigo-500/20 text-xs sm:text-sm gap-2 active:scale-[0.98]"
           >
             <span>{t("continueOrder", { price: computedTotal })}</span>
@@ -752,7 +758,7 @@ function ServiceDetailContent({ record }: { record: Service }) {
                   <Button
                     variant="outline"
                     size="sm"
-                    disabled={isCheckingOut}
+                    disabled={isCheckingOut || !payments.available}
                     onClick={() => setOrderModalOpen(false)}
                     className="flex-1 text-xs cursor-pointer"
                   >

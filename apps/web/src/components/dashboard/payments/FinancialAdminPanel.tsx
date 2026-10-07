@@ -3,6 +3,7 @@ import { useState } from "react"
 import { useApiResource } from "@/hooks/useApiResource"
 import { requestData, jsonRequest } from "@/lib/marketplace"
 import { ApiState } from "@/components/feedback/ApiState"
+import { usePaymentCapability } from "@/hooks/usePaymentCapability"
 interface Queue {
   disputes: { id: string; orderId: string; description: string; status: string }[]
   refunds: { id: string; orderId: string; amount: string; status: string }[]
@@ -24,6 +25,7 @@ interface Evidence {
   conversation: { messages: { id: string; content: string }[] } | null
 }
 export function FinancialAdminPanel() {
+  const payments = usePaymentCapability()
   const queue = useApiResource<Queue>("/api/v1/financial/admin/queue")
   const [orderId, setOrderId] = useState(""),
     [reason, setReason] = useState(""),
@@ -60,6 +62,7 @@ export function FinancialAdminPanel() {
   return (
     <section className="rounded-xl border bg-white p-5 space-y-4">
       <h2 className="font-semibold">Financial review</h2>
+      {!payments.available && <p role="status">{payments.message}</p>}
       <ApiState loading={queue.loading} error={error || queue.error} retry={queue.reload} />
       <p>
         External payouts are disabled pending provider validation. Refund processing contacts the
@@ -121,7 +124,7 @@ export function FinancialAdminPanel() {
       </label>
       <div className="flex flex-wrap gap-2">
         <button
-          disabled={busy || !orderId || reason.trim().length < 3}
+          disabled={busy || !payments.available || !orderId || reason.trim().length < 3}
           onClick={() =>
             void execute(`/api/v1/financial/admin/orders/${orderId}/resolve`, {
               outcome: "BUYER",
@@ -158,7 +161,9 @@ export function FinancialAdminPanel() {
         />
       </label>
       <button
-        disabled={busy || !orderId || !refundAmount || reason.trim().length < 3}
+        disabled={
+          busy || !payments.available || !orderId || !refundAmount || reason.trim().length < 3
+        }
         onClick={() => {
           const key = refundKey || crypto.randomUUID()
           setRefundKey(key)
@@ -196,7 +201,7 @@ export function FinancialAdminPanel() {
             USD {refund.amount} · {refund.status}
           </p>
           <button
-            disabled={busy}
+            disabled={busy || !payments.available}
             onClick={() => void execute(`/api/v1/financial/admin/refunds/${refund.id}/process`)}
             className="rounded border p-2"
           >
@@ -211,7 +216,7 @@ export function FinancialAdminPanel() {
         </p>
       ))}
       <button
-        disabled={busy || !orderId}
+        disabled={busy || !payments.available || !orderId}
         onClick={() => {
           setBusy(true)
           void requestData(`/api/v1/financial/admin/orders/${orderId}/reconciliation`)

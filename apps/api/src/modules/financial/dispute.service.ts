@@ -4,6 +4,7 @@ import { OrderService } from '../order/order.service';
 import { basis, entry, financialTx, reasonSchema } from './domain';
 import { cents } from './money';
 import { RefundService, requireFinancialAdmin } from './refund.service';
+import { assertPaymentsEnabled } from '../../lib/payment-provider';
 
 export class DisputeService {
   static async open(buyerId: string, orderId: string, category: string, description: string) {
@@ -22,6 +23,7 @@ export class DisputeService {
   }
   static async resolve(adminId: string, orderId: string, outcome: 'BUYER' | 'SELLER', reason: string) {
     await requireFinancialAdmin(adminId); reasonSchema.parse(reason);
+    if (outcome === 'BUYER') assertPaymentsEnabled();
     return financialTx(async tx => {
       const order = await OrderService.load(tx, orderId);
       const dispute = order.dispute;

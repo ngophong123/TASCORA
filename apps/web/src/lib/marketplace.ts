@@ -97,9 +97,11 @@ export async function requestData<T>(path: string, options: RequestInit = {}): P
   if (!response.ok || !result?.success)
     throw new ApiError(
       response.status,
-      typeof result?.error === "string"
-        ? result.error
-        : result?.error?.message ||
+      result?.error?.code === "PAYMENT_PROVIDER_UNAVAILABLE"
+        ? "Payments are temporarily unavailable in this environment."
+        : typeof result?.error === "string"
+          ? result.error
+          : result?.error?.message ||
             (
               {
                 401: "Sign in to continue.",

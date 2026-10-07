@@ -3,6 +3,7 @@ import { useRef, useState } from "react"
 import { useApiResource } from "@/hooks/useApiResource"
 import { ApiState } from "@/components/feedback/ApiState"
 import { requestData, jsonRequest } from "@/lib/marketplace"
+import { usePaymentCapability } from "@/hooks/usePaymentCapability"
 export interface Earnings {
   currency: string
   pending: string
@@ -20,12 +21,14 @@ export interface Earnings {
   }[]
 }
 export function LiveEarnings() {
+  const payments = usePaymentCapability()
   const resource = useApiResource<Earnings>("/api/v1/financial/earnings")
   const keys = useRef<Record<string, string>>({})
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [status, setStatus] = useState("")
   async function request(orderId: string) {
+    if (!payments.available) return
     setBusy(true)
     setError("")
     try {
@@ -53,6 +56,7 @@ export function LiveEarnings() {
         retry={resource.reload}
       />
       <p role="status">{status}</p>
+      {!payments.available && <p role="status">{payments.message}</p>}
       {resource.data && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -73,7 +77,7 @@ export function LiveEarnings() {
               <div key={order.id} className="p-3 border rounded break-all">
                 <span>{order.id}</span>
                 <button
-                  disabled={busy}
+                  disabled={busy || !payments.available}
                   onClick={() => void request(order.id)}
                   className="rounded border p-2 ml-2"
                 >
