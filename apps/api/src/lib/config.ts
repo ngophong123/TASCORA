@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import { paymentProvider } from './payment-provider';
+import { parseTrustProxy } from './trust-proxy';
 
 // Staging uses production runtime security and never loads the developer's .env.
 if (process.env.APP_ENV && !['development', 'test', 'staging', 'production'].includes(process.env.APP_ENV)) throw new Error('Invalid APP_ENV');
@@ -12,6 +13,7 @@ if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test' && 
 }
 
 export const isProduction = process.env.NODE_ENV === 'production';
+export const trustProxy = parseTrustProxy(process.env.TRUST_PROXY);
 const provider = paymentProvider();
 if (provider === 'disabled' && process.env.APP_ENV !== 'staging') throw new Error('Disabled payments are allowed only in explicit staging');
 export const webUrl = process.env.WEB_URL || process.env.NEXT_PUBLIC_WEB_URL || (isProduction ? '' : 'http://localhost:3200');

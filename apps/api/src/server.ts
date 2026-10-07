@@ -1,4 +1,4 @@
-import { allowedOrigins, isProduction } from './lib/config';
+import { allowedOrigins, isProduction, trustProxy } from './lib/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -49,9 +49,7 @@ app.post('/api/v1/payments/webhook', express.raw({ type: 'application/json', lim
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-if (process.env.TRUST_PROXY) {
-  app.set('trust proxy', process.env.TRUST_PROXY);
-}
+app.set('trust proxy', trustProxy);
 
 app.use(
   cors({
