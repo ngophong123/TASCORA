@@ -19,7 +19,7 @@ export function ScrollProgressBar() {
       aria-hidden="true"
     >
       <motion.div
-        className="h-full w-full origin-left bg-gradient-to-r from-blue-600 via-sky-500 to-sky-400 shadow-[0_0_8px_rgba(59,130,246,0.6)]"
+        className="h-full w-full origin-left bg-gradient-to-r from-[#635BFF] via-[#DF1B41] via-[#FF8A00] to-[#FFC700] shadow-[0_0_10px_rgba(99,91,255,0.6)]"
         style={{ scaleX }}
       />
     </div>

@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test"
+import { test, expect } from "../support/live-fixtures"
 
 test.describe("Navigation, Localization and Anchors", () => {
   test("Vietnamese MegaMenu displays localized column headings and item descriptions on /vi", async ({

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { motion, useScroll, useTransform } from "framer-motion"
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion"
 import { cn } from "@/lib/utils"
 
 interface GradientBackgroundProps {
@@ -21,66 +21,63 @@ export function GradientBackground({
     offset: ["start start", "end start"],
   })
 
-  // Subtle scroll-driven drift and scale for the ambient mesh blobs
-  const blobsY = useTransform(scrollYProgress, [0, 1], [0, 80])
-  const blobsScale = useTransform(scrollYProgress, [0, 1], [1, 1.08])
+  const shouldReduceMotion = useReducedMotion()
 
-  // Subtle parallax for the Stripe-style diagonal band (moves slightly slower than scroll)
-  const bandY = useTransform(scrollYProgress, [0, 1], [0, 20])
+  // Subtle scroll-driven drift and scale for the ambient mesh blobs (disabled on reduced motion)
+  const blobsY = useTransform(scrollYProgress, [0, 1], [0, shouldReduceMotion ? 0 : 50])
+  const blobsScale = useTransform(scrollYProgress, [0, 1], [1, shouldReduceMotion ? 1 : 1.05])
 
   return (
-    <div
-      ref={containerRef}
-      className={cn("relative w-full overflow-hidden bg-white", className)}
-    >
-      {/* 1. Animated Radial Mesh Gradient Blobs with Scroll Response */}
+    <div ref={containerRef} className={cn("relative w-full overflow-hidden bg-white", className)}>
+      {/* 1. Subtle Ambient Lighting with Signature Stripe Multi-Color Flowing Mesh */}
       <motion.div
         style={{ y: blobsY, scale: blobsScale }}
         className="pointer-events-none absolute inset-0 overflow-hidden will-change-transform"
         aria-hidden="true"
       >
-        {/* Blob 1: Soft Light Blue (#93C5FD) - Top Left (Brand Dominant) */}
+        {/* Layer 1: Signature Multi-Hue Flowing Gradient Ribbon (Top Right) */}
         <div
-          className="absolute -top-[20%] -left-[10%] w-[600px] sm:w-[850px] h-[600px] sm:h-[850px] rounded-full bg-[#93C5FD]/45 blur-[110px] animate-blob-1 will-change-transform"
-        />
-
-        {/* Blob 2: Rich Violet Accent (#A855F7) - Center Right Edge for depth */}
-        <div
-          className="absolute top-[10%] -right-[15%] w-[550px] sm:w-[750px] h-[550px] sm:h-[750px] rounded-full bg-[#A855F7]/30 blur-[130px] animate-blob-2 will-change-transform"
-        />
-
-        {/* Blob 3: Vibrant Sky Blue (#38BDF8) - Bottom Center */}
-        <div
-          className="absolute top-[40%] left-[20%] w-[500px] sm:w-[700px] h-[500px] sm:h-[700px] rounded-full bg-[#38BDF8]/35 blur-[110px] animate-blob-3 will-change-transform"
-        />
-
-        {/* 2. Faint Dotted Grid (opacity ~5%) */}
-        <div
-          className="absolute inset-0 opacity-[0.05] pointer-events-none"
+          className={cn(
+            "absolute -top-[18%] right-[-15%] sm:right-[-5%] w-[650px] sm:w-[950px] h-[450px] sm:h-[600px] rounded-full blur-[130px] opacity-[0.24] pointer-events-none transform -rotate-12",
+            !shouldReduceMotion && "animate-ambient-mesh"
+          )}
           style={{
-            backgroundImage: `radial-gradient(rgba(15, 15, 30, 0.4) 1px, transparent 1px)`,
-            backgroundSize: "28px 28px",
+            background:
+              "linear-gradient(135deg, #4f46e5 0%, #7c3aed 28%, #ec4899 65%, #f97316 100%)",
           }}
         />
 
-        {/* 3. Smooth bottom fade to white */}
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none" />
+        {/* Layer 2: Soft Indigo/Sky Support Bloom (Top Left) */}
+        <div
+          className={cn(
+            "absolute -top-[25%] -left-[12%] w-[500px] sm:w-[750px] h-[400px] sm:h-[550px] rounded-full blur-[140px] opacity-[0.14] pointer-events-none",
+            !shouldReduceMotion && "animate-ambient-mesh-slow"
+          )}
+          style={{
+            background:
+              "radial-gradient(ellipse at center, rgba(37, 99, 235, 0.45) 0%, rgba(99, 91, 255, 0.25) 50%, transparent 75%)",
+          }}
+        />
+
+        {/* Layer 3: Architectural Dotted Grid (subtle 3% opacity) */}
+        <div
+          className="absolute inset-0 opacity-[0.03] pointer-events-none"
+          style={{
+            backgroundImage: `radial-gradient(rgba(15, 23, 42, 0.6) 1px, transparent 1px)`,
+            backgroundSize: "24px 24px",
+          }}
+        />
+
+        {/* Layer 4: Smooth bottom fade to white */}
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none" />
       </motion.div>
 
       {/* Main Content */}
       <div className="relative z-10">{children}</div>
 
-      {/* 4. Stripe-style diagonal skewed gradient separator band (Blue-Violet journey) */}
+      {/* 4. Subtle Hairline Bottom Divider */}
       {showDiagonalBand && (
-        <motion.div
-          style={{ y: bandY }}
-          className="relative w-full h-16 pointer-events-none overflow-hidden -mt-8 will-change-transform"
-          aria-hidden="true"
-        >
-          <div
-            className="absolute inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-blue-500/50 via-indigo-500/40 to-transparent transform -skew-y-1 shadow-[0_2px_12px_rgba(99,102,241,0.25)]"
-          />
-        </motion.div>
+        <div className="relative w-full h-px bg-[#E2E8F0] pointer-events-none" aria-hidden="true" />
       )}
     </div>
   )

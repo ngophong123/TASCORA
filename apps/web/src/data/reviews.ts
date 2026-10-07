@@ -2,7 +2,7 @@
  * TASCORA Generated Seed & Mock Data: Reviews & Ratings
  *
  * Auto-generated deterministically with seed 42 for QA & Playwright E2E tests.
- * Total Reviews: 214
+ * Total Reviews: 215
  * Regenerate with: npm run seed
  */
 
@@ -54,8 +54,7 @@ export const KNOWN_TEST_REVIEWS = {
       buyer: {
         id: "usr-client-2",
         name: "David Sterling",
-        avatar:
-          "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80",
+        avatar: "/images/avatars/david-sterling.jpg",
         country: "United States",
         company: "Apex Capital Ventures",
       },
@@ -80,8 +79,7 @@ export const KNOWN_TEST_REVIEWS = {
       buyer: {
         id: "usr-client-4",
         name: "Rachel Adams",
-        avatar:
-          "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&auto=format&fit=crop&q=80",
+        avatar: "/images/avatars/helena-rostova.jpg",
         country: "United States",
         company: "Horizon Health Technologies",
       },
@@ -104,30 +102,29 @@ export const KNOWN_TEST_REVIEWS = {
       helpfulCount: 16,
     },
     {
-      id: "rev-58",
+      id: "rev-62",
       gigId: "gig-1",
-      orderId: "ORD-8068",
+      orderId: "ORD-8073",
       sellerId: "f-1",
       buyer: {
-        id: "usr-18",
-        name: "Minh Nguyen",
-        avatar:
-          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+        id: "usr-17",
+        name: "Katrina Stehr",
+        avatar: "/images/avatars/arthur-pendelton.jpg",
         country: "United States",
         company: "Enterprise Partner",
       },
       rating: 5,
       comment:
-        "Superb execution. The RAG pipeline latency dropped by 65% and evaluation scores improved dramatically. Highly recommended.",
-      createdAt: "2026-02-22T16:00:00Z",
-      date: "1 month ago",
-      dateFormatted: "1 month ago",
+        "Flawless deliverable. Every edge case was accounted for, and the milestone handover was crystal clear.",
+      createdAt: "2026-03-20T16:00:00Z",
+      date: "4 days ago",
+      dateFormatted: "4 days ago",
       aspectRatings: {
         communication: 5,
         qualityOfDelivery: 5,
         valueForMoney: 5,
       },
-      helpfulCount: 2,
+      helpfulCount: 0,
     },
   ],
   edgeCritical: {
@@ -137,8 +134,7 @@ export const KNOWN_TEST_REVIEWS = {
     buyer: {
       id: "usr-client-2",
       name: "David Sterling",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       country: "United States",
       company: "Apex Capital Ventures",
     },
@@ -167,8 +163,7 @@ export const KNOWN_TEST_REVIEWS = {
     buyer: {
       id: "usr-client-1",
       name: "Marcus Thorne",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       country: "United Kingdom",
       company: "Fintech Corp Ltd",
     },
@@ -198,8 +193,7 @@ export const KNOWN_TEST_REVIEWS = {
     buyer: {
       id: "usr-client-3",
       name: "Emily Zhang",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       country: "Singapore",
       company: "Nexus AI Ventures",
     },
@@ -224,7 +218,7 @@ export const KNOWN_TEST_REVIEWS = {
 }
 
 /**
- * Complete set of all local seed reviews (214 total).
+ * Complete set of all local seed reviews (215 total).
  */
 export const MOCK_REVIEWS: Review[] = [
   {
@@ -235,8 +229,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-2",
       name: "David Sterling",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       country: "United States",
       company: "Apex Capital Ventures",
     },
@@ -261,8 +254,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-2",
       name: "David Sterling",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       country: "United States",
       company: "Apex Capital Ventures",
     },
@@ -287,8 +279,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-4",
       name: "Rachel Adams",
-      avatar:
-        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/helena-rostova.jpg",
       country: "United States",
       company: "Horizon Health Technologies",
     },
@@ -318,8 +309,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-4",
       name: "Rachel Adams",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/rachel-adams.jpg",
       country: "United States",
       company: "Horizon Health Technologies",
     },
@@ -340,12 +330,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-5",
     gigId: "gig-3",
     orderId: "ORD-8002",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-12",
       name: "Priscilla Mertz",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/aiko-tanaka.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -366,12 +355,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-6",
     gigId: "gig-4",
     orderId: "ORD-8003",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-15",
       name: "Robin Christiansen",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/lukas-weber.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -392,12 +380,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-7",
     gigId: "gig-5",
     orderId: "ORD-8004",
-    sellerId: "usr-edge-brandnew",
+    sellerId: "usr-edge-fast-response",
     buyer: {
       id: "usr-18",
       name: "Minh Nguyen",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mai-tran.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -414,7 +401,7 @@ export const MOCK_REVIEWS: Review[] = [
     },
     sellerResponse: {
       comment:
-        "Thank you Minh! It was a pleasure collaborating on this Web Development architecture.",
+        "Thank you Minh! It was a pleasure collaborating on this Programming & Tech architecture.",
       respondedAt: "2026-03-28T19:30:00Z",
     },
     helpfulCount: 14,
@@ -423,12 +410,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-8",
     gigId: "gig-7",
     orderId: "ORD-8006",
-    sellerId: "usr-edge-slow-response",
+    sellerId: "usr-16",
     buyer: {
       id: "usr-client-3",
       name: "Emily Zhang",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       country: "United States",
       company: "Nexus AI Ventures",
     },
@@ -449,12 +435,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-9",
     gigId: "gig-8",
     orderId: "ORD-8007",
-    sellerId: "usr-edge-suspended",
+    sellerId: "usr-26",
     buyer: {
       id: "usr-11",
       name: "Gregory Bayer",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/minh-nguyen.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -475,12 +460,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-10",
     gigId: "gig-9",
     orderId: "ORD-8008",
-    sellerId: "usr-11",
+    sellerId: "usr-34",
     buyer: {
       id: "usr-14",
       name: "Sandra Zieme-Luettgen",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -501,12 +485,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-11",
     gigId: "gig-10",
     orderId: "ORD-8009",
-    sellerId: "usr-12",
+    sellerId: "usr-14",
     buyer: {
       id: "usr-17",
       name: "Katrina Stehr",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/arthur-pendelton.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -523,7 +506,7 @@ export const MOCK_REVIEWS: Review[] = [
     },
     sellerResponse: {
       comment:
-        "Thank you Katrina! It was a pleasure collaborating on this Web Development architecture.",
+        "Thank you Katrina! It was a pleasure collaborating on this Programming & Tech architecture.",
       respondedAt: "2026-01-28T19:30:00Z",
     },
     helpfulCount: 12,
@@ -532,12 +515,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-12",
     gigId: "gig-12",
     orderId: "ORD-8011",
-    sellerId: "usr-14",
+    sellerId: "usr-35",
     buyer: {
       id: "usr-client-2",
       name: "David Sterling",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       country: "United States",
       company: "Apex Capital Ventures",
     },
@@ -558,12 +540,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-13",
     gigId: "gig-13",
     orderId: "ORD-8012",
-    sellerId: "usr-15",
+    sellerId: "usr-38",
     buyer: {
       id: "usr-client-5",
       name: "Liam O'Connor",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/liam-oconnor.jpg",
       country: "United States",
       company: "Nova Dynamics AI",
     },
@@ -584,12 +565,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-14",
     gigId: "gig-14",
     orderId: "ORD-8013",
-    sellerId: "usr-16",
+    sellerId: "f-1",
     buyer: {
       id: "usr-13",
       name: "River Johns",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/kwame-mensah.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -610,12 +590,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-15",
     gigId: "gig-15",
     orderId: "ORD-8014",
-    sellerId: "usr-17",
+    sellerId: "usr-32",
     buyer: {
       id: "usr-16",
       name: "David Herzog",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/maya-patel.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -632,7 +611,7 @@ export const MOCK_REVIEWS: Review[] = [
     },
     sellerResponse: {
       comment:
-        "Thank you David! It was a pleasure collaborating on this UI/UX & Product Design architecture.",
+        "Thank you David! It was a pleasure collaborating on this Graphics & Design architecture.",
       respondedAt: "2026-02-28T19:30:00Z",
     },
     helpfulCount: 10,
@@ -641,12 +620,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-16",
     gigId: "gig-17",
     orderId: "ORD-8016",
-    sellerId: "usr-19",
+    sellerId: "usr-24",
     buyer: {
       id: "usr-client-1",
       name: "Marcus Thorne",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       country: "United States",
       company: "Fintech Corp Ltd",
     },
@@ -667,12 +645,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-17",
     gigId: "gig-18",
     orderId: "ORD-8017",
-    sellerId: "usr-20",
+    sellerId: "usr-17",
     buyer: {
       id: "usr-client-4",
       name: "Rachel Adams",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/rachel-adams.jpg",
       country: "United States",
       company: "Horizon Health Technologies",
     },
@@ -693,12 +670,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-18",
     gigId: "gig-19",
     orderId: "ORD-8018",
-    sellerId: "usr-21",
+    sellerId: "usr-22",
     buyer: {
       id: "usr-12",
       name: "Priscilla Mertz",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/aiko-tanaka.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -719,12 +695,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-19",
     gigId: "gig-20",
     orderId: "ORD-8019",
-    sellerId: "usr-22",
+    sellerId: "usr-32",
     buyer: {
       id: "usr-15",
       name: "Robin Christiansen",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/lukas-weber.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -741,7 +716,7 @@ export const MOCK_REVIEWS: Review[] = [
     },
     sellerResponse: {
       comment:
-        "Thank you Robin! It was a pleasure collaborating on this UI/UX & Product Design architecture.",
+        "Thank you Robin! It was a pleasure collaborating on this Graphics & Design architecture.",
       respondedAt: "2026-03-23T19:30:00Z",
     },
     helpfulCount: 8,
@@ -750,12 +725,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-20",
     gigId: "gig-22",
     orderId: "ORD-8021",
-    sellerId: "usr-24",
+    sellerId: "usr-14",
     buyer: {
       id: "f-1",
       name: "Alexandre Moreau",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -776,12 +750,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-21",
     gigId: "gig-23",
     orderId: "ORD-8022",
-    sellerId: "usr-25",
+    sellerId: "usr-17",
     buyer: {
       id: "usr-client-3",
       name: "Emily Zhang",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       country: "United States",
       company: "Nexus AI Ventures",
     },
@@ -802,12 +775,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-22",
     gigId: "gig-24",
     orderId: "ORD-8023",
-    sellerId: "usr-26",
+    sellerId: "usr-22",
     buyer: {
       id: "usr-11",
       name: "Gregory Bayer",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/minh-nguyen.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -828,12 +800,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-23",
     gigId: "gig-25",
     orderId: "ORD-8024",
-    sellerId: "usr-27",
+    sellerId: "f-3",
     buyer: {
       id: "usr-14",
       name: "Sandra Zieme-Luettgen",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -859,12 +830,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-24",
     gigId: "gig-27",
     orderId: "ORD-8026",
-    sellerId: "usr-29",
+    sellerId: "usr-23",
     buyer: {
       id: "usr-20",
       name: "Mitchell Ankunding",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/fatima-almansoor.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -885,12 +855,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-25",
     gigId: "gig-28",
     orderId: "ORD-8027",
-    sellerId: "usr-30",
+    sellerId: "usr-33",
     buyer: {
       id: "usr-client-2",
       name: "David Sterling",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       country: "United States",
       company: "Apex Capital Ventures",
     },
@@ -911,12 +880,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-26",
     gigId: "gig-29",
     orderId: "ORD-8028",
-    sellerId: "usr-31",
+    sellerId: "f-3",
     buyer: {
       id: "usr-client-5",
       name: "Liam O'Connor",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/liam-oconnor.jpg",
       country: "United States",
       company: "Nova Dynamics AI",
     },
@@ -937,12 +905,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-27",
     gigId: "gig-30",
     orderId: "ORD-8029",
-    sellerId: "usr-32",
+    sellerId: "usr-13",
     buyer: {
       id: "usr-13",
       name: "River Johns",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/kwame-mensah.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -968,12 +935,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-28",
     gigId: "gig-32",
     orderId: "ORD-8031",
-    sellerId: "usr-34",
+    sellerId: "usr-33",
     buyer: {
       id: "usr-19",
       name: "Sherwood Barrows",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mateo-rossi.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -994,12 +960,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-29",
     gigId: "gig-33",
     orderId: "ORD-8032",
-    sellerId: "usr-35",
+    sellerId: "f-3",
     buyer: {
       id: "usr-client-1",
       name: "Marcus Thorne",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       country: "United States",
       company: "Fintech Corp Ltd",
     },
@@ -1020,12 +985,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-30",
     gigId: "gig-34",
     orderId: "ORD-8033",
-    sellerId: "usr-36",
+    sellerId: "usr-13",
     buyer: {
       id: "usr-client-4",
       name: "Rachel Adams",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/rachel-adams.jpg",
       country: "United States",
       company: "Horizon Health Technologies",
     },
@@ -1046,12 +1010,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-31",
     gigId: "gig-35",
     orderId: "ORD-8034",
-    sellerId: "usr-37",
+    sellerId: "usr-23",
     buyer: {
       id: "usr-12",
       name: "Priscilla Mertz",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/aiko-tanaka.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -1077,12 +1040,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-32",
     gigId: "gig-37",
     orderId: "ORD-8036",
-    sellerId: "usr-39",
+    sellerId: "f-4",
     buyer: {
       id: "usr-18",
       name: "Minh Nguyen",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mai-tran.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -1103,12 +1065,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-33",
     gigId: "gig-38",
     orderId: "ORD-8037",
-    sellerId: "usr-40",
+    sellerId: "usr-19",
     buyer: {
       id: "f-1",
       name: "Alexandre Moreau",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -1129,12 +1090,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-34",
     gigId: "gig-39",
     orderId: "ORD-8038",
-    sellerId: "usr-41",
+    sellerId: "usr-34",
     buyer: {
       id: "usr-client-3",
       name: "Emily Zhang",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       country: "United States",
       company: "Nexus AI Ventures",
     },
@@ -1155,12 +1115,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-35",
     gigId: "gig-40",
     orderId: "ORD-8039",
-    sellerId: "f-1",
+    sellerId: "usr-39",
     buyer: {
       id: "usr-11",
       name: "Gregory Bayer",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/minh-nguyen.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -1177,7 +1136,7 @@ export const MOCK_REVIEWS: Review[] = [
     },
     sellerResponse: {
       comment:
-        "Thank you Gregory! It was a pleasure collaborating on this Technical SEO & Growth architecture.",
+        "Thank you Gregory! It was a pleasure collaborating on this Digital Marketing architecture.",
       respondedAt: "2026-01-16T19:30:00Z",
     },
     helpfulCount: 0,
@@ -1186,12 +1145,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-36",
     gigId: "gig-42",
     orderId: "ORD-8041",
-    sellerId: "f-3",
+    sellerId: "usr-19",
     buyer: {
       id: "usr-17",
       name: "Katrina Stehr",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/arthur-pendelton.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -1212,12 +1170,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-37",
     gigId: "gig-43",
     orderId: "ORD-8042",
-    sellerId: "f-4",
+    sellerId: "usr-18",
     buyer: {
       id: "usr-20",
       name: "Mitchell Ankunding",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/fatima-almansoor.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -1238,12 +1195,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-38",
     gigId: "gig-44",
     orderId: "ORD-8043",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-26",
     buyer: {
       id: "usr-client-2",
       name: "David Sterling",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       country: "United States",
       company: "Apex Capital Ventures",
     },
@@ -1264,12 +1220,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-39",
     gigId: "gig-45",
     orderId: "ORD-8044",
-    sellerId: "usr-edge-brandnew",
+    sellerId: "usr-38",
     buyer: {
       id: "usr-client-5",
       name: "Liam O'Connor",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/liam-oconnor.jpg",
       country: "United States",
       company: "Nova Dynamics AI",
     },
@@ -1286,7 +1241,7 @@ export const MOCK_REVIEWS: Review[] = [
     },
     sellerResponse: {
       comment:
-        "Thank you Liam! It was a pleasure collaborating on this Technical Writing architecture.",
+        "Thank you Liam! It was a pleasure collaborating on this Writing & Translation architecture.",
       respondedAt: "2026-02-12T19:30:00Z",
     },
     helpfulCount: 16,
@@ -1295,12 +1250,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-40",
     gigId: "gig-47",
     orderId: "ORD-8046",
-    sellerId: "usr-edge-slow-response",
+    sellerId: "usr-28",
     buyer: {
       id: "usr-16",
       name: "David Herzog",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/maya-patel.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -1321,12 +1275,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-41",
     gigId: "gig-48",
     orderId: "ORD-8047",
-    sellerId: "usr-edge-suspended",
+    sellerId: "usr-38",
     buyer: {
       id: "usr-19",
       name: "Sherwood Barrows",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mateo-rossi.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -1347,12 +1300,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-42",
     gigId: "gig-49",
     orderId: "ORD-8048",
-    sellerId: "usr-11",
+    sellerId: "usr-18",
     buyer: {
       id: "usr-client-1",
       name: "Marcus Thorne",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       country: "United States",
       company: "Fintech Corp Ltd",
     },
@@ -1373,12 +1325,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-43",
     gigId: "gig-50",
     orderId: "ORD-8049",
-    sellerId: "usr-12",
+    sellerId: "usr-32",
     buyer: {
       id: "usr-client-4",
       name: "Rachel Adams",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/rachel-adams.jpg",
       country: "United States",
       company: "Horizon Health Technologies",
     },
@@ -1395,7 +1346,7 @@ export const MOCK_REVIEWS: Review[] = [
     },
     sellerResponse: {
       comment:
-        "Thank you Rachel! It was a pleasure collaborating on this UI/UX & Product Design architecture.",
+        "Thank you Rachel! It was a pleasure collaborating on this Graphics & Design architecture.",
       respondedAt: "2026-03-15T19:30:00Z",
     },
     helpfulCount: 14,
@@ -1408,8 +1359,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-15",
       name: "Robin Christiansen",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/lukas-weber.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -1430,12 +1380,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-45",
     gigId: "gig-53",
     orderId: "ORD-8052",
-    sellerId: "usr-15",
+    sellerId: "usr-17",
     buyer: {
       id: "usr-18",
       name: "Minh Nguyen",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mai-tran.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -1456,12 +1405,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-46",
     gigId: "gig-54",
     orderId: "ORD-8053",
-    sellerId: "usr-16",
+    sellerId: "usr-22",
     buyer: {
       id: "f-1",
       name: "Alexandre Moreau",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -1482,12 +1430,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-47",
     gigId: "gig-55",
     orderId: "ORD-8054",
-    sellerId: "usr-17",
+    sellerId: "usr-14",
     buyer: {
       id: "usr-client-3",
       name: "Emily Zhang",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       country: "United States",
       company: "Nexus AI Ventures",
     },
@@ -1504,7 +1451,7 @@ export const MOCK_REVIEWS: Review[] = [
     },
     sellerResponse: {
       comment:
-        "Thank you Emily! It was a pleasure collaborating on this Web Development architecture.",
+        "Thank you Emily! It was a pleasure collaborating on this Programming & Tech architecture.",
       respondedAt: "2026-01-09T19:30:00Z",
     },
     helpfulCount: 12,
@@ -1513,12 +1460,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-48",
     gigId: "gig-57",
     orderId: "ORD-8056",
-    sellerId: "usr-19",
+    sellerId: "usr-34",
     buyer: {
       id: "usr-14",
       name: "Sandra Zieme-Luettgen",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -1539,12 +1485,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-49",
     gigId: "gig-58",
     orderId: "ORD-8057",
-    sellerId: "usr-20",
+    sellerId: "usr-14",
     buyer: {
       id: "usr-17",
       name: "Katrina Stehr",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/arthur-pendelton.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -1565,12 +1510,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-50",
     gigId: "gig-59",
     orderId: "ORD-8058",
-    sellerId: "usr-21",
+    sellerId: "usr-15",
     buyer: {
       id: "usr-20",
       name: "Mitchell Ankunding",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/fatima-almansoor.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -1591,12 +1535,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-51",
     gigId: "gig-60",
     orderId: "ORD-8059",
-    sellerId: "usr-22",
+    sellerId: "usr-23",
     buyer: {
       id: "usr-client-2",
       name: "David Sterling",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       country: "United States",
       company: "Apex Capital Ventures",
     },
@@ -1613,7 +1556,7 @@ export const MOCK_REVIEWS: Review[] = [
     },
     sellerResponse: {
       comment:
-        "Thank you David! It was a pleasure collaborating on this Web Development architecture.",
+        "Thank you David! It was a pleasure collaborating on this Programming & Tech architecture.",
       respondedAt: "2026-02-28T19:30:00Z",
     },
     helpfulCount: 10,
@@ -1622,12 +1565,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-52",
     gigId: "gig-62",
     orderId: "ORD-8061",
-    sellerId: "usr-24",
+    sellerId: "usr-13",
     buyer: {
       id: "usr-13",
       name: "River Johns",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/kwame-mensah.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -1648,12 +1590,11 @@ export const MOCK_REVIEWS: Review[] = [
     id: "rev-53",
     gigId: "gig-63",
     orderId: "ORD-8062",
-    sellerId: "usr-25",
+    sellerId: "usr-38",
     buyer: {
       id: "usr-16",
       name: "David Herzog",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/maya-patel.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -1672,23 +1613,22 @@ export const MOCK_REVIEWS: Review[] = [
   },
   {
     id: "rev-54",
-    gigId: "gig-edge-single-tier",
+    gigId: "gig-64",
     orderId: "ORD-8063",
-    sellerId: "f-1",
+    sellerId: "usr-11",
     buyer: {
       id: "usr-19",
       name: "Sherwood Barrows",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mateo-rossi.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
     rating: 5,
     comment:
       "One of the best specialists I have hired on any platform. The architecture handles high concurrency effortlessly and was documented thoroughly.",
-    createdAt: "2026-01-21T16:00:00Z",
-    date: "2 months ago",
-    dateFormatted: "2 months ago",
+    createdAt: "2026-01-26T16:00:00Z",
+    date: "1 month ago",
+    dateFormatted: "1 month ago",
     aspectRatings: {
       communication: 5,
       qualityOfDelivery: 5,
@@ -1698,14 +1638,13 @@ export const MOCK_REVIEWS: Review[] = [
   },
   {
     id: "rev-55",
-    gigId: "gig-edge-overflow-title",
+    gigId: "gig-65",
     orderId: "ORD-8064",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-12",
     buyer: {
       id: "usr-client-1",
       name: "Marcus Thorne",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       country: "United States",
       company: "Fintech Corp Ltd",
     },
@@ -1722,28 +1661,27 @@ export const MOCK_REVIEWS: Review[] = [
     },
     sellerResponse: {
       comment:
-        "Thank you Marcus! It was a pleasure collaborating on this Web Development architecture.",
+        "Thank you Marcus! It was a pleasure collaborating on this Business & Consulting architecture.",
       respondedAt: "2026-03-28T19:30:00Z",
     },
     helpfulCount: 8,
   },
   {
     id: "rev-56",
-    gigId: "gig-edge-draft",
+    gigId: "gig-67",
     orderId: "ORD-8066",
-    sellerId: "f-3",
+    sellerId: "usr-23",
     buyer: {
       id: "usr-12",
       name: "Priscilla Mertz",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/aiko-tanaka.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
     rating: 5,
     comment:
       "Exceeded all expectations. The code review and documentation made onboarding our internal engineers seamless.",
-    createdAt: "2026-01-12T16:00:00Z",
+    createdAt: "2026-01-16T16:00:00Z",
     date: "2 months ago",
     dateFormatted: "2 months ago",
     aspectRatings: {
@@ -1755,21 +1693,20 @@ export const MOCK_REVIEWS: Review[] = [
   },
   {
     id: "rev-57",
-    gigId: "gig-edge-max-addons",
+    gigId: "gig-68",
     orderId: "ORD-8067",
-    sellerId: "f-1",
+    sellerId: "usr-24",
     buyer: {
       id: "usr-15",
       name: "Robin Christiansen",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/lukas-weber.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
     rating: 5,
     comment:
       "Outstanding collaboration from day one. Deep domain expertise, prompt communication, and zero friction during milestone sign-offs.",
-    createdAt: "2026-03-17T16:00:00Z",
+    createdAt: "2026-03-16T16:00:00Z",
     date: "1 week ago",
     dateFormatted: "1 week ago",
     aspectRatings: {
@@ -1781,21 +1718,20 @@ export const MOCK_REVIEWS: Review[] = [
   },
   {
     id: "rev-58",
-    gigId: "gig-1",
+    gigId: "gig-edge-single-tier",
     orderId: "ORD-8068",
     sellerId: "f-1",
     buyer: {
       id: "usr-18",
       name: "Minh Nguyen",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mai-tran.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
     rating: 5,
     comment:
       "Superb execution. The RAG pipeline latency dropped by 65% and evaluation scores improved dramatically. Highly recommended.",
-    createdAt: "2026-02-22T16:00:00Z",
+    createdAt: "2026-02-19T16:00:00Z",
     date: "1 month ago",
     dateFormatted: "1 month ago",
     aspectRatings: {
@@ -1807,14 +1743,13 @@ export const MOCK_REVIEWS: Review[] = [
   },
   {
     id: "rev-59",
-    gigId: "gig-2",
+    gigId: "gig-edge-overflow-title",
     orderId: "ORD-8069",
-    sellerId: "f-3",
+    sellerId: "usr-edge-overflow",
     buyer: {
       id: "f-1",
       name: "Alexandre Moreau",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
@@ -1831,28 +1766,27 @@ export const MOCK_REVIEWS: Review[] = [
     },
     sellerResponse: {
       comment:
-        "Thank you Alexandre! It was a pleasure collaborating on this Web Development architecture.",
+        "Thank you Alexandre! It was a pleasure collaborating on this Programming & Tech architecture.",
       respondedAt: "2026-01-28T19:30:00Z",
     },
     helpfulCount: 6,
   },
   {
     id: "rev-60",
-    gigId: "gig-4",
+    gigId: "gig-edge-draft",
     orderId: "ORD-8071",
-    sellerId: "usr-edge-overflow",
+    sellerId: "f-3",
     buyer: {
       id: "usr-11",
       name: "Gregory Bayer",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/minh-nguyen.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
     rating: 5,
     comment:
       "Exceptional engineering quality. Delivered ahead of schedule with clean modular code and extensive test coverage. Will definitely work together again.",
-    createdAt: "2026-02-13T16:00:00Z",
+    createdAt: "2026-02-10T16:00:00Z",
     date: "1 month ago",
     dateFormatted: "1 month ago",
     aspectRatings: {
@@ -1864,21 +1798,20 @@ export const MOCK_REVIEWS: Review[] = [
   },
   {
     id: "rev-61",
-    gigId: "gig-5",
+    gigId: "gig-edge-max-addons",
     orderId: "ORD-8072",
-    sellerId: "usr-edge-brandnew",
+    sellerId: "f-1",
     buyer: {
       id: "usr-14",
       name: "Sandra Zieme-Luettgen",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
     rating: 5,
     comment:
       "World-class craft. The design tokens and components were structured with extreme attention to detail and easily integrated into our codebase.",
-    createdAt: "2026-01-16T16:00:00Z",
+    createdAt: "2026-01-15T16:00:00Z",
     date: "2 months ago",
     dateFormatted: "2 months ago",
     aspectRatings: {
@@ -1890,23 +1823,22 @@ export const MOCK_REVIEWS: Review[] = [
   },
   {
     id: "rev-62",
-    gigId: "gig-6",
+    gigId: "gig-1",
     orderId: "ORD-8073",
-    sellerId: "usr-edge-fast-response",
+    sellerId: "f-1",
     buyer: {
       id: "usr-17",
       name: "Katrina Stehr",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/arthur-pendelton.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
     rating: 5,
     comment:
       "Flawless deliverable. Every edge case was accounted for, and the milestone handover was crystal clear.",
-    createdAt: "2026-03-24T16:00:00Z",
-    date: "1 day ago",
-    dateFormatted: "1 day ago",
+    createdAt: "2026-03-20T16:00:00Z",
+    date: "4 days ago",
+    dateFormatted: "4 days ago",
     aspectRatings: {
       communication: 5,
       qualityOfDelivery: 5,
@@ -1916,21 +1848,20 @@ export const MOCK_REVIEWS: Review[] = [
   },
   {
     id: "rev-63",
-    gigId: "gig-7",
+    gigId: "gig-2",
     orderId: "ORD-8074",
-    sellerId: "usr-edge-slow-response",
+    sellerId: "f-3",
     buyer: {
       id: "usr-20",
       name: "Mitchell Ankunding",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/fatima-almansoor.jpg",
       country: "United States",
       company: "Enterprise Partner",
     },
     rating: 5,
     comment:
       "Fast, reliable, and exceptionally talented. TASCORA escrow milestone system made the entire transaction smooth and secure.",
-    createdAt: "2026-02-28T16:00:00Z",
+    createdAt: "2026-02-27T16:00:00Z",
     date: "3 weeks ago",
     dateFormatted: "3 weeks ago",
     aspectRatings: {
@@ -1940,8 +1871,8 @@ export const MOCK_REVIEWS: Review[] = [
     },
     sellerResponse: {
       comment:
-        "Thank you Mitchell! It was a pleasure collaborating on this Web Development architecture.",
-      respondedAt: "2026-02-28T19:30:00Z",
+        "Thank you Mitchell! It was a pleasure collaborating on this Programming & Tech architecture.",
+      respondedAt: "2026-02-27T19:30:00Z",
     },
     helpfulCount: 4,
   },
@@ -1952,8 +1883,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-2",
       name: "David Sterling",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       country: "United States",
       company: "Apex Capital Ventures",
     },
@@ -1982,8 +1912,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-1",
       name: "Marcus Thorne",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       country: "United Kingdom",
       company: "Fintech Corp Ltd",
     },
@@ -2013,8 +1942,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-3",
       name: "Emily Zhang",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       country: "Singapore",
       company: "Nexus AI Ventures",
     },
@@ -2043,8 +1971,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-3",
       name: "Emily Zhang",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       country: "Singapore",
       company: "Nexus AI Ventures",
     },
@@ -2068,8 +1995,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-15",
       name: "Robin Christiansen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/lukas-weber.jpg",
       country: "Japan",
     },
     rating: 5,
@@ -2092,8 +2018,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-1",
       name: "Marcus Thorne",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       country: "United Kingdom",
       company: "Fintech Corp Ltd",
     },
@@ -2117,8 +2042,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-13",
       name: "River Johns",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/kwame-mensah.jpg",
       country: "Germany",
     },
     rating: 5,
@@ -2141,8 +2065,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-20",
       name: "Mitchell Ankunding",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/fatima-almansoor.jpg",
       country: "Australia",
     },
     rating: 5,
@@ -2165,8 +2088,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-11",
       name: "Gregory Bayer",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/minh-nguyen.jpg",
       country: "United States",
     },
     rating: 5,
@@ -2189,8 +2111,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-18",
       name: "Minh Nguyen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mai-tran.jpg",
       country: "Vietnam",
     },
     rating: 5,
@@ -2213,8 +2134,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-4",
       name: "Rachel Adams",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/rachel-adams.jpg",
       country: "Canada",
       company: "Horizon Health Technologies",
     },
@@ -2238,8 +2158,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-16",
       name: "David Herzog",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/maya-patel.jpg",
       country: "Canada",
     },
     rating: 5,
@@ -2262,8 +2181,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-2",
       name: "David Sterling",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       country: "United States",
       company: "Apex Capital Ventures",
     },
@@ -2287,8 +2205,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-14",
       name: "Sandra Zieme-Luettgen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       country: "United Kingdom",
     },
     rating: 5,
@@ -2311,8 +2228,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "f-1",
       name: "Alexandre Moreau",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       country: "France",
     },
     rating: 5,
@@ -2335,8 +2251,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-12",
       name: "Priscilla Mertz",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/aiko-tanaka.jpg",
       country: "Vietnam",
     },
     rating: 5,
@@ -2359,8 +2274,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-19",
       name: "Sherwood Barrows",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mateo-rossi.jpg",
       country: "France",
     },
     rating: 5,
@@ -2383,8 +2297,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-5",
       name: "Liam O'Connor",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/liam-oconnor.jpg",
       country: "Ireland",
       company: "Nova Dynamics AI",
     },
@@ -2408,8 +2321,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-17",
       name: "Katrina Stehr",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/arthur-pendelton.jpg",
       country: "Singapore",
     },
     rating: 4,
@@ -2432,8 +2344,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-3",
       name: "Emily Zhang",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       country: "Singapore",
       company: "Nexus AI Ventures",
     },
@@ -2457,8 +2368,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-15",
       name: "Robin Christiansen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/lukas-weber.jpg",
       country: "Japan",
     },
     rating: 5,
@@ -2481,8 +2391,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-1",
       name: "Marcus Thorne",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       country: "United Kingdom",
       company: "Fintech Corp Ltd",
     },
@@ -2506,8 +2415,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-13",
       name: "River Johns",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/kwame-mensah.jpg",
       country: "Germany",
     },
     rating: 5,
@@ -2530,8 +2438,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-20",
       name: "Mitchell Ankunding",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/fatima-almansoor.jpg",
       country: "Australia",
     },
     rating: 5,
@@ -2554,8 +2461,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-11",
       name: "Gregory Bayer",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/minh-nguyen.jpg",
       country: "United States",
     },
     rating: 5,
@@ -2578,8 +2484,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-18",
       name: "Minh Nguyen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mai-tran.jpg",
       country: "Vietnam",
     },
     rating: 5,
@@ -2602,8 +2507,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-4",
       name: "Rachel Adams",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/rachel-adams.jpg",
       country: "Canada",
       company: "Horizon Health Technologies",
     },
@@ -2627,8 +2531,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-16",
       name: "David Herzog",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/maya-patel.jpg",
       country: "Canada",
     },
     rating: 5,
@@ -2651,8 +2554,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-2",
       name: "David Sterling",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       country: "United States",
       company: "Apex Capital Ventures",
     },
@@ -2676,8 +2578,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-14",
       name: "Sandra Zieme-Luettgen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       country: "United Kingdom",
     },
     rating: 5,
@@ -2700,8 +2601,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "f-1",
       name: "Alexandre Moreau",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       country: "France",
     },
     rating: 5,
@@ -2724,8 +2624,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-12",
       name: "Priscilla Mertz",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/aiko-tanaka.jpg",
       country: "Vietnam",
     },
     rating: 5,
@@ -2748,8 +2647,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-19",
       name: "Sherwood Barrows",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mateo-rossi.jpg",
       country: "France",
     },
     rating: 5,
@@ -2772,8 +2670,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-5",
       name: "Liam O'Connor",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/liam-oconnor.jpg",
       country: "Ireland",
       company: "Nova Dynamics AI",
     },
@@ -2797,8 +2694,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-17",
       name: "Katrina Stehr",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/arthur-pendelton.jpg",
       country: "Singapore",
     },
     rating: 5,
@@ -2821,8 +2717,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-3",
       name: "Emily Zhang",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       country: "Singapore",
       company: "Nexus AI Ventures",
     },
@@ -2846,8 +2741,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-15",
       name: "Robin Christiansen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/lukas-weber.jpg",
       country: "Japan",
     },
     rating: 5,
@@ -2870,8 +2764,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-1",
       name: "Marcus Thorne",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       country: "United Kingdom",
       company: "Fintech Corp Ltd",
     },
@@ -2895,8 +2788,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-13",
       name: "River Johns",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/kwame-mensah.jpg",
       country: "Germany",
     },
     rating: 5,
@@ -2919,8 +2811,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-3",
       name: "Emily Zhang",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       country: "Singapore",
       company: "Nexus AI Ventures",
     },
@@ -2944,8 +2835,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-15",
       name: "Robin Christiansen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/lukas-weber.jpg",
       country: "Japan",
     },
     rating: 5,
@@ -2968,8 +2858,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-1",
       name: "Marcus Thorne",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       country: "United Kingdom",
       company: "Fintech Corp Ltd",
     },
@@ -2993,8 +2882,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-13",
       name: "River Johns",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/kwame-mensah.jpg",
       country: "Germany",
     },
     rating: 5,
@@ -3017,8 +2905,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-20",
       name: "Mitchell Ankunding",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/fatima-almansoor.jpg",
       country: "Australia",
     },
     rating: 5,
@@ -3041,8 +2928,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-11",
       name: "Gregory Bayer",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/minh-nguyen.jpg",
       country: "United States",
     },
     rating: 5,
@@ -3065,8 +2951,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-18",
       name: "Minh Nguyen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mai-tran.jpg",
       country: "Vietnam",
     },
     rating: 5,
@@ -3089,8 +2974,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-4",
       name: "Rachel Adams",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/rachel-adams.jpg",
       country: "Canada",
       company: "Horizon Health Technologies",
     },
@@ -3114,8 +2998,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-16",
       name: "David Herzog",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/maya-patel.jpg",
       country: "Canada",
     },
     rating: 5,
@@ -3138,8 +3021,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-2",
       name: "David Sterling",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       country: "United States",
       company: "Apex Capital Ventures",
     },
@@ -3163,8 +3045,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-14",
       name: "Sandra Zieme-Luettgen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       country: "United Kingdom",
     },
     rating: 5,
@@ -3187,8 +3068,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "f-1",
       name: "Alexandre Moreau",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       country: "France",
     },
     rating: 5,
@@ -3211,8 +3091,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-12",
       name: "Priscilla Mertz",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/aiko-tanaka.jpg",
       country: "Vietnam",
     },
     rating: 5,
@@ -3235,8 +3114,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-19",
       name: "Sherwood Barrows",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mateo-rossi.jpg",
       country: "France",
     },
     rating: 5,
@@ -3259,8 +3137,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-5",
       name: "Liam O'Connor",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/liam-oconnor.jpg",
       country: "Ireland",
       company: "Nova Dynamics AI",
     },
@@ -3284,8 +3161,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-17",
       name: "Katrina Stehr",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/arthur-pendelton.jpg",
       country: "Singapore",
     },
     rating: 4,
@@ -3308,8 +3184,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-3",
       name: "Emily Zhang",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       country: "Singapore",
       company: "Nexus AI Ventures",
     },
@@ -3333,8 +3208,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-15",
       name: "Robin Christiansen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/lukas-weber.jpg",
       country: "Japan",
     },
     rating: 5,
@@ -3357,8 +3231,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-1",
       name: "Marcus Thorne",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       country: "United Kingdom",
       company: "Fintech Corp Ltd",
     },
@@ -3382,8 +3255,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-13",
       name: "River Johns",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/kwame-mensah.jpg",
       country: "Germany",
     },
     rating: 5,
@@ -3406,8 +3278,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-20",
       name: "Mitchell Ankunding",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/fatima-almansoor.jpg",
       country: "Australia",
     },
     rating: 5,
@@ -3430,8 +3301,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-11",
       name: "Gregory Bayer",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/minh-nguyen.jpg",
       country: "United States",
     },
     rating: 5,
@@ -3454,8 +3324,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-18",
       name: "Minh Nguyen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mai-tran.jpg",
       country: "Vietnam",
     },
     rating: 5,
@@ -3478,8 +3347,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-4",
       name: "Rachel Adams",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/rachel-adams.jpg",
       country: "Canada",
       company: "Horizon Health Technologies",
     },
@@ -3503,8 +3371,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-16",
       name: "David Herzog",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/maya-patel.jpg",
       country: "Canada",
     },
     rating: 5,
@@ -3527,8 +3394,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-2",
       name: "David Sterling",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       country: "United States",
       company: "Apex Capital Ventures",
     },
@@ -3552,8 +3418,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-14",
       name: "Sandra Zieme-Luettgen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       country: "United Kingdom",
     },
     rating: 5,
@@ -3576,8 +3441,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "f-1",
       name: "Alexandre Moreau",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       country: "France",
     },
     rating: 5,
@@ -3600,8 +3464,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-12",
       name: "Priscilla Mertz",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/aiko-tanaka.jpg",
       country: "Vietnam",
     },
     rating: 5,
@@ -3624,8 +3487,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-19",
       name: "Sherwood Barrows",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mateo-rossi.jpg",
       country: "France",
     },
     rating: 5,
@@ -3648,8 +3510,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-5",
       name: "Liam O'Connor",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/liam-oconnor.jpg",
       country: "Ireland",
       company: "Nova Dynamics AI",
     },
@@ -3673,8 +3534,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-17",
       name: "Katrina Stehr",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/arthur-pendelton.jpg",
       country: "Singapore",
     },
     rating: 5,
@@ -3697,8 +3557,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-3",
       name: "Emily Zhang",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       country: "Singapore",
       company: "Nexus AI Ventures",
     },
@@ -3722,8 +3581,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-15",
       name: "Robin Christiansen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/lukas-weber.jpg",
       country: "Japan",
     },
     rating: 5,
@@ -3746,8 +3604,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-client-1",
       name: "Marcus Thorne",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       country: "United Kingdom",
       company: "Fintech Corp Ltd",
     },
@@ -3771,8 +3628,7 @@ export const MOCK_REVIEWS: Review[] = [
     buyer: {
       id: "usr-13",
       name: "River Johns",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/kwame-mensah.jpg",
       country: "Germany",
     },
     rating: 5,
@@ -3791,12 +3647,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-136",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-client-3",
       name: "Emily Zhang",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       country: "Singapore",
       company: "Nexus AI Ventures",
     },
@@ -3816,12 +3671,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-137",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-15",
       name: "Robin Christiansen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/lukas-weber.jpg",
       country: "Japan",
     },
     rating: 5,
@@ -3840,12 +3694,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-138",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-client-1",
       name: "Marcus Thorne",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       country: "United Kingdom",
       company: "Fintech Corp Ltd",
     },
@@ -3865,12 +3718,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-139",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-13",
       name: "River Johns",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/kwame-mensah.jpg",
       country: "Germany",
     },
     rating: 5,
@@ -3889,12 +3741,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-140",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-20",
       name: "Mitchell Ankunding",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/fatima-almansoor.jpg",
       country: "Australia",
     },
     rating: 5,
@@ -3913,12 +3764,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-141",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-11",
       name: "Gregory Bayer",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/minh-nguyen.jpg",
       country: "United States",
     },
     rating: 5,
@@ -3937,12 +3787,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-142",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-18",
       name: "Minh Nguyen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mai-tran.jpg",
       country: "Vietnam",
     },
     rating: 5,
@@ -3961,12 +3810,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-143",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-client-4",
       name: "Rachel Adams",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/rachel-adams.jpg",
       country: "Canada",
       company: "Horizon Health Technologies",
     },
@@ -3986,12 +3834,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-144",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-16",
       name: "David Herzog",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/maya-patel.jpg",
       country: "Canada",
     },
     rating: 5,
@@ -4010,12 +3857,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-145",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-client-2",
       name: "David Sterling",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       country: "United States",
       company: "Apex Capital Ventures",
     },
@@ -4035,12 +3881,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-146",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-14",
       name: "Sandra Zieme-Luettgen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       country: "United Kingdom",
     },
     rating: 5,
@@ -4059,12 +3904,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-147",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "f-1",
       name: "Alexandre Moreau",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       country: "France",
     },
     rating: 5,
@@ -4083,12 +3927,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-148",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-12",
       name: "Priscilla Mertz",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/aiko-tanaka.jpg",
       country: "Vietnam",
     },
     rating: 5,
@@ -4107,12 +3950,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-149",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-19",
       name: "Sherwood Barrows",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mateo-rossi.jpg",
       country: "France",
     },
     rating: 5,
@@ -4131,12 +3973,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-150",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-client-5",
       name: "Liam O'Connor",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/liam-oconnor.jpg",
       country: "Ireland",
       company: "Nova Dynamics AI",
     },
@@ -4156,12 +3997,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-151",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-17",
       name: "Katrina Stehr",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/arthur-pendelton.jpg",
       country: "Singapore",
     },
     rating: 4,
@@ -4180,12 +4020,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-152",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-client-3",
       name: "Emily Zhang",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       country: "Singapore",
       company: "Nexus AI Ventures",
     },
@@ -4205,12 +4044,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-153",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-15",
       name: "Robin Christiansen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/lukas-weber.jpg",
       country: "Japan",
     },
     rating: 5,
@@ -4229,12 +4067,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-154",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-client-1",
       name: "Marcus Thorne",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       country: "United Kingdom",
       company: "Fintech Corp Ltd",
     },
@@ -4254,12 +4091,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-155",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-13",
       name: "River Johns",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/kwame-mensah.jpg",
       country: "Germany",
     },
     rating: 5,
@@ -4278,12 +4114,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-156",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-20",
       name: "Mitchell Ankunding",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/fatima-almansoor.jpg",
       country: "Australia",
     },
     rating: 5,
@@ -4302,12 +4137,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-157",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-11",
       name: "Gregory Bayer",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/minh-nguyen.jpg",
       country: "United States",
     },
     rating: 5,
@@ -4326,12 +4160,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-158",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-18",
       name: "Minh Nguyen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mai-tran.jpg",
       country: "Vietnam",
     },
     rating: 5,
@@ -4350,12 +4183,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-159",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-client-4",
       name: "Rachel Adams",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/rachel-adams.jpg",
       country: "Canada",
       company: "Horizon Health Technologies",
     },
@@ -4375,12 +4207,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-160",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-16",
       name: "David Herzog",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/maya-patel.jpg",
       country: "Canada",
     },
     rating: 5,
@@ -4399,12 +4230,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-161",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-client-2",
       name: "David Sterling",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       country: "United States",
       company: "Apex Capital Ventures",
     },
@@ -4424,12 +4254,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-162",
     gigId: "gig-3",
-    sellerId: "f-4",
+    sellerId: "usr-21",
     buyer: {
       id: "usr-14",
       name: "Sandra Zieme-Luettgen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       country: "United Kingdom",
     },
     rating: 5,
@@ -4448,12 +4277,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-163",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-client-3",
       name: "Emily Zhang",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       country: "Singapore",
       company: "Nexus AI Ventures",
     },
@@ -4473,12 +4301,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-164",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-15",
       name: "Robin Christiansen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/lukas-weber.jpg",
       country: "Japan",
     },
     rating: 5,
@@ -4497,12 +4324,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-165",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-client-1",
       name: "Marcus Thorne",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       country: "United Kingdom",
       company: "Fintech Corp Ltd",
     },
@@ -4522,12 +4348,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-166",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-13",
       name: "River Johns",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/kwame-mensah.jpg",
       country: "Germany",
     },
     rating: 5,
@@ -4546,12 +4371,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-167",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-20",
       name: "Mitchell Ankunding",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/fatima-almansoor.jpg",
       country: "Australia",
     },
     rating: 5,
@@ -4570,12 +4394,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-168",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-11",
       name: "Gregory Bayer",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/minh-nguyen.jpg",
       country: "United States",
     },
     rating: 5,
@@ -4594,12 +4417,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-169",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-18",
       name: "Minh Nguyen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mai-tran.jpg",
       country: "Vietnam",
     },
     rating: 5,
@@ -4618,12 +4440,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-170",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-client-4",
       name: "Rachel Adams",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/rachel-adams.jpg",
       country: "Canada",
       company: "Horizon Health Technologies",
     },
@@ -4643,12 +4464,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-171",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-16",
       name: "David Herzog",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/maya-patel.jpg",
       country: "Canada",
     },
     rating: 5,
@@ -4667,12 +4487,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-172",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-client-2",
       name: "David Sterling",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       country: "United States",
       company: "Apex Capital Ventures",
     },
@@ -4692,12 +4511,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-173",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-14",
       name: "Sandra Zieme-Luettgen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       country: "United Kingdom",
     },
     rating: 5,
@@ -4716,12 +4534,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-174",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "f-1",
       name: "Alexandre Moreau",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       country: "France",
     },
     rating: 5,
@@ -4740,12 +4557,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-175",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-12",
       name: "Priscilla Mertz",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/aiko-tanaka.jpg",
       country: "Vietnam",
     },
     rating: 5,
@@ -4764,12 +4580,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-176",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-19",
       name: "Sherwood Barrows",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mateo-rossi.jpg",
       country: "France",
     },
     rating: 5,
@@ -4788,12 +4603,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-177",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-client-5",
       name: "Liam O'Connor",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/liam-oconnor.jpg",
       country: "Ireland",
       company: "Nova Dynamics AI",
     },
@@ -4813,12 +4627,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-178",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-17",
       name: "Katrina Stehr",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/arthur-pendelton.jpg",
       country: "Singapore",
     },
     rating: 4,
@@ -4837,12 +4650,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-179",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-client-3",
       name: "Emily Zhang",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       country: "Singapore",
       company: "Nexus AI Ventures",
     },
@@ -4862,12 +4674,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-180",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-15",
       name: "Robin Christiansen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/lukas-weber.jpg",
       country: "Japan",
     },
     rating: 5,
@@ -4886,12 +4697,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-181",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-client-1",
       name: "Marcus Thorne",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       country: "United Kingdom",
       company: "Fintech Corp Ltd",
     },
@@ -4911,12 +4721,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-182",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-13",
       name: "River Johns",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/kwame-mensah.jpg",
       country: "Germany",
     },
     rating: 5,
@@ -4935,12 +4744,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-183",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-20",
       name: "Mitchell Ankunding",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/fatima-almansoor.jpg",
       country: "Australia",
     },
     rating: 5,
@@ -4959,12 +4767,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-184",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-11",
       name: "Gregory Bayer",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/minh-nguyen.jpg",
       country: "United States",
     },
     rating: 5,
@@ -4983,12 +4790,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-185",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-18",
       name: "Minh Nguyen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mai-tran.jpg",
       country: "Vietnam",
     },
     rating: 5,
@@ -5007,12 +4813,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-186",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-client-4",
       name: "Rachel Adams",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/rachel-adams.jpg",
       country: "Canada",
       company: "Horizon Health Technologies",
     },
@@ -5032,12 +4837,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-187",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-16",
       name: "David Herzog",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/maya-patel.jpg",
       country: "Canada",
     },
     rating: 5,
@@ -5056,12 +4860,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-188",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-client-2",
       name: "David Sterling",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       country: "United States",
       company: "Apex Capital Ventures",
     },
@@ -5081,12 +4884,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-189",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-14",
       name: "Sandra Zieme-Luettgen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       country: "United Kingdom",
     },
     rating: 5,
@@ -5105,12 +4907,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-190",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "f-1",
       name: "Alexandre Moreau",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       country: "France",
     },
     rating: 5,
@@ -5129,12 +4930,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-191",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-12",
       name: "Priscilla Mertz",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/aiko-tanaka.jpg",
       country: "Vietnam",
     },
     rating: 5,
@@ -5153,12 +4953,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-192",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-19",
       name: "Sherwood Barrows",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mateo-rossi.jpg",
       country: "France",
     },
     rating: 5,
@@ -5177,12 +4976,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-193",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-client-5",
       name: "Liam O'Connor",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/liam-oconnor.jpg",
       country: "Ireland",
       company: "Nova Dynamics AI",
     },
@@ -5202,12 +5000,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-194",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-17",
       name: "Katrina Stehr",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/arthur-pendelton.jpg",
       country: "Singapore",
     },
     rating: 5,
@@ -5226,12 +5023,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-195",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-client-3",
       name: "Emily Zhang",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       country: "Singapore",
       company: "Nexus AI Ventures",
     },
@@ -5251,12 +5047,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-196",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-15",
       name: "Robin Christiansen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/lukas-weber.jpg",
       country: "Japan",
     },
     rating: 5,
@@ -5275,12 +5070,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-197",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-client-1",
       name: "Marcus Thorne",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       country: "United Kingdom",
       company: "Fintech Corp Ltd",
     },
@@ -5300,12 +5094,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-198",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-13",
       name: "River Johns",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/kwame-mensah.jpg",
       country: "Germany",
     },
     rating: 5,
@@ -5324,12 +5117,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-199",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-20",
       name: "Mitchell Ankunding",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/fatima-almansoor.jpg",
       country: "Australia",
     },
     rating: 5,
@@ -5348,12 +5140,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-200",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-11",
       name: "Gregory Bayer",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/minh-nguyen.jpg",
       country: "United States",
     },
     rating: 5,
@@ -5372,12 +5163,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-201",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-18",
       name: "Minh Nguyen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mai-tran.jpg",
       country: "Vietnam",
     },
     rating: 5,
@@ -5396,12 +5186,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-202",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-client-4",
       name: "Rachel Adams",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/rachel-adams.jpg",
       country: "Canada",
       company: "Horizon Health Technologies",
     },
@@ -5421,12 +5210,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-203",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-16",
       name: "David Herzog",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/maya-patel.jpg",
       country: "Canada",
     },
     rating: 5,
@@ -5445,12 +5233,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-204",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-client-2",
       name: "David Sterling",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       country: "United States",
       company: "Apex Capital Ventures",
     },
@@ -5470,12 +5257,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-205",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-14",
       name: "Sandra Zieme-Luettgen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       country: "United Kingdom",
     },
     rating: 5,
@@ -5494,12 +5280,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-206",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "f-1",
       name: "Alexandre Moreau",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       country: "France",
     },
     rating: 5,
@@ -5518,12 +5303,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-207",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-12",
       name: "Priscilla Mertz",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/aiko-tanaka.jpg",
       country: "Vietnam",
     },
     rating: 5,
@@ -5542,12 +5326,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-208",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-19",
       name: "Sherwood Barrows",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mateo-rossi.jpg",
       country: "France",
     },
     rating: 4,
@@ -5566,12 +5349,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-209",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-client-5",
       name: "Liam O'Connor",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/liam-oconnor.jpg",
       country: "Ireland",
       company: "Nova Dynamics AI",
     },
@@ -5591,12 +5373,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-210",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-17",
       name: "Katrina Stehr",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/arthur-pendelton.jpg",
       country: "Singapore",
     },
     rating: 5,
@@ -5615,12 +5396,11 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "rev-211",
     gigId: "gig-4",
-    sellerId: "usr-edge-overflow",
+    sellerId: "usr-31",
     buyer: {
       id: "usr-client-3",
       name: "Emily Zhang",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       country: "Singapore",
       company: "Nexus AI Ventures",
     },
@@ -5636,6 +5416,29 @@ export const MOCK_REVIEWS: Review[] = [
       valueForMoney: 5,
     },
     helpfulCount: 6,
+  },
+  {
+    id: "rev-212",
+    gigId: "gig-4",
+    sellerId: "usr-31",
+    buyer: {
+      id: "usr-15",
+      name: "Robin Christiansen",
+      avatar: "/images/avatars/lukas-weber.jpg",
+      country: "Japan",
+    },
+    rating: 5,
+    comment:
+      "Incredible turnaround and profound technical depth. Saved our core product team at least a month of engineering time.",
+    createdAt: "2026-02-23T10:00:00Z",
+    date: "1 month ago",
+    dateFormatted: "1 month ago",
+    aspectRatings: {
+      communication: 5,
+      qualityOfDelivery: 5,
+      valueForMoney: 5,
+    },
+    helpfulCount: 8,
   },
 ]
 

@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useSearchParams } from "next/navigation"
 import { useRouter, usePathname } from "@/i18n/routing"
-import { MOCK_GIGS, type SellerLevel } from "@/data/gigs"
+import { type Gig, type SellerLevel } from "@/data/gigs"
 import {
   PRICE_BOUNDS,
   FILTER_CATEGORIES,
@@ -34,6 +34,7 @@ export interface ActiveFilterChip {
   onRemove: () => void
 }
 
+import { requestData, serviceGig, type Service } from "@/lib/marketplace"
 const PAGE_SIZE = 12
 
 export function useServiceFilters() {
@@ -41,6 +42,57 @@ export function useServiceFilters() {
   const router = useRouter()
   const pathname = usePathname()
 
+  const [liveGigs, setLiveGigs] = React.useState<Gig[]>([])
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState("")
+  React.useEffect(() => {
+    const controller = new AbortController()
+    async function load() {
+      try {
+        const first = await requestData<{ services: Service[]; totalPages: number }>(
+          "/api/v1/services?limit=50",
+          { signal: controller.signal }
+        )
+        const categories = await requestData<{ id: string; slug: string; name: string }[]>(
+          "/api/v1/marketplace/categories",
+          { signal: controller.signal }
+        )
+        const services = [...first.services]
+        for (let page = 2; page <= first.totalPages; page++) {
+          const more = await requestData<{ services: Service[] }>(
+            `/api/v1/services?limit=50&page=${page}`,
+            { signal: controller.signal }
+          )
+          services.push(...more.services)
+        }
+        if (!controller.signal.aborted)
+          setLiveGigs(
+            services.map((service) => {
+              const gig = serviceGig(service)
+              const parent = categories.find((c) => c.id === service.category.parentId)
+              return parent
+                ? {
+                    ...gig,
+                    categorySlug: parent.slug,
+                    categoryName: parent.name,
+                    subCategorySlug: service.category.slug,
+                    subCategoryName: service.category.name,
+                  }
+                : gig
+            })
+          )
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          setLiveGigs([])
+          setError(error instanceof Error ? error.message : "Catalog unavailable.")
+        }
+      } finally {
+        if (!controller.signal.aborted) setLoading(false)
+      }
+    }
+    void load()
+    return () => controller.abort()
+  }, [])
   // Parse filters from URL search params
   const filters: ServiceFilterState = React.useMemo(() => {
     const q = searchParams.get("q") || ""
@@ -183,7 +235,7 @@ export function useServiceFilters() {
 
   // Filter and sort the gigs
   const filteredGigs = React.useMemo(() => {
-    let result = [...MOCK_GIGS]
+    let result = [...liveGigs]
 
     // Search query
     if (filters.q.trim()) {
@@ -209,9 +261,12 @@ export function useServiceFilters() {
     }
 
     // Price range
-    result = result.filter(
-      (g) => g.startingPrice >= filters.minPrice && g.startingPrice <= filters.maxPrice
-    )
+    if (searchParams.has("minPrice") || searchParams.has("maxPrice"))
+      result = result.filter(
+        (g) =>
+          (!searchParams.has("minPrice") || g.startingPrice >= filters.minPrice) &&
+          (!searchParams.has("maxPrice") || g.startingPrice <= filters.maxPrice)
+      )
 
     // Delivery time
     if (filters.delivery && filters.delivery !== "any") {
@@ -270,7 +325,7 @@ export function useServiceFilters() {
     }
 
     return result
-  }, [filters])
+  }, [filters, liveGigs, searchParams])
 
   // Pagination calculation
   const totalResults = filteredGigs.length
@@ -376,6 +431,8 @@ export function useServiceFilters() {
 
   return {
     filters,
+    loading,
+    error,
     setFilter,
     toggleLevel,
     toggleLanguage,

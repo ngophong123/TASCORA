@@ -1,5 +1,8 @@
 "use client"
 
+import { requestData, jsonRequest, imageUrl, profileName, type Service } from "@/lib/marketplace"
+import { useApiResource } from "@/hooks/useApiResource"
+import { ApiState } from "@/components/feedback/ApiState"
 import * as React from "react"
 import { Link, useRouter } from "@/i18n/routing"
 import { useParams } from "next/navigation"
@@ -20,360 +23,153 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
-import { getGigById, getGigBySlug, type GigAddon } from "@/data/gigs"
-import { getReviewsByGigId } from "@/data/reviews"
-
-// Default service add-ons
-const SERVICE_ADDONS: GigAddon[] = [
-  {
-    id: "express-delivery",
-    name: "24-Hour Express Delivery",
-    price: 50,
-    description: "Prioritize project delivery within 24 hours",
-  },
-  {
-    id: "extra-revision",
-    name: "Additional Code Audit & Revision Round",
-    price: 35,
-    description: "Deep architectural & vulnerability review",
-  },
-]
-
-// Fallback curated service details
-const FALLBACK_SERVICE_DETAIL = {
-  id: "srv-1",
-  title: "Full-Stack Next.js 15 & Node.js Production Architecture with Clean Code",
-  category: { name: "Programming & Tech", slug: "programming" },
-  ratingAverage: 4.98,
-  ratingCount: 42,
-  seller: {
-    id: "seller-1",
-    user: {
-      profile: {
-        firstName: "Alexandre",
-        lastName: "Moreau",
-        avatar:
-          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-        bio: "Principal Software Architect with 12+ years of experience designing high-throughput distributed systems, Next.js applications, and secure microservices.",
-        country: "France",
-      },
-      email: "alexandre@tascora.com",
-    },
-    level: "TOP_RATED",
-    title: "Senior Full-Stack Architect",
-    ratingAverage: 4.99,
-    ratingCount: 114,
-    completedOrders: 114,
-    responseTimeHours: 1,
-    memberSince: "2023",
-  },
-  images: [
-    {
-      url: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80",
-    },
-    {
-      url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop&q=80",
-    },
-    {
-      url: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&auto=format&fit=crop&q=80",
-    },
-  ],
-  description: `Are you seeking a high-throughput, enterprise-grade Next.js 15 and Node.js architecture engineered for production scale?
-
-I specialize in building bulletproof full-stack platforms adhering to Clean Architecture principles, automated test coverage, and optimized database indexing.
-
-### What is included in this service:
-- **Full Architecture Blueprint**: Scalable modular monolith or microservices pattern.
-- **Next.js 15 App Router**: Server components, streaming SSR, and edge API optimization.
-- **Enterprise Database Modeling**: PostgreSQL schema with Prisma ORM, foreign keys, and zero-downtime migration scripts.
-- **Authentication & Security**: Multi-tenant JWT session cookies, rate-limiting, CORS whitelisting, and input sanitization via Zod.
-- **Containerization & CI/CD**: Docker Compose development setup and GitHub Actions pipelines.`,
-  packages: [
-    {
-      type: "BASIC",
-      name: "Starter Architecture",
-      price: 250,
-      deliveryDays: 3,
-      revisions: 2,
-      description:
-        "Ideal for early-stage MVPs or technical audits. Clean project scaffold with Next.js 15 and database configuration.",
-      features: [
-        "Core Next.js 15 Scaffold",
-        "Prisma ORM & PostgreSQL Setup",
-        "JWT Authentication Boilerplate",
-        "2 Revisions included",
-        "3 Days Delivery",
-      ],
-    },
-    {
-      type: "STANDARD",
-      name: "Production Monorepo",
-      price: 450,
-      deliveryDays: 5,
-      revisions: 4,
-      description:
-        "Comprehensive production setup with full API integration, Redis caching, and real-time Socket.io.",
-      features: [
-        "Everything in Basic",
-        "pnpm Monorepo Configuration",
-        "Redis Cache & Rate Limiting",
-        "Socket.io Real-time Setup",
-        "Stripe Payment Webhook Boilerplate",
-        "4 Revisions included",
-        "5 Days Delivery",
-      ],
-    },
-    {
-      type: "PREMIUM",
-      name: "Enterprise Architecture",
-      price: 850,
-      deliveryDays: 7,
-      revisions: 99,
-      description:
-        "Full-scale deployment with CI/CD, Docker production image, automated unit tests, and 30 days post-launch support.",
-      features: [
-        "Everything in Standard",
-        "Docker Production Multi-Stage Build",
-        "Automated CI/CD Pipeline",
-        "Comprehensive Unit & E2E Test Suite",
-        "Unlimited Revisions",
-        "30 Days Dedicated Support",
-      ],
-    },
-  ],
-  reviews: [
-    {
-      id: "rev-1",
-      buyer: {
-        name: "Marcus Thorne",
-        avatar:
-          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
-        country: "United Kingdom",
-      },
-      rating: 5,
-      date: "2 weeks ago",
-      comment:
-        "Alexandre delivered an exceptional codebase. The architecture is clean, maintainable, and performs flawlessly under load. Will certainly hire again.",
-    },
-    {
-      id: "rev-2",
-      buyer: {
-        name: "Sarah Lin",
-        avatar:
-          "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80",
-        country: "United States",
-      },
-      rating: 5,
-      date: "1 month ago",
-      comment:
-        "Outstanding communication and profound technical depth. The Next.js 15 setup saved our engineering team weeks of trial and error.",
-    },
-  ],
-  faqs: [
-    {
-      q: "Which Next.js version is utilized?",
-      a: "All deliverables utilize Next.js 15+ App Router with React 19 and strict TypeScript compiler settings.",
-    },
-    {
-      q: "Can this be customized to my existing cloud infrastructure?",
-      a: "Yes. Standard and Premium packages can be customized for AWS ECS, Vercel, Fly.io, or self-hosted Docker environments.",
-    },
-  ],
-  addons: SERVICE_ADDONS,
-}
-
-function getServiceDetailFromGig(gigIdOrSlug: string) {
-  const matchedGig = getGigById(gigIdOrSlug) || getGigBySlug(gigIdOrSlug)
-  const gigReviews = getReviewsByGigId(matchedGig ? matchedGig.id : gigIdOrSlug)
-
-  if (!matchedGig) {
-    return {
-      ...FALLBACK_SERVICE_DETAIL,
-      reviews: gigReviews.length > 0 ? gigReviews : FALLBACK_SERVICE_DETAIL.reviews,
-    }
-  }
-
-  const nameParts = matchedGig.seller.name.split(" ")
-  const firstName = nameParts[0] || "Specialist"
-  const lastName = nameParts.slice(1).join(" ") || ""
-
-  return {
-    id: matchedGig.id,
-    title: matchedGig.title,
-    category: { name: matchedGig.categoryName, slug: matchedGig.categorySlug },
-    ratingAverage: matchedGig.rating,
-    ratingCount: matchedGig.reviewsCount,
-    seller: {
-      id: matchedGig.seller.id,
-      user: {
-        profile: {
-          firstName,
-          lastName,
-          avatar:
-            matchedGig.seller.avatar ||
-            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-          bio: `${matchedGig.seller.name} is a verified ${matchedGig.seller.level} specialist on TASCORA from ${matchedGig.seller.country}.`,
-          country: matchedGig.seller.country,
-        },
-        email: `${matchedGig.seller.name.toLowerCase().replace(/[^a-z0-9]/g, "")}@tascora.com`,
-      },
-      level: matchedGig.seller.level,
-      title: `${matchedGig.subCategoryName} Specialist`,
-      ratingAverage: matchedGig.rating,
-      ratingCount: matchedGig.reviewsCount,
-      completedOrders: matchedGig.stats?.orders || 24,
-      responseTimeHours: 1,
-      memberSince: matchedGig.createdAt
-        ? new Date(matchedGig.createdAt).getFullYear().toString()
-        : "2024",
-    },
-    images:
-      matchedGig.gallery && matchedGig.gallery.length > 0
-        ? matchedGig.gallery.map((g) => ({ url: g.url }))
-        : FALLBACK_SERVICE_DETAIL.images,
-    description: matchedGig.description,
-    packages: matchedGig.packages,
-    addons: matchedGig.addons && matchedGig.addons.length > 0 ? matchedGig.addons : SERVICE_ADDONS,
-    reviews: gigReviews.length > 0 ? gigReviews : FALLBACK_SERVICE_DETAIL.reviews,
-    faqs:
-      matchedGig.faqs && matchedGig.faqs.length > 0
-        ? matchedGig.faqs
-        : FALLBACK_SERVICE_DETAIL.faqs,
-  }
-}
+import type { GigAddon } from "@/data/gigs"
+import { AvatarImage } from "@/components/ui/AvatarImage"
+import { ServiceCardImage } from "@/components/ui/ServiceCardImage"
 
 export default function ServiceDetailPage() {
-  const t = useTranslations("serviceDetail")
   const params = useParams()
-  const router = useRouter()
-  const serviceId = params.id as string
-
-  const fallbackDetail = React.useMemo(() => getServiceDetailFromGig(serviceId), [serviceId])
-  const [service, setService] = React.useState(fallbackDetail)
-  const [selectedImageIndex, setSelectedImageIndex] = React.useState(0)
-
-  const availableTiers = React.useMemo(() => {
-    return (["BASIC", "STANDARD", "PREMIUM"] as const).filter((tier) =>
-      service.packages.some((p) => p.type === tier)
+  const resource = useApiResource<Service>(`/api/v1/services/${String(params.id)}`)
+  if (resource.loading || resource.error || !resource.data)
+    return (
+      <div className="container mx-auto px-4 py-10">
+        <ApiState loading={resource.loading} error={resource.error} retry={resource.reload} />
+      </div>
     )
-  }, [service.packages])
-
-  const [selectedPackageTier, setSelectedPackageTier] = React.useState<
-    "BASIC" | "STANDARD" | "PREMIUM"
-  >(() => {
-    const hasStandard = fallbackDetail.packages.some((p) => p.type === "STANDARD")
-    const firstType = fallbackDetail.packages[0]?.type
-    if (hasStandard) return "STANDARD"
-    if (firstType === "BASIC" || firstType === "STANDARD" || firstType === "PREMIUM")
-      return firstType
-    return "BASIC"
-  })
-
+  if (!resource.data.packages.length)
+    return <ApiState empty="This service has no available package." />
+  return <ServiceDetailContent key={resource.data.id} record={resource.data} />
+}
+function ServiceDetailContent({ record }: { record: Service }) {
+  const t = useTranslations("serviceDetail")
+  const router = useRouter()
+  const service = React.useMemo(
+    () => ({
+      ...record,
+      seller: {
+        ...record.seller,
+        user: { profile: { ...record.seller, avatar: imageUrl(record.seller.avatar) } },
+        title: record.seller.professionalTitle || "",
+        memberSince: record.seller.createdAt
+          ? new Date(record.seller.createdAt).getFullYear()
+          : "Unavailable",
+        completedOrders: null,
+        responseTimeHours: null,
+      },
+      images: record.images.length
+        ? record.images.map((i) => ({ url: imageUrl(i.url) }))
+        : [{ url: "/favicon.svg" }],
+      packages: record.packages.map((p) => ({ ...p, name: p.title, price: Number(p.price) })),
+      reviews: (record.reviews || []).map((r) => ({
+        ...r,
+        buyer: {
+          name: profileName(r.buyer.buyerProfile),
+          avatar: imageUrl(r.buyer.buyerProfile?.avatar),
+          country: r.buyer.buyerProfile?.country || "",
+        },
+        date: new Date(r.createdAt).toLocaleDateString(),
+      })),
+      faqs: (record.faqs || []).map((f) => ({ q: f.question, a: f.answer })),
+    }),
+    [record]
+  )
+  const availableTiers = service.packages.map((p) => p.type)
+  const [selectedPackageTier, setSelectedPackageTier] = React.useState(
+    service.packages.find((p) => p.type === "STANDARD")?.type || service.packages[0]!.type
+  )
+  const [selectedImageIndex, setSelectedImageIndex] = React.useState(0)
   const [selectedAddons, setSelectedAddons] = React.useState<string[]>([])
   const [isFavorite, setIsFavorite] = React.useState(false)
   const [orderModalOpen, setOrderModalOpen] = React.useState(false)
   const [orderSuccess, setOrderSuccess] = React.useState(false)
   const [isCheckingOut, setIsCheckingOut] = React.useState(false)
   const [showAllReviews, setShowAllReviews] = React.useState(false)
-
-  // Reset indices and update service on param change
-  const prevServiceIdRef = React.useRef(serviceId)
-  React.useEffect(() => {
-    if (prevServiceIdRef.current !== serviceId) {
-      prevServiceIdRef.current = serviceId
-      setService(fallbackDetail)
-      setSelectedImageIndex(0)
-      setSelectedAddons([])
-      const hasStandard = fallbackDetail.packages.some((p) => p.type === "STANDARD")
-      const firstType = fallbackDetail.packages[0]?.type
-      if (hasStandard) {
-        setSelectedPackageTier("STANDARD")
-      } else if (firstType === "BASIC" || firstType === "STANDARD" || firstType === "PREMIUM") {
-        setSelectedPackageTier(firstType)
-      } else {
-        setSelectedPackageTier("BASIC")
-      }
-    }
-  }, [serviceId, fallbackDetail])
-
-  // Fetch from API
-  React.useEffect(() => {
-    async function loadService() {
-      try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"
-        const res = await fetch(`${apiUrl}/api/v1/services/${serviceId}`)
-        if (res.ok) {
-          const data = await res.json()
-          if (data.success && data.data) {
-            const apiData = data.data
-            setService({
-              ...fallbackDetail,
-              id: apiData.id,
-              title: apiData.title,
-              description: apiData.description || fallbackDetail.description,
-              ratingAverage: apiData.ratingAverage || 5.0,
-              ratingCount: apiData.ratingCount || 12,
-              seller: {
-                ...fallbackDetail.seller,
-                ...(apiData.seller || {}),
-              },
-              packages: apiData.packages?.length > 0 ? apiData.packages : fallbackDetail.packages,
-              images: apiData.images?.length > 0 ? apiData.images : fallbackDetail.images,
-            })
-          }
-        }
-      } catch {
-        // Fallback works automatically
-      }
-    }
-    void loadService()
-  }, [serviceId, fallbackDetail])
-
+  const [actionError, setActionError] = React.useState("")
+  const [createdOrder, setCreatedOrder] = React.useState<{
+    id: string
+    amount: string
+    status: string
+  } | null>(null)
+  const checkout = React.useRef<{ packageId: string; key: string } | null>(null)
   const currentPackage =
-    service.packages.find((p) => p.type === selectedPackageTier) ??
-    service.packages[0] ??
-    FALLBACK_SERVICE_DETAIL.packages[0]!
-
-  const availableAddons: GigAddon[] =
-    service.addons && service.addons.length > 0 ? service.addons : SERVICE_ADDONS
-
-  const toggleAddon = (id: string) => {
-    setSelectedAddons((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    )
+    service.packages.find((p) => p.type === selectedPackageTier) || service.packages[0]!
+  const availableAddons: GigAddon[] = []
+  const SERVICE_ADDONS = availableAddons
+  const computedTotal = currentPackage.price
+  const toggleAddon = (id: string) =>
+    setSelectedAddons((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
+  React.useEffect(() => {
+    if (!localStorage.getItem("user")) return
+    let active = true
+    requestData<Service[]>("/api/v1/favorites")
+      .then((saved) => {
+        if (active) setIsFavorite(saved.some((s) => s.id === record.id))
+      })
+      .catch(() => {})
+    return () => {
+      active = false
+    }
+  }, [record.id])
+  async function toggleFavorite() {
+    try {
+      await requestData(
+        `/api/v1/favorites/${record.id}`,
+        jsonRequest(isFavorite ? "DELETE" : "POST")
+      )
+      setIsFavorite(!isFavorite)
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "Unable to save service.")
+    }
   }
-
-  const addonsTotal = selectedAddons.reduce((sum, id) => {
-    const addon = availableAddons.find((a: GigAddon) => a.id === id)
-    return sum + (addon ? addon.price : 0)
-  }, 0)
-
-  const computedTotal = currentPackage.price + addonsTotal
-
   const handleStartOrder = () => {
+    setActionError("")
     setOrderSuccess(false)
     setOrderModalOpen(true)
   }
-
+  async function createOrder() {
+    if (isCheckingOut || orderSuccess) return
+    setIsCheckingOut(true)
+    setActionError("")
+    if (!checkout.current || checkout.current.packageId !== currentPackage.id)
+      checkout.current = { packageId: currentPackage.id, key: crypto.randomUUID() }
+    try {
+      const order = await requestData<{ id: string; amount: string; status: string }>(
+        "/api/v1/orders",
+        jsonRequest("POST", {
+          serviceId: record.id,
+          packageId: currentPackage.id,
+          idempotencyKey: checkout.current.key,
+        })
+      )
+      setCreatedOrder(order)
+      setOrderSuccess(true)
+      checkout.current = null
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "Unable to create order.")
+    } finally {
+      setIsCheckingOut(false)
+    }
+  }
   return (
-    <div className="container mx-auto px-4 md:px-8 py-10 min-h-screen">
+    <div className="container mx-auto px-4 md:px-8 py-10 pb-28 lg:pb-10 min-h-screen">
+      <ApiState error={actionError} />
       {/* Breadcrumb Navigation */}
-      <nav className="flex items-center gap-2 text-xs text-text-muted mb-6">
-        <Link href="/" className="hover:text-text-primary transition-colors">
+      <nav className="flex items-center gap-2 text-xs text-text-muted mb-6 overflow-x-auto scrollbar-none py-1">
+        <Link href="/" className="hover:text-text-primary transition-colors shrink-0">
           {t("breadcrumbHome")}
         </Link>
-        <ChevronRight className="h-3.5 w-3.5" />
-        <Link href="/explore" className="hover:text-text-primary transition-colors">
+        <ChevronRight className="h-3.5 w-3.5 shrink-0" />
+        <Link href="/explore" className="hover:text-text-primary transition-colors shrink-0">
           {t("breadcrumbExplore")}
         </Link>
-        <ChevronRight className="h-3.5 w-3.5" />
+        <ChevronRight className="h-3.5 w-3.5 shrink-0" />
         <Link
           href={`/explore?category=${service.category?.slug || ""}`}
-          className="hover:text-text-primary transition-colors"
+          className="hover:text-text-primary transition-colors shrink-0"
         >
           {service.category?.name || "Professional"}
         </Link>
-        <ChevronRight className="h-3.5 w-3.5" />
+        <ChevronRight className="h-3.5 w-3.5 shrink-0" />
         <span className="text-text-primary truncate max-w-xs">{service.title}</span>
       </nav>
 
@@ -386,15 +182,13 @@ export default function ServiceDetailPage() {
             <div className="flex items-center gap-2 mb-3">
               <Badge variant="luxury">{service.category?.name}</Badge>
               <Badge variant="outline" className="border-border text-text-muted">
-                {service.seller.level === "TOP_RATED"
-                  ? t("topRatedTalent")
-                  : t("verifiedSpecialist")}
+                {service.seller.level === "TOP_RATED" ? t("topRatedTalent") : "Approved seller"}
               </Badge>
             </div>
 
             <h1
               data-testid="service-title"
-              className="font-display text-2xl sm:text-3xl md:text-4xl text-text-primary font-medium leading-snug"
+              className="stripe-section-heading text-slate-900 dark:text-white"
             >
               {service.title}
             </h1>
@@ -402,10 +196,13 @@ export default function ServiceDetailPage() {
             {/* Seller meta line */}
             <div className="flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-border/40 text-xs text-text-secondary">
               <div className="flex items-center gap-2.5">
-                <img
+                <AvatarImage
                   src={service.seller.user.profile.avatar}
-                  alt={service.seller.user.profile.firstName}
-                  className="h-8 w-8 rounded-full object-cover border border-border"
+                  name={`${service.seller.user.profile.firstName} ${service.seller.user.profile.lastName}`}
+                  id={service.seller.id}
+                  size={32}
+                  rounded="full"
+                  alt={`${service.seller.user.profile.firstName} ${service.seller.user.profile.lastName} - Specialist profile`}
                 />
                 <div>
                   <span data-testid="seller-name" className="font-medium text-text-primary block">
@@ -429,12 +226,12 @@ export default function ServiceDetailPage() {
 
               <div className="flex items-center gap-1 text-text-muted">
                 <Clock className="h-3.5 w-3.5 text-blue-600" />
-                <span>{t("respondsIn", { hours: service.seller.responseTimeHours })}</span>
+                <span>Response time unavailable</span>
               </div>
 
               <div className="ml-auto flex items-center gap-2">
                 <button
-                  onClick={() => setIsFavorite(!isFavorite)}
+                  onClick={() => void toggleFavorite()}
                   className={`p-2 rounded-lg border transition-colors ${
                     isFavorite
                       ? "border-rose-500/40 bg-rose-500/10 text-rose-500"
@@ -458,10 +255,11 @@ export default function ServiceDetailPage() {
           {/* Media Gallery */}
           <div className="space-y-3">
             <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden border border-border bg-slate-100">
-              <img
+              <ServiceCardImage
                 src={service.images[selectedImageIndex]?.url || service.images[0]?.url}
-                alt={service.title}
-                className="h-full w-full object-cover"
+                alt={`${service.title} - Main service preview shot ${selectedImageIndex + 1}`}
+                priority
+                sizes="(max-width: 1024px) 100vw, 66vw"
               />
             </div>
 
@@ -478,10 +276,10 @@ export default function ServiceDetailPage() {
                         : "border-border opacity-60 hover:opacity-100"
                     }`}
                   >
-                    <img
+                    <ServiceCardImage
                       src={img.url}
-                      alt={`Preview ${index}`}
-                      className="h-full w-full object-cover"
+                      alt={`${service.title} preview thumbnail ${index + 1}`}
+                      sizes="96px"
                     />
                   </button>
                 ))}
@@ -506,10 +304,14 @@ export default function ServiceDetailPage() {
             </h2>
 
             <div className="flex flex-col sm:flex-row items-start gap-5">
-              <img
+              <AvatarImage
                 src={service.seller.user.profile.avatar}
-                alt={service.seller.user.profile.firstName}
-                className="h-16 w-16 rounded-full object-cover border-2 border-blue-600/30"
+                name={`${service.seller.user.profile.firstName} ${service.seller.user.profile.lastName}`}
+                id={service.seller.id}
+                size={64}
+                rounded="full"
+                alt={`${service.seller.user.profile.firstName} ${service.seller.user.profile.lastName} - Specialist portrait`}
+                imageClassName="border-2 border-blue-600/30"
               />
               <div className="space-y-2 flex-1">
                 <div className="flex items-center gap-3">
@@ -543,9 +345,7 @@ export default function ServiceDetailPage() {
                 <span className="text-text-muted block text-[10px] uppercase">
                   {t("ordersDelivered")}
                 </span>
-                <span className="font-medium text-text-primary">
-                  {service.seller.completedOrders}+
-                </span>
+                <span className="font-medium text-text-primary">Unavailable</span>
               </div>
               <div className="p-3 rounded-xl bg-slate-50 border border-border">
                 <span className="text-text-muted block text-[10px] uppercase">{t("rating")}</span>
@@ -583,10 +383,13 @@ export default function ServiceDetailPage() {
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <img
+                      <AvatarImage
                         src={rev.buyer.avatar}
-                        alt={rev.buyer.name}
-                        className="h-8 w-8 rounded-full object-cover"
+                        name={rev.buyer.name}
+                        id={rev.id}
+                        size={32}
+                        rounded="full"
+                        alt={`${rev.buyer.name} - Verified buyer avatar`}
                       />
                       <div>
                         <span className="font-medium text-xs text-text-primary block">
@@ -625,7 +428,7 @@ export default function ServiceDetailPage() {
                 >
                   {showAllReviews
                     ? "Show fewer reviews"
-                    : `Show all ${service.reviews.length} reviews`}
+                    : `Show all ${service.reviews.length} loaded reviews`}
                 </button>
               )}
             </div>
@@ -651,11 +454,11 @@ export default function ServiceDetailPage() {
 
         {/* Right Column: Sticky Pricing Packages (1/3) */}
         <div className="lg:col-span-1">
-          <div className="sticky top-24 rounded-2xl border border-border bg-surface p-6 shadow-xl space-y-6">
+          <div className="sticky top-24 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-6 shadow-xl space-y-6">
             {/* Package Tabs */}
             <div
               className={cn(
-                "grid rounded-xl border border-border bg-slate-100 p-1",
+                "grid rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-100/80 dark:bg-slate-800/80 p-1.5",
                 availableTiers.length === 1 && "grid-cols-1",
                 availableTiers.length === 2 && "grid-cols-2",
                 availableTiers.length >= 3 && "grid-cols-3"
@@ -666,11 +469,12 @@ export default function ServiceDetailPage() {
                   key={tier}
                   data-testid={`package-tab-${tier.toLowerCase()}`}
                   onClick={() => setSelectedPackageTier(tier)}
-                  className={`py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  className={cn(
+                    "py-2.5 rounded-lg text-xs font-semibold transition-all cursor-pointer",
                     selectedPackageTier === tier
-                      ? "bg-blue-600 text-white shadow"
-                      : "text-text-muted hover:text-text-primary"
-                  }`}
+                      ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm ring-1 ring-black/5 dark:ring-white/10"
+                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                  )}
                 >
                   {tier}
                 </button>
@@ -700,12 +504,7 @@ export default function ServiceDetailPage() {
               </div>
               <div className="flex items-center gap-2 text-text-secondary">
                 <RotateCcw className="h-4 w-4 text-blue-600" />
-                <span>
-                  {currentPackage.revisions === "unlimited" ||
-                  Number(currentPackage.revisions) >= 90
-                    ? t("unlimitedRevisions")
-                    : t("revisionsCount", { count: Number(currentPackage.revisions) })}
-                </span>
+                <span>{t("revisionsCount", { count: currentPackage.revisions })}</span>
               </div>
             </div>
 
@@ -785,7 +584,7 @@ export default function ServiceDetailPage() {
               <Button
                 data-testid="continue-order-btn"
                 onClick={handleStartOrder}
-                className="w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white py-3 font-semibold shadow-lg shadow-blue-600/20 gap-2 transition-all cursor-pointer"
+                className="w-full rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600 hover:from-indigo-500 hover:via-violet-500 hover:to-blue-500 text-white py-3.5 font-semibold shadow-lg shadow-indigo-500/25 gap-2 transition-all cursor-pointer active:scale-[0.98]"
               >
                 <span>{t("continueOrder", { price: computedTotal })}</span>
                 <ArrowRight className="h-4 w-4" />
@@ -806,15 +605,56 @@ export default function ServiceDetailPage() {
             <div className="pt-2 text-center">
               <div className="inline-flex items-center gap-1.5 text-[11px] text-blue-700 font-medium">
                 <ShieldCheck className="h-4 w-4 text-emerald-500" />
-                <span>{t("escrowMilestone")}</span>
+                <span>Payment pending</span>
               </div>
-              <p className="text-[10px] text-text-muted mt-0.5">{t("escrowGuaranteeNote")}</p>
+              <p className="text-[10px] text-text-muted mt-0.5">
+                Settlement and payouts are not available.
+              </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Mock Order Drawer Confirmation */}
+      {/* Mobile Sticky Action Bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 px-4 py-3 safe-area-bottom shadow-2xl flex items-center justify-between gap-3">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+              {selectedPackageTier}
+            </span>
+            <span className="text-slate-300 dark:text-slate-600">•</span>
+            <span className="text-[11px] text-slate-500 flex items-center gap-0.5">
+              <Clock className="h-3 w-3 text-blue-600" />
+              {currentPackage.deliveryDays}d
+            </span>
+          </div>
+          <span className="text-xl font-bold font-mono text-slate-900 dark:text-white leading-tight">
+            ${computedTotal}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Link href={`/dashboard/messages?seller=${service.seller.id}`}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-11 w-11 p-0 rounded-xl border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 shrink-0"
+              aria-label="Contact Specialist"
+            >
+              <MessageSquare className="h-4 w-4" />
+            </Button>
+          </Link>
+          <Button
+            onClick={handleStartOrder}
+            className="h-11 px-5 rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600 hover:from-indigo-500 hover:via-violet-500 hover:to-blue-500 text-white font-semibold shadow-lg shadow-indigo-500/20 text-xs sm:text-sm gap-2 active:scale-[0.98]"
+          >
+            <span>{t("continueOrder", { price: computedTotal })}</span>
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Server-backed order confirmation */}
       {orderModalOpen && (
         <div
           data-testid="checkout-drawer-backdrop"
@@ -822,7 +662,7 @@ export default function ServiceDetailPage() {
         >
           <div
             data-testid="checkout-drawer"
-            className="max-w-md w-full rounded-2xl border border-border bg-white p-6 space-y-6 shadow-2xl animate-in zoom-in-95"
+            className="max-w-md w-full rounded-2xl border border-border bg-white p-6 space-y-6 shadow-2xl animate-in zoom-in-95 safe-area-bottom"
           >
             <div className="flex items-center justify-between pb-3 border-b border-border">
               <h3 className="font-display text-lg text-text-primary font-medium">
@@ -831,6 +671,7 @@ export default function ServiceDetailPage() {
               <Badge variant="luxury">{selectedPackageTier}</Badge>
             </div>
 
+            <ApiState error={actionError} />
             {orderSuccess ? (
               <div
                 data-testid="checkout-success"
@@ -843,8 +684,13 @@ export default function ServiceDetailPage() {
                   Order Confirmed Successfully!
                 </h4>
                 <p className="text-xs text-emerald-700">
-                  Your milestone escrow contract has been activated for{" "}
-                  <strong>${computedTotal}</strong>. The freelancer has been notified.
+                  Your order for {service.title} was created with payment pending. No charge, escrow
+                  activation or transfer has occurred.
+                  {createdOrder && (
+                    <span className="block mt-2">
+                      Order amount: ${createdOrder.amount} · {createdOrder.status}
+                    </span>
+                  )}
                 </p>
                 <div className="pt-2">
                   <Button
@@ -917,15 +763,10 @@ export default function ServiceDetailPage() {
                     data-testid="confirm-checkout-btn"
                     isLoading={isCheckingOut}
                     loadingText="Đang xử lý..."
-                    onClick={async () => {
-                      setIsCheckingOut(true)
-                      await new Promise((res) => setTimeout(res, 400))
-                      setIsCheckingOut(false)
-                      setOrderSuccess(true)
-                    }}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold cursor-pointer"
+                    onClick={() => void createOrder()}
+                    className="flex-1 bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600 hover:from-indigo-500 hover:via-violet-500 hover:to-blue-500 text-white text-xs font-semibold cursor-pointer shadow-md shadow-indigo-500/20 active:scale-[0.98] py-2.5 rounded-xl"
                   >
-                    {t("confirmAndPay")}
+                    Create order
                   </Button>
                 </div>
               </>

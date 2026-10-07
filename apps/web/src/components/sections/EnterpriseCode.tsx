@@ -64,11 +64,33 @@ export function EnterpriseCode() {
 
   return (
     <section
-      className="py-16 sm:py-24 md:py-36 border-b border-[rgba(15,15,30,0.08)] bg-[#FFFFFF] relative overflow-hidden"
+      className="py-16 sm:py-24 md:py-36 border-y border-white/10 bg-[#0B1026] text-white relative overflow-hidden"
       id="enterprise"
     >
-      {/* Ambient background lighting */}
-      <div className="absolute top-1/2 -right-48 w-96 h-96 bg-blue-300/15 rounded-full blur-[160px] pointer-events-none" />
+      {/* Stripe-Inspired Ambient Flowing Gradient Mesh in Dark Section */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div
+          className="absolute -top-[30%] -right-[10%] w-[600px] sm:w-[900px] h-[500px] sm:h-[700px] rounded-full blur-[140px] opacity-[0.28] pointer-events-none animate-ambient-mesh"
+          style={{
+            background:
+              "linear-gradient(135deg, #4f46e5 0%, #7c3aed 32%, #ec4899 68%, #f97316 100%)",
+          }}
+        />
+        <div
+          className="absolute -bottom-[20%] -left-[10%] w-[500px] sm:w-[700px] h-[400px] sm:h-[600px] rounded-full blur-[140px] opacity-[0.16] pointer-events-none animate-ambient-mesh-slow"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, rgba(37, 99, 235, 0.45), transparent 70%)",
+          }}
+        />
+        <div
+          className="absolute inset-0 opacity-[0.04] pointer-events-none"
+          style={{
+            backgroundImage: `radial-gradient(rgba(255, 255, 255, 0.6) 1px, transparent 1px)`,
+            backgroundSize: "24px 24px",
+          }}
+        />
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
@@ -80,23 +102,25 @@ export function EnterpriseCode() {
             viewport={VIEWPORT_ONCE}
           >
             <motion.div variants={fadeUpVariants}>
-              <Badge variant="gradient" size="md">
-                <Building2 className="h-3.5 w-3.5 mr-1" />
+              <Badge
+                variant="outline"
+                size="md"
+                className="bg-white/10 text-white border-white/20 backdrop-blur-sm"
+              >
+                <Building2 className="h-3.5 w-3.5 mr-1 text-[#818CF8]" />
                 {t("badge")}
               </Badge>
             </motion.div>
 
-            <motion.h2
-              variants={fadeUpBlurVariants}
-              className="text-[clamp(32px,4.5vw,56px)] font-semibold tracking-[-0.03em] leading-[1.1] text-[#0B0B14]"
-            >
-              {t("titlePrefix")} <span className="text-accent-gradient">{t("titleHighlight")}</span>
+            <motion.h2 variants={fadeUpBlurVariants} className="stripe-section-heading text-white">
+              {t("titlePrefix")}{" "}
+              <span className="stripe-gradient-text-light">{t("titleHighlight")}</span>
             </motion.h2>
 
             <motion.p
               variants={fadeUpVariants}
               custom={0.1}
-              className="text-base text-[#4B4B5C] leading-relaxed"
+              className="text-base sm:text-lg text-slate-300 leading-relaxed font-normal"
             >
               {t("subtitle")}
             </motion.p>
@@ -132,12 +156,12 @@ export function EnterpriseCode() {
                     variants={staggerChildCardVariants}
                     className="flex items-start gap-3.5"
                   >
-                    <div className="h-7 w-7 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shrink-0 mt-0.5 shadow-sm">
+                    <div className="h-8 w-8 rounded-lg bg-white/10 border border-white/15 flex items-center justify-center text-[#818CF8] shrink-0 mt-0.5 shadow-2xs">
                       <IconComponent className="h-4 w-4" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold text-[#0B0B14]">{bullet.title}</h4>
-                      <p className="text-xs text-[#4B4B5C] mt-0.5 leading-relaxed">{bullet.desc}</p>
+                      <h4 className="text-sm font-semibold text-white">{bullet.title}</h4>
+                      <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">{bullet.desc}</p>
                     </div>
                   </motion.div>
                 )
@@ -157,11 +181,10 @@ export function EnterpriseCode() {
                   <Button
                     variant="primary"
                     size="lg"
-                    pill
-                    className="w-full sm:w-auto px-8 shadow-md justify-center"
+                    className="w-full sm:w-auto px-8 shadow-sm justify-center"
                   >
                     <span>{t("ctaContact")}</span>
-                    <ArrowRight className="h-4 w-4" />
+                    <ArrowRight className="h-4 w-4 arrow-micro" />
                   </Button>
                 </motion.div>
               </Link>
@@ -176,14 +199,14 @@ export function EnterpriseCode() {
             viewport={VIEWPORT_ONCE}
             variants={landingCardVariants}
           >
-            <div className="rounded-2xl bg-[#0D0D12] border border-slate-800 shadow-[0_24px_70px_-15px_rgba(15,15,30,0.35),0_0_30px_-10px_rgba(37,99,235,0.2)] overflow-hidden">
+            <div className="rounded-xl bg-[#080C1E] border border-white/12 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden">
               {/* macOS Window Title Bar */}
-              <div className="flex items-center justify-between px-4 py-3 bg-[#14141C] border-b border-white/8">
+              <div className="flex items-center justify-between px-4 py-3 bg-[#0F1636] border-b border-white/10">
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full bg-rose-500/80 hover:opacity-100 transition-opacity" />
                   <div className="h-3 w-3 rounded-full bg-amber-500/80 hover:opacity-100 transition-opacity" />
                   <div className="h-3 w-3 rounded-full bg-emerald-500/80 hover:opacity-100 transition-opacity" />
-                  <div className="ml-3 flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#0D0D12] border border-white/6 text-xs text-[#A1A1AA] font-mono">
+                  <div className="ml-3 flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#080C1E] border border-white/10 text-xs text-[#94A3B8] font-mono">
                     <FileCode2 className="h-3.5 w-3.5 text-blue-400" />
                     <span>create-project.ts</span>
                   </div>

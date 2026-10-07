@@ -107,7 +107,7 @@ export function LoadingOverlay({
             </div>
 
             {/* Typography */}
-            <h3 className="font-medium text-sm text-[#0B0B14] tracking-tight">{title}</h3>
+            <h3 className="font-medium text-sm text-[#0A0A23] tracking-tight">{title}</h3>
             <p className="text-xs text-[#6B6B7B] mt-1.5">{subtext}</p>
           </motion.div>
         </motion.div>

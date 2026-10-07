@@ -1,3 +1,4 @@
+import { allowedOrigins, isProduction } from './lib/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -21,10 +22,13 @@ import couponRoutes from './modules/coupon/coupon.route';
 import emailRoutes from './modules/email/email.route';
 import walletRoutes from './modules/wallet/wallet.route';
 import adminRoutes from './modules/admin/admin.route';
+import marketplaceRoutes from './modules/marketplace/marketplace.route';
+import financialRoutes from './modules/financial/financial.route';
 import { handleWebhook } from './modules/payment/payment.controller';
 import http from 'http';
+import { uploadRouter } from './modules/upload/upload.route';
 import { initSocket } from './lib/socket';
-import { initCronJobs } from './workers/cron';
+
 
 const logger = pino();
 const app = express();
@@ -33,23 +37,20 @@ const server = http.createServer(app);
 // Initializing Socket.io
 initSocket(server);
 
-// Initializing Cron Jobs
-initCronJobs();
+// Scheduled jobs start only in the process entrypoint, never during test imports.
 
 // Security Middlewares
 app.use(helmet());
 
 // --- RAW BODY PARSER FOR STRIPE WEBHOOK ---
 // Must be mounted before express.json()
-app.use('/api/v1/payments/webhook', express.raw({ type: 'application/json' }), handleWebhook);
+app.post('/api/v1/payments/webhook', express.raw({ type: 'application/json', limit: '256kb' }), handleWebhook);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://localhost:3200',
-  process.env.NEXT_PUBLIC_WEB_URL,
-].filter(Boolean) as string[];
+if (process.env.TRUST_PROXY) {
+  app.set('trust proxy', process.env.TRUST_PROXY);
+}
 
 app.use(
   cors({
@@ -84,7 +85,8 @@ app.get('/health', async (req, res) => {
 });
 
 // Routes
-app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/uploads', uploadRouter());
+app.use('/api/v1/auth', rateLimit({ windowMs: 15 * 60 * 1000, limit: 30, standardHeaders: 'draft-7', legacyHeaders: false }), authRoutes);
 app.use('/api/v1/profile', profileRoutes);
 app.use('/api/v1/onboarding', onboardingRoutes);
 app.use('/api/v1/sessions', sessionRoutes);
@@ -100,15 +102,17 @@ app.use('/api/v1/coupons', couponRoutes);
 app.use('/api/v1/emails', emailRoutes);
 app.use('/api/v1/wallets', walletRoutes);
 app.use('/api/v1/admin', adminRoutes);
+app.use('/api/v1/marketplace', marketplaceRoutes);
+app.use('/api/v1/financial', financialRoutes);
 
 // Centralized error handler
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  logger.error(err);
+app.use((err: Error & { status?: number; code?: string }, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  logger.error({ type: err.name, status: err.status || 500 }, 'Request failed');
   res.status(err.status || 500).json({
     success: false,
     error: {
       code: err.code || 'INTERNAL_SERVER_ERROR',
-      message: err.message || 'Something went wrong',
+      message: isProduction && (err.status || 500) >= 500 ? 'Something went wrong' : err.message || 'Something went wrong',
     },
   });
 });

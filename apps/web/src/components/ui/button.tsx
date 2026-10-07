@@ -22,7 +22,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       className,
       variant = "primary",
       size = "md",
-      pill = true,
+      pill = false,
       children,
       disabled,
       isLoading = false,
@@ -38,25 +38,26 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const isBusy = isLoading || isSuccess || isError
 
     const baseStyles =
-      "relative inline-flex items-center justify-center font-medium transition-all duration-180 ease-out select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:pointer-events-none disabled:opacity-55 overflow-hidden group active:translate-y-0 active:scale-[0.98] will-change-transform"
+      "group relative inline-flex items-center justify-center font-medium transition-all duration-[180ms] ease-[cubic-bezier(0.16,1,0.3,1)] select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#635BFF] focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900 disabled:pointer-events-none disabled:opacity-50 overflow-hidden active:scale-[0.975] will-change-transform [&>svg]:transition-transform [&>svg]:duration-200 [&>svg]:ease-out hover:[&>svg:last-child]:translate-x-1"
 
     const sizeStyles = {
-      sm: "h-9 px-4 text-xs gap-1.5",
-      md: "h-11 px-6 text-sm gap-2",
-      lg: "h-13 px-8 text-base gap-2.5",
+      sm: "h-8 px-3 text-xs gap-1.5",
+      md: "h-10 px-4 text-xs sm:text-sm gap-2",
+      lg: "h-12 px-6 text-sm sm:text-base gap-2.5",
     }[size]
 
-    const radiusStyles = pill ? "rounded-full" : "rounded-xl"
+    const radiusStyles = pill ? "rounded-full" : "rounded-lg"
 
     const variantStyles = {
       primary:
-        "text-white bg-gradient-to-r from-blue-600 via-blue-500 to-sky-400 hover:from-blue-700 hover:via-blue-600 hover:to-sky-500 shadow-[0_4px_16px_rgba(37,99,235,0.3)] hover:shadow-[0_8px_24px_rgba(37,99,235,0.45)] hover:-translate-y-0.5",
+        "text-white bg-gradient-to-r from-[#635BFF] via-[#564EF5] to-[#7C3AED] hover:brightness-[1.05] active:brightness-[0.96] border border-[#635BFF]/80 shadow-xs hover:-translate-y-px hover:scale-[1.01] hover:shadow-[0_8px_22px_-6px_rgba(99,91,255,0.40)]",
       secondary:
-        "text-[#0B0B14] bg-white border border-[rgba(15,15,30,0.12)] hover:border-[rgba(15,15,30,0.22)] hover:bg-[#F4F4F8] shadow-xs hover:-translate-y-0.5",
+        "text-slate-900 dark:text-white bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs hover:border-[#635BFF]/30 hover:bg-[#635BFF]/[0.04] dark:hover:bg-[#635BFF]/[0.12] hover:text-[#635BFF] dark:hover:text-indigo-400 hover:-translate-y-px hover:shadow-xs active:scale-[0.98]",
       outline:
-        "text-[#0B0B14] bg-transparent border border-[rgba(15,15,30,0.14)] hover:border-blue-600 hover:bg-blue-50/60 hover:text-blue-700 hover:-translate-y-0.5",
-      ghost: "text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-black/[0.04]",
-      link: "text-blue-600 hover:text-blue-800 p-0 h-auto underline-offset-4 hover:underline",
+        "text-slate-700 dark:text-slate-300 bg-transparent border border-slate-200/90 dark:border-slate-800 hover:border-[#635BFF]/40 hover:text-[#635BFF] dark:hover:text-indigo-400 hover:bg-[#635BFF]/[0.04] dark:hover:bg-[#635BFF]/[0.10] hover:-translate-y-px active:scale-[0.98]",
+      ghost:
+        "text-slate-600 dark:text-slate-400 hover:text-[#635BFF] dark:hover:text-indigo-400 hover:bg-[#635BFF]/[0.06] dark:hover:bg-[#635BFF]/[0.12] active:scale-[0.97]",
+      link: "text-[#635BFF] hover:text-[#4F46E5] p-0 h-auto underline-offset-4 hover:underline",
     }[variant]
 
     return (
@@ -74,14 +75,6 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         {...props}
       >
-        {/* Subtle shine sweep on primary hover */}
-        {variant === "primary" && !isBusy && (
-          <span
-            className="absolute inset-0 w-1/2 h-full bg-white/20 skew-x-12 -translate-x-full group-hover:translate-x-[300%] transition-transform duration-1000 ease-out pointer-events-none will-change-transform"
-            aria-hidden="true"
-          />
-        )}
-
         {/* Natural layout keeper: preserves exact button width/height to avoid layout shifts */}
         <span
           className={cn(

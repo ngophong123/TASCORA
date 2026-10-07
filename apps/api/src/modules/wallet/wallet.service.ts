@@ -1,5 +1,5 @@
 import { prisma } from '../../lib/prisma';
-import { WalletTransactionType } from '@prisma/client';
+import { Prisma, WalletTransactionType } from '@prisma/client';
 
 export class WalletService {
   static async getWallet(userId: string) {
@@ -26,36 +26,14 @@ export class WalletService {
   }
 
   static async addTransaction(walletId: string, amount: number, type: WalletTransactionType, description?: string) {
-    const transaction = await prisma.$transaction(async (tx) => {
-      // Tạo record giao dịch
-      const newTx = await tx.walletTransaction.create({
-        data: {
-          walletId,
-          amount,
-          type,
-          description,
-          status: 'SUCCEEDED',
-        },
-      });
-
-      // Cập nhật số dư
-      const wallet = await tx.wallet.findUnique({ where: { id: walletId } });
-      if (!wallet) throw new Error('Wallet not found');
-
-      const updatedBalance = Number(wallet.balance) + amount;
-      
-      if (updatedBalance < 0) {
-        throw new Error('Insufficient funds');
-      }
-
-      await tx.wallet.update({
-        where: { id: walletId },
-        data: { balance: updatedBalance },
-      });
-
-      return newTx;
+    const delta = new Prisma.Decimal(amount);
+    if (!delta.isFinite() || delta.isZero() || delta.decimalPlaces() > 2) throw new Error('Invalid wallet amount');
+    const debit = type === WalletTransactionType.WITHDRAWAL || type === WalletTransactionType.PAYMENT;
+    if (debit !== delta.isNegative()) throw new Error('Wallet transaction direction is invalid');
+    return prisma.$transaction(async tx => {
+      const updated = await tx.wallet.updateMany({ where: { id: walletId, ...(debit ? { balance: { gte: delta.negated() } } : {}) }, data: { balance: { increment: delta } } });
+      if (updated.count !== 1) throw new Error('Wallet not found or insufficient funds');
+      return tx.walletTransaction.create({ data: { walletId, amount: delta, type, description, status: 'SUCCEEDED' } });
     });
-
-    return transaction;
   }
 }

@@ -41,7 +41,7 @@ export function BalanceCards({
           </div>
 
           <div className="mt-4">
-            <h3 className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[#0B0B14]">
+            <h3 className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[#0A0A23]">
               $
               {availableBalance.toLocaleString("en-US", {
                 minimumFractionDigits: 2,
@@ -82,7 +82,7 @@ export function BalanceCards({
           </div>
 
           <div className="mt-4">
-            <h3 className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[#0B0B14]">
+            <h3 className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[#0A0A23]">
               $
               {pendingClearance.toLocaleString("en-US", {
                 minimumFractionDigits: 2,
@@ -97,7 +97,7 @@ export function BalanceCards({
 
         <div className="mt-5 pt-3 border-t border-[rgba(15,15,30,0.06)] flex items-center justify-between text-[11px] text-[#6B6B7B]">
           <span>Next release</span>
-          <span className="font-medium text-[#0B0B14]">Tomorrow, 14:00</span>
+          <span className="font-medium text-[#0A0A23]">Tomorrow, 14:00</span>
         </div>
       </div>
 
@@ -118,7 +118,7 @@ export function BalanceCards({
           </div>
 
           <div className="mt-4">
-            <h3 className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[#0B0B14]">
+            <h3 className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[#0A0A23]">
               $
               {withdrawnTotal.toLocaleString("en-US", {
                 minimumFractionDigits: 2,
@@ -133,7 +133,7 @@ export function BalanceCards({
 
         <div className="mt-5 pt-3 border-t border-[rgba(15,15,30,0.06)] flex items-center justify-between text-[11px] text-[#6B6B7B]">
           <span>Completed payouts</span>
-          <span className="font-medium text-[#0B0B14]">14 transfers</span>
+          <span className="font-medium text-[#0A0A23]">14 transfers</span>
         </div>
       </div>
 
@@ -153,7 +153,7 @@ export function BalanceCards({
           </div>
 
           <div className="mt-4">
-            <h3 className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[#0B0B14]">
+            <h3 className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[#0A0A23]">
               $
               {inEscrowActive.toLocaleString("en-US", {
                 minimumFractionDigits: 2,

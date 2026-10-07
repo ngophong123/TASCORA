@@ -17,6 +17,7 @@ import {
   writeNotificationsDataFile,
   writePaymentsDataFile,
 } from "./phase4-generators"
+import { SPECIFIC_GIG_COVERS } from "../apps/web/src/data/gigCovers"
 
 // Load environment variables (.env.local has priority over .env)
 dotenv.config({ path: path.resolve(process.cwd(), ".env.local") })
@@ -209,6 +210,26 @@ const DOMAIN_SKILLS: Record<string, { titles: string[]; skills: string[]; basePr
     skills: ["React Native", "Expo", "TypeScript", "iOS Swift", "Android Kotlin", "Offline-First", "Mobile CI/CD"],
     basePrice: 260,
   },
+  devops: {
+    titles: [
+      "Principal DevOps & SRE Engineer",
+      "Cloud Infrastructure & Terraform Architect",
+      "Kubernetes & Platform Engineer",
+      "AWS Solutions & Cloud Systems Lead",
+    ],
+    skills: ["Kubernetes", "Docker", "Terraform", "AWS", "CI/CD", "Helm", "Prometheus", "ArgoCD"],
+    basePrice: 320,
+  },
+  blockchain: {
+    titles: [
+      "Senior Smart Contract & Security Engineer",
+      "Blockchain & Solidity Protocol Architect",
+      "Web3 Full-Stack & EVM Specialist",
+      "DeFi Systems & Cryptographic Auditor",
+    ],
+    skills: ["Solidity", "Smart Contracts", "EVM", "Foundry", "Hardhat", "Web3.js", "Ethereum", "DeFi"],
+    basePrice: 380,
+  },
   video: {
     titles: [
       "3D Motion Designer & WebGL Creative Director",
@@ -236,6 +257,16 @@ const DOMAIN_SKILLS: Record<string, { titles: string[]; skills: string[]; basePr
     skills: ["Programmatic SEO", "Technical SEO", "Attribution Modeling", "Funnel CRO", "Google Analytics 4"],
     basePrice: 200,
   },
+  business: {
+    titles: [
+      "Managing Director & Corporate Strategy Advisor",
+      "Venture Financial Modeler & Valuation Analyst",
+      "Web3 Tokenomics & Governance Advisor",
+      "Market Research & Competitive Intelligence Lead",
+    ],
+    skills: ["Financial Modeling", "Corporate Strategy", "Due Diligence", "Tokenomics", "Valuation", "Market Analysis"],
+    basePrice: 280,
+  },
 }
 
 // ---------------------------------------------------------------------------
@@ -248,7 +279,7 @@ export const SEED_ADMIN_USER: UserProfile = {
   role: "admin",
   title: "Platform Trust, Safety & Operations Director",
   avatarInitials: "AD",
-  avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+  avatar: "/images/avatars/default-avatar.jpg",
   gradient: "from-blue-700 via-indigo-600 to-violet-700",
   accent: "blue",
   bio: "Platform Administrator overseeing dispute arbitration, automated milestone escrow reconciliation, and platform compliance policies.",
@@ -281,7 +312,7 @@ const FIXED_FEATURED_FREELANCERS: UserProfile[] = [
     role: "both",
     title: "Senior Full-Stack Architect",
     avatarInitials: "AM",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+    avatar: "/images/avatars/alexandre-moreau.jpg",
     gradient: "from-blue-600 to-sky-500",
     accent: "blue",
     bio: "Principal Software Architect with 12+ years of experience designing high-throughput distributed systems, Next.js applications, and secure microservices.",
@@ -310,7 +341,7 @@ const FIXED_FEATURED_FREELANCERS: UserProfile[] = [
     role: "freelancer",
     title: "Principal Brand & Product Designer",
     avatarInitials: "HR",
-    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    avatar: "/images/avatars/helena-rostova.jpg",
     gradient: "from-teal-600 to-emerald-500",
     accent: "teal",
     bio: "Digital product designer specializing in design systems, typographic identity, and conversion-centered SaaS interfaces for Series A-C startups.",
@@ -339,7 +370,7 @@ const FIXED_FEATURED_FREELANCERS: UserProfile[] = [
     role: "freelancer",
     title: "AI Engineer & Research Lead",
     avatarInitials: "MV",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+    avatar: "/images/avatars/marcus-vance.jpg",
     gradient: "from-purple-600 to-violet-500",
     accent: "violet",
     bio: "AI practitioner developing production RAG architectures, local LLM fine-tuning pipelines, and autonomous agent systems for enterprise knowledge bases.",
@@ -368,7 +399,7 @@ const FIXED_FEATURED_FREELANCERS: UserProfile[] = [
     role: "freelancer",
     title: "B2B SaaS Growth & SEO Strategist",
     avatarInitials: "SL",
-    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+    avatar: "/images/avatars/sophia-chen.jpg",
     gradient: "from-pink-600 to-rose-500",
     accent: "pink",
     bio: "Technical growth marketer focused on programmatic SEO architectures, multi-touch attribution pipelines, and landing page conversion optimization.",
@@ -401,7 +432,7 @@ const FIXED_CLIENTS: UserProfile[] = [
     title: "VP of Product Engineering",
     company: "Fintech Corp Ltd",
     avatarInitials: "MT",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+    avatar: "/images/avatars/client-marcus.jpg",
     gradient: "from-blue-600 to-indigo-700",
     accent: "blue",
     bio: "Overseeing engineering and cloud infrastructure for cross-border banking rails and decentralized settlements.",
@@ -431,6 +462,7 @@ const FIXED_CLIENTS: UserProfile[] = [
     title: "Managing Partner",
     company: "Apex Capital Ventures",
     avatarInitials: "DS",
+    avatar: "/images/avatars/david-sterling.jpg",
     gradient: "from-teal-600 to-cyan-700",
     accent: "teal",
     bio: "Venture capitalist backing early-stage infrastructure, AI tooling, and enterprise productivity software.",
@@ -460,6 +492,7 @@ const FIXED_CLIENTS: UserProfile[] = [
     title: "Head of Digital Operations",
     company: "Nexus AI Ventures",
     avatarInitials: "EZ",
+    avatar: "/images/avatars/client-emily.jpg",
     gradient: "from-violet-600 to-purple-700",
     accent: "violet",
     bio: "Leading rapid software prototyping and growth sprints for hyper-growth portfolio companies across APAC.",
@@ -489,6 +522,7 @@ const FIXED_CLIENTS: UserProfile[] = [
     title: "Chief Technology Officer",
     company: "Horizon Health Technologies",
     avatarInitials: "RA",
+    avatar: "/images/avatars/rachel-adams.jpg",
     gradient: "from-pink-600 to-rose-700",
     accent: "pink",
     bio: "Building HIPAA-compliant telemedicine patient experiences and scalable HL7 FHIR integrations.",
@@ -518,6 +552,7 @@ const FIXED_CLIENTS: UserProfile[] = [
     title: "Co-Founder & CEO",
     company: "Nova Dynamics AI",
     avatarInitials: "LO",
+    avatar: "/images/avatars/liam-oconnor.jpg",
     gradient: "from-indigo-600 to-blue-700",
     accent: "indigo",
     bio: "Scaling generative workflow automation pipelines for European industrial logistics and freight forwarding.",
@@ -549,6 +584,7 @@ const SPECIFIC_EDGE_CASES: UserProfile[] = [
     role: "freelancer",
     title: "Executive Distinguished Systems Architect & Global Enterprise Transformation Lead Specialist",
     avatarInitials: "BM",
+    avatar: "/images/avatars/bart-montgomery.jpg",
     gradient: "from-indigo-700 via-purple-700 to-pink-700",
     accent: "indigo",
     bio: "Over twenty-five years architecting mission-critical distributed consensus networks, zero-latency financial transmission conduits, and fault-tolerant multi-cloud enterprise application fabrics across heterogeneous banking conglomerates worldwide. Specializes in deep cryptographic formal verification, ultra-scale streaming microservices, resilient disaster topologies, and cross-border regulatory governance.",
@@ -577,6 +613,7 @@ const SPECIFIC_EDGE_CASES: UserProfile[] = [
     role: "freelancer",
     title: "Junior React & TypeScript Developer",
     avatarInitials: "OB",
+    avatar: "/images/avatars/oliver-bennett.jpg",
     gradient: "from-sky-500 to-blue-600",
     accent: "blue",
     bio: "Passionate front-end developer eager to build clean, accessible components in Next.js and Tailwind CSS. Newly registered on TASCORA and ready for first project engagements.",
@@ -605,6 +642,7 @@ const SPECIFIC_EDGE_CASES: UserProfile[] = [
     role: "freelancer",
     title: "DevOps & Zero-Downtime CI/CD Specialist",
     avatarInitials: "CN",
+    avatar: "/images/avatars/chloe-nguyen.jpg",
     gradient: "from-teal-500 to-emerald-600",
     accent: "teal",
     bio: "Automation maniac maintaining 99.999% uptime pipelines. Specializes in Docker, Terraform, AWS ECS Fargate, and zero-downtime blue/green deployment orchestration.",
@@ -633,6 +671,7 @@ const SPECIFIC_EDGE_CASES: UserProfile[] = [
     role: "freelancer",
     title: "Enterprise SAP & Cloud Migration Consultant",
     avatarInitials: "TL",
+    avatar: "/images/avatars/torsten-lindemann.jpg",
     gradient: "from-amber-600 to-stone-700",
     accent: "amber",
     bio: "Providing quarterly architectural audits and strategic migration planning for SAP S/4HANA transitions. Engages in high-touch, async consultative deliveries.",
@@ -661,6 +700,7 @@ const SPECIFIC_EDGE_CASES: UserProfile[] = [
     role: "freelancer",
     title: "Legacy Web3 Contract Engineer",
     avatarInitials: "SR",
+    avatar: "/images/avatars/sergei-romanov.jpg",
     gradient: "from-rose-700 to-slate-800",
     accent: "pink",
     bio: "Account currently suspended pending credential reverification and policy audit review.",
@@ -710,12 +750,48 @@ function generateBulkUsers(): UserProfile[] {
     { first: "Anh", last: "Pham", city: "Hanoi" },
   ]
 
+  // Curated, unique real stock photography portraits from Unsplash
+  const BULK_AVATARS: string[] = [
+    "/images/avatars/minh-nguyen.jpg",
+    "/images/avatars/aiko-tanaka.jpg",
+    "/images/avatars/kwame-mensah.jpg",
+    "/images/avatars/nadia-belkacem.jpg",
+    "/images/avatars/lukas-weber.jpg",
+    "/images/avatars/maya-patel.jpg",
+    "/images/avatars/arthur-pendelton.jpg",
+    "/images/avatars/mai-tran.jpg",
+    "/images/avatars/mateo-rossi.jpg",
+    "/images/avatars/fatima-almansoor.jpg",
+    "/images/avatars/tariq-sterling.jpg",
+    "/images/avatars/sunita-rao.jpg",
+    "/images/avatars/jonas-vestergaard.jpg",
+    "/images/avatars/beatrice-dupont.jpg",
+    "/images/avatars/carlos-mendoza.jpg",
+    "/images/avatars/hoang-le.jpg",
+    "/images/avatars/henrik-lindholm.jpg",
+    "/images/avatars/sarah-jenkins.jpg",
+    "/images/avatars/kevin-oreilly.jpg",
+    "/images/avatars/yuka-sato.jpg",
+    "/images/avatars/kofi-boateng.jpg",
+    "/images/avatars/valerie-mercier.jpg",
+    "/images/avatars/stefan-richter.jpg",
+    "/images/avatars/anh-pham.jpg",
+    "/images/avatars/clara-novak.jpg",
+    "/images/avatars/dmitri-volkov.jpg",
+    "/images/avatars/chloe-laurent.jpg",
+    "/images/avatars/leila-haddad.jpg",
+    "/images/avatars/linnea-holm.jpg",
+    "/images/avatars/david-chen.jpg",
+    "/images/avatars/default-avatar.jpg",
+  ]
+
   for (let i = 1; i <= 31; i++) {
     const isBoth = i <= 10
     const role: UserRole = isBoth ? "both" : "freelancer"
     const domainKey = domainKeys[(i - 1) % domainKeys.length]
     const domain = DOMAIN_SKILLS[domainKey]
     const palette = ACCENT_PALETTES[(i - 1) % ACCENT_PALETTES.length]
+    const avatar = BULK_AVATARS[(i - 1) % BULK_AVATARS.length]
 
     let firstName: string
     let lastName: string
@@ -780,6 +856,7 @@ function generateBulkUsers(): UserProfile[] {
       role,
       title,
       avatarInitials: initials,
+      avatar,
       gradient: palette.gradient,
       accent: palette.accent,
       bio: bioSentences.join(" "),
@@ -822,14 +899,20 @@ export function generateAllUsers(): UserProfile[] {
 // 7. PHASE 2: GIGS GENERATOR (60-80 Gigs, Packages, Add-ons, FAQs, Galleries)
 // ---------------------------------------------------------------------------
 const GALLERY_PLACEHOLDERS = [
-  "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=1200&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=1200&auto=format&fit=crop&q=80",
+  "/images/services/programming/full-stack-nextjs-node.jpg",
+  "/images/services/design/luxury-brand-identity-stationery.jpg",
+  "/images/services/ai/llm-rag-fine-tuning-code.jpg",
+  "/images/services/marketing/technical-seo-analytics-growth.jpg",
+  "/images/services/programming/cybersecurity-soc-monitor.jpg",
+  "/images/services/design/motion-graphics-3d-workstation.jpg",
+  "/images/services/programming/mobile-app-engineering.jpg",
+  "/images/services/programming/cloud-devops-infrastructure.jpg",
+  "/images/services/gallery/code-architecture-blueprint.jpg",
+  "/images/services/gallery/analytics-revenue-metrics.jpg",
+  "/images/services/gallery/cloud-server-datacenter.jpg",
+  "/images/services/design/saas-design-system-figma.jpg",
+  "/images/services/writing/technical-documentation-editorial.jpg",
+  "/images/services/business/enterprise-consulting-boardroom.jpg",
 ]
 
 interface CategoryConfig {
@@ -841,23 +924,24 @@ interface CategoryConfig {
 const CATEGORIES: CategoryConfig[] = [
   {
     slug: "programming",
-    name: "Web Development",
+    name: "Programming & Tech",
     subcategories: [
-      { slug: "nextjs", name: "Next.js & React 19" },
-      { slug: "fullstack", name: "Full-Stack Node.js" },
-      { slug: "cloud-devops", name: "Cloud & DevOps" },
-      { slug: "smart-contracts", name: "Smart Contracts & Web3" },
-      { slug: "mobile", name: "Mobile App Development" },
+      { slug: "nextjs", name: "Web Development" },
+      { slug: "fullstack", name: "Backend Development" },
+      { slug: "cloud-devops", name: "DevOps & Cloud" },
+      { slug: "smart-contracts", name: "Blockchain & Web3" },
+      { slug: "mobile", name: "Mobile Development" },
+      { slug: "cybersecurity", name: "Cybersecurity" },
     ],
   },
   {
     slug: "design",
-    name: "UI/UX & Product Design",
+    name: "Graphics & Design",
     subcategories: [
-      { slug: "design-systems", name: "Design Systems & Figma" },
-      { slug: "saas-ux", name: "SaaS Application UX" },
-      { slug: "branding", name: "Logo & Brand Identity" },
-      { slug: "3d-motion", name: "Video & 3D Animation" },
+      { slug: "design-systems", name: "Design Systems" },
+      { slug: "saas-ux", name: "UI/UX Design" },
+      { slug: "branding", name: "Brand & Identity" },
+      { slug: "3d-motion", name: "3D & Motion" },
     ],
   },
   {
@@ -865,26 +949,36 @@ const CATEGORIES: CategoryConfig[] = [
     name: "AI & Automation",
     subcategories: [
       { slug: "agents", name: "Autonomous AI Agents" },
-      { slug: "rag-systems", name: "LLM Fine-Tuning & RAG" },
-      { slug: "computer-vision", name: "Computer Vision & ML" },
+      { slug: "rag-systems", name: "AI & Machine Learning" },
+      { slug: "computer-vision", name: "AI & Machine Learning" },
     ],
   },
   {
     slug: "marketing",
-    name: "Technical SEO & Growth",
+    name: "Digital Marketing",
     subcategories: [
-      { slug: "programmatic-seo", name: "Programmatic SEO Architecture" },
-      { slug: "cro-funnels", name: "Conversion Rate Optimization" },
-      { slug: "attribution", name: "Attribution & Analytics" },
+      { slug: "programmatic-seo", name: "Technical SEO" },
+      { slug: "cro-funnels", name: "Growth & CRO" },
+      { slug: "attribution", name: "Technical SEO" },
     ],
   },
   {
     slug: "writing",
-    name: "Technical Writing",
+    name: "Writing & Translation",
     subcategories: [
-      { slug: "api-docs", name: "API & Developer Documentation" },
-      { slug: "whitepapers", name: "Fintech & Web3 Whitepapers" },
-      { slug: "architecture-specs", name: "System Architecture Specs" },
+      { slug: "api-docs", name: "API Documentation" },
+      { slug: "whitepapers", name: "Technical Writing" },
+      { slug: "architecture-specs", name: "System Architecture" },
+    ],
+  },
+  {
+    slug: "business",
+    name: "Business & Consulting",
+    subcategories: [
+      { slug: "strategy", name: "Corporate Strategy" },
+      { slug: "finance", name: "Financial Modeling" },
+      { slug: "web3-advisory", name: "Corporate Strategy" },
+      { slug: "market-research", name: "Corporate Strategy" },
     ],
   },
 ]
@@ -1492,6 +1586,58 @@ const GIG_CATALOG_TEMPLATES = [
     premPrice: 580,
     tags: ["ADR", "Onboarding", "Runbooks", "Developer Docs"],
   },
+
+  // BUSINESS & CONSULTING (5)
+  {
+    catIndex: 5,
+    subIndex: 0,
+    title: "Enterprise Corporate Strategy & Executive Advisory",
+    basePrice: 350,
+    stdPrice: 650,
+    premPrice: 1200,
+    tags: ["Strategy", "Enterprise", "Consulting", "Management"],
+    badge: "Top Rated",
+    featured: true,
+  },
+  {
+    catIndex: 5,
+    subIndex: 1,
+    title: "Startup Financial Valuation Model & Investor Pitch Deck",
+    basePrice: 280,
+    stdPrice: 520,
+    premPrice: 950,
+    tags: ["Financial Model", "Pitch Deck", "Valuation", "Startup"],
+    badge: "Best Seller",
+  },
+  {
+    catIndex: 5,
+    subIndex: 2,
+    title: "Web3 Tokenomics, DAO Governance & Crypto Venture Advisory",
+    basePrice: 420,
+    stdPrice: 780,
+    premPrice: 1450,
+    tags: ["Web3", "Tokenomics", "DAO", "Crypto", "Strategy"],
+    badge: "Pro Choice",
+    featured: true,
+  },
+  {
+    catIndex: 5,
+    subIndex: 0,
+    title: "Fractional CTO & Digital Architecture Transformation Advisory",
+    basePrice: 450,
+    stdPrice: 850,
+    premPrice: 1600,
+    tags: ["Fractional CTO", "Advisory", "Architecture", "Transformation"],
+  },
+  {
+    catIndex: 5,
+    subIndex: 3,
+    title: "Market Research, Competitive Intelligence & TAM Sizing Report",
+    basePrice: 220,
+    stdPrice: 410,
+    premPrice: 750,
+    tags: ["Market Research", "Competitive Analysis", "TAM", "Intelligence"],
+  },
 ]
 
 // ---------------------------------------------------------------------------
@@ -1520,9 +1666,9 @@ const SPECIFIC_GIG_EDGE_CASES: SpecificGigEdgeCaseConfig[] = [
     slug: "rapid-security-vulnerability-cve-audit",
     title: "Targeted Rapid Security Code Audit & Dependency CVE Scan",
     categorySlug: "programming",
-    categoryName: "Web Development",
-    subCategorySlug: "cloud-devops",
-    subCategoryName: "Cloud & DevOps",
+    categoryName: "Programming & Tech",
+    subCategorySlug: "cybersecurity",
+    subCategoryName: "Cybersecurity",
     sellerId: "f-1",
     singlePackageOnly: true,
   },
@@ -1532,9 +1678,9 @@ const SPECIFIC_GIG_EDGE_CASES: SpecificGigEdgeCaseConfig[] = [
     slug: "enterprise-heterogeneous-multi-cloud-high-throughput-microservices",
     title: "Enterprise Heterogeneous Multi-Cloud High-Throughput Zero-Downtime Microservices Architecture with Formal Cryptographic Verification, Kubernetes Orchestration, and Distributed Transaction Observability",
     categorySlug: "programming",
-    categoryName: "Web Development",
-    subCategorySlug: "fullstack",
-    subCategoryName: "Full-Stack Node.js",
+    categoryName: "Programming & Tech",
+    subCategorySlug: "cloud-devops",
+    subCategoryName: "DevOps & Cloud",
     sellerId: "usr-edge-overflow",
     veryLongTitle: true,
   },
@@ -1544,9 +1690,9 @@ const SPECIFIC_GIG_EDGE_CASES: SpecificGigEdgeCaseConfig[] = [
     slug: "fresh-react-components-tailwind-ui",
     title: "Accessible Tailwind CSS & React 19 UI Component Library",
     categorySlug: "programming",
-    categoryName: "Web Development",
+    categoryName: "Programming & Tech",
     subCategorySlug: "nextjs",
-    subCategoryName: "Next.js & React 19",
+    subCategoryName: "Web Development",
     sellerId: "usr-edge-brandnew",
     zeroOrders: true,
   },
@@ -1557,8 +1703,8 @@ const SPECIFIC_GIG_EDGE_CASES: SpecificGigEdgeCaseConfig[] = [
     title: "Draft Experimental Quantum Computing Simulator with Qiskit & Python",
     categorySlug: "ai",
     categoryName: "AI & Automation",
-    subCategorySlug: "agents",
-    subCategoryName: "Autonomous AI Agents",
+    subCategorySlug: "rag-systems",
+    subCategoryName: "AI & Machine Learning",
     sellerId: "f-3",
     status: "draft",
   },
@@ -1568,13 +1714,244 @@ const SPECIFIC_GIG_EDGE_CASES: SpecificGigEdgeCaseConfig[] = [
     slug: "fullstack-enterprise-cloud-suite-maximum-addons",
     title: "Full-Stack Enterprise Cloud SaaS Suite with Maximum Add-on Options",
     categorySlug: "programming",
-    categoryName: "Web Development",
+    categoryName: "Programming & Tech",
     subCategorySlug: "nextjs",
-    subCategoryName: "Next.js & React 19",
+    subCategoryName: "Web Development",
     sellerId: "f-1",
     maxAddons: true,
   },
 ]
+
+function getRealisticDescription(title: string, categorySlug: string, subCategorySlug: string, subCategoryName: string): string {
+  const lowerTitle = title.toLowerCase()
+
+  if (categorySlug === "programming") {
+    if (subCategorySlug === "nextjs" || lowerTitle.includes("next.js")) {
+      return `I will architect and develop a high-performance Next.js 15 application using React 19, strict TypeScript, and Tailwind CSS. Whether you're building a new SaaS platform or refactoring an existing codebase, I focus on clean component hierarchy, fast initial page loads, and seamless API integrations.
+
+### Deliverables & Scope:
+- **Production Next.js 15 Setup**: App Router architecture with optimized Server & Client Components.
+- **Strict TypeScript & Clean Code**: Zero implicit any, strict ESLint configuration, and modular folder structure.
+- **Responsive & Accessible UI**: Pixel-perfect implementation using Tailwind CSS and Radix UI primitives.
+- **State Management & Data Fetching**: TanStack Query, Server Actions, and optimistic UI updates.
+- **Database & Auth Integration**: Prisma / Drizzle ORM schema with PostgreSQL, NextAuth.js or Supabase.
+- **Testing & Deployment**: Vitest unit test suite, automated GitHub Actions CI/CD, and Vercel/Docker deployment guide.`
+    }
+    if (subCategorySlug === "cloud-devops" || lowerTitle.includes("cloud") || lowerTitle.includes("docker") || lowerTitle.includes("kubernetes")) {
+      return `I will design, provision, and automate your cloud infrastructure using modern Infrastructure as Code (IaC) and container orchestration best practices. I eliminate manual server administration and configure resilient, zero-downtime deployment pipelines.
+
+### Deliverables & Scope:
+- **Infrastructure as Code**: Production-grade Terraform / OpenTofu modules for AWS, GCP, or DigitalOcean.
+- **Containerization & Orchestration**: Minimal multi-stage Dockerfiles and Kubernetes manifests / Helm charts.
+- **Automated CI/CD Pipeline**: GitHub Actions workflows for automated linting, test suites, and staging/prod deployments.
+- **Observability & Health Checks**: Prometheus/Grafana or Datadog metrics, structured JSON logging, and alert rules.
+- **Security Hardening**: Least-privilege IAM roles, secrets management with Vault/AWS Secrets Manager, and TLS certificate automation.`
+    }
+    if (subCategorySlug === "smart-contracts" || lowerTitle.includes("solidity") || lowerTitle.includes("web3")) {
+      return `I will write, test, and audit secure Solidity smart contracts for Ethereum and EVM-compatible networks. I follow OpenZeppelin security standards and write exhaustive test suites to guard against reentrancy, integer overflows, and front-running vulnerabilities.
+
+### Deliverables & Scope:
+- **Audited Solidity Code**: Gas-optimized ERC-20, ERC-721, or custom staking/escrow smart contracts.
+- **Exhaustive Foundry / Hardhat Test Suites**: 100% branch test coverage, fuzz testing, and formal verification tests.
+- **Gas Optimization Report**: Storage packing and opcode-level savings to minimize transaction fees.
+- **Deployment Scripts & Verification**: Multi-network deployment scripts and verified source code on Etherscan/Basescan.
+- **Frontend Integration Helpers**: Typechain bindings and Wagmi / Viem hook wrappers for your dApp frontend.`
+    }
+    if (subCategorySlug === "mobile" || lowerTitle.includes("react native") || lowerTitle.includes("flutter") || lowerTitle.includes("ios")) {
+      return `I will develop a responsive, cross-platform mobile application with fluid 60fps animations, offline data caching, and native device feature integration. Built with clean architecture principles for easy maintenance and store approvals.
+
+### Deliverables & Scope:
+- **Clean Cross-Platform Code**: React Native (Expo) or Flutter codebase with modular state architecture.
+- **Offline-First Persistence**: Local SQLite / WatermelonDB sync with automatic network conflict resolution.
+- **Native Hardware Integration**: Push notifications, biometric authentication (FaceID/Fingerprint), and camera/location APIs.
+- **Store Submission Readiness**: Production signing configs, Fastlane scripts, and App Store / Google Play compliance checklist.
+- **Comprehensive QA**: Tested on physical iOS and Android test devices across multiple screen sizes.`
+    }
+    return `I will build a scalable, production-ready backend service and API engine tailored to your application's transaction volume. Focusing on robust domain modeling, low latency database queries, and clear API documentation.
+
+### Deliverables & Scope:
+- **Clean Architecture API**: Node.js (NestJS / Express) or Go microservice with clear controller-service-repository layers.
+- **Database Schema & Indexing**: PostgreSQL / Redis schema with optimized indexes, migration scripts, and connection pooling.
+- **Security & Rate Limiting**: JWT / OAuth2 authentication, Helmet security headers, CORS policies, and Redis rate limiters.
+- **Interactive Documentation**: OpenAPI 3.1 (Swagger) contract and Postman collection with example request payloads.
+- **Dockerized Environment**: Docker Compose setup for instant local onboarding and production parity.`
+  }
+
+  if (categorySlug === "design") {
+    if (subCategorySlug === "branding" || lowerTitle.includes("brand") || lowerTitle.includes("logo")) {
+      return `I will craft a distinctive, enduring visual brand identity that elevates your company above competitors. From typography pairings to packaging systems, every element is designed to resonate with your target market and communicate your core value.
+
+### Deliverables & Scope:
+- **Primary & Secondary Brandmarks**: Vector logo assets in monochrome, inverted, and responsive lockups.
+- **Comprehensive Brand Guidelines**: Digital PDF handbook detailing logo clearspace, color palettes, and typographic hierarchy.
+- **Design Tokens & Swatches**: Hex, RGB, CMYK, and Pantone color definitions ready for digital and print reproduction.
+- **Stationery & Social Kit**: Business cards, letterhead, email signatures, and social media banner templates.
+- **Source Deliverables**: Master vector files in Figma, Adobe Illustrator (.ai), SVG, and high-res print-ready PDFs.`
+    }
+    if (subCategorySlug === "design-systems" || lowerTitle.includes("figma") || lowerTitle.includes("design system")) {
+      return `I will design a scalable, accessible Figma design system tailored for modern SaaS applications. Built with Figma's latest variable modes, autolayout, and strict component property conventions that map 1:1 to frontend code tokens.
+
+### Deliverables & Scope:
+- **Foundational Token Library**: Color variables (Light & Dark modes), fluid typographic scale, spacing tokens, and shadow elevations.
+- **Atomic Component Library**: Buttons, form inputs, dropdowns, modal dialogs, data tables, and toast notifications.
+- **Component Variants & States**: Default, hover, focused, disabled, and loading states configured with boolean properties.
+- **Interactive Prototypes**: High-fidelity clickable user flows demonstrating transitions and responsive layouts.
+- **Engineering Handoff Guide**: Detailed token naming matching Tailwind CSS / CSS variable conventions.`
+    }
+    if (subCategorySlug === "3d-motion" || lowerTitle.includes("motion") || lowerTitle.includes("3d") || lowerTitle.includes("video")) {
+      return `I will produce high-impact 3D product animations and motion graphics that explain complex product features with cinematic clarity. Perfect for landing page hero sections, pitch videos, and product launches.
+
+### Deliverables & Scope:
+- **Storyboarding & Visual Direction**: Styleframes and motion moodboards aligned with your brand aesthetic.
+- **High-Fidelity 3D Modeling**: Detailed procedural materials, realistic lighting, and photorealistic rendering in Blender / Cinema 4D.
+- **Smooth 60fps Motion Design**: Expressive easing, camera choreography, and physics-based interactions.
+- **Sound Design & Audio Mix**: Bespoke sound effects, foley, and royalty-free music sync.
+- **Export Deliverables**: ProRes 422 master, web-optimized MP4 / WebM, and transparent alpha channel exports for web integration.`
+    }
+    return `I will design an intuitive, conversion-focused user interface and user experience for your web application. Through user journey mapping and systematic wireframing, I simplify complex workflows and eliminate onboarding friction.
+
+### Deliverables & Scope:
+- **User Flow & Wireframe Architecture**: Low-fidelity structural wireframes establishing optimal user pathways.
+- **High-Fidelity Interface Screens**: Fully realized UI screens for desktop, tablet, and mobile breakpoints.
+- **Clickable Interactive Prototype**: Figma prototype configured with realistic micro-interactions and transitions.
+- **Usability Audit Notes**: Friction point identification and heuristic recommendations.
+- **Design Specifications**: Ready-for-development Figma file with autolayout and exported vector assets.`
+  }
+
+  if (categorySlug === "ai") {
+    if (subCategorySlug === "rag-systems" || lowerTitle.includes("rag") || lowerTitle.includes("fine-tuning") || lowerTitle.includes("llm")) {
+      return `I will design and deploy a production Retrieval-Augmented Generation (RAG) system or custom model fine-tuning pipeline. I resolve common hallucination issues, optimize chunking strategies, and establish measurable retrieval evaluation metrics.
+
+### Deliverables & Scope:
+- **Ingestion & Chunking Pipeline**: Semantic document parsing (PDFs, Markdown, Notion, Confluence) with hybrid search chunking.
+- **Vector Database Setup**: Production vector indexing in pgvector, Pinecone, or Qdrant with HNSW distance metrics.
+- **Reranking & Context Compression**: Cohere reranker or cross-encoder integration to maximize context relevance.
+- **Evaluation Benchmark Suite**: Ragas or TruLens evaluation scripts tracking faithfulness, answer relevancy, and latency.
+- **API Wrapper**: Fast, streaming FastAPI endpoint with token usage telemetry and Redis semantic caching.`
+    }
+    if (subCategorySlug === "agents" || lowerTitle.includes("agent")) {
+      return `I will engineer autonomous AI agents capable of multi-step reasoning, external tool execution, and stateful task completion. Designed with guardrails to guarantee deterministic, reliable workflows for business operations.
+
+### Deliverables & Scope:
+- **Agent Architecture**: LangGraph or CrewAI state machine orchestrating specialized agent sub-tasks.
+- **External Tool & API Integrations**: Secure tool definitions for database queries, web scraping, and third-party APIs.
+- **Memory & State Persistence**: Checkpointed conversation state stored in Redis or PostgreSQL.
+- **Guardrails & Fallback Logic**: Output validation schema with Pydantic and fallback error handlers.
+- **Production Deployment**: Dockerized container ready for deployment on AWS ECS, Modal, or Fly.io.`
+    }
+    return `I will train, evaluate, and optimize machine learning models for computer vision, tabular prediction, or multimodal tasks. Focused on real-world inference throughput, low memory footprint, and production deployment reliability.
+
+### Deliverables & Scope:
+- **Data Preprocessing & Augmentation**: Clean data ingestion pipelines with robust validation and normalization.
+- **Model Training & Hyperparameter Tuning**: PyTorch / ONNX model training with experiment tracking (Weights & Biases).
+- **Inference Optimization**: Model quantization (INT8/FP16) and TensorRT compilation for sub-100ms latency.
+- **REST / gRPC Inference Service**: High-throughput inference server with batching and GPU acceleration.
+- **Validation Report**: Precision, recall, F1 scores, confusion matrix, and ROC-AUC curves.`
+  }
+
+  if (categorySlug === "marketing") {
+    return `I will conduct an in-depth technical SEO and conversion growth analysis to capture high-intent organic search traffic. I combine programmatic page architectures with data-driven CRO experiments to drive sustainable customer acquisition.
+
+### Deliverables & Scope:
+- **Comprehensive Technical SEO Audit**: Core Web Vitals diagnostics, indexation hygiene, and canonicalization analysis.
+- **Programmatic Keyword Strategy**: Keyword clustering, search intent mapping, and scalable page template blueprints.
+- **Schema & Structured Data**: Rich JSON-LD markup for Organization, FAQ, Product, and Article entities.
+- **Attribution & Analytics Setup**: Google Analytics 4 (GA4) with custom conversion events and PostHog / Mixpanel funnels.
+- **Actionable 90-Day Roadmap**: Prioritized implementation backlog ranked by technical effort and business impact.`
+  }
+
+  if (categorySlug === "writing") {
+    return `I will research, structure, and author clear, developer-friendly technical documentation and architectural whitepapers. I bridge the gap between complex engineering systems and the developers or stakeholders who need to adopt them.
+
+### Deliverables & Scope:
+- **Comprehensive Technical Content**: Production-ready markdown / MDX guides with annotated code samples.
+- **OpenAPI / Swagger Contract**: Interactive API reference documentation with accurate request/response payloads.
+- **Architectural Diagrams**: Clear C4 model or sequence diagrams illustrating data flows and trust boundaries.
+- **Developer Quickstart Guides**: Step-by-step onboarding walkthroughs that reduce time-to-first-hello-world.
+- **Editorial Review**: Thorough proofreading for technical precision, clarity, and consistent voice.`
+  }
+
+  if (categorySlug === "business") {
+    return `I will build an institutional-grade financial model, valuation sensitivity analysis, or market intelligence strategy deck. Designed with dynamic assumptions, stress testing, and clear executive summaries ready for board review or investor due diligence.
+
+### Deliverables & Scope:
+- **Dynamic 3-Statement Financial Model**: Integrated Income Statement, Balance Sheet, and Cash Flow in Excel / Google Sheets.
+- **Valuation & Scenario Analysis**: DCF valuation, trading comparables, and sensitivity matrices under bull/bear assumptions.
+- **Unit Economics & KPI Dashboard**: LTV, CAC, payback periods, net retention rate (NRR), and runway projections.
+- **Executive Presentation Deck**: Clean, data-driven slides summarizing strategic opportunities and risk factors.
+- **Video Walkthrough**: Screen recording explaining model architecture, formulas, and toggling scenario parameters.`
+  }
+
+  return `I will deliver a professional, production-ready ${subCategoryName} solution adhering to strict quality standards and industry best practices.
+
+### Deliverables & Scope:
+- **Core Deliverables**: Complete implementation meeting your exact technical brief and requirements.
+- **Documentation**: Comprehensive setup instructions, architecture notes, and maintenance guides.
+- **Revisions Included**: Dedicated iteration rounds to refine and polish every detail.
+- **Milestone Escrow Protection**: All work is securely funded through TASCORA's milestone escrow.`
+}
+
+function getCoherentGallery(primaryCover: string, categorySlug: string, subCategorySlug: string, title: string): GigGalleryItem[] {
+  const galleriesByCategory: Record<string, string[]> = {
+    programming: [
+      "/images/services/programming/developer-workstation-dual-monitors.jpg",
+      "/images/services/gallery/code-architecture-blueprint.jpg",
+      "/images/services/programming/cloud-devops-infrastructure.jpg",
+      "/images/services/programming/database-systems-cluster.jpg",
+      "/images/services/programming/modern-frontend-minimalist.jpg",
+    ],
+    design: [
+      "/images/services/design/saas-design-system-figma.jpg",
+      "/images/services/design/visual-brand-guidelines-swatches.jpg",
+      "/images/services/design/product-ui-design-studio.jpg",
+      "/images/services/design/packaging-editorial-typography.jpg",
+      "/images/services/design/luxury-brand-identity-stationery.jpg",
+    ],
+    ai: [
+      "/images/services/ai/neural-network-ai-workstation.jpg",
+      "/images/services/ai/machine-learning-computer-vision.jpg",
+      "/images/services/ai/data-science-deep-learning.jpg",
+      "/images/services/gallery/code-architecture-blueprint.jpg",
+      "/images/services/ai/llm-rag-fine-tuning-code.jpg",
+    ],
+    marketing: [
+      "/images/services/marketing/data-attribution-dashboard.jpg",
+      "/images/services/gallery/analytics-revenue-metrics.jpg",
+      "/images/services/marketing/conversion-optimization-strategy.jpg",
+      "/images/services/marketing/technical-seo-analytics-growth.jpg",
+    ],
+    writing: [
+      "/images/services/writing/system-architecture-whitepaper.jpg",
+      "/images/services/writing/technical-documentation-editorial.jpg",
+      "/images/services/gallery/code-architecture-blueprint.jpg",
+    ],
+    business: [
+      "/images/services/business/financial-modeling-advisory.jpg",
+      "/images/services/business/enterprise-consulting-boardroom.jpg",
+      "/images/services/gallery/analytics-revenue-metrics.jpg",
+    ],
+    video: [
+      "/images/services/video/cinematic-motion-postproduction.jpg",
+      "/images/services/video/video-production-studio-editing.jpg",
+      "/images/services/design/motion-graphics-3d-workstation.jpg",
+    ],
+    photography: [
+      "/images/services/photography/commercial-product-photography.jpg",
+      "/images/services/design/product-ui-design-studio.jpg",
+    ],
+  }
+
+  const pool = galleriesByCategory[categorySlug] || galleriesByCategory.programming
+  const secondaries = pool.filter((url) => url !== primaryCover)
+  const item2 = secondaries[0] || pool[0]
+  const item3 = secondaries[1] || secondaries[0] || pool[1] || pool[0]
+
+  return [
+    { url: primaryCover, alt: `${title} primary preview photo` },
+    { url: item2, alt: `${title} technical workspace and architecture preview` },
+    { url: item3, alt: `${title} detailed specifications and deliverable preview` },
+  ]
+}
 
 export function generateAllGigs(freelancers: UserProfile[]): Gig[] {
   const gigs: Gig[] = []
@@ -1583,6 +1960,91 @@ export function generateAllGigs(freelancers: UserProfile[]): Gig[] {
   const freelancerMap = new Map<string, UserProfile>()
   freelancers.forEach((f) => freelancerMap.set(f.id, f))
 
+  // Categorize freelancers into domain pools for 100% semantic consistency
+  const devopsPool = freelancers.filter(
+    (f) =>
+      f.status === "active" &&
+      (f.id === "usr-edge-fast-response" ||
+       f.title.includes("DevOps") ||
+       f.title.includes("SRE") ||
+       f.title.includes("Kubernetes") ||
+       f.title.includes("Cloud Infrastructure"))
+  )
+  const blockchainPool = freelancers.filter(
+    (f) =>
+      f.status === "active" &&
+      (f.title.includes("Smart Contract") ||
+       f.title.includes("Blockchain") ||
+       f.title.includes("Web3") ||
+       f.title.includes("Solidity") ||
+       f.title.includes("DeFi"))
+  )
+  const mobilePool = freelancers.filter(
+    (f) =>
+      f.status === "active" &&
+      (f.title.includes("Mobile") ||
+       f.title.includes("React Native") ||
+       f.title.includes("Flutter") ||
+       f.title.includes("iOS"))
+  )
+  const backendPool = freelancers.filter(
+    (f) =>
+      f.status === "active" &&
+      (f.title.includes("Backend") ||
+       f.title.includes("Node.js") ||
+       f.skills.some((s) => ["Go", "NestJS", "Microservices", "PostgreSQL"].includes(s)))
+  )
+  const webdevPool = freelancers.filter(
+    (f) =>
+      f.status === "active" &&
+      (f.id === "f-1" ||
+       f.id === "usr-edge-brandnew" ||
+       f.title.includes("Full-Stack") ||
+       f.title.includes("Next.js") ||
+       f.title.includes("Engineer") ||
+       f.title.includes("Developer"))
+  )
+  const designPool = freelancers.filter(
+    (f) =>
+      f.id === "f-2" ||
+      f.title.includes("Designer") ||
+      f.title.includes("UX") ||
+      f.title.includes("Visual") ||
+      f.skills.some((s) => ["Figma", "Design Systems", "SaaS UX", "Typography", "Prototyping"].includes(s))
+  )
+  const aiPool = freelancers.filter(
+    (f) =>
+      f.id === "f-3" ||
+      f.title.includes("AI") ||
+      f.title.includes("Machine Learning") ||
+      f.title.includes("LLM") ||
+      f.skills.some((s) => ["LangChain", "RAG Systems", "Python", "FastAPI", "Vector Databases", "PyTorch"].includes(s))
+  )
+  const marketingPool = freelancers.filter(
+    (f) =>
+      f.id === "f-4" ||
+      f.title.includes("Marketing") ||
+      f.title.includes("SEO") ||
+      f.title.includes("Growth") ||
+      f.skills.some((s) => ["Programmatic SEO", "Technical SEO", "Attribution Modeling", "Funnel CRO"].includes(s))
+  )
+  const writingPool = freelancers.filter(
+    (f) =>
+      f.title.includes("Writing") ||
+      f.title.includes("Author") ||
+      f.title.includes("Documentation") ||
+      f.skills.some((s) => ["Technical Writing", "OpenAPI", "Mintlify", "Whitepapers"].includes(s))
+  )
+  const businessPool = freelancers.filter(
+    (f) =>
+      f.id === "usr-edge-slow-response" ||
+      f.id === "usr-edge-overflow" ||
+      f.title.includes("Consultant") ||
+      f.title.includes("Architect") ||
+      f.title.includes("Strategy") ||
+      f.skills.some((s) => ["Enterprise Architecture", "SAP S/4HANA", "Cloud Migration", "Compliance Auditing"].includes(s))
+  )
+
   // 1. GENERATE REGULAR 65 CATALOG GIGS
   GIG_CATALOG_TEMPLATES.forEach((tmpl, idx) => {
     const gigId = `gig-${idx + 1}`
@@ -1590,9 +2052,32 @@ export function generateAllGigs(freelancers: UserProfile[]): Gig[] {
     const subcategory = category.subcategories[tmpl.subIndex]
     const palette = ACCENT_PALETTES[idx % ACCENT_PALETTES.length]
 
-    // Distribute seller across all available freelancers
-    // Keep first gig mapped to Alexandre Moreau (f-1)
-    const seller = idx === 0 ? freelancerMap.get("f-1")! : freelancers[(idx + 1) % freelancers.length]
+    // Domain-appropriate seller selection
+    let seller: UserProfile
+    const lowerTitle = tmpl.title.toLowerCase()
+    if (subcategory.slug === "smart-contracts" || lowerTitle.includes("smart contract") || lowerTitle.includes("solidity") || lowerTitle.includes("defi") || lowerTitle.includes("web3")) {
+      seller = blockchainPool.length > 0 ? blockchainPool[idx % blockchainPool.length] : webdevPool[idx % webdevPool.length]
+    } else if (subcategory.slug === "cloud-devops" || lowerTitle.includes("kubernetes") || lowerTitle.includes("aws") || lowerTitle.includes("terraform") || lowerTitle.includes("devops") || lowerTitle.includes("docker")) {
+      seller = devopsPool.length > 0 ? devopsPool[idx % devopsPool.length] : webdevPool[idx % webdevPool.length]
+    } else if (subcategory.slug === "mobile" || lowerTitle.includes("mobile") || lowerTitle.includes("react native") || lowerTitle.includes("flutter") || lowerTitle.includes("ios") || lowerTitle.includes("swiftui") || lowerTitle.includes("aso")) {
+      seller = mobilePool.length > 0 ? mobilePool[idx % mobilePool.length] : webdevPool[idx % webdevPool.length]
+    } else if (subcategory.slug === "backend" || lowerTitle.includes("microservice") || lowerTitle.includes("golang") || lowerTitle.includes("go (") || lowerTitle.includes("nestjs") || lowerTitle.includes("graphql") || lowerTitle.includes("redis")) {
+      seller = backendPool.length > 0 ? backendPool[idx % backendPool.length] : webdevPool[idx % webdevPool.length]
+    } else if (category.slug === "programming") {
+      seller = idx === 0 ? (freelancerMap.get("f-1") || webdevPool[0]) : webdevPool[idx % webdevPool.length]
+    } else if (category.slug === "design") {
+      seller = designPool.length > 0 ? designPool[idx % designPool.length] : (freelancerMap.get("f-2") || freelancers[0])
+    } else if (category.slug === "ai") {
+      seller = aiPool.length > 0 ? aiPool[idx % aiPool.length] : (freelancerMap.get("f-3") || freelancers[0])
+    } else if (category.slug === "marketing") {
+      seller = marketingPool.length > 0 ? marketingPool[idx % marketingPool.length] : (freelancerMap.get("f-4") || freelancers[0])
+    } else if (category.slug === "writing") {
+      seller = writingPool.length > 0 ? writingPool[idx % writingPool.length] : webdevPool[idx % webdevPool.length]
+    } else if (category.slug === "business") {
+      seller = businessPool.length > 0 ? businessPool[idx % businessPool.length] : webdevPool[idx % webdevPool.length]
+    } else {
+      seller = freelancers[idx % freelancers.length]
+    }
 
     // Create 3 Package Tiers
     const packages: GigPackageTier[] = [
@@ -1602,7 +2087,7 @@ export function generateAllGigs(freelancers: UserProfile[]): Gig[] {
         price: tmpl.basePrice,
         deliveryDays: Math.max(2, Math.floor(tmpl.basePrice / 100)),
         revisions: 2,
-        description: `Essential ${subcategory.name} setup tailored for early-stage validation, clean code structure, and fundamental deliverables.`,
+        description: `Essential ${subcategory.name} setup tailored for early-stage validation, clean structure, and core deliverables.`,
         features: [
           `Core ${subcategory.name} Foundation`,
           "Detailed Code / Asset Documentation",
@@ -1709,12 +2194,19 @@ export function generateAllGigs(freelancers: UserProfile[]): Gig[] {
       },
     ]
 
-    // Gallery
-    const gallery: GigGalleryItem[] = [
-      { url: GALLERY_PLACEHOLDERS[idx % GALLERY_PLACEHOLDERS.length], alt: `${tmpl.title} preview 1` },
-      { url: GALLERY_PLACEHOLDERS[(idx + 1) % GALLERY_PLACEHOLDERS.length], alt: `${tmpl.title} preview 2` },
-      { url: GALLERY_PLACEHOLDERS[(idx + 2) % GALLERY_PLACEHOLDERS.length], alt: `${tmpl.title} preview 3` },
-    ]
+    const slug = tmpl.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "")
+
+    // Direct 1:1 lookup for 100% unique primary cover mapping
+    const primaryCover =
+      SPECIFIC_GIG_COVERS[gigId] ||
+      SPECIFIC_GIG_COVERS[slug] ||
+      "/images/services/programming/full-stack-nextjs-node.jpg"
+
+    // Coherent domain-specific Gallery
+    const gallery = getCoherentGallery(primaryCover, category.slug, subcategory.slug, tmpl.title)
 
     // Stats
     const impressions = 450 + ((idx * 83) % 2900)
@@ -1723,16 +2215,11 @@ export function generateAllGigs(freelancers: UserProfile[]): Gig[] {
     const revenue = orders * tmpl.stdPrice
     const conversionRate = Math.round((orders / clicks) * 1000) / 10
 
-    const slug = tmpl.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "")
-
     gigs.push({
       id: gigId,
       slug,
       title: tmpl.title,
-      description: `Are you seeking a high-throughput, enterprise-grade ${subcategory.name} deliverable engineered for production scale?\n\nI specialize in building bulletproof platforms adhering to Clean Architecture principles, automated test coverage, and optimized performance.\n\n### What is included in this service:\n- **Full Architecture Blueprint**: Scalable modular design and clear boundaries.\n- **Modern Tooling**: Strict typing, automated formatting, and comprehensive documentation.\n- **Zero-Friction Delivery**: Milestone tracking, escrow security, and post-launch verification.`,
+      description: getRealisticDescription(tmpl.title, category.slug, subcategory.slug, subcategory.name),
       categorySlug: category.slug,
       categoryName: category.name,
       subCategorySlug: subcategory.slug,
@@ -1852,10 +2339,38 @@ export function generateAllGigs(freelancers: UserProfile[]): Gig[] {
       { q: "What is the turnaround time?", a: "Strict adherence to agreed milestones." },
     ]
 
-    const gallery: GigGalleryItem[] = [
-      { url: GALLERY_PLACEHOLDERS[0], alt: `${edge.title} preview 1` },
-      { url: GALLERY_PLACEHOLDERS[1], alt: `${edge.title} preview 2` },
-    ]
+    const edgeCover =
+      SPECIFIC_GIG_COVERS[edge.id] ||
+      SPECIFIC_GIG_COVERS[edge.slug] ||
+      "/images/services/programming/full-stack-nextjs-node.jpg"
+
+    let edgeGallery: GigGalleryItem[] = []
+    if (edge.id === "gig-edge-single-tier") {
+      edgeGallery = [
+        { url: edgeCover, alt: "Cybersecurity CVE audit and static vulnerability AST analysis" },
+        { url: "/images/services/programming/cybersecurity-soc-monitor.jpg", alt: "Cybersecurity SOC monitor" },
+      ]
+    } else if (edge.id === "gig-edge-overflow-title") {
+      edgeGallery = [
+        { url: edgeCover, alt: "Enterprise multi-cloud architecture and high-throughput microservices" },
+        { url: "/images/services/programming/cloud-devops-infrastructure.jpg", alt: "Cloud infrastructure" },
+      ]
+    } else if (edge.id === "gig-edge-zero-orders") {
+      edgeGallery = [
+        { url: edgeCover, alt: "Accessible Tailwind CSS and React 19 UI component system" },
+        { url: "/images/services/programming/modern-frontend-minimalist.jpg", alt: "Modern clean frontend setup" },
+      ]
+    } else if (edge.id === "gig-edge-draft") {
+      edgeGallery = [
+        { url: edgeCover, alt: "Experimental quantum computing simulator and Qiskit algorithms" },
+        { url: "/images/services/ai/neural-network-ai-workstation.jpg", alt: "AI compute workstation" },
+      ]
+    } else {
+      edgeGallery = [
+        { url: edgeCover, alt: "Fullstack enterprise cloud SaaS suite" },
+        { url: "/images/services/programming/developer-workstation-dual-monitors.jpg", alt: "Developer engineering workstation" },
+      ]
+    }
 
     const stats = edge.zeroOrders
       ? { impressions: 140, clicks: 9, orders: 0, revenue: 0, conversionRate: 0 }
@@ -1865,7 +2380,7 @@ export function generateAllGigs(freelancers: UserProfile[]): Gig[] {
       id: edge.id,
       slug: edge.slug,
       title: edge.title,
-      description: `Comprehensive service offering for ${edge.title}. Formatted to test edge conditions and interface reliability.`,
+      description: getRealisticDescription(edge.title, edge.categorySlug, edge.subCategorySlug, edge.subCategoryName),
       categorySlug: edge.categorySlug,
       categoryName: edge.categoryName,
       subCategorySlug: edge.subCategorySlug,
@@ -1896,7 +2411,7 @@ export function generateAllGigs(freelancers: UserProfile[]): Gig[] {
       packages,
       addons,
       faqs,
-      gallery,
+      gallery: edgeGallery,
       stats,
     })
   })
@@ -2185,7 +2700,7 @@ export function writeDashboardGigsDataFile() {
         slug: g.slug,
         category: g.categoryName,
         subcategory: g.subCategoryName,
-        coverImage: g.gallery[0]?.url || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80",
+        coverImage: g.gallery[0]?.url || "/images/services/programming/full-stack-nextjs-node.jpg",
         status: g.status || "active",
         createdAt: g.createdAt,
         updatedAt: "2026-03-15",

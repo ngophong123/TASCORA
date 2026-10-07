@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { Prisma } from '@prisma/client';
 
 export const createServiceSchema = z.object({
   body: z.object({
@@ -27,7 +28,10 @@ export const createPackageSchema = z.object({
     type: z.enum(['BASIC', 'STANDARD', 'PREMIUM']),
     title: z.string().min(5).max(50),
     description: z.string().max(500),
-    price: z.number().positive(),
+    price: z.number().finite().positive().max(99999999.99).refine(
+      value => new Prisma.Decimal(value).decimalPlaces() <= 2,
+      'Price must have at most two decimal places',
+    ),
     deliveryDays: z.number().int().positive(),
     revisions: z.number().int().min(0),
     features: z.array(z.string()),

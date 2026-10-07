@@ -24,6 +24,7 @@ export class ServicesPage {
   async goto() {
     await this.page.goto("/services")
     await expect(this.searchInput).toBeVisible()
+    await expect(this.gigCards.first()).toBeVisible()
   }
 
   async search(query: string) {

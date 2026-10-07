@@ -18,6 +18,11 @@ export default function HomePage() {
     <div className="flex flex-col min-h-screen">
       {/* 1. HERO (Stripe-Style Mesh Gradient + HTML/CSS Mockups) */}
       <Hero />
+      <p className="max-w-7xl mx-auto px-4 py-3 text-xs text-slate-500">
+        Product mockups, statistics and testimonials on this page are illustrative presentation
+        content. Services and seller profiles load actual marketplace records. Settlement and
+        payouts are unavailable.
+      </p>
 
       {/* 2. TRUST BAR (Infinite Marquee) */}
       <TrustBar />

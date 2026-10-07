@@ -4,12 +4,21 @@ import * as React from "react"
 import { Link } from "@/i18n/routing"
 import { useDashboard } from "@/context/DashboardContext"
 import { type DashboardOrder } from "@/data/dashboard/orders"
+import { ApiState } from "@/components/feedback/ApiState"
 import { OrdersTable } from "@/components/dashboard/orders/OrdersTable"
 import { OrderDetailDrawer } from "@/components/dashboard/orders/OrderDetailDrawer"
 import { ChevronRight, PlusCircle, Compass } from "lucide-react"
 
 export default function DashboardOrdersPage() {
-  const { role, orders, selectedOrderId, setSelectedOrderId } = useDashboard()
+  const {
+    role,
+    orders,
+    selectedOrderId,
+    setSelectedOrderId,
+    ordersLoading,
+    ordersError,
+    reloadOrders,
+  } = useDashboard()
   const isClient = role === "CLIENT"
 
   const [selectedOrder, setSelectedOrder] = React.useState<DashboardOrder | null>(null)
@@ -53,8 +62,8 @@ export default function DashboardOrdersPage() {
           </nav>
 
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0B0B14] tracking-tight">
-              {isClient ? "My Milestone Contracts" : "Order Management"}
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0A0A23] tracking-tight">
+              {isClient ? "My Purchases" : "Order Management"}
             </h1>
             <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200/60">
               {orders.length} total
@@ -63,7 +72,7 @@ export default function DashboardOrdersPage() {
 
           <p className="text-xs sm:text-sm text-[#6B6B7B] mt-1 leading-relaxed">
             {isClient
-              ? "Track milestone progress, inspect delivered assets, and authorize escrow disbursements."
+              ? "Track milestone progress, inspect delivered assets, and manage order status."
               : "Manage active client orders, submit completed milestone packages, and review feedback."}
           </p>
         </div>
@@ -91,7 +100,8 @@ export default function DashboardOrdersPage() {
       </div>
 
       {/* 2. Main Orders Table */}
-      <OrdersTable onSelectOrder={handleSelectOrder} />
+      <ApiState loading={ordersLoading} error={ordersError} retry={reloadOrders} />
+      {!ordersLoading && !ordersError && <OrdersTable onSelectOrder={handleSelectOrder} />}
 
       {/* 3. Order Detail Side Drawer with Confirm Actions */}
       <OrderDetailDrawer

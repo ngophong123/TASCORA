@@ -57,10 +57,9 @@ export const INITIAL_GIGS: DashboardGig[] = [
     id: "gig-1",
     title: "Full-Stack Next.js 15 & Node.js Production Architecture with Clean Code",
     slug: "full-stack-next-js-15-node-js-production-architecture-with-clean-code",
-    category: "Web Development",
-    subcategory: "Next.js & React 19",
-    coverImage:
-      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80",
+    category: "Programming & Tech",
+    subcategory: "Web Development",
+    coverImage: "/images/services/programming/full-stack-nextjs-node.jpg",
     status: "active",
     createdAt: "2026-01-10",
     updatedAt: "2026-03-15",
@@ -79,12 +78,12 @@ export const INITIAL_GIGS: DashboardGig[] = [
         name: "BASIC",
         title: "Starter Deliverable",
         description:
-          "Essential Next.js & React 19 setup tailored for early-stage validation, clean code structure, and fundamental deliverables.",
+          "Essential Web Development setup tailored for early-stage validation, clean structure, and core deliverables.",
         price: 250,
         deliveryDays: 2,
         revisions: 2,
         features: [
-          "Core Next.js & React 19 Foundation",
+          "Core Web Development Foundation",
           "Detailed Code / Asset Documentation",
           "2 Iteration & Revision Rounds",
           "Linted & Strict TypeScript / Vector Deliverables",
@@ -127,7 +126,7 @@ export const INITIAL_GIGS: DashboardGig[] = [
       },
     },
     description:
-      "Are you seeking a high-throughput, enterprise-grade Next.js & React 19 deliverable engineered for production scale?\n\nI specialize in building bulletproof platforms adhering to Clean Architecture principles, automated test coverage, and optimized performance.\n\n### What is included in this service:\n- **Full Architecture Blueprint**: Scalable modular design and clear boundaries.\n- **Modern Tooling**: Strict typing, automated formatting, and comprehensive documentation.\n- **Zero-Friction Delivery**: Milestone tracking, escrow security, and post-launch verification.",
+      "I will architect and develop a high-performance Next.js 15 application using React 19, strict TypeScript, and Tailwind CSS. Whether you're building a new SaaS platform or refactoring an existing codebase, I focus on clean component hierarchy, fast initial page loads, and seamless API integrations.\n\n### Deliverables & Scope:\n- **Production Next.js 15 Setup**: App Router architecture with optimized Server & Client Components.\n- **Strict TypeScript & Clean Code**: Zero implicit any, strict ESLint configuration, and modular folder structure.\n- **Responsive & Accessible UI**: Pixel-perfect implementation using Tailwind CSS and Radix UI primitives.\n- **State Management & Data Fetching**: TanStack Query, Server Actions, and optimistic UI updates.\n- **Database & Auth Integration**: Prisma / Drizzle ORM schema with PostgreSQL, NextAuth.js or Supabase.\n- **Testing & Deployment**: Vitest unit test suite, automated GitHub Actions CI/CD, and Vercel/Docker deployment guide.",
     requirements:
       "Please provide your project brief, repository access or Figma designs, and target cloud deployment environment.",
     tags: ["Next.js", "TypeScript", "Node.js", "PostgreSQL"],
@@ -159,37 +158,36 @@ export const INITIAL_GIGS: DashboardGig[] = [
     ],
   },
   {
-    id: "gig-40",
-    title: "B2B SaaS Cold Outbound Email Infrastructure & Deliverability Warmup Setup",
-    slug: "b2b-saas-cold-outbound-email-infrastructure-deliverability-warmup-setup",
-    category: "Technical SEO & Growth",
-    subcategory: "Conversion Rate Optimization",
-    coverImage:
-      "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=1200&auto=format&fit=crop&q=80",
+    id: "gig-14",
+    title: "Real-Time WebSocket & Socket.io Collaborative Canvas Engine",
+    slug: "real-time-websocket-socket-io-collaborative-canvas-engine",
+    category: "Programming & Tech",
+    subcategory: "Backend Development",
+    coverImage: "/images/services/programming/realtime-websocket-engine.jpg",
     status: "active",
-    createdAt: "2026-01-13",
+    createdAt: "2026-02-23",
     updatedAt: "2026-03-15",
-    startingPrice: 230,
+    startingPrice: 260,
     rating: 4.99,
     reviewsCount: 42,
     stats: {
-      impressions: 787,
-      clicks: 87,
-      orders: 18,
-      revenue: 7740,
-      conversionRate: 20.7,
+      impressions: 1529,
+      clicks: 147,
+      orders: 29,
+      revenue: 13920,
+      conversionRate: 19.7,
     },
     tiers: {
       basic: {
         name: "BASIC",
         title: "Starter Deliverable",
         description:
-          "Essential Conversion Rate Optimization setup tailored for early-stage validation, clean code structure, and fundamental deliverables.",
-        price: 230,
+          "Essential Backend Development setup tailored for early-stage validation, clean structure, and core deliverables.",
+        price: 260,
         deliveryDays: 2,
         revisions: 2,
         features: [
-          "Core Conversion Rate Optimization Foundation",
+          "Core Backend Development Foundation",
           "Detailed Code / Asset Documentation",
           "2 Iteration & Revision Rounds",
           "Linted & Strict TypeScript / Vector Deliverables",
@@ -201,8 +199,8 @@ export const INITIAL_GIGS: DashboardGig[] = [
         title: "Production Monorepo",
         description:
           "Comprehensive production-ready release with full test suites, automated CI/CD integration, and high-load performance optimization.",
-        price: 430,
-        deliveryDays: 4,
+        price: 480,
+        deliveryDays: 5,
         revisions: 4,
         features: [
           "Everything in Starter Tier",
@@ -218,8 +216,8 @@ export const INITIAL_GIGS: DashboardGig[] = [
         title: "Enterprise Architecture",
         description:
           "Full-scale enterprise execution with architecture blueprinting, multi-stage Docker / vector builds, and 30-day dedicated post-launch support.",
-        price: 770,
-        deliveryDays: 9,
+        price: 860,
+        deliveryDays: 10,
         revisions: "unlimited",
         features: [
           "Everything in Production Monorepo",
@@ -232,10 +230,10 @@ export const INITIAL_GIGS: DashboardGig[] = [
       },
     },
     description:
-      "Are you seeking a high-throughput, enterprise-grade Conversion Rate Optimization deliverable engineered for production scale?\n\nI specialize in building bulletproof platforms adhering to Clean Architecture principles, automated test coverage, and optimized performance.\n\n### What is included in this service:\n- **Full Architecture Blueprint**: Scalable modular design and clear boundaries.\n- **Modern Tooling**: Strict typing, automated formatting, and comprehensive documentation.\n- **Zero-Friction Delivery**: Milestone tracking, escrow security, and post-launch verification.",
+      "I will build a scalable, production-ready backend service and API engine tailored to your application's transaction volume. Focusing on robust domain modeling, low latency database queries, and clear API documentation.\n\n### Deliverables & Scope:\n- **Clean Architecture API**: Node.js (NestJS / Express) or Go microservice with clear controller-service-repository layers.\n- **Database Schema & Indexing**: PostgreSQL / Redis schema with optimized indexes, migration scripts, and connection pooling.\n- **Security & Rate Limiting**: JWT / OAuth2 authentication, Helmet security headers, CORS policies, and Redis rate limiters.\n- **Interactive Documentation**: OpenAPI 3.1 (Swagger) contract and Postman collection with example request payloads.\n- **Dockerized Environment**: Docker Compose setup for instant local onboarding and production parity.",
     requirements:
       "Please provide your project brief, repository access or Figma designs, and target cloud deployment environment.",
-    tags: ["Cold Email", "Deliverability", "DNS", "SPF/DKIM"],
+    tags: ["WebSockets", "Socket.io", "Real-Time", "React"],
     faqs: [
       {
         id: "faq-1",
@@ -267,10 +265,9 @@ export const INITIAL_GIGS: DashboardGig[] = [
     id: "gig-edge-single-tier",
     title: "Targeted Rapid Security Code Audit & Dependency CVE Scan",
     slug: "rapid-security-vulnerability-cve-audit",
-    category: "Web Development",
-    subcategory: "Cloud & DevOps",
-    coverImage:
-      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80",
+    category: "Programming & Tech",
+    subcategory: "Cybersecurity",
+    coverImage: "/images/services/programming/cybersecurity-cve-audit.jpg",
     status: "active",
     createdAt: "2026-02-01",
     updatedAt: "2026-03-15",
@@ -332,7 +329,7 @@ export const INITIAL_GIGS: DashboardGig[] = [
       },
     },
     description:
-      "Comprehensive service offering for Targeted Rapid Security Code Audit & Dependency CVE Scan. Formatted to test edge conditions and interface reliability.",
+      "I will build a scalable, production-ready backend service and API engine tailored to your application's transaction volume. Focusing on robust domain modeling, low latency database queries, and clear API documentation.\n\n### Deliverables & Scope:\n- **Clean Architecture API**: Node.js (NestJS / Express) or Go microservice with clear controller-service-repository layers.\n- **Database Schema & Indexing**: PostgreSQL / Redis schema with optimized indexes, migration scripts, and connection pooling.\n- **Security & Rate Limiting**: JWT / OAuth2 authentication, Helmet security headers, CORS policies, and Redis rate limiters.\n- **Interactive Documentation**: OpenAPI 3.1 (Swagger) contract and Postman collection with example request payloads.\n- **Dockerized Environment**: Docker Compose setup for instant local onboarding and production parity.",
     requirements:
       "Please provide your project brief, repository access or Figma designs, and target cloud deployment environment.",
     tags: ["TypeScript", "Next.js", "Architecture", "Testing"],
@@ -359,9 +356,8 @@ export const INITIAL_GIGS: DashboardGig[] = [
     title: "Draft Experimental Quantum Computing Simulator with Qiskit & Python",
     slug: "internal-draft-quantum-computing-simulator",
     category: "AI & Automation",
-    subcategory: "Autonomous AI Agents",
-    coverImage:
-      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80",
+    subcategory: "AI & Machine Learning",
+    coverImage: "/images/services/ai/quantum-computing-simulator.jpg",
     status: "draft",
     createdAt: "2026-02-01",
     updatedAt: "2026-03-15",
@@ -410,7 +406,7 @@ export const INITIAL_GIGS: DashboardGig[] = [
       },
     },
     description:
-      "Comprehensive service offering for Draft Experimental Quantum Computing Simulator with Qiskit & Python. Formatted to test edge conditions and interface reliability.",
+      "I will design and deploy a production Retrieval-Augmented Generation (RAG) system or custom model fine-tuning pipeline. I resolve common hallucination issues, optimize chunking strategies, and establish measurable retrieval evaluation metrics.\n\n### Deliverables & Scope:\n- **Ingestion & Chunking Pipeline**: Semantic document parsing (PDFs, Markdown, Notion, Confluence) with hybrid search chunking.\n- **Vector Database Setup**: Production vector indexing in pgvector, Pinecone, or Qdrant with HNSW distance metrics.\n- **Reranking & Context Compression**: Cohere reranker or cross-encoder integration to maximize context relevance.\n- **Evaluation Benchmark Suite**: Ragas or TruLens evaluation scripts tracking faithfulness, answer relevancy, and latency.\n- **API Wrapper**: Fast, streaming FastAPI endpoint with token usage telemetry and Redis semantic caching.",
     requirements:
       "Please provide your project brief, repository access or Figma designs, and target cloud deployment environment.",
     tags: ["TypeScript", "Next.js", "Architecture", "Testing"],
@@ -436,10 +432,9 @@ export const INITIAL_GIGS: DashboardGig[] = [
     id: "gig-edge-max-addons",
     title: "Full-Stack Enterprise Cloud SaaS Suite with Maximum Add-on Options",
     slug: "fullstack-enterprise-cloud-suite-maximum-addons",
-    category: "Web Development",
-    subcategory: "Next.js & React 19",
-    coverImage:
-      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80",
+    category: "Programming & Tech",
+    subcategory: "Web Development",
+    coverImage: "/images/services/programming/cloud-saas-enterprise-suite.jpg",
     status: "active",
     createdAt: "2026-02-01",
     updatedAt: "2026-03-15",
@@ -488,7 +483,7 @@ export const INITIAL_GIGS: DashboardGig[] = [
       },
     },
     description:
-      "Comprehensive service offering for Full-Stack Enterprise Cloud SaaS Suite with Maximum Add-on Options. Formatted to test edge conditions and interface reliability.",
+      "I will architect and develop a high-performance Next.js 15 application using React 19, strict TypeScript, and Tailwind CSS. Whether you're building a new SaaS platform or refactoring an existing codebase, I focus on clean component hierarchy, fast initial page loads, and seamless API integrations.\n\n### Deliverables & Scope:\n- **Production Next.js 15 Setup**: App Router architecture with optimized Server & Client Components.\n- **Strict TypeScript & Clean Code**: Zero implicit any, strict ESLint configuration, and modular folder structure.\n- **Responsive & Accessible UI**: Pixel-perfect implementation using Tailwind CSS and Radix UI primitives.\n- **State Management & Data Fetching**: TanStack Query, Server Actions, and optimistic UI updates.\n- **Database & Auth Integration**: Prisma / Drizzle ORM schema with PostgreSQL, NextAuth.js or Supabase.\n- **Testing & Deployment**: Vitest unit test suite, automated GitHub Actions CI/CD, and Vercel/Docker deployment guide.",
     requirements:
       "Please provide your project brief, repository access or Figma designs, and target cloud deployment environment.",
     tags: ["TypeScript", "Next.js", "Architecture", "Testing"],

@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test"
+import { test, expect } from "../support/live-fixtures"
 import { ServicesPage } from "../pages/ServicesPage"
 import { GigDetailPage } from "../pages/GigDetailPage"
 
@@ -40,25 +40,17 @@ test.describe("Gig Detail and Order Flows", () => {
     await expect(detailPage.orderTotalPrice).toContainText("850")
   })
 
-  test("selecting add-ons dynamically recalculates computed total price", async ({ page }) => {
+  test("unsupported add-ons cannot change the server-priced order", async ({ page, marketplace }) => {
     const detailPage = new GigDetailPage(page)
-    await detailPage.goto("srv-1")
-
-    // Select Basic tier ($250)
-    await detailPage.selectPackageTier("basic")
-    await expect(detailPage.orderTotalPrice).toContainText("250")
-
-    // Select 24-Hour Express Delivery (+$50)
-    await detailPage.toggleAddon("express-delivery")
-    await expect(detailPage.orderTotalPrice).toContainText("300")
-
-    // Select Extra Revision (+$35) -> total $335
-    await detailPage.toggleAddon("extra-revision")
-    await expect(detailPage.orderTotalPrice).toContainText("335")
-
-    // Deselect Express Delivery (-$50) -> total $285
-    await detailPage.toggleAddon("express-delivery")
-    await expect(detailPage.orderTotalPrice).toContainText("285")
+    await detailPage.goto('srv-1')
+    await detailPage.selectPackageTier('basic')
+    await expect(detailPage.orderTotalPrice).toContainText('250')
+    await expect(page.locator('[data-testid^="addon-checkbox-"]')).toHaveCount(0)
+    await detailPage.openCheckout()
+    await detailPage.confirmCheckout()
+    await expect(detailPage.checkoutSuccess).toBeVisible()
+    expect(marketplace.orders[0]!.amount).toBe('250')
+    expect(marketplace.orders[0]!.status).toBe('PENDING')
   })
 
   test("completing order flow opens checkout drawer and shows success confirmation", async ({ page }) => {

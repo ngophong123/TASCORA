@@ -3,8 +3,9 @@
 import * as React from "react"
 import { Link, usePathname } from "@/i18n/routing"
 import { useTranslations } from "next-intl"
-import { MessageCircle, Check } from "lucide-react"
+import { MessageCircle, Check, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Logo } from "@/components/ui/Logo"
 import { LanguageSwitcher } from "./LanguageSwitcher"
 
 export function Footer() {
@@ -12,7 +13,7 @@ export function Footer() {
   const t = useTranslations("footer")
 
   const [email, setEmail] = React.useState("")
-  const [subscribed, setSubscribed] = React.useState(false)
+  const subscribed = false
 
   // Suppress marketing footer on dashboard routes (including localized routes like /vi/dashboard)
   if (pathname?.includes("/dashboard")) {
@@ -21,41 +22,25 @@ export function Footer() {
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault()
-    if (email.trim()) {
-      setSubscribed(true)
-      setEmail("")
-      setTimeout(() => setSubscribed(false), 4000)
-    }
   }
 
   return (
     <footer
       data-testid="footer"
-      className="relative bg-[#FAFAFC] text-[#4B4B5C] border-t border-[rgba(15,15,30,0.08)] pt-14 sm:pt-20 pb-10 sm:pb-12 overflow-hidden select-none"
+      className="relative bg-[#F8FAFC] text-[#475569] border-t border-[#E2E8F0] pt-14 sm:pt-20 pb-10 sm:pb-12 overflow-hidden select-none"
     >
-      {/* Background ambient lighting */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-blue-600/5 rounded-full blur-[140px] pointer-events-none" />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 relative z-10">
         {/* Top Newsletter & Brand Strip */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between pb-10 sm:pb-16 border-b border-[rgba(15,15,30,0.08)] gap-8">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between pb-10 sm:pb-16 border-b border-[#E2E8F0] gap-8">
           <div className="max-w-md">
-            <Link href="/" className="group flex items-center gap-2.5 mb-3">
-              <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-blue-600 via-blue-500 to-sky-400 p-[1px] shadow-sm">
-                <div className="h-full w-full bg-white rounded-[11px] flex items-center justify-center">
-                  <span className="font-bold text-sm bg-gradient-to-r from-blue-700 to-sky-600 bg-clip-text text-transparent">
-                    T
-                  </span>
-                </div>
-              </div>
-              <span className="text-xl font-semibold tracking-tight text-[#0B0B14] group-hover:text-blue-950 transition-colors">
-                TASCOR
-                <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-sky-400 bg-clip-text text-transparent font-bold">
-                  A
-                </span>
-              </span>
+            <Link
+              href="/"
+              className="inline-block mb-3 select-none transition-transform hover:scale-[1.01]"
+              aria-label="TASCORA Home"
+            >
+              <Logo size="md" />
             </Link>
-            <p className="text-xs sm:text-sm text-[#4B4B5C] leading-relaxed">{t("brandDesc")}</p>
+            <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">{t("brandDesc")}</p>
           </div>
 
           {/* Newsletter Input */}
@@ -66,31 +51,40 @@ export function Footer() {
             >
               <div className="relative w-full sm:w-80">
                 <input
+                  disabled
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t("newsletterPlaceholder")}
                   required
-                  className="w-full px-4 py-2.5 rounded-full bg-white border border-[rgba(15,15,30,0.12)] text-xs sm:text-sm text-[#0B0B14] placeholder:text-[#6B6B7B] outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 shadow-sm transition-all"
+                  className="w-full px-3.5 py-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 outline-none hover:border-[#635BFF]/50 focus:border-[#635BFF] focus:ring-2 focus:ring-[#635BFF]/20 shadow-xs transition-all duration-200"
                 />
               </div>
               <Button
+                disabled
+                title="Newsletter signup is not implemented"
                 type="submit"
                 variant="primary"
                 size="sm"
-                pill
-                className="w-full sm:w-auto px-5 text-xs shrink-0"
+                className="w-full sm:w-auto px-5 text-xs shrink-0 shadow-xs hover:shadow-md hover:shadow-[#635BFF]/30 active:scale-[0.98] group"
               >
                 {subscribed ? (
-                  <span className="flex items-center gap-1.5 text-white">
+                  <span
+                    className="flex items-center gap-1.5 text-white animate-fade-in"
+                    role="status"
+                    aria-live="polite"
+                  >
                     <Check className="h-3.5 w-3.5" /> {t("newsletterSubscribed")}
                   </span>
                 ) : (
-                  <span>{t("newsletterButton")}</span>
+                  <span className="flex items-center gap-1.5">
+                    <span>{t("newsletterButton")}</span>
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
+                  </span>
                 )}
               </Button>
             </form>
-            <span className="text-[11px] text-[#6B6B7B] mt-2 block sm:text-left text-center">
+            <span className="text-[11px] text-[#64748B] mt-2 block sm:text-left text-center">
               {t("newsletterSubtext")}
             </span>
           </div>
@@ -100,14 +94,14 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-8 py-10 sm:py-16 border-b border-[rgba(15,15,30,0.08)] text-xs">
           {/* Column 1: Marketplace */}
           <div>
-            <h4 className="font-semibold text-[#0B0B14] uppercase tracking-wider mb-4 text-[11px]">
+            <h4 className="font-semibold text-[#0A0A23] uppercase tracking-wider mb-4 text-[11px]">
               {t("colMarketplace")}
             </h4>
             <ul className="space-y-3">
               <li>
                 <Link
                   href="/services?category=programming"
-                  className="hover:text-[#0B0B14] transition-colors"
+                  className="hover:text-[#0A0A23] transition-colors"
                 >
                   {t("linkWebFullStack")}
                 </Link>
@@ -115,7 +109,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/services?category=design"
-                  className="hover:text-[#0B0B14] transition-colors"
+                  className="hover:text-[#0A0A23] transition-colors"
                 >
                   {t("linkDesignSystems")}
                 </Link>
@@ -123,7 +117,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/services?category=ai"
-                  className="hover:text-[#0B0B14] transition-colors"
+                  className="hover:text-[#0A0A23] transition-colors"
                 >
                   {t("linkAiAgents")}
                 </Link>
@@ -131,7 +125,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/services?category=marketing"
-                  className="hover:text-[#0B0B14] transition-colors"
+                  className="hover:text-[#0A0A23] transition-colors"
                 >
                   {t("linkGrowthSeo")}
                 </Link>
@@ -139,7 +133,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/services?category=writing"
-                  className="hover:text-[#0B0B14] transition-colors"
+                  className="hover:text-[#0A0A23] transition-colors"
                 >
                   {t("linkTechnicalCopywriting")}
                 </Link>
@@ -157,32 +151,32 @@ export function Footer() {
 
           {/* Column 2: For Clients */}
           <div>
-            <h4 className="font-semibold text-[#0B0B14] uppercase tracking-wider mb-4 text-[11px]">
+            <h4 className="font-semibold text-[#0A0A23] uppercase tracking-wider mb-4 text-[11px]">
               {t("colClients")}
             </h4>
             <ul className="space-y-3">
               <li>
-                <Link href="/services" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="/services" className="hover:text-[#0A0A23] transition-colors">
                   {t("linkFindSpecialists")}
                 </Link>
               </li>
               <li>
-                <Link href="/#how-it-works" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="/#how-it-works" className="hover:text-[#0A0A23] transition-colors">
                   {t("linkMilestoneEscrow")}
                 </Link>
               </li>
               <li>
-                <Link href="/#enterprise" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="/#enterprise" className="hover:text-[#0A0A23] transition-colors">
                   {t("linkEnterpriseWorkspaces")}
                 </Link>
               </li>
               <li>
-                <Link href="/services" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="/services" className="hover:text-[#0A0A23] transition-colors">
                   {t("linkPlatformPricing")}
                 </Link>
               </li>
               <li>
-                <Link href="/explore" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="/explore" className="hover:text-[#0A0A23] transition-colors">
                   {t("linkDedicatedSquads")}
                 </Link>
               </li>
@@ -191,35 +185,35 @@ export function Footer() {
 
           {/* Column 3: For Freelancers */}
           <div>
-            <h4 className="font-semibold text-[#0B0B14] uppercase tracking-wider mb-4 text-[11px]">
+            <h4 className="font-semibold text-[#0A0A23] uppercase tracking-wider mb-4 text-[11px]">
               {t("colFreelancers")}
             </h4>
             <ul className="space-y-3">
               <li>
                 <Link
                   href="/register?role=seller"
-                  className="hover:text-[#0B0B14] transition-colors"
+                  className="hover:text-[#0A0A23] transition-colors"
                 >
                   {t("linkApplySpecialist")}
                 </Link>
               </li>
               <li>
-                <Link href="/#how-it-works" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="/#how-it-works" className="hover:text-[#0A0A23] transition-colors">
                   {t("linkSellerHandbook")}
                 </Link>
               </li>
               <li>
-                <Link href="/#how-it-works" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="/#how-it-works" className="hover:text-[#0A0A23] transition-colors">
                   {t("linkPayoutGuarantee")}
                 </Link>
               </li>
               <li>
-                <Link href="/seller/dashboard" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="/seller/dashboard" className="hover:text-[#0A0A23] transition-colors">
                   {t("linkDeveloperGuild")}
                 </Link>
               </li>
               <li>
-                <Link href="/categories" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="/categories" className="hover:text-[#0A0A23] transition-colors">
                   {t("linkReputationLevels")}
                 </Link>
               </li>
@@ -228,32 +222,32 @@ export function Footer() {
 
           {/* Column 4: Company */}
           <div>
-            <h4 className="font-semibold text-[#0B0B14] uppercase tracking-wider mb-4 text-[11px]">
+            <h4 className="font-semibold text-[#0A0A23] uppercase tracking-wider mb-4 text-[11px]">
               {t("colCompany")}
             </h4>
             <ul className="space-y-3">
               <li>
-                <Link href="#about" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="#about" className="hover:text-[#0A0A23] transition-colors">
                   {t("linkAbout")}
                 </Link>
               </li>
               <li>
-                <Link href="#careers" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="#careers" className="hover:text-[#0A0A23] transition-colors">
                   {t("linkCareers")}
                 </Link>
               </li>
               <li>
-                <Link href="#news" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="#news" className="hover:text-[#0A0A23] transition-colors">
                   {t("linkNews")}
                 </Link>
               </li>
               <li>
-                <Link href="#brand" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="#brand" className="hover:text-[#0A0A23] transition-colors">
                   {t("linkBrand")}
                 </Link>
               </li>
               <li>
-                <Link href="#contact" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="#contact" className="hover:text-[#0A0A23] transition-colors">
                   {t("linkContact")}
                 </Link>
               </li>
@@ -262,32 +256,32 @@ export function Footer() {
 
           {/* Column 5: Resources & Legal */}
           <div>
-            <h4 className="font-semibold text-[#0B0B14] uppercase tracking-wider mb-4 text-[11px]">
+            <h4 className="font-semibold text-[#0A0A23] uppercase tracking-wider mb-4 text-[11px]">
               {t("colResources")}
             </h4>
             <ul className="space-y-3">
               <li>
-                <Link href="#docs" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="#docs" className="hover:text-[#0A0A23] transition-colors">
                   {t("linkDocs")}
                 </Link>
               </li>
               <li>
-                <Link href="#trust-and-safety" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="#trust-and-safety" className="hover:text-[#0A0A23] transition-colors">
                   {t("linkTrustSafety")}
                 </Link>
               </li>
               <li>
-                <Link href="#dispute-policy" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="#dispute-policy" className="hover:text-[#0A0A23] transition-colors">
                   {t("linkDisputePolicy")}
                 </Link>
               </li>
               <li>
-                <Link href="#privacy" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="#privacy" className="hover:text-[#0A0A23] transition-colors">
                   {t("linkPrivacy")}
                 </Link>
               </li>
               <li>
-                <Link href="#terms" className="hover:text-[#0B0B14] transition-colors">
+                <Link href="#terms" className="hover:text-[#0A0A23] transition-colors">
                   {t("linkTerms")}
                 </Link>
               </li>
@@ -317,7 +311,7 @@ export function Footer() {
               href="https://github.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-[#0B0B14] transition-colors"
+              className="hover:text-[#0A0A23] transition-colors"
               aria-label="GitHub"
             >
               <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
@@ -332,7 +326,7 @@ export function Footer() {
               href="https://twitter.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-[#0B0B14] transition-colors"
+              className="hover:text-[#0A0A23] transition-colors"
               aria-label="Twitter"
             >
               <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
@@ -343,7 +337,7 @@ export function Footer() {
               href="https://linkedin.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-[#0B0B14] transition-colors"
+              className="hover:text-[#0A0A23] transition-colors"
               aria-label="LinkedIn"
             >
               <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
@@ -354,7 +348,7 @@ export function Footer() {
               href="https://discord.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-[#0B0B14] transition-colors"
+              className="hover:text-[#0A0A23] transition-colors"
               aria-label="Discord"
             >
               <MessageCircle className="h-4 w-4" />
@@ -364,7 +358,7 @@ export function Footer() {
 
         {/* Giant Faint "TASCORA" Wordmark at Bottom (Stripe Signature) */}
         <div className="mt-16 sm:mt-24 pointer-events-none select-none text-center overflow-hidden">
-          <span className="font-bold text-[clamp(60px,18vw,230px)] tracking-tighter leading-none bg-gradient-to-b from-[#0B0B14]/[0.06] via-[#0B0B14]/[0.02] to-transparent bg-clip-text text-transparent block">
+          <span className="font-bold text-[clamp(60px,18vw,230px)] tracking-tighter leading-none bg-gradient-to-b from-[#0A0A23]/[0.06] via-[#0A0A23]/[0.02] to-transparent bg-clip-text text-transparent block">
             TASCORA
           </span>
         </div>

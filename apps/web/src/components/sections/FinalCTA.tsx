@@ -18,25 +18,30 @@ export function FinalCTA() {
   const t = useTranslations("finalCta")
 
   return (
-    <section className="relative py-14 sm:py-20 md:py-32 overflow-hidden bg-[#FFFFFF]">
+    <section className="relative py-14 sm:py-20 md:py-32 overflow-hidden bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 relative z-10">
-        {/* Rich Multi-Stop Showstopper Gradient Banner (Blue -> Violet -> Pink) */}
+        {/* Signature Stripe Ambient Banner */}
         <motion.div
-          className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-gradient-to-br from-[#1E3A8A] via-[#2563EB] via-[#7C3AED] to-[#DB2777] px-5 py-10 sm:p-14 md:p-20 text-center shadow-[0_24px_70px_-15px_rgba(124,58,237,0.38)] border border-white/20"
+          className="relative rounded-2xl overflow-hidden bg-[#0B1026] border border-white/12 px-6 py-12 sm:p-16 md:p-20 text-center shadow-2xl"
           initial="hidden"
           whileInView="visible"
           viewport={VIEWPORT_ONCE}
           variants={landingCardVariants}
         >
-          {/* Ambient Blobs inside Banner for Depth */}
+          {/* Deliberate Signature Gradient Moment: Top angled radiant mesh bloom */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-            <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-purple-400/30 blur-[100px]" />
-            <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-pink-400/25 blur-[100px]" />
             <div
-              className="absolute inset-0 opacity-[0.08]"
+              className="absolute -top-36 sm:-top-44 left-1/2 -translate-x-1/2 w-[750px] sm:w-[950px] h-[360px] sm:h-[460px] rounded-full blur-[110px] sm:blur-[130px] opacity-45 pointer-events-none animate-ambient-mesh"
               style={{
-                backgroundImage: `radial-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px)`,
-                backgroundSize: "28px 28px",
+                background:
+                  "linear-gradient(135deg, #4f46e5 0%, #7c3aed 32%, #ec4899 68%, #f97316 100%)",
+              }}
+            />
+            <div
+              className="absolute inset-0 opacity-[0.04]"
+              style={{
+                backgroundImage: `radial-gradient(rgba(255, 255, 255, 0.6) 1px, transparent 1px)`,
+                backgroundSize: "24px 24px",
               }}
             />
           </div>
@@ -45,9 +50,9 @@ export function FinalCTA() {
             {/* Announcement Badge */}
             <motion.div
               variants={fadeUpVariants}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 mb-8 backdrop-blur-md shadow-sm"
+              className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/15 mb-8 shadow-xs backdrop-blur-sm"
             >
-              <span className="text-xs font-semibold text-white tracking-wide">
+              <span className="text-xs font-semibold text-slate-200 tracking-wide">
                 {t("badge")}
               </span>
             </motion.div>
@@ -55,16 +60,17 @@ export function FinalCTA() {
             {/* Main Display Headline */}
             <motion.h2
               variants={fadeUpBlurVariants}
-              className="text-[clamp(26px,5.5vw,68px)] font-semibold tracking-[-0.03em] leading-[1.1] text-white max-w-4xl mx-auto mb-5 sm:mb-6"
+              className="stripe-section-heading text-white max-w-4xl mx-auto mb-5 sm:mb-6"
             >
-              {t("titlePrefix")} <span className="text-pink-100 drop-shadow-sm">{t("titleHighlight")}</span>
+              {t("titlePrefix")}{" "}
+              <span className="stripe-gradient-text-light">{t("titleHighlight")}</span>
             </motion.h2>
 
             {/* Supporting Subhead */}
             <motion.p
               variants={fadeUpVariants}
               custom={0.1}
-              className="text-sm sm:text-lg md:text-xl text-blue-100/90 max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-10 px-2"
+              className="stripe-subheading text-slate-300 max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-10 px-2 font-normal"
             >
               {t("subtitle")}
             </motion.p>
@@ -79,11 +85,11 @@ export function FinalCTA() {
                 <motion.div whileTap={buttonTapMotion.whileTap} className="w-full sm:w-auto">
                   <Button
                     size="lg"
-                    pill
-                    className="w-full sm:w-auto px-9 bg-white text-blue-950 font-bold hover:bg-blue-50 hover:shadow-xl transition-all shadow-lg justify-center"
+                    variant="primary"
+                    className="w-full sm:w-auto px-9 font-semibold shadow-sm justify-center"
                   >
                     <span>{t("ctaHire")}</span>
-                    <ArrowRight className="h-4 w-4" />
+                    <ArrowRight className="h-4 w-4 arrow-micro" />
                   </Button>
                 </motion.div>
               </Link>
@@ -91,8 +97,8 @@ export function FinalCTA() {
                 <motion.div whileTap={buttonTapMotion.whileTap} className="w-full sm:w-auto">
                   <Button
                     size="lg"
-                    pill
-                    className="w-full sm:w-auto px-9 bg-white/10 border border-white/25 text-white hover:bg-white/20 transition-all font-semibold justify-center"
+                    variant="outline"
+                    className="w-full sm:w-auto px-9 bg-transparent border-white/20 text-white hover:bg-white/10 transition-all font-semibold justify-center"
                   >
                     {t("ctaFreelancer")}
                   </Button>
@@ -100,23 +106,22 @@ export function FinalCTA() {
               </Link>
             </motion.div>
 
-
             {/* Reassurance Microcopy */}
             <motion.div
               variants={fadeUpVariants}
               custom={0.2}
-              className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-blue-200/90 font-medium"
+              className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-slate-400 font-medium"
             >
               <div className="flex items-center gap-1.5">
-                <ShieldCheck className="h-4 w-4 text-emerald-300" />
+                <ShieldCheck className="h-4 w-4 text-emerald-400" />
                 <span>{t("guarantee")}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="h-4 w-4 text-blue-200" />
+                <CheckCircle2 className="h-4 w-4 text-[#818CF8]" />
                 <span>{t("zeroRisk")}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Zap className="h-4 w-4 text-sky-300" />
+                <Zap className="h-4 w-4 text-amber-400" />
                 <span>{t("noHiddenFees")}</span>
               </div>
             </motion.div>
@@ -126,4 +131,3 @@ export function FinalCTA() {
     </section>
   )
 }
-

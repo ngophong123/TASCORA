@@ -1,5 +1,6 @@
 "use client"
 
+import { logoutSession } from "@/lib/auth-client"
 import * as React from "react"
 import { Link, usePathname, useRouter } from "@/i18n/routing"
 import { useTranslations } from "next-intl"
@@ -15,6 +16,7 @@ import {
   LayoutDashboard,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Logo } from "@/components/ui/Logo"
 import { MegaMenu } from "./MegaMenu"
 import { LanguageSwitcher } from "./LanguageSwitcher"
 import { useLenis } from "./SmoothScrollProvider"
@@ -77,11 +79,14 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  const handleLogout = () => {
-    localStorage.removeItem("token")
-    localStorage.removeItem("user")
-    setUser(null)
-    window.location.replace("/")
+  const handleLogout = async () => {
+    try {
+      await logoutSession()
+      setUser(null)
+      window.location.replace("/")
+    } catch {
+      window.alert("Unable to sign out. Please retry.")
+    }
   }
 
   const handleMouseEnter = (menu: "explore" | "categories") => {
@@ -129,7 +134,7 @@ export function Navbar() {
       ref={navRef}
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${
         isScrolled
-          ? "bg-white/80 backdrop-blur-xl border-b border-[rgba(15,15,30,0.08)] shadow-[0_4px_20px_-4px_rgba(15,15,30,0.06)]"
+          ? "bg-white/95 backdrop-blur-md border-b border-[#E2E8F0] shadow-xs"
           : "bg-transparent border-b border-transparent"
       }`}
     >
@@ -139,25 +144,14 @@ export function Navbar() {
           <Link
             href="/"
             data-testid="navbar-brand"
-            className="group flex items-center gap-2.5 outline-none select-none"
+            className="group flex items-center outline-none select-none transition-transform hover:scale-[1.01] active:scale-[0.99]"
+            aria-label="TASCORA Home"
           >
-            <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-blue-600 via-blue-500 to-sky-400 p-[1px] shadow-[0_2px_10px_rgba(37,99,235,0.3)] group-hover:shadow-[0_4px_16px_rgba(37,99,235,0.5)] transition-all">
-              <div className="h-full w-full bg-white rounded-[11px] flex items-center justify-center">
-                <span className="font-bold text-sm bg-gradient-to-r from-blue-700 to-sky-600 bg-clip-text text-transparent">
-                  T
-                </span>
-              </div>
-            </div>
-            <span className="text-xl font-semibold tracking-tight text-[#0B0B14] group-hover:text-blue-950 transition-colors">
-              TASCOR
-              <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-sky-400 bg-clip-text text-transparent font-bold">
-                A
-              </span>
-            </span>
+            <Logo size="md" />
           </Link>
 
           {/* Center: Desktop Navigation with Mega Menus */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1.5">
             {/* Explore Services with Mega Menu */}
             <div
               className="relative"
@@ -168,17 +162,19 @@ export function Navbar() {
                 type="button"
                 data-testid="mega-menu-trigger"
                 onClick={() => setActiveMenu("explore")}
-                className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors cursor-pointer ${
+                className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors cursor-pointer nav-link-underline ${
                   activeMenu === "explore"
-                    ? "text-blue-700 bg-blue-50/80"
-                    : "text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-black/[0.03]"
+                    ? "text-[#635BFF]"
+                    : "text-slate-600 hover:text-[#635BFF]"
                 }`}
                 aria-expanded={activeMenu === "explore"}
               >
                 <span>{t("exploreServices")}</span>
                 <ChevronDown
                   className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                    activeMenu === "explore" ? "rotate-180 text-blue-600" : "text-[#6B6B7B]"
+                    activeMenu === "explore"
+                      ? "rotate-180 text-[#635BFF]"
+                      : "text-slate-400 group-hover:text-[#635BFF]"
                   }`}
                 />
               </button>
@@ -210,17 +206,19 @@ export function Navbar() {
             >
               <button
                 type="button"
-                className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors cursor-pointer ${
+                className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors cursor-pointer nav-link-underline ${
                   activeMenu === "categories"
-                    ? "text-blue-700 bg-blue-50/80"
-                    : "text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-black/[0.03]"
+                    ? "text-[#635BFF]"
+                    : "text-slate-600 hover:text-[#635BFF]"
                 }`}
                 aria-expanded={activeMenu === "categories"}
               >
                 <span>{t("categories")}</span>
                 <ChevronDown
                   className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                    activeMenu === "categories" ? "rotate-180 text-blue-600" : "text-[#6B6B7B]"
+                    activeMenu === "categories"
+                      ? "rotate-180 text-[#635BFF]"
+                      : "text-slate-400 group-hover:text-[#635BFF]"
                   }`}
                 />
               </button>
@@ -244,12 +242,12 @@ export function Navbar() {
               </AnimatePresence>
             </div>
 
-            {/* Regular Links with Smooth Scroll & Fallback Navigation */}
+            {/* Regular Links with Smooth Scroll & Animated Underline */}
             <Link
               href="/#how-it-works"
               data-testid="nav-link-how-it-works"
               onClick={(e) => handleNavAnchorClick(e, "how-it-works")}
-              className="px-3 py-2 text-sm font-medium text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-black/[0.03] rounded-lg transition-colors cursor-pointer"
+              className="px-3 py-2 text-sm font-medium text-slate-600 hover:text-[#635BFF] transition-colors cursor-pointer nav-link-underline"
             >
               {t("howItWorks")}
             </Link>
@@ -257,7 +255,7 @@ export function Navbar() {
               href="/#for-freelancers"
               data-testid="nav-link-for-freelancers"
               onClick={(e) => handleNavAnchorClick(e, "for-freelancers")}
-              className="px-3 py-2 text-sm font-medium text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-black/[0.03] rounded-lg transition-colors cursor-pointer"
+              className="px-3 py-2 text-sm font-medium text-slate-600 hover:text-[#635BFF] transition-colors cursor-pointer nav-link-underline"
             >
               {t("forFreelancers")}
             </Link>
@@ -265,7 +263,7 @@ export function Navbar() {
               href="/#enterprise"
               data-testid="nav-link-enterprise"
               onClick={(e) => handleNavAnchorClick(e, "enterprise")}
-              className="px-3 py-2 text-sm font-medium text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-black/[0.03] rounded-lg transition-colors cursor-pointer"
+              className="px-3 py-2 text-sm font-medium text-slate-600 hover:text-[#635BFF] transition-colors cursor-pointer nav-link-underline"
             >
               {t("enterprise")}
             </Link>
@@ -281,34 +279,32 @@ export function Navbar() {
 
           {mounted && user ? (
             /* Logged in state */
-            <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-3">
               <Link
                 href="/dashboard/notifications"
-                className="p-2 rounded-xl text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-[#F4F4F8] transition-colors relative"
+                className="p-2 rounded-lg text-[#475569] hover:text-[#0F172A] hover:bg-slate-100 transition-colors relative"
                 aria-label={t("notifications")}
               >
                 <Bell className="h-4 w-4" />
-                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-blue-600 ring-2 ring-white" />
               </Link>
               <Link
                 href="/dashboard/messages"
-                className="p-2 rounded-xl text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-[#F4F4F8] transition-colors"
+                className="p-2 rounded-lg text-[#475569] hover:text-[#0F172A] hover:bg-slate-100 transition-colors"
                 aria-label={t("messages")}
               >
                 <MessageSquare className="h-4 w-4" />
               </Link>
               <Link href="/dashboard" data-testid="nav-link-dashboard">
-                <Button variant="secondary" size="sm" pill>
-                  <LayoutDashboard className="h-3.5 w-3.5 text-blue-600" />
+                <Button variant="secondary" size="sm">
+                  <LayoutDashboard className="h-3.5 w-3.5 text-[#635BFF]" />
                   <span>{t("dashboard")}</span>
                 </Button>
               </Link>
               <Button
                 variant="ghost"
                 size="sm"
-                pill
                 onClick={handleLogout}
-                className="text-[#6B6B7B] hover:text-rose-600"
+                className="text-[#64748B] hover:text-rose-600"
                 title={t("signOut")}
                 aria-label={t("signOut")}
               >
@@ -321,12 +317,16 @@ export function Navbar() {
               <Link
                 href="/login"
                 data-testid="nav-link-signin"
-                className="text-sm font-medium text-[#4B4B5C] hover:text-[#0B0B14] transition-colors px-2 py-1"
+                className="text-sm font-medium text-slate-600 hover:text-[#635BFF] transition-colors px-2.5 py-1.5 rounded-lg cursor-pointer"
               >
                 {t("signIn")}
               </Link>
               <Link href="/register" data-testid="nav-link-join">
-                <Button variant="primary" size="md" pill className="px-5">
+                <Button
+                  variant="primary"
+                  size="md"
+                  className="px-5 shadow-xs hover:shadow-md hover:shadow-[#635BFF]/30 active:scale-[0.98]"
+                >
                   <span>{t("joinTascora")}</span>
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
@@ -338,7 +338,7 @@ export function Navbar() {
           <button
             data-testid="mobile-menu-toggle"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-xl text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-[#F4F4F8] transition-colors cursor-pointer"
+            className="lg:hidden p-2 rounded-lg text-[#475569] hover:text-[#0F172A] hover:bg-slate-100 transition-colors cursor-pointer"
             aria-label={t("toggleMenu")}
             aria-expanded={mobileMenuOpen}
           >
@@ -348,6 +348,7 @@ export function Navbar() {
       </div>
 
       {/* Full-Screen Animated Mobile Drawer */}
+      {/* Full-Screen Animated Mobile Drawer */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -356,92 +357,94 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.22, ease: EASE_OUT_EXPO }}
-            className="lg:hidden fixed inset-x-0 top-16 sm:top-20 bottom-0 bg-white/98 backdrop-blur-2xl border-b border-[rgba(15,15,30,0.1)] z-50 overflow-y-auto px-6 py-8 flex flex-col justify-between"
+            className="lg:hidden fixed inset-x-0 top-16 sm:top-20 bottom-0 bg-white/98 backdrop-blur-2xl border-b border-[#E2E8F0] z-50 overflow-y-auto px-6 py-6 pb-12 safe-area-bottom flex flex-col justify-between"
           >
-            <div className="flex items-center justify-between pb-3 border-b border-[rgba(15,15,30,0.06)]">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#6B6B7B]">
-                Navigation
-              </span>
-              <button
-                type="button"
-                data-testid="mobile-drawer-close"
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-1.5 rounded-lg text-[#6B6B7B] hover:text-[#0B0B14] hover:bg-[#F4F4F8] cursor-pointer"
-                aria-label="Close menu"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <nav className="flex flex-col space-y-4 pt-2">
-              <Link
-                href="/explore"
-                data-testid="mobile-nav-link-explore"
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-lg font-medium text-[#0B0B14] hover:text-blue-700 flex items-center justify-between py-2 border-b border-[rgba(15,15,30,0.06)]"
-              >
-                <span>{t("exploreServices")}</span>
-                <ArrowRight className="h-4 w-4 text-blue-600" />
-              </Link>
-              <Link
-                href="/explore?category=programming"
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-lg font-medium text-[#0B0B14] hover:text-blue-700 flex items-center justify-between py-2 border-b border-[rgba(15,15,30,0.06)]"
-              >
-                <span>{t("categories")}</span>
-                <ArrowRight className="h-4 w-4 text-blue-600" />
-              </Link>
-              <Link
-                href="/#how-it-works"
-                onClick={(e) => {
-                  setMobileMenuOpen(false)
-                  handleNavAnchorClick(e, "how-it-works")
-                }}
-                className="text-lg font-medium text-[#4B4B5C] hover:text-[#0B0B14] py-2 border-b border-[rgba(15,15,30,0.06)]"
-              >
-                {t("howItWorks")}
-              </Link>
-              <Link
-                href="/#for-freelancers"
-                onClick={(e) => {
-                  setMobileMenuOpen(false)
-                  handleNavAnchorClick(e, "for-freelancers")
-                }}
-                className="text-lg font-medium text-[#4B4B5C] hover:text-[#0B0B14] py-2 border-b border-[rgba(15,15,30,0.06)]"
-              >
-                {t("forFreelancers")}
-              </Link>
-              <Link
-                href="/#enterprise"
-                onClick={(e) => {
-                  setMobileMenuOpen(false)
-                  handleNavAnchorClick(e, "enterprise")
-                }}
-                className="text-lg font-medium text-[#4B4B5C] hover:text-[#0B0B14] py-2 border-b border-[rgba(15,15,30,0.06)]"
-              >
-                {t("enterprise")}
-              </Link>
-
-              {/* Mobile Language Switcher Item */}
-              <div className="flex items-center justify-between py-3 border-b border-[rgba(15,15,30,0.06)]">
-                <span className="text-sm font-medium text-[#4B4B5C]">Language / Ngôn ngữ</span>
-                <LanguageSwitcher align="right" />
+            <div>
+              <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0]">
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+                  Navigation
+                </span>
+                <button
+                  type="button"
+                  data-testid="mobile-drawer-close"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 cursor-pointer"
+                  aria-label="Close menu"
+                >
+                  <X className="h-5 w-5" />
+                </button>
               </div>
-            </nav>
+              <nav className="flex flex-col pt-2">
+                <Link
+                  href="/explore"
+                  data-testid="mobile-nav-link-explore"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="min-h-[48px] text-base font-semibold text-[#0F172A] hover:text-[#635BFF] flex items-center justify-between py-3 border-b border-[#E2E8F0] transition-colors"
+                >
+                  <span>{t("exploreServices")}</span>
+                  <ArrowRight className="h-4 w-4 text-[#635BFF]" />
+                </Link>
+                <Link
+                  href="/explore?category=programming"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="min-h-[48px] text-base font-semibold text-[#0F172A] hover:text-[#635BFF] flex items-center justify-between py-3 border-b border-[#E2E8F0] transition-colors"
+                >
+                  <span>{t("categories")}</span>
+                  <ArrowRight className="h-4 w-4 text-[#635BFF]" />
+                </Link>
+                <Link
+                  href="/#how-it-works"
+                  onClick={(e) => {
+                    setMobileMenuOpen(false)
+                    handleNavAnchorClick(e, "how-it-works")
+                  }}
+                  className="min-h-[48px] text-base font-medium text-[#475569] hover:text-[#0F172A] flex items-center py-3 border-b border-[#E2E8F0] transition-colors"
+                >
+                  {t("howItWorks")}
+                </Link>
+                <Link
+                  href="/#for-freelancers"
+                  onClick={(e) => {
+                    setMobileMenuOpen(false)
+                    handleNavAnchorClick(e, "for-freelancers")
+                  }}
+                  className="min-h-[48px] text-base font-medium text-[#475569] hover:text-[#0F172A] flex items-center py-3 border-b border-[#E2E8F0] transition-colors"
+                >
+                  {t("forFreelancers")}
+                </Link>
+                <Link
+                  href="/#enterprise"
+                  onClick={(e) => {
+                    setMobileMenuOpen(false)
+                    handleNavAnchorClick(e, "enterprise")
+                  }}
+                  className="min-h-[48px] text-base font-medium text-[#475569] hover:text-[#0F172A] flex items-center py-3 border-b border-[#E2E8F0] transition-colors"
+                >
+                  {t("enterprise")}
+                </Link>
 
-            <div className="pt-8 border-t border-[rgba(15,15,30,0.08)] flex flex-col gap-3">
+                {/* Mobile Language Switcher Item */}
+                <div className="min-h-[48px] flex items-center justify-between py-3 border-b border-[#E2E8F0]">
+                  <span className="text-sm font-medium text-[#475569]">Language / Ngôn ngữ</span>
+                  <LanguageSwitcher align="right" />
+                </div>
+              </nav>
+            </div>
+
+            <div className="pt-6 border-t border-[#E2E8F0] flex flex-col gap-3">
               {mounted && user ? (
                 <>
                   <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="primary" size="lg" pill className="w-full">
+                    <Button variant="primary" size="lg" className="w-full min-h-[48px]">
                       {t("goToDashboard")}
                     </Button>
                   </Link>
                   <button
                     onClick={() => {
-                      handleLogout()
+                      void handleLogout()
                       setMobileMenuOpen(false)
                     }}
-                    className="w-full py-3 text-sm text-rose-600 text-center font-medium"
+                    className="w-full min-h-[44px] py-3 text-sm text-rose-600 text-center font-medium"
                   >
                     {t("signOut")}
                   </button>
@@ -449,12 +452,12 @@ export function Navbar() {
               ) : (
                 <>
                   <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="outline" size="lg" pill className="w-full">
+                    <Button variant="outline" size="lg" className="w-full min-h-[48px]">
                       {t("signIn")}
                     </Button>
                   </Link>
                   <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="primary" size="lg" pill className="w-full">
+                    <Button variant="primary" size="lg" className="w-full min-h-[48px]">
                       {t("joinTascora")}
                     </Button>
                   </Link>

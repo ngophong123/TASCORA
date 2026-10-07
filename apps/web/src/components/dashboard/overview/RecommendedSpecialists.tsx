@@ -3,8 +3,9 @@
 import * as React from "react"
 import { Link } from "@/i18n/routing"
 import { type RecommendedSpecialist } from "@/data/dashboard/overview"
-import { Sparkles, Star, ArrowRight } from "lucide-react"
+import { Users, Star, ArrowRight } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { AvatarImage } from "@/components/ui/AvatarImage"
 import { cn } from "@/lib/utils"
 
 interface RecommendedSpecialistsProps {
@@ -22,8 +23,8 @@ export function RecommendedSpecialists({ specialists, className }: RecommendedSp
     >
       <div className="flex items-center justify-between pb-4 border-b border-[rgba(15,15,30,0.06)] mb-4">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-blue-600" />
-          <h3 className="text-sm font-bold text-[#0B0B14]">Recommended Talent For You</h3>
+          <Users className="w-4 h-4 text-blue-600" />
+          <h3 className="text-sm font-bold text-[#0A0A23]">Recommended Talent For You</h3>
         </div>
         <Link
           href="/services"
@@ -43,27 +44,27 @@ export function RecommendedSpecialists({ specialists, className }: RecommendedSp
             <div>
               {/* Header with avatar & online status */}
               <div className="flex items-start justify-between gap-2 mb-3">
-                <div className="relative">
-                  <img
-                    src={spec.avatar}
-                    alt={spec.name}
-                    className="w-10 h-10 rounded-full object-cover border border-[rgba(15,15,30,0.1)]"
-                  />
-                  {spec.isOnline && (
-                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white" />
-                  )}
-                </div>
+                <AvatarImage
+                  src={spec.avatar}
+                  name={spec.name}
+                  id={spec.id}
+                  size={40}
+                  rounded="full"
+                  showOnlineStatus
+                  isOnline={spec.isOnline}
+                  alt={`${spec.name} avatar`}
+                />
 
                 <Badge
                   variant={spec.level === "TOP_RATED" ? "gradient" : "luxury"}
                   size="sm"
                   className="text-[9px] py-0 px-1.5 h-4"
                 >
-                  {spec.level === "TOP_RATED" ? "★ Top Rated" : "Level 2"}
+                  {spec.level === "TOP_RATED" ? "Top Rated" : "Level 2"}
                 </Badge>
               </div>
 
-              <h4 className="text-xs font-bold text-[#0B0B14]">{spec.name}</h4>
+              <h4 className="text-xs font-bold text-[#0A0A23]">{spec.name}</h4>
               <p className="text-[11px] text-[#6B6B7B] line-clamp-1 mb-2">{spec.title}</p>
 
               {/* Rating & Rate */}
@@ -75,7 +76,7 @@ export function RecommendedSpecialists({ specialists, className }: RecommendedSp
                     ({spec.reviewsCount})
                   </span>
                 </div>
-                <span className="font-mono font-bold text-xs text-[#0B0B14]">
+                <span className="font-mono font-bold text-xs text-[#0A0A23]">
                   {spec.hourlyRate}
                 </span>
               </div>
@@ -95,7 +96,7 @@ export function RecommendedSpecialists({ specialists, className }: RecommendedSp
 
             <Link
               href="/services"
-              className="w-full inline-flex items-center justify-center gap-1.5 h-8 rounded-lg bg-white border border-[rgba(15,15,30,0.12)] text-xs font-semibold text-[#0B0B14] hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 transition-colors shadow-2xs"
+              className="w-full inline-flex items-center justify-center gap-1.5 h-8 rounded-lg bg-white border border-[rgba(15,15,30,0.12)] text-xs font-semibold text-[#0A0A23] hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 transition-colors shadow-2xs"
             >
               <span>View Profile & Gigs</span>
               <ArrowRight className="w-3 h-3" />

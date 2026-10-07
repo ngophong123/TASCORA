@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="cat-des-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080D1A"/>
+      <stop offset="50%" stop-color="#141738"/>
+      <stop offset="100%" stop-color="#1E1B4B"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="24" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <filter id="soft-shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <rect width="800" height="500" fill="url(#cat-des-bg)"/>
+  <circle cx="400" cy="240" r="180" fill="#818CF8" opacity="0.22" filter="url(#glow)"/>
+  <circle cx="200" cy="200" r="150" fill="#EC4899" opacity="0.18" filter="url(#glow)"/>
+
+  <!-- Design Canvas & Palette Palette Illustration -->
+  <g filter="url(#soft-shadow)" transform="translate(180, 80)">
+    <rect width="440" height="340" rx="20" fill="#0F172A" stroke="#334155" stroke-width="1.8" opacity="0.96"/>
+    <!-- Window top -->
+    <rect width="440" height="42" rx="20" fill="#1E293B"/>
+    <rect y="22" width="440" height="20" fill="#1E293B"/>
+    <line x1="0" y1="42" x2="440" y2="42" stroke="#334155" stroke-width="1"/>
+
+    <circle cx="24" cy="21" r="5" fill="#EF4444"/>
+    <circle cx="40" cy="21" r="5" fill="#F59E0B"/>
+    <circle cx="56" cy="21" r="5" fill="#10B981"/>
+
+    <!-- Central Palette Layout -->
+    <g transform="translate(60, 65)">
+      <!-- Palette Chips -->
+      <rect x="0" y="0" width="80" height="85" rx="12" fill="#2563EB"/>
+      <rect x="95" y="0" width="80" height="85" rx="12" fill="#7C3AED"/>
+      <rect x="190" y="0" width="80" height="85" rx="12" fill="#DB2777"/>
+      <rect x="285" y="0" width="80" height="85" rx="12" fill="#0284C7"/>
+
+      <!-- Bezier Curve Anchor Overlay -->
+      <path d="M 40 160 C 120 70 240 210 320 130" fill="none" stroke="#F472B6" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="40" cy="160" r="7" fill="#FFFFFF" stroke="#F472B6" stroke-width="3"/>
+      <circle cx="320" cy="130" r="7" fill="#FFFFFF" stroke="#F472B6" stroke-width="3"/>
+      <rect x="175" y="135" width="12" height="12" fill="#38BDF8" stroke="#FFFFFF" stroke-width="2"/>
+    </g>
+
+    <!-- Component Specimen Layout Bars -->
+    <g transform="translate(60, 260)">
+      <rect x="0" y="0" width="140" height="35" rx="8" fill="#1E293B" stroke="#475569" stroke-width="1"/>
+      <rect x="15" y="14" width="70" height="7" rx="3.5" fill="#A78BFA"/>
+
+      <rect x="160" y="0" width="140" height="35" rx="8" fill="#1E293B" stroke="#475569" stroke-width="1"/>
+      <rect x="175" y="14" width="80" height="7" rx="3.5" fill="#38BDF8"/>
+    </g>
+  </g>
+</svg>

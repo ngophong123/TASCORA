@@ -55,7 +55,7 @@ export function RevenueAreaChart({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[rgba(15,15,30,0.06)]">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-base font-bold text-[#0B0B14] tracking-tight">{title}</h3>
+            <h3 className="text-base font-bold text-[#0A0A23] tracking-tight">{title}</h3>
             {badgeText && (
               <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200/60">
                 {badgeText}
@@ -63,7 +63,7 @@ export function RevenueAreaChart({
             )}
           </div>
           <div className="flex items-baseline gap-2 mt-1">
-            <span className="text-2xl font-extrabold text-[#0B0B14] font-mono">
+            <span className="text-2xl font-extrabold text-[#0A0A23] font-mono">
               {currencyPrefix}
               {totalAmount.toLocaleString()}
             </span>
@@ -87,7 +87,7 @@ export function RevenueAreaChart({
                 "px-3 py-1 rounded-lg text-xs font-semibold transition-all",
                 range === tab
                   ? "bg-white text-blue-900 shadow-2xs font-bold"
-                  : "text-[#6B6B7B] hover:text-[#0B0B14]"
+                  : "text-[#6B6B7B] hover:text-[#0A0A23]"
               )}
             >
               {tab.toUpperCase()}
@@ -135,7 +135,7 @@ export function RevenueAreaChart({
                         <span className="font-semibold text-[#6B6B7B] block">{label}</span>
                         <div className="flex items-center gap-2">
                           <span className="w-2 h-2 rounded-full bg-blue-600" />
-                          <span className="font-mono font-bold text-sm text-[#0B0B14]">
+                          <span className="font-mono font-bold text-sm text-[#0A0A23]">
                             {currencyPrefix}
                             {data.amount.toLocaleString()}
                           </span>

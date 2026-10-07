@@ -19,10 +19,10 @@ import {
   ChevronLeft,
   ChevronRight,
   ShieldCheck,
-  Sparkles,
   Zap,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Logo } from "@/components/ui/Logo"
 
 const NAV_ICON_MAP: Record<string, React.ElementType> = {
   LayoutDashboard,
@@ -57,36 +57,32 @@ export function DashboardSidebar() {
   return (
     <aside
       className={cn(
-        "hidden lg:flex flex-col h-screen sticky top-0 bg-white border-r border-[rgba(15,15,30,0.08)] transition-all duration-300 z-40 select-none",
+        "hidden lg:flex flex-col h-screen sticky top-0 bg-white dark:bg-slate-900 border-r border-slate-200/80 dark:border-slate-800 transition-all duration-300 z-40 select-none",
         sidebarCollapsed ? "w-[72px]" : "w-64"
       )}
       aria-label="Dashboard Sidebar"
     >
       {/* 1. Header: Brand Logo & Collapse Toggle */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-[rgba(15,15,30,0.06)] shrink-0">
-        <Link href="/" className="flex items-center gap-2.5 overflow-hidden">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-blue-600 via-blue-500 to-sky-400 p-[1px] shadow-sm shrink-0">
-            <div className="h-full w-full bg-white rounded-[11px] flex items-center justify-center font-bold text-sm bg-gradient-to-r from-blue-700 to-sky-600 bg-clip-text text-transparent">
-              T
-            </div>
-          </div>
-          {!sidebarCollapsed && (
-            <div className="flex flex-col">
-              <span className="font-extrabold text-base tracking-tight text-[#0B0B14]">
-                TASCORA
-              </span>
-              <span className="text-[10px] font-semibold text-blue-700 tracking-wider uppercase">
-                {role === "CLIENT" ? "Client Portal" : "Creator Studio"}
-              </span>
-            </div>
-          )}
+      <div className="h-16 flex items-center justify-between px-4 border-b border-slate-200/60 dark:border-slate-800 shrink-0">
+        <Link
+          href="/"
+          className="flex items-center overflow-hidden outline-none"
+          aria-label="TASCORA Home"
+        >
+          <Logo
+            size="md"
+            variant={sidebarCollapsed ? "mark" : "full"}
+            subtitle={
+              sidebarCollapsed ? undefined : role === "CLIENT" ? "Client Portal" : "Creator Studio"
+            }
+          />
         </Link>
 
         {/* Sidebar Collapse Toggle Button */}
         <button
           type="button"
           onClick={toggleSidebar}
-          className="p-1.5 rounded-lg text-[#6B6B7B] hover:text-[#0B0B14] hover:bg-[#FAFAFC] border border-transparent hover:border-[rgba(15,15,30,0.08)] transition-all"
+          className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-all cursor-pointer"
           aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {sidebarCollapsed ? (
@@ -114,8 +110,8 @@ export function DashboardSidebar() {
               className={cn(
                 "relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all group",
                 isActive
-                  ? "text-blue-900 font-bold"
-                  : "text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-[#FAFAFC]"
+                  ? "text-slate-900 dark:text-white font-bold"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/60"
               )}
               title={sidebarCollapsed ? label : undefined}
             >
@@ -123,7 +119,7 @@ export function DashboardSidebar() {
               {isActive && (
                 <motion.div
                   layoutId="sidebar-active-pill"
-                  className="absolute inset-0 bg-blue-50 border border-blue-200/80 rounded-xl -z-10 shadow-xs"
+                  className="absolute inset-0 bg-primary/10 border border-primary/25 rounded-xl -z-10 shadow-xs"
                   transition={{ type: "spring", stiffness: 350, damping: 30 }}
                 />
               )}
@@ -131,7 +127,7 @@ export function DashboardSidebar() {
               <Icon
                 className={cn(
                   "w-4 h-4 shrink-0 transition-colors",
-                  isActive ? "text-blue-700" : "text-[#6B6B7B] group-hover:text-blue-600"
+                  isActive ? "text-primary" : "text-slate-400 group-hover:text-primary"
                 )}
               />
 
@@ -143,8 +139,8 @@ export function DashboardSidebar() {
                   className={cn(
                     "px-2 py-0.5 rounded-full text-[10px] font-mono font-bold shrink-0",
                     item.badgeVariant === "gradient"
-                      ? "bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-2xs"
-                      : "bg-[#F4F4F8] text-[#4B4B5C] border border-[rgba(15,15,30,0.06)]"
+                      ? "bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600 text-white shadow-xs"
+                      : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700"
                   )}
                 >
                   {item.badge}
@@ -153,7 +149,7 @@ export function DashboardSidebar() {
 
               {/* Collapsed dot badge */}
               {sidebarCollapsed && item.badge !== undefined && (
-                <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-blue-600" />
+                <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary" />
               )}
             </Link>
           )
@@ -162,23 +158,22 @@ export function DashboardSidebar() {
 
       {/* 3. Bottom Card (Role-Specific, hidden if collapsed) */}
       {!sidebarCollapsed && (
-        <div className="p-3 m-3 rounded-2xl bg-gradient-to-b from-[#FAFAFC] to-[#F4F4F8] border border-[rgba(15,15,30,0.08)] shadow-2xs">
+        <div className="p-3.5 m-3 rounded-2xl bg-slate-50/80 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 shadow-xs">
           {role === "CLIENT" ? (
             <div className="space-y-2">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-blue-800">
-                <ShieldCheck className="w-4 h-4 text-blue-600" />
-                <span>Escrow Protection</span>
+              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900 dark:text-white">
+                <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                <span>Order payments and refunds</span>
               </div>
-              <p className="text-[11px] text-[#6B6B7B] leading-relaxed">
-                100% of your deposits are safely held in milestone escrow until deliverables are
-                approved.
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                Track server-confirmed payments and refund requests in your orders. External seller
+                payouts remain unavailable.
               </p>
               <div className="pt-1">
                 <Link
                   href="/services"
-                  className="w-full inline-flex items-center justify-center gap-1 h-8 rounded-lg bg-white border border-[rgba(15,15,30,0.12)] text-[11px] font-semibold text-[#0B0B14] hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 shadow-2xs transition-colors"
+                  className="w-full inline-flex items-center justify-center gap-1 h-8 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-900 dark:text-white hover:bg-primary/10 hover:text-primary hover:border-primary/30 shadow-xs transition-colors"
                 >
-                  <Sparkles className="w-3 h-3 text-blue-600" />
                   <span>{t("hireSpecialist")}</span>
                 </Link>
               </div>
@@ -186,17 +181,13 @@ export function DashboardSidebar() {
           ) : (
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-bold text-[#0B0B14] flex items-center gap-1">
+                <span className="font-bold text-slate-900 dark:text-white flex items-center gap-1">
                   <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-                  <span>Profile Strength</span>
+                  <span>Your seller profile</span>
                 </span>
-                <span className="font-mono font-bold text-blue-700 text-[11px]">85%</span>
               </div>
-              <div className="w-full h-1.5 rounded-full bg-gray-200 overflow-hidden">
-                <div className="h-full rounded-full bg-gradient-to-r from-blue-600 to-sky-500 w-[85%]" />
-              </div>
-              <p className="text-[10px] text-[#6B6B7B]">
-                Add 2 more portfolio showcases to reach 100% and rank higher.
+              <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                Manage your profile and service drafts in account settings.
               </p>
             </div>
           )}

@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test"
+import { test, expect } from "../support/live-fixtures"
 
 test.describe("Authentication Flows (Auth Domain)", () => {
   test("login page renders all essential form elements", async ({ page }) => {
@@ -43,7 +43,7 @@ test.describe("Authentication Flows (Auth Domain)", () => {
     await page.goto("/login")
 
     // Click link to register page
-    const registerLink = page.locator('a[href*="/register"]').first()
+    const registerLink = page.getByRole('link', { name: 'Create an account', exact: true })
     await expect(registerLink).toBeVisible()
     await registerLink.click()
 

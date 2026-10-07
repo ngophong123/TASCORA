@@ -25,137 +25,284 @@ import {
   ArrowUpRight,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import {
+  requestData,
+  jsonRequest,
+  imageUrl,
+  profileName,
+  uploadFile,
+  downloadUpload,
+  type Profile,
+} from "@/lib/marketplace"
+import { useConversationSocket } from "@/hooks/useConversationSocket"
+import { ApiState } from "@/components/feedback/ApiState"
 import { StatusBadge } from "@/components/ui/StatusBadge"
 import { useDashboard } from "@/context/DashboardContext"
-import { MOCK_CONVERSATIONS, type Conversation, type ChatMessage } from "@/data/dashboard/messages"
+import { type Conversation, type ChatMessage } from "@/data/dashboard/messages"
 
 function MessagesContent() {
   const searchParams = useSearchParams()
   const orderParam = searchParams.get("orderId")
-  const { showToast, role } = useDashboard()
-
-  const [conversations, setConversations] = React.useState<Conversation[]>(MOCK_CONVERSATIONS)
-  const [selectedConvId, setSelectedConvId] = React.useState<string>(() => {
-    if (orderParam) {
-      const match = MOCK_CONVERSATIONS.find((c) => c.order.id === orderParam)
-      if (match) return match.id
-    }
-    return MOCK_CONVERSATIONS[0]?.id || "conv-1"
-  })
-
+  const { showToast, account } = useDashboard()
+  const sellerParam = searchParams.get("seller") || searchParams.get("contact")
+  const [conversations, setConversations] = React.useState<Conversation[]>([])
+  const [selectedConvId, setSelectedConvId] = React.useState("")
+  const [realtimeRevision, setRealtimeRevision] = React.useState(0)
+  const realtimeStatus = useConversationSocket(account?.id, selectedConvId, setRealtimeRevision)
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState("")
+  const [sending, setSending] = React.useState(false)
+  const [attachment, setAttachment] = React.useState("")
   const [searchFilter, setSearchFilter] = React.useState("")
   const [tabFilter, setTabFilter] = React.useState<"all" | "unread">("all")
   const [inputText, setInputText] = React.useState("")
-  const [isTyping, setIsTyping] = React.useState(false)
+  const isTyping = false
   const [showOrderContext, setShowOrderContext] = React.useState(true)
   const [mobileActivePane, setMobileActivePane] = React.useState<"list" | "chat">("list")
-
   const messagesEndRef = React.useRef<HTMLDivElement>(null)
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
-
-  const activeConv =
-    conversations.find((c) => c.id === selectedConvId) ?? conversations[0] ?? MOCK_CONVERSATIONS[0]!
-
-  // Auto scroll message thread to bottom
-  React.useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [activeConv?.messages, isTyping])
-
-  // Clear unread count when opening a conversation
-  React.useEffect(() => {
-    if (selectedConvId) {
-      setConversations((prev) =>
-        prev.map((c) =>
-          c.id === selectedConvId && c.unreadCount > 0 ? { ...c, unreadCount: 0 } : c
-        )
-      )
-    }
-  }, [selectedConvId])
-
-  const handleSelectConv = (convId: string) => {
-    setSelectedConvId(convId)
-    setMobileActivePane("chat")
+  interface StoredMessage {
+    id: string
+    senderId: string
+    content: string
+    createdAt: string
+    isRead: boolean
+    attachmentUrl: string | null
   }
-
-  const handleSendMessage = (e?: React.FormEvent) => {
-    if (e) e.preventDefault()
-    if (!inputText.trim()) return
-
-    const messageText = inputText.trim()
-    const newMsgId = `msg-${Date.now()}`
-    const nowTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-
-    const userMessage: ChatMessage = {
-      id: newMsgId,
-      senderId: "me",
-      senderName: role === "CLIENT" ? "Marcus Thorne" : "Alexandre Moreau",
-      content: messageText,
-      time: nowTime,
-      date: "Today",
-      read: false,
-    }
-
-    setConversations((prev) =>
-      prev.map((c) => {
-        if (c.id === selectedConvId) {
-          return {
-            ...c,
-            lastMessage: messageText,
-            lastMessageTime: "Just now",
-            messages: [...c.messages, userMessage],
-          }
+  interface StoredConversation {
+    id: string
+    participant1Id: string
+    participant2Id: string
+    participant1: { id: string; buyerProfile: Profile | null; sellerProfile: Profile | null }
+    participant2: { id: string; buyerProfile: Profile | null; sellerProfile: Profile | null }
+    unreadCount1: number
+    unreadCount2: number
+    messages: StoredMessage[]
+    order: {
+      id: string
+      status: string
+      amount: string
+      deliveryDate: string | null
+      service: { title: string }
+      package: { type: "BASIC" | "STANDARD" | "PREMIUM" }
+    } | null
+  }
+  const mapMessage = React.useCallback(
+    (message: StoredMessage): ChatMessage => ({
+      id: message.id,
+      senderId: message.senderId === account?.id ? "me" : message.senderId,
+      senderName:
+        message.senderId === account?.id
+          ? profileName(account?.buyerProfile || account?.sellerProfile)
+          : "Member",
+      content: message.content,
+      time: new Date(message.createdAt).toLocaleTimeString(),
+      date: new Date(message.createdAt).toLocaleDateString(),
+      read: message.isRead,
+      attachments: message.attachmentUrl
+        ? [
+            {
+              id: message.id,
+              name: message.attachmentUrl.split("/").pop() || "Attachment",
+              size: "",
+              type: "pdf",
+              url: message.attachmentUrl,
+            },
+          ]
+        : [],
+    }),
+    [account]
+  )
+  React.useEffect(() => {
+    if (!account) return
+    const controller = new AbortController()
+    let created = false
+    async function load() {
+      try {
+        let opened = ""
+        if (!created && (orderParam || sellerParam)) {
+          const conversation = await requestData<{ id: string }>(
+            "/api/v1/marketplace/conversations",
+            jsonRequest("POST", orderParam ? { orderId: orderParam } : { sellerId: sellerParam })
+          )
+          opened = conversation.id
+          created = true
         }
-        return c
-      })
-    )
-
-    setInputText("")
-
-    // Simulate partner typing response preview
-    setTimeout(() => {
-      setIsTyping(true)
-      setTimeout(() => {
-        setIsTyping(false)
-        const partnerReply: ChatMessage = {
-          id: `reply-${Date.now()}`,
-          senderId: activeConv.partner.id,
-          senderName: activeConv.partner.name,
-          content:
-            "Thanks for the update! I will incorporate this immediately into our deployment checklist.",
-          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          date: "Today",
-          read: true,
-        }
+        const stored = await requestData<StoredConversation[]>("/api/v1/messages/conversations", {
+          signal: controller.signal,
+        })
+        if (controller.signal.aborted) return
         setConversations((prev) =>
-          prev.map((c) => {
-            if (c.id === selectedConvId) {
-              return {
-                ...c,
-                lastMessage: partnerReply.content,
-                lastMessageTime: "Just now",
-                messages: [...c.messages, partnerReply],
-              }
+          stored.map((c) => {
+            const isOne = c.participant1Id === account!.id
+            const participant = isOne ? c.participant2 : c.participant1
+            const profile = participant.sellerProfile || participant.buyerProfile
+            return {
+              id: c.id,
+              partner: {
+                id: participant.id,
+                name: profileName(profile),
+                title: profile?.professionalTitle || "",
+                avatar: imageUrl(profile?.avatar),
+                online: false,
+                lastSeen: "Presence unavailable",
+                rating: profile?.ratingAverage || 0,
+                reviewsCount: profile?.ratingCount || 0,
+                responseTime: "Unavailable",
+              },
+              order: {
+                id: c.order?.id || "",
+                title: c.order?.service.title || "Direct conversation",
+                category: "",
+                tier: c.order?.package.type || "BASIC",
+                amount: c.order?.amount || "",
+                escrowAmount: "Unavailable",
+                status:
+                  c.order?.status === "COMPLETED"
+                    ? "completed"
+                    : c.order?.status === "DELIVERED"
+                      ? "delivered"
+                      : "active",
+                dueDate: c.order?.deliveryDate || "",
+                milestoneSummary: {
+                  total: 0,
+                  completed: 0,
+                  currentTitle: c.order?.status || "",
+                  currentAmount: "",
+                },
+                sharedFiles: [],
+              },
+              lastMessage: c.messages[0]?.content || "",
+              lastMessageTime: c.messages[0]
+                ? new Date(c.messages[0].createdAt).toLocaleString()
+                : "",
+              unreadCount: isOne ? c.unreadCount1 : c.unreadCount2,
+              messages: prev.find((p) => p.id === c.id)?.messages || [],
             }
-            return c
           })
         )
-      }, 2500)
-    }, 800)
+        if (opened) setSelectedConvId(opened)
+        else
+          setSelectedConvId((prev) =>
+            stored.some((c) => c.id === prev) ? prev : stored[0]?.id || ""
+          )
+        setError("")
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          setConversations([])
+          setError(error instanceof Error ? error.message : "Chat unavailable.")
+        }
+      } finally {
+        if (!controller.signal.aborted) setLoading(false)
+      }
+    }
+    void load()
+    const timer = setInterval(() => void load(), 5000)
+    return () => {
+      controller.abort()
+      clearInterval(timer)
+    }
+  }, [account, orderParam, sellerParam, realtimeRevision])
+  React.useEffect(() => {
+    if (!selectedConvId || !account) return
+    const controller = new AbortController()
+    async function loadHistory() {
+      try {
+        const messages: StoredMessage[] = []
+        for (let skip = 0; ; skip += 100) {
+          const batch = await requestData<StoredMessage[]>(
+            `/api/v1/messages/${selectedConvId}?skip=${skip}&take=100`,
+            { signal: controller.signal }
+          )
+          messages.push(...batch)
+          if (batch.length < 100) break
+        }
+        const unreadIds = messages
+          .filter((message) => !message.isRead && message.senderId !== account?.id)
+          .map((message) => message.id)
+        for (let offset = 0; offset < unreadIds.length; offset += 100)
+          await requestData(`/api/v1/marketplace/conversations/${selectedConvId}/read`, {
+            ...jsonRequest("POST", { messageIds: unreadIds.slice(offset, offset + 100) }),
+            signal: controller.signal,
+          })
+        if (!controller.signal.aborted)
+          setConversations((prev) =>
+            prev.map((c) =>
+              c.id === selectedConvId
+                ? { ...c, messages: messages.map(mapMessage), unreadCount: 0 }
+                : c
+            )
+          )
+      } catch (error) {
+        if (!controller.signal.aborted)
+          setError(error instanceof Error ? error.message : "Message history unavailable.")
+      }
+    }
+    void loadHistory()
+    const timer = setInterval(() => void loadHistory(), 5000)
+    return () => {
+      controller.abort()
+      clearInterval(timer)
+    }
+  }, [selectedConvId, account, mapMessage, realtimeRevision])
+  const activeConv = conversations.find((c) => c.id === selectedConvId)
+  React.useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [activeConv?.messages])
+  const handleSelectConv = (id: string) => {
+    setSelectedConvId(id)
+    setMobileActivePane("chat")
+  }
+  const handleSendMessage = async (event?: React.FormEvent) => {
+    event?.preventDefault()
+    if (!inputText.trim() || sending || !selectedConvId) return
+    setSending(true)
+    setError("")
+    try {
+      const message = await requestData<StoredMessage>(
+        "/api/v1/messages",
+        jsonRequest("POST", {
+          conversationId: selectedConvId,
+          content: inputText.trim(),
+          ...(attachment ? { attachmentUrl: attachment } : {}),
+        })
+      )
+      setConversations((prev) =>
+        prev.map((c) =>
+          c.id === selectedConvId
+            ? {
+                ...c,
+                messages: [...c.messages.filter((m) => m.id !== message.id), mapMessage(message)],
+                lastMessage: message.content,
+              }
+            : c
+        )
+      )
+      setInputText("")
+      setAttachment("")
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Message send failed.")
+    } finally {
+      setSending(false)
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
-      handleSendMessage()
+      void handleSendMessage()
     }
   }
 
   const handleDownloadFile = (fileName: string, size: string) => {
-    showToast({
-      title: "Downloading File",
-      message: `${fileName} (${size}) has been saved to your downloads.`,
-      type: "success",
-    })
+    void size
+    const file = activeConv?.messages
+      .flatMap((m) => m.attachments || [])
+      .find((f) => f.name === fileName)
+    if (file?.url)
+      void downloadUpload(file.url).catch((error: Error) =>
+        showToast({ title: error.message, type: "error" })
+      )
   }
 
   const filteredConversations = conversations.filter((c) => {
@@ -182,22 +329,53 @@ function MessagesContent() {
     }
   }
 
+  if (loading || error || !activeConv)
+    return (
+      <ApiState
+        loading={loading}
+        error={error}
+        retry={() => window.location.reload()}
+        empty="No conversations yet. Open a service or an order to contact the other participant."
+      />
+    )
   return (
     <div className="space-y-6">
+      <p role="status" className="text-xs text-slate-500">
+        {realtimeStatus}
+      </p>
+      <label className="block text-xs">
+        Chat attachment (private to this conversation)
+        <input
+          type="file"
+          accept="image/png,image/jpeg,image/webp,application/pdf"
+          disabled={sending}
+          onChange={(event) => {
+            const file = event.target.files?.[0]
+            if (file) {
+              setSending(true)
+              void uploadFile(file)
+                .then(setAttachment)
+                .catch((error: Error) => setError(error.message))
+                .finally(() => setSending(false))
+            }
+          }}
+        />
+        {attachment && <span>Attachment ready</span>}
+      </label>
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight text-[#0B0B14]">
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-2xl font-semibold tracking-tight text-[#0A0A23]">
               Messages & Workspace
             </h1>
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-              Escrow Protected
+              Private conversation
             </span>
           </div>
           <p className="text-sm text-[#4B4B5C] mt-1">
-            End-to-end encrypted collaboration with linked milestones and contract context.
+            Persisted messages and shared attachments with your conversation participant.
           </p>
         </div>
 
@@ -242,7 +420,7 @@ function MessagesContent() {
                 value={searchFilter}
                 onChange={(e) => setSearchFilter(e.target.value)}
                 placeholder="Search dialogue or order ID..."
-                className="w-full rounded-xl border border-[rgba(15,15,30,0.12)] bg-white pl-9 pr-3 py-1.5 text-xs text-[#0B0B14] placeholder:text-[#6B6B7B] outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                className="w-full rounded-xl border border-[rgba(15,15,30,0.12)] bg-white pl-9 pr-3 py-1.5 text-xs text-[#0A0A23] placeholder:text-[#6B6B7B] outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
               />
             </div>
 
@@ -252,8 +430,8 @@ function MessagesContent() {
                 onClick={() => setTabFilter("all")}
                 className={`flex-1 text-xs font-medium py-1 px-2 rounded-md transition-all ${
                   tabFilter === "all"
-                    ? "bg-white text-[#0B0B14] shadow-sm"
-                    : "text-[#6B6B7B] hover:text-[#0B0B14]"
+                    ? "bg-white text-[#0A0A23] shadow-sm"
+                    : "text-[#6B6B7B] hover:text-[#0A0A23]"
                 }`}
               >
                 All Chats ({conversations.length})
@@ -262,8 +440,8 @@ function MessagesContent() {
                 onClick={() => setTabFilter("unread")}
                 className={`flex-1 text-xs font-medium py-1 px-2 rounded-md transition-all ${
                   tabFilter === "unread"
-                    ? "bg-white text-[#0B0B14] shadow-sm"
-                    : "text-[#6B6B7B] hover:text-[#0B0B14]"
+                    ? "bg-white text-[#0A0A23] shadow-sm"
+                    : "text-[#6B6B7B] hover:text-[#0A0A23]"
                 }`}
               >
                 Unread ({conversations.filter((c) => c.unreadCount > 0).length})
@@ -308,7 +486,7 @@ function MessagesContent() {
                       <div className="flex items-center justify-between mb-0.5">
                         <span
                           className={`text-xs font-semibold truncate ${
-                            isSelected ? "text-blue-900" : "text-[#0B0B14]"
+                            isSelected ? "text-blue-900" : "text-[#0A0A23]"
                           }`}
                         >
                           {conv.partner.name}
@@ -356,7 +534,7 @@ function MessagesContent() {
               {/* Back button on mobile */}
               <button
                 onClick={() => setMobileActivePane("list")}
-                className="md:hidden p-1.5 -ml-1 text-[#6B6B7B] hover:text-[#0B0B14] hover:bg-[#F4F4F8] rounded-lg transition-colors"
+                className="md:hidden p-1.5 -ml-1 text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-[#F4F4F8] rounded-lg transition-colors"
               >
                 <ArrowLeft className="h-4 w-4" />
               </button>
@@ -375,7 +553,7 @@ function MessagesContent() {
 
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <h2 className="text-sm font-semibold text-[#0B0B14] truncate">
+                  <h2 className="text-sm font-semibold text-[#0A0A23] truncate">
                     {activeConv.partner.name}
                   </h2>
                   <span className="hidden sm:inline-flex items-center gap-0.5 text-[11px] font-medium text-amber-600 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">
@@ -399,7 +577,7 @@ function MessagesContent() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowOrderContext((prev) => !prev)}
-                className="h-8 px-2 text-xs text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-[#F4F4F8] lg:hidden flex items-center gap-1"
+                className="h-8 px-2 text-xs text-[#4B4B5C] hover:text-[#0A0A23] hover:bg-[#F4F4F8] lg:hidden flex items-center gap-1"
               >
                 <Info className="h-4 w-4 text-blue-600" />
                 <span className="hidden sm:inline">Order Info</span>
@@ -424,10 +602,10 @@ function MessagesContent() {
             <div className="mx-auto max-w-md bg-white border border-[rgba(15,15,30,0.08)] rounded-xl p-3 text-center shadow-sm">
               <div className="flex items-center justify-center gap-1.5 text-xs font-medium text-emerald-700">
                 <ShieldCheck className="h-4 w-4 text-emerald-600" />
-                <span>All communications & attachments are covered by Tascora Escrow</span>
+                <span>Attachments are shared with conversation participants</span>
               </div>
               <p className="text-[11px] text-[#6B6B7B] mt-0.5">
-                Funds remain locked in smart escrow until you explicitly verify deliverable signoff.
+                Payment settlement, escrow release, refunds and payouts are unavailable.
               </p>
             </div>
 
@@ -448,7 +626,7 @@ function MessagesContent() {
                     className={`rounded-2xl px-4 py-3 max-w-[88%] sm:max-w-[72%] shadow-sm space-y-2 ${
                       isMe
                         ? "bg-gradient-to-r from-blue-600 to-sky-600 text-white rounded-tr-sm"
-                        : "bg-white text-[#0B0B14] border border-[rgba(15,15,30,0.08)] rounded-tl-sm"
+                        : "bg-white text-[#0A0A23] border border-[rgba(15,15,30,0.08)] rounded-tl-sm"
                     }`}
                   >
                     <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">
@@ -464,7 +642,7 @@ function MessagesContent() {
                             className={`flex items-center justify-between gap-3 p-2 rounded-xl text-xs transition-colors ${
                               isMe
                                 ? "bg-white/15 hover:bg-white/25 text-white"
-                                : "bg-[#F4F4F8] hover:bg-[#EAEAEA] text-[#0B0B14]"
+                                : "bg-[#F4F4F8] hover:bg-[#EAEAEA] text-[#0A0A23]"
                             }`}
                           >
                             <div className="flex items-center gap-2 min-w-0">
@@ -533,7 +711,7 @@ function MessagesContent() {
 
           {/* Message Composer Area */}
           <div className="p-3 sm:p-4 bg-white border-t border-[rgba(15,15,30,0.08)]">
-            <form onSubmit={handleSendMessage} className="space-y-2">
+            <form onSubmit={(event) => void handleSendMessage(event)} className="space-y-2">
               <div className="relative rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] focus-within:bg-white focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all">
                 <textarea
                   ref={inputRef}
@@ -543,7 +721,7 @@ function MessagesContent() {
                   data-testid="message-input"
                   rows={2}
                   placeholder={`Write a message to ${activeConv.partner.name}... (Enter to send, Shift+Enter for newline)`}
-                  className="w-full bg-transparent p-3 text-xs sm:text-sm text-[#0B0B14] placeholder:text-[#6B6B7B] resize-none outline-none"
+                  className="w-full bg-transparent p-3 text-xs sm:text-sm text-[#0A0A23] placeholder:text-[#6B6B7B] resize-none outline-none"
                 />
 
                 {/* Bottom Composer Toolbar */}
@@ -554,12 +732,13 @@ function MessagesContent() {
                       onClick={() =>
                         showToast({
                           title: "Attach File",
-                          message: "Select files from your device to upload to project escrow.",
+                          message:
+                            "Use the chat attachment control to share a file with this conversation.",
                           type: "info",
                         })
                       }
                       title="Attach file or code"
-                      className="p-1.5 text-[#6B6B7B] hover:text-[#0B0B14] hover:bg-[#EFEFF4] rounded-lg transition-colors"
+                      className="p-1.5 text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-[#EFEFF4] rounded-lg transition-colors"
                     >
                       <Paperclip className="h-4 w-4" />
                     </button>
@@ -574,7 +753,7 @@ function MessagesContent() {
                         })
                       }
                       title="Insert quick response"
-                      className="p-1.5 text-[#6B6B7B] hover:text-[#0B0B14] hover:bg-[#EFEFF4] rounded-lg transition-colors"
+                      className="p-1.5 text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-[#EFEFF4] rounded-lg transition-colors"
                     >
                       <Sparkles className="h-4 w-4 text-blue-600" />
                     </button>
@@ -589,7 +768,7 @@ function MessagesContent() {
                         })
                       }
                       title="Add emoji"
-                      className="p-1.5 text-[#6B6B7B] hover:text-[#0B0B14] hover:bg-[#EFEFF4] rounded-lg transition-colors"
+                      className="p-1.5 text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-[#EFEFF4] rounded-lg transition-colors"
                     >
                       <Smile className="h-4 w-4" />
                     </button>
@@ -620,19 +799,19 @@ function MessagesContent() {
         </div>
 
         {/* PANE 3: Order Context Panel (Right) */}
-        {showOrderContext && (
+        {showOrderContext && Boolean(activeConv.order.id) && (
           <div className="w-full lg:w-[320px] xl:w-[340px] shrink-0 border-l border-[rgba(15,15,30,0.08)] bg-white flex flex-col overflow-y-auto max-h-full">
             {/* Context Panel Header */}
             <div className="p-4 border-b border-[rgba(15,15,30,0.08)] flex items-center justify-between bg-[#FAFAFC]/60">
               <div className="flex items-center gap-2">
                 <ShoppingBag className="h-4 w-4 text-blue-600" />
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-[#0B0B14]">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-[#0A0A23]">
                   Contract Context
                 </h3>
               </div>
               <button
                 onClick={() => setShowOrderContext(false)}
-                className="p-1 text-[#6B6B7B] hover:text-[#0B0B14] rounded-lg hover:bg-[#F4F4F8] transition-colors lg:hidden"
+                className="p-1 text-[#6B6B7B] hover:text-[#0A0A23] rounded-lg hover:bg-[#F4F4F8] transition-colors lg:hidden"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -648,7 +827,7 @@ function MessagesContent() {
                     className="h-11 w-11 rounded-full object-cover border border-[rgba(15,15,30,0.1)] shadow-sm"
                   />
                   <div className="min-w-0 flex-1">
-                    <h4 className="text-xs font-semibold text-[#0B0B14] truncate">
+                    <h4 className="text-xs font-semibold text-[#0A0A23] truncate">
                       {activeConv.partner.name}
                     </h4>
                     <p className="text-[11px] text-[#6B6B7B] truncate">
@@ -669,14 +848,14 @@ function MessagesContent() {
                 <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[rgba(15,15,30,0.06)] text-[11px]">
                   <div>
                     <span className="text-[#6B6B7B] block text-[10px]">Response Time</span>
-                    <span className="font-medium text-[#0B0B14]">
+                    <span className="font-medium text-[#0A0A23]">
                       {activeConv.partner.responseTime}
                     </span>
                   </div>
                   <div>
                     <span className="text-[#6B6B7B] block text-[10px]">Badge Status</span>
                     <span className="font-medium text-blue-700">
-                      {activeConv.partner.level === "TOP_RATED" ? "Top Rated" : "Verified Pro"}
+                      {activeConv.partner.level === "TOP_RATED" ? "Top Rated" : "Unavailable"}
                     </span>
                   </div>
                 </div>
@@ -685,7 +864,7 @@ function MessagesContent() {
               {/* Active Order Details */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-[#0B0B14]">Active Order</span>
+                  <span className="text-xs font-semibold text-[#0A0A23]">Active Order</span>
                   <StatusBadge status={activeConv.order.status} size="sm" />
                 </div>
 
@@ -699,13 +878,13 @@ function MessagesContent() {
                     </span>
                   </div>
 
-                  <p className="text-xs font-medium text-[#0B0B14] line-clamp-2">
+                  <p className="text-xs font-medium text-[#0A0A23] line-clamp-2">
                     {activeConv.order.title}
                   </p>
 
                   <div className="flex items-center justify-between pt-1 border-t border-[rgba(15,15,30,0.04)] text-xs">
                     <span className="text-[#6B6B7B]">Contract Value:</span>
-                    <span className="font-mono font-bold text-[#0B0B14]">
+                    <span className="font-mono font-bold text-[#0A0A23]">
                       {activeConv.order.amount}
                     </span>
                   </div>
@@ -723,7 +902,7 @@ function MessagesContent() {
               {/* Milestone Progress */}
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-[#0B0B14]">Milestone Progress</span>
+                  <span className="font-semibold text-[#0A0A23]">Milestone Progress</span>
                   <span className="font-mono font-medium text-blue-700">
                     {activeConv.order.milestoneSummary.completed}/
                     {activeConv.order.milestoneSummary.total} Completed
@@ -742,7 +921,7 @@ function MessagesContent() {
 
                 <div className="bg-[#FAFAFC] p-2.5 rounded-lg border border-[rgba(15,15,30,0.06)] space-y-1">
                   <div className="flex items-center justify-between text-[11px]">
-                    <span className="font-medium text-[#0B0B14]">Current Stage</span>
+                    <span className="font-medium text-[#0A0A23]">Current Stage</span>
                     <span className="font-mono text-emerald-600 font-semibold">
                       {activeConv.order.milestoneSummary.currentAmount}
                     </span>
@@ -756,7 +935,7 @@ function MessagesContent() {
               {/* Deliverable Files Shared */}
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-[#0B0B14]">Shared Deliverables</span>
+                  <span className="font-semibold text-[#0A0A23]">Shared Deliverables</span>
                   <span className="text-[10px] text-[#6B6B7B]">
                     {activeConv.order.sharedFiles.length} files
                   </span>
@@ -770,7 +949,7 @@ function MessagesContent() {
                     >
                       <div className="flex items-center gap-2 min-w-0">
                         {getFileIcon(file.type)}
-                        <span className="truncate font-mono text-[11px] text-[#0B0B14]">
+                        <span className="truncate font-mono text-[11px] text-[#0A0A23]">
                           {file.name}
                         </span>
                       </div>
@@ -793,7 +972,7 @@ function MessagesContent() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full text-xs font-medium text-[#0B0B14] border-[rgba(15,15,30,0.12)] hover:bg-[#F4F4F8] flex items-center justify-center gap-1.5"
+                    className="w-full text-xs font-medium text-[#0A0A23] border-[rgba(15,15,30,0.12)] hover:bg-[#F4F4F8] flex items-center justify-center gap-1.5"
                   >
                     <span>View Order In Workspace</span>
                     <ChevronRight className="h-3.5 w-3.5 text-[#6B6B7B]" />
@@ -802,16 +981,10 @@ function MessagesContent() {
 
                 <Button
                   size="sm"
-                  onClick={() =>
-                    showToast({
-                      title: "Release Milestone Escrow",
-                      message: `Redirecting to milestone confirmation for ${activeConv.order.id}...`,
-                      type: "info",
-                    })
-                  }
+                  disabled
                   className="w-full text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
                 >
-                  Approve Milestone ({activeConv.order.milestoneSummary.currentAmount})
+                  Milestone settlement unavailable
                 </Button>
               </div>
             </div>

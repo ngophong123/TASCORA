@@ -50,11 +50,19 @@ export function LanguageSwitcher({
         setIsOpen(false)
       }
     }
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsOpen(false)
+        buttonRef.current?.focus()
+      }
+    }
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside)
+      document.addEventListener("keydown", handleEscape)
     }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
+      document.removeEventListener("keydown", handleEscape)
     }
   }, [isOpen])
 
@@ -108,7 +116,7 @@ export function LanguageSwitcher({
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-label={t("switchLanguage")}
-        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-black/[0.04] active:bg-black/[0.06] rounded-xl border border-[rgba(15,15,30,0.08)] bg-white/70 backdrop-blur-md transition-all shadow-[0_1px_3px_rgba(15,15,30,0.04)] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
+        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-[#4B4B5C] hover:text-[#0A0A23] hover:bg-black/[0.04] active:bg-black/[0.06] rounded-xl border border-[rgba(15,15,30,0.08)] bg-white/70 backdrop-blur-md transition-all shadow-[0_1px_3px_rgba(15,15,30,0.04)] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
       >
         <Globe className="h-3.5 w-3.5 text-blue-600" />
         <span>
@@ -157,8 +165,8 @@ export function LanguageSwitcher({
                       isSelected
                         ? "bg-blue-50/90 text-blue-700 font-semibold"
                         : isFocused
-                          ? "bg-black/[0.04] text-[#0B0B14]"
-                          : "text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-black/[0.03]"
+                          ? "bg-black/[0.04] text-[#0A0A23]"
+                          : "text-[#4B4B5C] hover:text-[#0A0A23] hover:bg-black/[0.03]"
                     }`}
                   >
                     <span className="flex items-center gap-2">

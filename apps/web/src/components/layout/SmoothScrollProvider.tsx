@@ -23,9 +23,18 @@ interface SmoothScrollProviderProps {
 export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
   const [lenisInstance, setLenisInstance] = React.useState<Lenis | null>(null)
   const pathname = usePathname()
+  const nativeScroll = /(^|\/)dashboard(\/|$)/.test(pathname)
   const lenisRef = React.useRef<Lenis | null>(null)
 
   React.useEffect(() => {
+    // Workspace forms, drawers and message panes use native scrolling.
+    if (nativeScroll) {
+      const previous = document.documentElement.style.scrollBehavior
+      document.documentElement.style.scrollBehavior = "auto"
+      return () => {
+        document.documentElement.style.scrollBehavior = previous
+      }
+    }
     // 1. Accessibility guardrail: Check if user prefers reduced motion
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
 
@@ -74,7 +83,7 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
       lenisRef.current = null
       setLenisInstance(null)
     }
-  }, [])
+  }, [nativeScroll])
 
   // Handle route change and hash scrolling
   React.useEffect(() => {

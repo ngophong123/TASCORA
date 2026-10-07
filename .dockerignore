@@ -36,3 +36,16 @@ coverage/
 # Misc
 *.pem
 *.tsbuildinfo
+
+# Environment variants may contain credentials
+.env.*
+!.env.example
+
+# Also exclude nested application environment files
+**/.env
+**/.env.*
+!**/.env.example
+
+# Development user uploads never enter Git or images
+.uploads/
+**/.uploads/

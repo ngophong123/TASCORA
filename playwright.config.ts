@@ -61,7 +61,7 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: {
     command: process.env.CI
-      ? "pnpm --filter web build && pnpm --filter web start -p 3000"
+      ? process.env.PLAYWRIGHT_SKIP_BUILD === '1' ? "pnpm --filter web start -p 3000" : "pnpm --filter web build && pnpm --filter web start -p 3000"
       : "pnpm --filter web exec next dev -p 3000",
     url: BASE_URL,
     reuseExistingServer: !process.env.CI,

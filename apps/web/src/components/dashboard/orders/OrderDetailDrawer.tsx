@@ -4,6 +4,8 @@ import * as React from "react"
 import { Link } from "@/i18n/routing"
 import { useDashboard } from "@/context/DashboardContext"
 import { type DashboardOrder, type DeliveryFile } from "@/data/dashboard/orders"
+import { downloadUpload } from "@/lib/marketplace"
+import { OrderActions } from "./OrderActions"
 import { StatusBadge } from "@/components/ui/StatusBadge"
 import { motion, AnimatePresence } from "framer-motion"
 import {
@@ -24,6 +26,7 @@ import {
   File,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { AvatarImage } from "@/components/ui/AvatarImage"
 
 interface OrderDetailDrawerProps {
   isOpen: boolean
@@ -42,7 +45,7 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
   // Form inputs
   const [revisionNotes, setRevisionNotes] = React.useState("")
   const [deliveryNotes, setDeliveryNotes] = React.useState("")
-  const [uploadedFileName] = React.useState("production-build-v1.zip")
+  const uploadedFileName = "No attachment selected"
 
   // Lock body scroll when drawer is open
   React.useEffect(() => {
@@ -84,29 +87,42 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
     order.milestones.find((m) => m.status === "in_progress") ||
     order.milestones[0]
 
-  const handleApproveConfirm = () => {
-    if (activeMilestone) {
-      approveMilestone(order.id, activeMilestone.id)
+  const handleApproveConfirm = async () => {
+    try {
+      if (activeMilestone) await approveMilestone(order.id, activeMilestone.id)
+      setApproveDialogOpen(false)
+    } catch (error) {
+      showToast({
+        title: error instanceof Error ? error.message : "Order update failed",
+        type: "error",
+      })
     }
-    setApproveDialogOpen(false)
   }
-
-  const handleRevisionSubmit = (e: React.FormEvent) => {
+  const handleRevisionSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!revisionNotes.trim()) return
-    requestRevision(order.id, revisionNotes)
-    setRevisionNotes("")
-    setRevisionDialogOpen(false)
+    try {
+      await requestRevision(order.id, revisionNotes)
+      setRevisionNotes("")
+      setRevisionDialogOpen(false)
+    } catch (error) {
+      showToast({
+        title: error instanceof Error ? error.message : "Revision failed",
+        type: "error",
+      })
+    }
   }
-
-  const handleDeliverySubmit = (e: React.FormEvent) => {
+  const handleDeliverySubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!deliveryNotes.trim() || !activeMilestone) return
-    deliverWork(order.id, activeMilestone.id, deliveryNotes, [
-      { name: uploadedFileName, size: "16.4 MB", type: "zip" },
-    ])
-    setDeliveryNotes("")
-    setDeliverDialogOpen(false)
+    try {
+      if (activeMilestone) await deliverWork(order.id, activeMilestone.id, deliveryNotes, [])
+      setDeliveryNotes("")
+      setDeliverDialogOpen(false)
+    } catch (error) {
+      showToast({
+        title: error instanceof Error ? error.message : "Delivery failed",
+        type: "error",
+      })
+    }
   }
 
   const getFileIcon = (type: DeliveryFile["type"]) => {
@@ -155,10 +171,10 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
               {/* 1. Drawer Header */}
               <div className="flex items-center justify-between px-6 py-4 border-b border-[rgba(15,15,30,0.08)] bg-[#FAFAFC] shrink-0">
                 <div className="flex items-center gap-2.5">
-                  <span className="font-mono text-sm font-extrabold text-[#0B0B14]">
+                  <span className="font-mono text-sm font-extrabold text-[#0A0A23]">
                     {order.id}
                   </span>
-                  <StatusBadge status={order.status} />
+                  <StatusBadge status={order.serverStatus || order.status} />
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200/60">
                     {order.tier} Tier
                   </span>
@@ -167,7 +183,7 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
                 <button
                   type="button"
                   onClick={onClose}
-                  className="p-1.5 rounded-lg text-[#6B6B7B] hover:text-[#0B0B14] hover:bg-black/[0.04] transition-colors"
+                  className="p-1.5 rounded-lg text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-black/[0.04] transition-colors"
                   aria-label="Close drawer"
                   data-testid="order-detail-drawer-close"
                 >
@@ -177,18 +193,19 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
 
               {/* 2. Scrollable Body */}
               <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                <OrderActions key={order.id} orderId={order.id} />
                 {/* Title & Escrow Guarantee strip */}
                 <div>
-                  <h2 className="text-base sm:text-lg font-bold text-[#0B0B14] leading-snug">
+                  <h2 className="text-base sm:text-lg font-bold text-[#0A0A23] leading-snug">
                     {order.title}
                   </h2>
                   <div className="flex items-center justify-between text-xs text-[#6B6B7B] mt-2 pt-2 border-t border-[rgba(15,15,30,0.06)]">
                     <span className="flex items-center gap-1.5 text-emerald-700 font-semibold">
                       <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                      <span>Milestone Escrow Active</span>
+                      <span>Order package</span>
                     </span>
-                    <span className="font-mono font-bold text-sm text-[#0B0B14]">
-                      Total: ${order.totalAmount}.00
+                    <span className="font-mono font-bold text-sm text-[#0A0A23]">
+                      Total: ${Number(order.totalAmount).toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -196,13 +213,15 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
                 {/* Counterpart Card */}
                 <div className="p-4 rounded-2xl bg-[#FAFAFC] border border-[rgba(15,15,30,0.08)] flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3 min-w-0">
-                    <img
+                    <AvatarImage
                       src={counterpart.avatar}
+                      name={counterpart.name}
+                      size={40}
+                      rounded="full"
                       alt={counterpart.name}
-                      className="w-10 h-10 rounded-full object-cover border border-[rgba(15,15,30,0.1)] shrink-0"
                     />
                     <div className="truncate">
-                      <span className="text-xs font-bold text-[#0B0B14] block truncate">
+                      <span className="text-xs font-bold text-[#0A0A23] block truncate">
                         {counterpart.name}
                       </span>
                       <span className="text-[11px] text-[#6B6B7B] block truncate">
@@ -217,7 +236,7 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
 
                   <Link
                     href="/dashboard/messages"
-                    className="inline-flex items-center gap-1.5 h-8 px-3 rounded-xl bg-white border border-[rgba(15,15,30,0.12)] text-xs font-semibold text-[#0B0B14] hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 shadow-2xs transition-colors shrink-0"
+                    className="inline-flex items-center gap-1.5 h-8 px-3 rounded-xl bg-white border border-[rgba(15,15,30,0.12)] text-xs font-semibold text-[#0A0A23] hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 shadow-2xs transition-colors shrink-0"
                   >
                     <MessageSquare className="w-3.5 h-3.5 text-blue-600" />
                     <span>Message</span>
@@ -227,7 +246,7 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
                 {/* Milestone Stepper Timeline */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-[#0B0B14] flex items-center gap-1.5">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-[#0A0A23] flex items-center gap-1.5">
                       <Clock className="w-3.5 h-3.5 text-blue-600" />
                       <span>Milestone Timeline</span>
                     </h3>
@@ -268,21 +287,21 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
                               >
                                 {isCompleted ? "✓" : idx + 1}
                               </span>
-                              <span className="text-[#0B0B14] truncate">{milestone.title}</span>
+                              <span className="text-[#0A0A23] truncate">{milestone.title}</span>
                             </div>
 
-                            <span className="font-mono font-bold text-xs text-[#0B0B14] shrink-0">
-                              ${milestone.amount}.00
+                            <span className="font-mono font-bold text-xs text-[#0A0A23] shrink-0">
+                              ${Number(milestone.amount).toFixed(2)}
                             </span>
                           </div>
 
                           <div className="flex items-center justify-between text-[11px] text-[#6B6B7B] pl-7">
                             <span>Due: {milestone.dueDate}</span>
                             <span className="font-medium capitalize text-[10px]">
-                              {isCompleted && "✓ Payment Released"}
+                              {isCompleted && "✓ Delivery accepted"}
                               {isInReview && "⏳ Client Review Pending"}
                               {isInProgress && "⚡ In Progress"}
-                              {milestone.status === "pending" && "🔒 Locked in Escrow"}
+                              {milestone.status === "pending" && "Awaiting work"}
                             </span>
                           </div>
                         </div>
@@ -293,7 +312,7 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
 
                 {/* Scope & Requirements */}
                 <div className="space-y-2">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#0B0B14] flex items-center gap-1.5">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#0A0A23] flex items-center gap-1.5">
                     <FileText className="w-3.5 h-3.5 text-blue-600" />
                     <span>Project Scope & Requirements</span>
                   </h3>
@@ -304,7 +323,7 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
 
                 {/* Deliverables List */}
                 <div className="space-y-2">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#0B0B14] flex items-center gap-1.5">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#0A0A23] flex items-center gap-1.5">
                     <Paperclip className="w-3.5 h-3.5 text-blue-600" />
                     <span>Submitted Deliverable Files ({order.deliveries.length})</span>
                   </h3>
@@ -337,7 +356,7 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
                               >
                                 <div className="flex items-center gap-2 truncate">
                                   {getFileIcon(file.type)}
-                                  <span className="font-medium text-[#0B0B14] truncate">
+                                  <span className="font-medium text-[#0A0A23] truncate">
                                     {file.name}
                                   </span>
                                   <span className="text-[10px] text-[#8B8B9B] font-mono">
@@ -347,11 +366,14 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    showToast({
-                                      title: `Downloading ${file.name}`,
-                                      message: "Secure file download started.",
-                                      type: "info",
-                                    })
+                                    file.url
+                                      ? void downloadUpload(file.url).catch((error: Error) =>
+                                          showToast({ title: error.message, type: "error" })
+                                        )
+                                      : showToast({
+                                          title: "No downloadable file reference",
+                                          type: "info",
+                                        })
                                   }
                                   className="p-1 rounded-md text-[#6B6B7B] hover:text-blue-700 hover:bg-blue-50 transition-colors"
                                   title="Download file"
@@ -412,12 +434,12 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
                           className="flex-1 h-11 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-xs font-semibold rounded-xl shadow-md hover:from-emerald-700 hover:to-teal-700 transition-all flex items-center justify-center gap-2"
                         >
                           <Check className="w-4 h-4" />
-                          <span>Approve & Release ${activeMilestone?.amount ?? 0}</span>
+                          <span>Accept delivery ${activeMilestone?.amount ?? 0}</span>
                         </button>
                       </>
                     ) : order.status === "completed" ? (
                       <div className="w-full text-center text-xs font-semibold text-emerald-700 bg-emerald-50 py-2.5 rounded-xl border border-emerald-200">
-                        ✓ All milestones completed and escrow released.
+                        ✓ Order completed. Settlement is unavailable.
                       </div>
                     ) : (
                       <div className="w-full flex items-center justify-between text-xs text-[#6B6B7B]">
@@ -487,17 +509,12 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
               <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-2">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
-              <h3 className="text-base font-bold text-[#0B0B14] text-center">
-                Approve & Release Payment?
+              <h3 className="text-base font-bold text-[#0A0A23] text-center">
+                Approve & Accept delivery?
               </h3>
               <p className="text-xs text-[#6B6B7B] text-center leading-relaxed">
-                You are about to release{" "}
-                <strong className="text-[#0B0B14] font-mono font-bold">
-                  ${activeMilestone?.amount}.00
-                </strong>{" "}
-                from escrow to {order.freelancer.name} for{" "}
-                <em>&ldquo;{activeMilestone?.title}&rdquo;</em>. This action is final and confirms
-                your satisfaction with the submitted deliverables.
+                Accept the submitted delivery for this order. This saves the COMPLETED status; it
+                does not release funds or initiate a payout.
               </p>
               <div className="flex items-center gap-3 pt-2">
                 <button
@@ -509,10 +526,10 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
                 </button>
                 <button
                   type="button"
-                  onClick={handleApproveConfirm}
+                  onClick={() => void handleApproveConfirm()}
                   className="flex-1 h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-md transition-colors"
                 >
-                  Confirm Release
+                  Confirm acceptance
                 </button>
               </div>
             </motion.div>
@@ -537,18 +554,18 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
               exit={{ scale: 0.95, opacity: 0 }}
               className="relative w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl z-10 space-y-4"
             >
-              <h3 className="text-base font-bold text-[#0B0B14]">Request Revision</h3>
+              <h3 className="text-base font-bold text-[#0A0A23]">Request Revision</h3>
               <p className="text-xs text-[#6B6B7B]">
                 Explain what adjustments or additions are required before milestone approval.
               </p>
-              <form onSubmit={handleRevisionSubmit} className="space-y-4">
+              <form onSubmit={(event) => void handleRevisionSubmit(event)} className="space-y-4">
                 <textarea
                   value={revisionNotes}
                   onChange={(e) => setRevisionNotes(e.target.value)}
                   placeholder="e.g. Please update the button hover states and test on Safari mobile..."
                   rows={4}
                   required
-                  className="w-full p-3 rounded-xl border border-[rgba(15,15,30,0.12)] text-xs text-[#0B0B14] placeholder-[#8B8B9B] focus:border-blue-600 focus:outline-none"
+                  className="w-full p-3 rounded-xl border border-[rgba(15,15,30,0.12)] text-xs text-[#0A0A23] placeholder-[#8B8B9B] focus:border-blue-600 focus:outline-none"
                 />
                 <div className="flex items-center gap-3">
                   <button
@@ -588,14 +605,14 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
               exit={{ scale: 0.95, opacity: 0 }}
               className="relative w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl z-10 space-y-4"
             >
-              <h3 className="text-base font-bold text-[#0B0B14]">Deliver Milestone Work</h3>
+              <h3 className="text-base font-bold text-[#0A0A23]">Deliver Milestone Work</h3>
               <p className="text-xs text-[#6B6B7B]">
                 Submit your deliverable files and add delivery notes for{" "}
                 <em>&ldquo;{activeMilestone?.title}&rdquo;</em>.
               </p>
-              <form onSubmit={handleDeliverySubmit} className="space-y-4">
+              <form onSubmit={(event) => void handleDeliverySubmit(event)} className="space-y-4">
                 <div>
-                  <label className="text-xs font-semibold text-[#0B0B14] block mb-1">
+                  <label className="text-xs font-semibold text-[#0A0A23] block mb-1">
                     Release Notes / Work Summary
                   </label>
                   <textarea
@@ -604,20 +621,20 @@ export function OrderDetailDrawer({ isOpen, onClose, order }: OrderDetailDrawerP
                     placeholder="Describe what has been delivered, git tags, or credentials..."
                     rows={3}
                     required
-                    className="w-full p-3 rounded-xl border border-[rgba(15,15,30,0.12)] text-xs text-[#0B0B14] placeholder-[#8B8B9B] focus:border-blue-600 focus:outline-none"
+                    className="w-full p-3 rounded-xl border border-[rgba(15,15,30,0.12)] text-xs text-[#0A0A23] placeholder-[#8B8B9B] focus:border-blue-600 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-[#0B0B14] block mb-1">
+                  <label className="text-xs font-semibold text-[#0A0A23] block mb-1">
                     Attached Deliverable Package
                   </label>
                   <div className="flex items-center gap-2 p-2.5 rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] text-xs">
                     <FileArchive className="w-4 h-4 text-blue-600" />
-                    <span className="font-mono text-xs text-[#0B0B14] truncate flex-1">
+                    <span className="font-mono text-xs text-[#0A0A23] truncate flex-1">
                       {uploadedFileName}
                     </span>
-                    <span className="text-[10px] text-[#8B8B9B]">16.4 MB</span>
+                    <span className="text-[10px] text-[#8B8B9B]">Not uploaded</span>
                   </div>
                 </div>
 

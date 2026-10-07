@@ -26,7 +26,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: "pnpm"
 
       - name: Install dependencies
@@ -41,6 +41,9 @@ jobs:
       - name: Run strict ESLint validation
         run: pnpm lint:strict
 
+      - name: Run backend ESLint validation
+        run: pnpm lint:api
+
       - name: Run fast Vitest unit tests
         run: pnpm test:unit
 
@@ -49,6 +52,12 @@ jobs:
 
       - name: Run Application security audit tests
         run: pnpm test:security
+
+      - name: Production build
+        run: pnpm build
+        env:
+          NEXT_PUBLIC_API_URL: https://api.example.com
+          NEXT_PUBLIC_WEB_URL: https://web.example.com
 
   e2e-tests:
     name: Playwright E2E Tests
@@ -66,7 +75,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: "pnpm"
 
       - name: Install dependencies
@@ -80,6 +89,9 @@ jobs:
 
       - name: Run Playwright E2E test suite
         run: pnpm test:e2e --project=chromium
+        env:
+          NEXT_PUBLIC_API_URL: https://api.example.com
+          NEXT_PUBLIC_WEB_URL: https://web.example.com
 
       - name: Upload Playwright test results artifact
         if: always()
@@ -107,7 +119,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: "pnpm"
 
       - name: Install dependencies
@@ -118,10 +130,15 @@ jobs:
 
       - name: Build Next.js application
         run: pnpm build
+        env:
+          NEXT_PUBLIC_API_URL: https://api.example.com
+          NEXT_PUBLIC_WEB_URL: https://web.example.com
 
       - name: Run Lighthouse CI audits
         run: pnpm lhci:mobile
         env:
+          NEXT_PUBLIC_API_URL: https://api.example.com
+          NEXT_PUBLIC_WEB_URL: https://web.example.com
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
       - name: Upload Lighthouse CI report artifact

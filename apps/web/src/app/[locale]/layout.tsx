@@ -7,7 +7,6 @@ import { routing } from "@/i18n/routing"
 import { Navbar } from "@/components/layout/Navbar"
 import { Footer } from "@/components/layout/Footer"
 import { SmoothScrollProvider } from "@/components/layout/SmoothScrollProvider"
-import { ScrollProgressBar } from "@/components/layout/ScrollProgressBar"
 import { NavigationProgressBar } from "@/components/layout/NavigationProgressBar"
 import { PageTransition } from "@/components/layout/PageTransition"
 import "../globals.css"
@@ -38,9 +37,11 @@ export async function generateMetadata({
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: "metadata" })
 
-  const canonicalUrl = locale === "en" ? "https://tascora.com" : `https://tascora.com/${locale}`
+  const siteUrl = process.env.NEXT_PUBLIC_WEB_URL || "http://localhost:3200"
+  const canonicalUrl = locale === "en" ? siteUrl : `${siteUrl}/${locale}`
 
   return {
+    metadataBase: new URL(siteUrl),
     title: t("title"),
     description: t("description"),
     keywords: t("keywords")
@@ -50,9 +51,9 @@ export async function generateMetadata({
     alternates: {
       canonical: canonicalUrl,
       languages: {
-        en: "https://tascora.com",
-        vi: "https://tascora.com/vi",
-        "x-default": "https://tascora.com",
+        en: siteUrl,
+        vi: `${siteUrl}/vi`,
+        "x-default": siteUrl,
       },
     },
     openGraph: {
@@ -67,6 +68,14 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: t("title"),
       description: t("description"),
+    },
+    icons: {
+      icon: [
+        { url: "/icon.svg", type: "image/svg+xml" },
+        { url: "/favicon.ico", sizes: "any" },
+      ],
+      shortcut: "/icon.svg",
+      apple: "/icon.svg",
     },
   }
 }
@@ -101,8 +110,7 @@ export default async function LocaleLayout({
       className={`${geistSans.variable} ${geistMono.variable}`}
       style={{ colorScheme: "light" }}
     >
-      <body className="font-sans antialiased min-h-screen flex flex-col bg-[#FFFFFF] text-[#0B0B14] selection:bg-blue-500/20 selection:text-blue-900">
-        <ScrollProgressBar />
+      <body className="font-sans antialiased min-h-screen flex flex-col bg-[#FFFFFF] text-[#0F172A] selection:bg-[#635BFF]/15 selection:text-[#635BFF]">
         <NextIntlClientProvider messages={messages}>
           <NavigationProgressBar />
           <SmoothScrollProvider>

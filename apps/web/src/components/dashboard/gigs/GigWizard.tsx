@@ -19,6 +19,10 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useDashboard } from "@/context/DashboardContext"
+import { requestData, jsonRequest, uploadFile, type Service } from "@/lib/marketplace"
+import { useApiResource } from "@/hooks/useApiResource"
+import { UploadImage } from "@/components/ui/UploadImage"
+import { ApiState } from "@/components/feedback/ApiState"
 
 const STEPS = [
   { id: 1, label: "Overview", icon: Layers },
@@ -28,63 +32,66 @@ const STEPS = [
   { id: 5, label: "Publish", icon: CheckCircle2 },
 ]
 
-export function GigWizard() {
+export function GigWizard({ serviceId }: { serviceId?: string } = {}) {
   const router = useRouter()
   const { showToast } = useDashboard()
   const [currentStep, setCurrentStep] = React.useState(1)
   const [isSubmitting, setIsSubmitting] = React.useState(false)
 
-  // Form State
+  const categories = useApiResource<{ id: string; name: string; slug: string }[]>(
+    "/api/v1/marketplace/categories"
+  )
+  const existing = useApiResource<Service[]>(serviceId ? "/api/v1/services/seller/me" : null)
+  const [draftId, setDraftId] = React.useState(serviceId || "")
+  const [error, setError] = React.useState("")
+  const blankTier = { title: "", description: "", price: 0, deliveryDays: 1, revisions: "0" }
   const [formData, setFormData] = React.useState({
-    title: "I will engineer enterprise-grade Next.js 15 & Node.js microservices",
-    category: "Web Development",
-    subcategory: "Full-Stack Development",
-    tags: ["nextjs", "typescript", "docker", "prisma"],
+    title: "",
+    category: "",
+    subcategory: "",
+    tags: [] as string[],
     newTag: "",
-
-    // Tiers
-    tiers: {
-      basic: {
-        title: "Starter Boilerplate",
-        description:
-          "App Router scaffolding with strict TypeScript, Tailwind CSS, and Docker configs.",
-        price: 250,
-        deliveryDays: 2,
-        revisions: "2",
-      },
-      standard: {
-        title: "Full Production Setup",
-        description:
-          "PostgreSQL, Prisma ORM, Redis caching, JWT auth, and Stripe webhook handling.",
-        price: 450,
-        deliveryDays: 4,
-        revisions: "4",
-      },
-      premium: {
-        title: "Enterprise Architecture",
-        description:
-          "Kubernetes configs, multi-tenancy, CI/CD telemetry, and 30 days priority support.",
-        price: 950,
-        deliveryDays: 7,
-        revisions: "Unlimited",
-      },
-    },
-
-    description:
-      "Enterprise web architecture with battle-tested performance, comprehensive test suites, and Docker containerization tailored for high-growth tech startups.",
-    requirements:
-      "Please provide your API specifications, preferred cloud provider credentials, and design tokens.",
-
-    faqs: [
-      {
-        question: "Do you include automated CI/CD pipelines?",
-        answer:
-          "Yes, GitHub Actions workflows for automated linting, test suites, and staging deploys are provided in all tiers.",
-      },
-    ],
-    coverImage:
-      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80",
+    tiers: { basic: { ...blankTier }, standard: { ...blankTier }, premium: { ...blankTier } },
+    description: "",
+    requirements: "",
+    faqs: [] as { question: string; answer: string }[],
+    coverImage: "",
   })
+  React.useEffect(() => {
+    if (!serviceId || !existing.data) return
+    const service = existing.data.find((s) => s.id === serviceId)
+    if (!service) {
+      setError("Service not found or unauthorized.")
+      return
+    }
+    setFormData((prev) => ({
+      ...prev,
+      title: service.title,
+      category: service.category.id,
+      description: service.description,
+      tags: service.tags?.map((t) => t.tag.name) || [],
+      requirements: service.requirements?.[0]?.description || "",
+      faqs: service.faqs || [],
+      coverImage: service.images[0]?.url || "",
+      tiers: Object.fromEntries(
+        ["basic", "standard", "premium"].map((key) => {
+          const p = service.packages.find((p) => p.type === key.toUpperCase())
+          return [
+            key,
+            p
+              ? {
+                  title: p.title,
+                  description: p.description,
+                  price: Number(p.price),
+                  deliveryDays: p.deliveryDays,
+                  revisions: String(p.revisions),
+                }
+              : { title: "", description: "", price: 0, deliveryDays: 1, revisions: "0" },
+          ]
+        })
+      ) as typeof prev.tiers,
+    }))
+  }, [existing.data, serviceId])
 
   const handleAddTag = () => {
     if (!formData.newTag.trim()) return
@@ -123,31 +130,95 @@ export function GigWizard() {
     }))
   }
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
     setIsSubmitting(true)
-    setTimeout(() => {
-      setIsSubmitting(false)
+    setError("")
+    try {
+      const packages = Object.entries(formData.tiers)
+        .filter(([, p]) => p.title.trim())
+        .map(([type, p]) => ({
+          ...p,
+          type: type.toUpperCase(),
+          revisions: Number(p.revisions),
+          features:
+            existing.data
+              ?.find((s) => s.id === serviceId)
+              ?.packages.find((pkg) => pkg.type === type.toUpperCase())?.features || [],
+        }))
+      if (!packages.length) throw new Error("Complete at least one package.")
+      let id = draftId
+      if (!id) {
+        const draft = await requestData<{ id: string }>(
+          "/api/v1/services",
+          jsonRequest("POST", {
+            title: formData.title,
+            categoryId: formData.category,
+            description: formData.description,
+          })
+        )
+        id = draft.id
+        setDraftId(id)
+      }
+      await requestData(
+        `/api/v1/marketplace/services/${id}/content`,
+        jsonRequest("PUT", {
+          title: formData.title,
+          categoryId: formData.category,
+          description: formData.description,
+          packages,
+          images: formData.coverImage ? [formData.coverImage] : [],
+          faqs: formData.faqs,
+          requirements: formData.requirements,
+          tags: formData.tags,
+        })
+      )
       showToast({
-        title: "Gig Published Successfully!",
-        message: "Your new service is live in the Tascora marketplace.",
+        title: "Service draft saved",
+        message: "An administrator must review the service before it is published.",
         type: "success",
       })
       router.push("/dashboard/gigs")
-    }, 1200)
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Unable to save service.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      <ApiState
+        loading={categories.loading || Boolean(serviceId && existing.loading)}
+        error={error || categories.error || existing.error}
+      />
+      <label className="block rounded-xl border p-3 text-sm">
+        Service cover (published with your service)
+        <input
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          disabled={isSubmitting}
+          onChange={(event) => {
+            const file = event.target.files?.[0]
+            if (file) {
+              setIsSubmitting(true)
+              void uploadFile(file)
+                .then((reference) => setFormData((prev) => ({ ...prev, coverImage: reference })))
+                .catch((error: Error) => setError(error.message))
+                .finally(() => setIsSubmitting(false))
+            }
+          }}
+        />
+      </label>
       {/* Top Header */}
       <div className="flex items-center justify-between pb-4 border-b border-[rgba(15,15,30,0.06)]">
         <div className="flex items-center gap-3">
           <Link href="/dashboard/gigs">
-            <button className="p-2 text-[#6B6B7B] hover:text-[#0B0B14] hover:bg-[#F4F4F8] rounded-xl transition-colors">
+            <button className="p-2 text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-[#F4F4F8] rounded-xl transition-colors">
               <ArrowLeft className="h-4 w-4" />
             </button>
           </Link>
           <div>
-            <h1 className="text-xl font-semibold text-[#0B0B14]">Create a New Service</h1>
+            <h1 className="text-xl font-semibold text-[#0A0A23]">Create a New Service</h1>
             <p className="text-xs text-[#6B6B7B]">
               Step {currentStep} of {STEPS.length} — {STEPS[currentStep - 1]?.label}
             </p>
@@ -227,7 +298,7 @@ export function GigWizard() {
         {currentStep === 1 && (
           <div className="space-y-5">
             <div>
-              <h2 className="text-base font-semibold text-[#0B0B14]">
+              <h2 className="text-base font-semibold text-[#0A0A23]">
                 Gig Overview & Categorization
               </h2>
               <p className="text-xs text-[#6B6B7B]">
@@ -237,7 +308,7 @@ export function GigWizard() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-[#0B0B14] block mb-1.5">
+                <label className="text-xs font-semibold text-[#0A0A23] block mb-1.5">
                   Gig Title
                 </label>
                 <div className="relative">
@@ -246,7 +317,7 @@ export function GigWizard() {
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     data-testid="wizard-gig-title-input"
-                    className="w-full rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] px-3.5 py-2.5 text-xs text-[#0B0B14] placeholder:text-[#6B6B7B] outline-none focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] px-3.5 py-2.5 text-xs text-[#0A0A23] placeholder:text-[#6B6B7B] outline-none focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <span className="text-[11px] text-[#6B6B7B] mt-1 block">
@@ -256,37 +327,41 @@ export function GigWizard() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-semibold text-[#0B0B14] block mb-1.5">
+                  <label className="text-xs font-semibold text-[#0A0A23] block mb-1.5">
                     Category
                   </label>
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] px-3.5 py-2.5 text-xs text-[#0B0B14] outline-none focus:bg-white focus:border-blue-500"
+                    className="w-full rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] px-3.5 py-2.5 text-xs text-[#0A0A23] outline-none focus:bg-white focus:border-blue-500"
                   >
-                    <option value="Web Development">Web Development</option>
-                    <option value="Artificial Intelligence">Artificial Intelligence</option>
-                    <option value="UI/UX Design">UI/UX Design</option>
-                    <option value="DevOps & Cloud">DevOps & Cloud</option>
+                    <option value="">Choose a category</option>
+                    {(categories.data || []).map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-[#0B0B14] block mb-1.5">
+                  <label className="text-xs font-semibold text-[#0A0A23] block mb-1.5">
                     Subcategory
                   </label>
                   <input
+                    disabled
+                    placeholder="Choose the actual category above"
                     type="text"
                     value={formData.subcategory}
                     onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
-                    className="w-full rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] px-3.5 py-2.5 text-xs text-[#0B0B14] outline-none focus:bg-white focus:border-blue-500"
+                    className="w-full rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] px-3.5 py-2.5 text-xs text-[#0A0A23] outline-none focus:bg-white focus:border-blue-500"
                   />
                 </div>
               </div>
 
               {/* Search Tags */}
               <div>
-                <label className="text-xs font-semibold text-[#0B0B14] block mb-1.5">
+                <label className="text-xs font-semibold text-[#0A0A23] block mb-1.5">
                   Search Tags (Up to 5)
                 </label>
                 <div className="flex flex-wrap items-center gap-2 mb-2">
@@ -314,14 +389,14 @@ export function GigWizard() {
                     onChange={(e) => setFormData({ ...formData, newTag: e.target.value })}
                     onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddTag())}
                     placeholder="Add tag and press Enter..."
-                    className="flex-1 rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] px-3.5 py-2 text-xs text-[#0B0B14] outline-none focus:bg-white focus:border-blue-500"
+                    className="flex-1 rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] px-3.5 py-2 text-xs text-[#0A0A23] outline-none focus:bg-white focus:border-blue-500"
                   />
                   <Button
                     type="button"
                     onClick={handleAddTag}
                     variant="outline"
                     size="sm"
-                    className="text-xs text-[#0B0B14] h-8.5"
+                    className="text-xs text-[#0A0A23] h-8.5"
                   >
                     Add
                   </Button>
@@ -335,7 +410,7 @@ export function GigWizard() {
         {currentStep === 2 && (
           <div className="space-y-5">
             <div>
-              <h2 className="text-base font-semibold text-[#0B0B14]">Scope & Pricing Tiers</h2>
+              <h2 className="text-base font-semibold text-[#0A0A23]">Scope & Pricing Tiers</h2>
               <p className="text-xs text-[#6B6B7B]">
                 Configure 3 transparent pricing packages with clear turnaround and revisions.
               </p>
@@ -345,7 +420,7 @@ export function GigWizard() {
               {/* BASIC */}
               <div className="p-4 rounded-xl border border-[rgba(15,15,30,0.1)] bg-[#FAFAFC] space-y-3">
                 <div className="flex items-center justify-between pb-2 border-b border-[rgba(15,15,30,0.06)]">
-                  <span className="text-xs font-bold text-[#0B0B14]">BASIC TIER</span>
+                  <span className="text-xs font-bold text-[#0A0A23]">BASIC TIER</span>
                   <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-gray-200/60 text-[#4B4B5C]">
                     Starter
                   </span>
@@ -367,7 +442,7 @@ export function GigWizard() {
                         },
                       })
                     }
-                    className="w-full rounded-lg border border-[rgba(15,15,30,0.1)] bg-white px-2.5 py-1.5 text-xs text-[#0B0B14]"
+                    className="w-full rounded-lg border border-[rgba(15,15,30,0.1)] bg-white px-2.5 py-1.5 text-xs text-[#0A0A23]"
                   />
                 </div>
 
@@ -387,7 +462,7 @@ export function GigWizard() {
                         },
                       })
                     }
-                    className="w-full rounded-lg border border-[rgba(15,15,30,0.1)] bg-white px-2.5 py-1.5 text-xs font-mono font-bold text-[#0B0B14]"
+                    className="w-full rounded-lg border border-[rgba(15,15,30,0.1)] bg-white px-2.5 py-1.5 text-xs font-mono font-bold text-[#0A0A23]"
                   />
                 </div>
 
@@ -461,7 +536,7 @@ export function GigWizard() {
                         },
                       })
                     }
-                    className="w-full rounded-lg border border-blue-300 bg-white px-2.5 py-1.5 text-xs text-[#0B0B14]"
+                    className="w-full rounded-lg border border-blue-300 bg-white px-2.5 py-1.5 text-xs text-[#0A0A23]"
                   />
                 </div>
 
@@ -533,7 +608,7 @@ export function GigWizard() {
               {/* PREMIUM */}
               <div className="p-4 rounded-xl border border-[rgba(15,15,30,0.1)] bg-[#FAFAFC] space-y-3">
                 <div className="flex items-center justify-between pb-2 border-b border-[rgba(15,15,30,0.06)]">
-                  <span className="text-xs font-bold text-[#0B0B14]">PREMIUM TIER</span>
+                  <span className="text-xs font-bold text-[#0A0A23]">PREMIUM TIER</span>
                   <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-teal-100 text-teal-800">
                     Enterprise
                   </span>
@@ -555,7 +630,7 @@ export function GigWizard() {
                         },
                       })
                     }
-                    className="w-full rounded-lg border border-[rgba(15,15,30,0.1)] bg-white px-2.5 py-1.5 text-xs text-[#0B0B14]"
+                    className="w-full rounded-lg border border-[rgba(15,15,30,0.1)] bg-white px-2.5 py-1.5 text-xs text-[#0A0A23]"
                   />
                 </div>
 
@@ -575,7 +650,7 @@ export function GigWizard() {
                         },
                       })
                     }
-                    className="w-full rounded-lg border border-[rgba(15,15,30,0.1)] bg-white px-2.5 py-1.5 text-xs font-mono font-bold text-[#0B0B14]"
+                    className="w-full rounded-lg border border-[rgba(15,15,30,0.1)] bg-white px-2.5 py-1.5 text-xs font-mono font-bold text-[#0A0A23]"
                   />
                 </div>
 
@@ -631,7 +706,7 @@ export function GigWizard() {
         {currentStep === 3 && (
           <div className="space-y-5">
             <div>
-              <h2 className="text-base font-semibold text-[#0B0B14]">
+              <h2 className="text-base font-semibold text-[#0A0A23]">
                 Description & Client Requirements
               </h2>
               <p className="text-xs text-[#6B6B7B]">
@@ -641,33 +716,33 @@ export function GigWizard() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-[#0B0B14] block mb-1.5">
+                <label className="text-xs font-semibold text-[#0A0A23] block mb-1.5">
                   Detailed Service Description
                 </label>
                 <textarea
                   rows={4}
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] p-3 text-xs text-[#0B0B14] outline-none focus:bg-white focus:border-blue-500"
+                  className="w-full rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] p-3 text-xs text-[#0A0A23] outline-none focus:bg-white focus:border-blue-500"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-[#0B0B14] block mb-1.5">
+                <label className="text-xs font-semibold text-[#0A0A23] block mb-1.5">
                   Buyer Requirements (What you need to start)
                 </label>
                 <textarea
                   rows={2}
                   value={formData.requirements}
                   onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
-                  className="w-full rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] p-3 text-xs text-[#0B0B14] outline-none focus:bg-white focus:border-blue-500"
+                  className="w-full rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] p-3 text-xs text-[#0A0A23] outline-none focus:bg-white focus:border-blue-500"
                 />
               </div>
 
               {/* FAQs */}
               <div className="space-y-3 pt-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-[#0B0B14]">
+                  <label className="text-xs font-semibold text-[#0A0A23]">
                     Frequently Asked Questions
                   </label>
                   <Button
@@ -687,7 +762,7 @@ export function GigWizard() {
                     className="p-3.5 rounded-xl border border-[rgba(15,15,30,0.08)] bg-[#FAFAFC] space-y-2 relative"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-semibold text-[#0B0B14]">
+                      <span className="text-[11px] font-semibold text-[#0A0A23]">
                         Question #{index + 1}
                       </span>
                       <button
@@ -709,7 +784,7 @@ export function GigWizard() {
                           setFormData({ ...formData, faqs: updated })
                         }
                       }}
-                      className="w-full rounded-lg border border-[rgba(15,15,30,0.1)] bg-white px-2.5 py-1.5 text-xs text-[#0B0B14]"
+                      className="w-full rounded-lg border border-[rgba(15,15,30,0.1)] bg-white px-2.5 py-1.5 text-xs text-[#0A0A23]"
                     />
                     <textarea
                       rows={2}
@@ -722,7 +797,7 @@ export function GigWizard() {
                           setFormData({ ...formData, faqs: updated })
                         }
                       }}
-                      className="w-full rounded-lg border border-[rgba(15,15,30,0.1)] bg-white p-2 text-xs text-[#0B0B14]"
+                      className="w-full rounded-lg border border-[rgba(15,15,30,0.1)] bg-white p-2 text-xs text-[#0A0A23]"
                     />
                   </div>
                 ))}
@@ -735,7 +810,7 @@ export function GigWizard() {
         {currentStep === 4 && (
           <div className="space-y-5">
             <div>
-              <h2 className="text-base font-semibold text-[#0B0B14]">Showcase & Gallery</h2>
+              <h2 className="text-base font-semibold text-[#0A0A23]">Showcase & Gallery</h2>
               <p className="text-xs text-[#6B6B7B]">
                 Upload high-resolution service previews and link portfolio repositories.
               </p>
@@ -743,22 +818,22 @@ export function GigWizard() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-[#0B0B14] block mb-1.5">
+                <label className="text-xs font-semibold text-[#0A0A23] block mb-1.5">
                   Cover Image URL
                 </label>
                 <input
                   type="text"
                   value={formData.coverImage}
                   onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
-                  className="w-full rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] px-3.5 py-2 text-xs text-[#0B0B14]"
+                  className="w-full rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] px-3.5 py-2 text-xs text-[#0A0A23]"
                 />
               </div>
 
               {/* Image Preview */}
               <div className="relative rounded-2xl overflow-hidden border border-[rgba(15,15,30,0.1)] h-56 w-full bg-[#FAFAFC] flex items-center justify-center">
-                <img
-                  src={formData.coverImage}
-                  alt="Gig cover preview"
+                <UploadImage
+                  source={formData.coverImage}
+                  alt="Gig cover draft visual preview"
                   className="h-full w-full object-cover"
                 />
               </div>
@@ -770,8 +845,8 @@ export function GigWizard() {
         {currentStep === 5 && (
           <div className="space-y-5">
             <div>
-              <h2 className="text-base font-semibold text-[#0B0B14]">
-                Review & Publish to Marketplace
+              <h2 className="text-base font-semibold text-[#0A0A23]">
+                Review & Save draft for review
               </h2>
               <p className="text-xs text-[#6B6B7B]">
                 Verify your service specifications before making it live to global clients.
@@ -780,16 +855,17 @@ export function GigWizard() {
 
             <div className="p-5 rounded-2xl border border-blue-200 bg-blue-50/20 space-y-4">
               <div className="flex items-start gap-4">
-                <img
-                  src={formData.coverImage}
-                  alt="Gig cover"
+                <UploadImage
+                  source={formData.coverImage}
+                  alt="Marketplace gig summary cover thumbnail"
                   className="h-20 w-32 rounded-xl object-cover border border-blue-200 shadow-xs"
                 />
                 <div>
-                  <span className="text-[10px] font-semibold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full">
-                    {formData.category}
+                  <span className="text-[10px] font-semibold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full break-all">
+                    {categories.data?.find((category) => category.id === formData.category)?.name ||
+                      "Choose a category"}
                   </span>
-                  <h3 className="text-sm font-bold text-[#0B0B14] mt-1">{formData.title}</h3>
+                  <h3 className="text-sm font-bold text-[#0A0A23] mt-1">{formData.title}</h3>
                   <div className="flex items-center gap-3 text-xs text-[#6B6B7B] mt-2">
                     <span>
                       Starting at{" "}
@@ -806,19 +882,19 @@ export function GigWizard() {
               <div className="grid grid-cols-3 gap-3 pt-3 border-t border-blue-100 text-xs">
                 <div>
                   <span className="text-[#6B6B7B] block text-[10px]">Basic Tier</span>
-                  <span className="font-mono font-semibold text-[#0B0B14]">
+                  <span className="font-mono font-semibold text-[#0A0A23]">
                     ${formData.tiers.basic.price}
                   </span>
                 </div>
                 <div>
                   <span className="text-[#6B6B7B] block text-[10px]">Standard Tier</span>
-                  <span className="font-mono font-semibold text-[#0B0B14]">
+                  <span className="font-mono font-semibold text-[#0A0A23]">
                     ${formData.tiers.standard.price}
                   </span>
                 </div>
                 <div>
                   <span className="text-[#6B6B7B] block text-[10px]">Premium Tier</span>
-                  <span className="font-mono font-semibold text-[#0B0B14]">
+                  <span className="font-mono font-semibold text-[#0A0A23]">
                     ${formData.tiers.premium.price}
                   </span>
                 </div>
@@ -827,10 +903,7 @@ export function GigWizard() {
 
             <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 p-3 rounded-xl border border-emerald-200">
               <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
-              <span>
-                Standard escrow protection and automated milestone invoicing are activated for this
-                gig.
-              </span>
+              <span>Financial settlement is unavailable for this gig.</span>
             </div>
           </div>
         )}
@@ -861,7 +934,7 @@ export function GigWizard() {
           ) : (
             <Button
               type="button"
-              onClick={handlePublish}
+              onClick={() => void handlePublish()}
               disabled={isSubmitting}
               data-testid="wizard-publish-btn"
               className="bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white text-xs font-bold px-6 h-9 rounded-xl flex items-center gap-1.5 shadow-sm"
@@ -869,11 +942,11 @@ export function GigWizard() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  <span>Publishing Gig...</span>
+                  <span>Saving draft...</span>
                 </>
               ) : (
                 <>
-                  <span>Publish to Marketplace</span>
+                  <span>Save draft for review</span>
                   <Sparkles className="h-3.5 w-3.5" />
                 </>
               )}

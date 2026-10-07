@@ -37,9 +37,9 @@ services:
     build:
       context: .
       dockerfile: docker/development/Dockerfile.dev
-    command: pnpm --filter "./apps/web" dev
+    command: sh -c "pnpm install --frozen-lockfile && pnpm --filter web dev"
     ports:
-      - "3000:3000"
+      - "3200:3200"
     volumes:
       - .:/app
       - /app/node_modules
@@ -52,9 +52,9 @@ services:
     build:
       context: .
       dockerfile: docker/development/Dockerfile.dev
-    command: pnpm --filter "./apps/api" dev
+    command: sh -c "pnpm install --frozen-lockfile && pnpm db:generate && pnpm --filter @taskora/api dev"
     ports:
-      - "3001:3001"
+      - "4000:4000"
     volumes:
       - .:/app
       - /app/node_modules

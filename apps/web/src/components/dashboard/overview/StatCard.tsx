@@ -51,20 +51,22 @@ export function StatCard({ data, className }: StatCardProps) {
     return `${x},${y}`
   })
 
-  const pathD = `M ${pathPoints.join(" L ")}`
-  const areaD = `M 0,${height} L ${pathPoints.join(" L ")} L ${width},${height} Z`
+  const pathD = pathPoints.length ? `M ${pathPoints.join(" L ")}` : ""
+  const areaD = pathPoints.length
+    ? `M 0,${height} L ${pathPoints.join(" L ")} L ${width},${height} Z`
+    : ""
 
   return (
     <div
       data-testid={`stat-card-${data.id}`}
       className={cn(
-        "relative p-5 rounded-2xl bg-white border border-[rgba(15,15,30,0.08)] shadow-xs hover:border-[rgba(15,15,30,0.16)] hover:shadow-sm transition-all duration-200 flex flex-col justify-between group overflow-hidden",
+        "stripe-card relative p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between group overflow-hidden",
         className
       )}
     >
       {/* Top row: Label & Icon */}
       <div className="flex items-center justify-between gap-2">
-        <span className="text-xs font-semibold uppercase tracking-wider text-[#6B6B7B]">
+        <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
           {data.label}
         </span>
         <div
@@ -82,7 +84,7 @@ export function StatCard({ data, className }: StatCardProps) {
         <div>
           <span
             data-testid="stat-card-value"
-            className="text-2xl sm:text-3xl font-extrabold text-[#0B0B14] font-mono tracking-tight"
+            className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white font-mono tracking-tight"
           >
             {data.value}
           </span>
@@ -111,13 +113,13 @@ export function StatCard({ data, className }: StatCardProps) {
       </div>
 
       {/* Bottom row: Delta badge & Subtext */}
-      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[rgba(15,15,30,0.06)] text-[11px]">
+      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800 text-[11px]">
         <span
           className={cn(
             "inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full font-semibold shrink-0",
             data.isPositive
-              ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
-              : "bg-amber-50 text-amber-800 border border-amber-200/60"
+              ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60"
+              : "bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-400 border border-amber-200/60 dark:border-amber-800/60"
           )}
         >
           {data.isPositive ? (
@@ -127,7 +129,7 @@ export function StatCard({ data, className }: StatCardProps) {
           )}
           <span>{data.delta}</span>
         </span>
-        <span className="text-[#6B6B7B] truncate">{data.subtext}</span>
+        <span className="text-slate-500 dark:text-slate-400 truncate">{data.subtext}</span>
       </div>
     </div>
   )

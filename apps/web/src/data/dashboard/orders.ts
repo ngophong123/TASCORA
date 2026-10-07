@@ -16,6 +16,7 @@ export interface OrderMilestone {
 }
 
 export interface DeliveryFile {
+  url?: string
   name: string
   size: string
   type: "zip" | "pdf" | "figma" | "code" | "image" | "video"
@@ -36,6 +37,7 @@ export interface RevisionRequest {
 }
 
 export interface DashboardOrder {
+  serverStatus?: string
   id: string
   title: string
   category: string
@@ -86,16 +88,14 @@ export const KNOWN_TEST_ORDERS = {
       id: "usr-client-1",
       name: "Marcus Thorne",
       email: "marcus.thorne@fintechcorp.io",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       company: "Fintech Corp Ltd",
     },
     freelancer: {
       id: "f-1",
       name: "Alexandre Moreau",
       title: "Senior Full-Stack Architect",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -162,16 +162,14 @@ export const KNOWN_TEST_ORDERS = {
       id: "usr-client-3",
       name: "Emily Zhang",
       email: "emily.zhang@nexusventures.sg",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       company: "Nexus AI Ventures",
     },
     freelancer: {
       id: "f-1",
       name: "Alexandre Moreau",
       title: "Senior Full-Stack Architect",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -232,16 +230,14 @@ export const KNOWN_TEST_ORDERS = {
       id: "usr-client-2",
       name: "David Sterling",
       email: "david.sterling@apexcap.com",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       company: "Apex Capital Ventures",
     },
     freelancer: {
       id: "f-1",
       name: "Alexandre Moreau",
       title: "Senior Full-Stack Architect",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -331,16 +327,14 @@ export const KNOWN_TEST_ORDERS = {
       id: "usr-client-4",
       name: "Rachel Adams",
       email: "rachel.adams@horizonhealth.ca",
-      avatar:
-        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/helena-rostova.jpg",
       company: "Horizon Health Technologies",
     },
     freelancer: {
       id: "f-1",
       name: "Alexandre Moreau",
       title: "Senior Full-Stack Architect",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -388,16 +382,14 @@ export const KNOWN_TEST_ORDERS = {
       id: "usr-client-5",
       name: "Liam O'Connor",
       email: "liam.oconnor@novadynamics.ie",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       company: "Nova Dynamics AI",
     },
     freelancer: {
       id: "f-1",
       name: "Alexandre Moreau",
       title: "Senior Full-Stack Architect",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -468,16 +460,14 @@ export const KNOWN_TEST_ORDERS = {
       id: "usr-client-1",
       name: "Marcus Thorne",
       email: "marcus.thorne@fintechcorp.io",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       company: "Fintech Corp Ltd",
     },
     freelancer: {
       id: "usr-edge-brandnew",
       name: "Oliver Bennett",
       title: "Junior Full-Stack Engineer",
-      avatar:
-        "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/chloe-laurent.jpg",
       rating: 0,
       level: "LEVEL_1",
     },
@@ -523,16 +513,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-1",
       name: "Marcus Thorne",
       email: "marcus.thorne@fintechcorp.io",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       company: "Fintech Corp Ltd",
     },
     freelancer: {
       id: "f-1",
       name: "Alexandre Moreau",
       title: "Senior Full-Stack Architect",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -599,16 +587,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-1",
       name: "Marcus Thorne",
       email: "marcus.thorne@fintechcorp.io",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       company: "Fintech Corp Ltd",
     },
     freelancer: {
       id: "f-2",
       name: "Helena Rostova",
       title: "Principal Brand & Product Designer",
-      avatar:
-        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/helena-rostova.jpg",
       rating: 5,
       level: "TOP_RATED",
     },
@@ -668,16 +654,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-2",
       name: "David Sterling",
       email: "david.sterling@apexcap.com",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       company: "Apex Capital Ventures",
     },
     freelancer: {
       id: "f-3",
       name: "Marcus Vance",
       title: "AI Engineer & Research Lead",
-      avatar:
-        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/dmitri-volkov.jpg",
       rating: 4.96,
       level: "TOP_RATED",
     },
@@ -738,16 +722,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-1",
       name: "Marcus Thorne",
       email: "marcus.thorne@fintechcorp.io",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       company: "Fintech Corp Ltd",
     },
     freelancer: {
       id: "f-4",
       name: "Sophia Lindqvist",
       title: "B2B SaaS Growth & SEO Strategist",
-      avatar:
-        "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/rachel-adams.jpg",
       rating: 4.94,
       level: "TOP_RATED",
     },
@@ -788,16 +770,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-3",
       name: "Emily Zhang",
       email: "emily.zhang@nexusventures.sg",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       company: "Nexus AI Ventures",
     },
     freelancer: {
       id: "f-1",
       name: "Alexandre Moreau",
       title: "Senior Full-Stack Architect",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -858,16 +838,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-2",
       name: "David Sterling",
       email: "david.sterling@apexcap.com",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       company: "Apex Capital Ventures",
     },
     freelancer: {
       id: "f-1",
       name: "Alexandre Moreau",
       title: "Senior Full-Stack Architect",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -957,16 +935,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-4",
       name: "Rachel Adams",
       email: "rachel.adams@horizonhealth.ca",
-      avatar:
-        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/helena-rostova.jpg",
       company: "Horizon Health Technologies",
     },
     freelancer: {
       id: "f-1",
       name: "Alexandre Moreau",
       title: "Senior Full-Stack Architect",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -1014,16 +990,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-5",
       name: "Liam O'Connor",
       email: "liam.oconnor@novadynamics.ie",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       company: "Nova Dynamics AI",
     },
     freelancer: {
       id: "f-1",
       name: "Alexandre Moreau",
       title: "Senior Full-Stack Architect",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -1094,16 +1068,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-1",
       name: "Marcus Thorne",
       email: "marcus.thorne@fintechcorp.io",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       company: "Fintech Corp Ltd",
     },
     freelancer: {
       id: "usr-edge-brandnew",
       name: "Oliver Bennett",
       title: "Junior Full-Stack Engineer",
-      avatar:
-        "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/chloe-laurent.jpg",
       rating: 0,
       level: "LEVEL_1",
     },
@@ -1131,7 +1103,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8000",
     title: "Full-Stack Next.js 15 & Node.js Production Architecture with Clean Code",
-    category: "Web Development",
+    category: "Programming & Tech",
     tier: "BASIC",
     gigId: "gig-1",
     totalAmount: 250,
@@ -1143,16 +1115,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-1",
       name: "Marcus Thorne",
       email: "marcus.thorne@fintechcorp.io",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       company: "Fintech Corp Ltd",
     },
     freelancer: {
       id: "f-1",
       name: "Alexandre Moreau",
-      title: "Next.js & React 19 Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      title: "Web Development Specialist",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -1161,7 +1131,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8000-1",
-        title: "Phase 1: Next.js & React 19 Milestone Deliverables",
+        title: "Phase 1: Web Development Milestone Deliverables",
         amount: 125,
         status: "completed",
         dueDate: "Cancelled",
@@ -1169,7 +1139,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8000-2",
-        title: "Phase 2: Next.js & React 19 Milestone Deliverables",
+        title: "Phase 2: Web Development Milestone Deliverables",
         amount: 125,
         status: "pending",
         dueDate: "Cancelled",
@@ -1181,7 +1151,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8001",
     title: "High-Converting SaaS Landing Page in Next.js & Framer Motion",
-    category: "Web Development",
+    category: "Programming & Tech",
     tier: "STANDARD",
     gigId: "gig-2",
     totalAmount: 320,
@@ -1193,16 +1163,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-4",
       name: "Rachel Adams",
       email: "rachel.adams@horizonhealth.ca",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/rachel-adams.jpg",
       company: "Horizon Health Technologies",
     },
     freelancer: {
       id: "f-3",
       name: "Marcus Vance",
-      title: "Next.js & React 19 Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+      title: "Web Development Specialist",
+      avatar: "/images/avatars/marcus-vance.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -1211,7 +1179,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8001-1",
-        title: "Phase 1: Next.js & React 19 Milestone Deliverables",
+        title: "Phase 1: Web Development Milestone Deliverables",
         amount: 160,
         status: "completed",
         dueDate: "2026-03-10",
@@ -1219,7 +1187,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8001-2",
-        title: "Phase 2: Next.js & React 19 Milestone Deliverables",
+        title: "Phase 2: Web Development Milestone Deliverables",
         amount: 160,
         status: "completed",
         dueDate: "2026-03-10",
@@ -1256,7 +1224,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8002",
     title: "Scalable GraphQL & REST Microservices Backend in NestJS and Redis",
-    category: "Web Development",
+    category: "Programming & Tech",
     tier: "STANDARD",
     gigId: "gig-3",
     totalAmount: 620,
@@ -1268,25 +1236,23 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-12",
       name: "Priscilla Mertz",
       email: "priscilla.mertz@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/aiko-tanaka.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "f-4",
-      name: "Sophia Lindqvist",
-      title: "Full-Stack Node.js Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
-      rating: 4.95,
-      level: "LEVEL_2",
+      id: "usr-21",
+      name: "Hattie Heidenreich",
+      title: "Backend Development Specialist",
+      avatar: "/images/avatars/tariq-sterling.jpg",
+      rating: 4.99,
+      level: "TOP_RATED",
     },
     requirements:
       "Execute Production Monorepo requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8002-1",
-        title: "Phase 1: Full-Stack Node.js Milestone Deliverables",
+        title: "Phase 1: Backend Development Milestone Deliverables",
         amount: 207,
         status: "completed",
         dueDate: "2026-02-17",
@@ -1294,7 +1260,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8002-2",
-        title: "Phase 2: Full-Stack Node.js Milestone Deliverables",
+        title: "Phase 2: Backend Development Milestone Deliverables",
         amount: 207,
         status: "completed",
         dueDate: "2026-02-17",
@@ -1302,7 +1268,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8002-3",
-        title: "Phase 3: Full-Stack Node.js Milestone Deliverables",
+        title: "Phase 3: Backend Development Milestone Deliverables",
         amount: 206,
         status: "completed",
         dueDate: "2026-02-17",
@@ -1339,7 +1305,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8003",
     title: "High-Performance Go (Golang) Microservice Engine with gRPC & RabbitMQ",
-    category: "Web Development",
+    category: "Programming & Tech",
     tier: "STANDARD",
     gigId: "gig-4",
     totalAmount: 720,
@@ -1351,25 +1317,23 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-15",
       name: "Robin Christiansen",
       email: "robin.christiansen@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/lukas-weber.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-edge-overflow",
-      name: "Dr. Bartholomew Alexander Montgomery-Fitzgerald III",
-      title: "Full-Stack Node.js Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.99,
-      level: "TOP_RATED",
+      id: "usr-31",
+      name: "Columbus Kuhic",
+      title: "Backend Development Specialist",
+      avatar: "/images/avatars/kofi-boateng.jpg",
+      rating: 4.95,
+      level: "LEVEL_2",
     },
     requirements:
       "Execute Production Monorepo requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8003-1",
-        title: "Phase 1: Full-Stack Node.js Milestone Deliverables",
+        title: "Phase 1: Backend Development Milestone Deliverables",
         amount: 240,
         status: "completed",
         dueDate: "2026-01-24",
@@ -1377,7 +1341,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8003-2",
-        title: "Phase 2: Full-Stack Node.js Milestone Deliverables",
+        title: "Phase 2: Backend Development Milestone Deliverables",
         amount: 240,
         status: "completed",
         dueDate: "2026-01-24",
@@ -1385,7 +1349,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8003-3",
-        title: "Phase 3: Full-Stack Node.js Milestone Deliverables",
+        title: "Phase 3: Backend Development Milestone Deliverables",
         amount: 240,
         status: "completed",
         dueDate: "2026-01-24",
@@ -1422,7 +1386,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8004",
     title: "Zero-Downtime AWS ECS & Terraform Infrastructure as Code Setup",
-    category: "Web Development",
+    category: "Programming & Tech",
     tier: "PREMIUM",
     gigId: "gig-5",
     totalAmount: 980,
@@ -1434,25 +1398,23 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-18",
       name: "Minh Nguyen",
       email: "minh.nguyen@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mai-tran.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-edge-brandnew",
-      name: "Oliver Bennett",
-      title: "Cloud & DevOps Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.95,
-      level: "LEVEL_2",
+      id: "usr-edge-fast-response",
+      name: "Chloe Nguyen (Minh Chau)",
+      title: "DevOps & Cloud Specialist",
+      avatar: "/images/avatars/chloe-nguyen.jpg",
+      rating: 4.99,
+      level: "TOP_RATED",
     },
     requirements:
       "Execute Enterprise Architecture requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8004-1",
-        title: "Phase 1: Cloud & DevOps Milestone Deliverables",
+        title: "Phase 1: DevOps & Cloud Milestone Deliverables",
         amount: 327,
         status: "completed",
         dueDate: "2026-03-28",
@@ -1460,7 +1422,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8004-2",
-        title: "Phase 2: Cloud & DevOps Milestone Deliverables",
+        title: "Phase 2: DevOps & Cloud Milestone Deliverables",
         amount: 327,
         status: "completed",
         dueDate: "2026-03-28",
@@ -1468,7 +1430,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8004-3",
-        title: "Phase 3: Cloud & DevOps Milestone Deliverables",
+        title: "Phase 3: DevOps & Cloud Milestone Deliverables",
         amount: 326,
         status: "completed",
         dueDate: "2026-03-28",
@@ -1505,7 +1467,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8005",
     title: "Kubernetes Production Cluster Setup with ArgoCD GitOps Pipeline",
-    category: "Web Development",
+    category: "Programming & Tech",
     tier: "BASIC",
     gigId: "gig-6",
     totalAmount: 450,
@@ -1517,16 +1479,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "f-1",
       name: "Alexandre Moreau",
       email: "alexandre.moreau@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-edge-fast-response",
-      name: "Chloe Nguyen (Minh Chau)",
-      title: "Cloud & DevOps Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-15",
+      name: "Robin Christiansen",
+      title: "DevOps & Cloud Specialist",
+      avatar: "/images/avatars/lukas-weber.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -1535,7 +1495,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8005-1",
-        title: "Phase 1: Cloud & DevOps Milestone Deliverables",
+        title: "Phase 1: DevOps & Cloud Milestone Deliverables",
         amount: 225,
         status: "completed",
         dueDate: "2026-02-28",
@@ -1543,7 +1503,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8005-2",
-        title: "Phase 2: Cloud & DevOps Milestone Deliverables",
+        title: "Phase 2: DevOps & Cloud Milestone Deliverables",
         amount: 225,
         status: "in_progress",
         dueDate: "2026-02-28",
@@ -1555,7 +1515,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8006",
     title: "Audited Solidity Smart Contracts with Formal ERC-20 & ERC-721 Security",
-    category: "Web Development",
+    category: "Programming & Tech",
     tier: "STANDARD",
     gigId: "gig-7",
     totalAmount: 790,
@@ -1567,25 +1527,23 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-3",
       name: "Emily Zhang",
       email: "emily.zhang@nexusventures.sg",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       company: "Nexus AI Ventures",
     },
     freelancer: {
-      id: "usr-edge-slow-response",
-      name: "Torsten Lindemann",
-      title: "Smart Contracts & Web3 Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.95,
-      level: "LEVEL_2",
+      id: "usr-16",
+      name: "David Herzog",
+      title: "Blockchain & Web3 Specialist",
+      avatar: "/images/avatars/maya-patel.jpg",
+      rating: 4.99,
+      level: "TOP_RATED",
     },
     requirements:
       "Execute Production Monorepo requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8006-1",
-        title: "Phase 1: Smart Contracts & Web3 Milestone Deliverables",
+        title: "Phase 1: Blockchain & Web3 Milestone Deliverables",
         amount: 263,
         status: "completed",
         dueDate: "2026-01-12",
@@ -1593,7 +1551,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8006-2",
-        title: "Phase 2: Smart Contracts & Web3 Milestone Deliverables",
+        title: "Phase 2: Blockchain & Web3 Milestone Deliverables",
         amount: 263,
         status: "completed",
         dueDate: "2026-01-12",
@@ -1601,7 +1559,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8006-3",
-        title: "Phase 3: Smart Contracts & Web3 Milestone Deliverables",
+        title: "Phase 3: Blockchain & Web3 Milestone Deliverables",
         amount: 264,
         status: "completed",
         dueDate: "2026-01-12",
@@ -1638,7 +1596,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8007",
     title: "DeFi Staking Protocol & Cross-Chain Bridge Web3 Integration",
-    category: "Web Development",
+    category: "Programming & Tech",
     tier: "STANDARD",
     gigId: "gig-8",
     totalAmount: 950,
@@ -1650,16 +1608,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-11",
       name: "Gregory Bayer",
       email: "gregory.bayer@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/minh-nguyen.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-edge-suspended",
-      name: "Sergei Romanov",
-      title: "Smart Contracts & Web3 Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-26",
+      name: "Mai Tran",
+      title: "Blockchain & Web3 Specialist",
+      avatar: "/images/avatars/hoang-le.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -1668,7 +1624,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8007-1",
-        title: "Phase 1: Smart Contracts & Web3 Milestone Deliverables",
+        title: "Phase 1: Blockchain & Web3 Milestone Deliverables",
         amount: 317,
         status: "completed",
         dueDate: "2026-03-19",
@@ -1676,7 +1632,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8007-2",
-        title: "Phase 2: Smart Contracts & Web3 Milestone Deliverables",
+        title: "Phase 2: Blockchain & Web3 Milestone Deliverables",
         amount: 317,
         status: "completed",
         dueDate: "2026-03-19",
@@ -1684,7 +1640,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8007-3",
-        title: "Phase 3: Smart Contracts & Web3 Milestone Deliverables",
+        title: "Phase 3: Blockchain & Web3 Milestone Deliverables",
         amount: 316,
         status: "completed",
         dueDate: "2026-03-19",
@@ -1721,7 +1677,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8008",
     title: "Cross-Platform React Native & Expo Mobile App with Offline SQLite Sync",
-    category: "Web Development",
+    category: "Programming & Tech",
     tier: "STANDARD",
     gigId: "gig-9",
     totalAmount: 590,
@@ -1733,16 +1689,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-14",
       name: "Sandra Zieme-Luettgen",
       email: "sandra.zieme-luettgen@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-11",
-      name: "Gregory Bayer",
-      title: "Mobile App Development Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-34",
+      name: "Hoang Le",
+      title: "Mobile Development Specialist",
+      avatar: "/images/avatars/anh-pham.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -1751,7 +1705,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8008-1",
-        title: "Phase 1: Mobile App Development Milestone Deliverables",
+        title: "Phase 1: Mobile Development Milestone Deliverables",
         amount: 295,
         status: "completed",
         dueDate: "2026-02-20",
@@ -1759,7 +1713,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8008-2",
-        title: "Phase 2: Mobile App Development Milestone Deliverables",
+        title: "Phase 2: Mobile Development Milestone Deliverables",
         amount: 295,
         status: "completed",
         dueDate: "2026-02-20",
@@ -1796,7 +1750,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8009",
     title: "Native iOS Swift 6 & SwiftUI Application with Biometric Authentication",
-    category: "Web Development",
+    category: "Programming & Tech",
     tier: "PREMIUM",
     gigId: "gig-10",
     totalAmount: 1190,
@@ -1808,16 +1762,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-17",
       name: "Katrina Stehr",
       email: "katrina.stehr@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/arthur-pendelton.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-12",
-      name: "Priscilla Mertz",
-      title: "Mobile App Development Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-14",
+      name: "Sandra Zieme-Luettgen",
+      title: "Mobile Development Specialist",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -1826,7 +1778,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8009-1",
-        title: "Phase 1: Mobile App Development Milestone Deliverables",
+        title: "Phase 1: Mobile Development Milestone Deliverables",
         amount: 397,
         status: "completed",
         dueDate: "2026-01-28",
@@ -1834,7 +1786,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8009-2",
-        title: "Phase 2: Mobile App Development Milestone Deliverables",
+        title: "Phase 2: Mobile Development Milestone Deliverables",
         amount: 397,
         status: "completed",
         dueDate: "2026-01-28",
@@ -1842,7 +1794,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8009-3",
-        title: "Phase 3: Mobile App Development Milestone Deliverables",
+        title: "Phase 3: Mobile Development Milestone Deliverables",
         amount: 396,
         status: "completed",
         dueDate: "2026-01-28",
@@ -1879,7 +1831,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8010",
     title: "High-Performance Flutter Mobile App with BLoC Pattern Architecture",
-    category: "Web Development",
+    category: "Programming & Tech",
     tier: "BASIC",
     gigId: "gig-11",
     totalAmount: 280,
@@ -1891,16 +1843,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-20",
       name: "Mitchell Ankunding",
       email: "mitchell.ankunding@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/fatima-almansoor.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-13",
-      name: "River Johns",
-      title: "Mobile App Development Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-24",
+      name: "Luz Champlin",
+      title: "Mobile Development Specialist",
+      avatar: "/images/avatars/beatrice-dupont.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -1909,7 +1859,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8010-1",
-        title: "Phase 1: Mobile App Development Milestone Deliverables",
+        title: "Phase 1: Mobile Development Milestone Deliverables",
         amount: 140,
         status: "completed",
         dueDate: "2026-03-26",
@@ -1917,7 +1867,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8010-2",
-        title: "Phase 2: Mobile App Development Milestone Deliverables",
+        title: "Phase 2: Mobile Development Milestone Deliverables",
         amount: 140,
         status: "in_review",
         dueDate: "2026-03-26",
@@ -1953,7 +1903,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8011",
     title: "Next.js 15 E-Commerce Platform with Stripe Checkout & Webhook Pipeline",
-    category: "Web Development",
+    category: "Programming & Tech",
     tier: "STANDARD",
     gigId: "gig-12",
     totalAmount: 490,
@@ -1965,25 +1915,23 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-2",
       name: "David Sterling",
       email: "david.sterling@apexcap.com",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       company: "Apex Capital Ventures",
     },
     freelancer: {
-      id: "usr-14",
-      name: "Sandra Zieme-Luettgen",
-      title: "Next.js & React 19 Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.95,
-      level: "LEVEL_2",
+      id: "usr-35",
+      name: "Domenico Hand",
+      title: "Web Development Specialist",
+      avatar: "/images/avatars/clara-novak.jpg",
+      rating: 4.99,
+      level: "TOP_RATED",
     },
     requirements:
       "Execute Production Monorepo requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8011-1",
-        title: "Phase 1: Next.js & React 19 Milestone Deliverables",
+        title: "Phase 1: Web Development Milestone Deliverables",
         amount: 245,
         status: "completed",
         dueDate: "2026-02-07",
@@ -1991,7 +1939,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8011-2",
-        title: "Phase 2: Next.js & React 19 Milestone Deliverables",
+        title: "Phase 2: Web Development Milestone Deliverables",
         amount: 245,
         status: "completed",
         dueDate: "2026-02-07",
@@ -2028,7 +1976,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8012",
     title: "Serverless Cloudflare Workers & D1 Edge API with Global Sub-50ms Latency",
-    category: "Web Development",
+    category: "Programming & Tech",
     tier: "STANDARD",
     gigId: "gig-13",
     totalAmount: 390,
@@ -2040,25 +1988,23 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-5",
       name: "Liam O'Connor",
       email: "liam.oconnor@novadynamics.ie",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/liam-oconnor.jpg",
       company: "Nova Dynamics AI",
     },
     freelancer: {
-      id: "usr-15",
-      name: "Robin Christiansen",
-      title: "Next.js & React 19 Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.99,
-      level: "TOP_RATED",
+      id: "usr-38",
+      name: "Eleonore Marks",
+      title: "Web Development Specialist",
+      avatar: "/images/avatars/leila-haddad.jpg",
+      rating: 4.95,
+      level: "LEVEL_2",
     },
     requirements:
       "Execute Production Monorepo requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8012-1",
-        title: "Phase 1: Next.js & React 19 Milestone Deliverables",
+        title: "Phase 1: Web Development Milestone Deliverables",
         amount: 195,
         status: "completed",
         dueDate: "2026-01-11",
@@ -2066,7 +2012,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8012-2",
-        title: "Phase 2: Next.js & React 19 Milestone Deliverables",
+        title: "Phase 2: Web Development Milestone Deliverables",
         amount: 195,
         status: "completed",
         dueDate: "2026-01-11",
@@ -2103,7 +2049,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8013",
     title: "Real-Time WebSocket & Socket.io Collaborative Canvas Engine",
-    category: "Web Development",
+    category: "Programming & Tech",
     tier: "STANDARD",
     gigId: "gig-14",
     totalAmount: 480,
@@ -2115,16 +2061,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-13",
       name: "River Johns",
       email: "river.johns@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/kwame-mensah.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-16",
-      name: "David Herzog",
-      title: "Full-Stack Node.js Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "f-1",
+      name: "Alexandre Moreau",
+      title: "Backend Development Specialist",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -2133,7 +2077,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8013-1",
-        title: "Phase 1: Full-Stack Node.js Milestone Deliverables",
+        title: "Phase 1: Backend Development Milestone Deliverables",
         amount: 240,
         status: "completed",
         dueDate: "2026-03-17",
@@ -2141,7 +2085,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8013-2",
-        title: "Phase 2: Full-Stack Node.js Milestone Deliverables",
+        title: "Phase 2: Backend Development Milestone Deliverables",
         amount: 240,
         status: "completed",
         dueDate: "2026-03-17",
@@ -2178,7 +2122,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8014",
     title: "Scalable Figma Design System with Design Tokens, Auto-Layout & Variables",
-    category: "UI/UX & Product Design",
+    category: "Graphics & Design",
     tier: "PREMIUM",
     gigId: "gig-15",
     totalAmount: 920,
@@ -2190,16 +2134,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-16",
       name: "David Herzog",
       email: "david.herzog@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/maya-patel.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-17",
-      name: "Katrina Stehr",
-      title: "Design Systems & Figma Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-32",
+      name: "Ibrahim Fritsch",
+      title: "Design Systems Specialist",
+      avatar: "/images/avatars/valerie-mercier.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -2208,7 +2150,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8014-1",
-        title: "Phase 1: Design Systems & Figma Milestone Deliverables",
+        title: "Phase 1: Design Systems Milestone Deliverables",
         amount: 307,
         status: "completed",
         dueDate: "2026-02-28",
@@ -2216,7 +2158,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8014-2",
-        title: "Phase 2: Design Systems & Figma Milestone Deliverables",
+        title: "Phase 2: Design Systems Milestone Deliverables",
         amount: 307,
         status: "completed",
         dueDate: "2026-02-28",
@@ -2224,7 +2166,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8014-3",
-        title: "Phase 3: Design Systems & Figma Milestone Deliverables",
+        title: "Phase 3: Design Systems Milestone Deliverables",
         amount: 306,
         status: "completed",
         dueDate: "2026-02-28",
@@ -2261,7 +2203,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8015",
     title: "Complex B2B SaaS Dashboard UI/UX Design with Dark Mode & Mobile Flows",
-    category: "UI/UX & Product Design",
+    category: "Graphics & Design",
     tier: "BASIC",
     gigId: "gig-16",
     totalAmount: 320,
@@ -2273,16 +2215,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-19",
       name: "Sherwood Barrows",
       email: "sherwood.barrows@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mateo-rossi.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-18",
-      name: "Minh Nguyen",
-      title: "SaaS Application UX Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-14",
+      name: "Sandra Zieme-Luettgen",
+      title: "UI/UX Design Specialist",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -2291,7 +2231,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8015-1",
-        title: "Phase 1: SaaS Application UX Milestone Deliverables",
+        title: "Phase 1: UI/UX Design Milestone Deliverables",
         amount: 160,
         status: "completed",
         dueDate: "2026-01-25",
@@ -2299,7 +2239,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8015-2",
-        title: "Phase 2: SaaS Application UX Milestone Deliverables",
+        title: "Phase 2: UI/UX Design Milestone Deliverables",
         amount: 160,
         status: "in_progress",
         dueDate: "2026-01-25",
@@ -2311,7 +2251,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8016",
     title: "FinTech Banking & Payment Mobile App UI/UX with High-Fidelity Prototype",
-    category: "UI/UX & Product Design",
+    category: "Graphics & Design",
     tier: "STANDARD",
     gigId: "gig-17",
     totalAmount: 640,
@@ -2323,16 +2263,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-1",
       name: "Marcus Thorne",
       email: "marcus.thorne@fintechcorp.io",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       company: "Fintech Corp Ltd",
     },
     freelancer: {
-      id: "usr-19",
-      name: "Sherwood Barrows",
-      title: "SaaS Application UX Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-24",
+      name: "Luz Champlin",
+      title: "UI/UX Design Specialist",
+      avatar: "/images/avatars/beatrice-dupont.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -2341,7 +2279,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8016-1",
-        title: "Phase 1: SaaS Application UX Milestone Deliverables",
+        title: "Phase 1: UI/UX Design Milestone Deliverables",
         amount: 213,
         status: "completed",
         dueDate: "2026-03-28",
@@ -2349,7 +2287,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8016-2",
-        title: "Phase 2: SaaS Application UX Milestone Deliverables",
+        title: "Phase 2: UI/UX Design Milestone Deliverables",
         amount: 213,
         status: "completed",
         dueDate: "2026-03-28",
@@ -2357,7 +2295,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8016-3",
-        title: "Phase 3: SaaS Application UX Milestone Deliverables",
+        title: "Phase 3: UI/UX Design Milestone Deliverables",
         amount: 214,
         status: "completed",
         dueDate: "2026-03-28",
@@ -2394,7 +2332,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8017",
     title: "Accessible WCAG 2.1 AA Compliant Web Application UI Kit in Figma",
-    category: "UI/UX & Product Design",
+    category: "Graphics & Design",
     tier: "STANDARD",
     gigId: "gig-18",
     totalAmount: 460,
@@ -2406,16 +2344,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-4",
       name: "Rachel Adams",
       email: "rachel.adams@horizonhealth.ca",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/rachel-adams.jpg",
       company: "Horizon Health Technologies",
     },
     freelancer: {
-      id: "usr-20",
-      name: "Mitchell Ankunding",
-      title: "Design Systems & Figma Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-17",
+      name: "Katrina Stehr",
+      title: "Design Systems Specialist",
+      avatar: "/images/avatars/arthur-pendelton.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -2424,7 +2360,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8017-1",
-        title: "Phase 1: Design Systems & Figma Milestone Deliverables",
+        title: "Phase 1: Design Systems Milestone Deliverables",
         amount: 230,
         status: "completed",
         dueDate: "2026-02-10",
@@ -2432,7 +2368,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8017-2",
-        title: "Phase 2: Design Systems & Figma Milestone Deliverables",
+        title: "Phase 2: Design Systems Milestone Deliverables",
         amount: 230,
         status: "completed",
         dueDate: "2026-02-10",
@@ -2469,7 +2405,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8018",
     title: "E-Commerce User Journey Mapping & Checkout Flow Conversion Redesign",
-    category: "UI/UX & Product Design",
+    category: "Graphics & Design",
     tier: "STANDARD",
     gigId: "gig-19",
     totalAmount: 480,
@@ -2481,16 +2417,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-12",
       name: "Priscilla Mertz",
       email: "priscilla.mertz@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/aiko-tanaka.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-21",
-      name: "Hattie Heidenreich",
-      title: "SaaS Application UX Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-22",
+      name: "Gerard Wiegand",
+      title: "UI/UX Design Specialist",
+      avatar: "/images/avatars/sunita-rao.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -2499,7 +2433,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8018-1",
-        title: "Phase 1: SaaS Application UX Milestone Deliverables",
+        title: "Phase 1: UI/UX Design Milestone Deliverables",
         amount: 240,
         status: "completed",
         dueDate: "2026-01-15",
@@ -2507,7 +2441,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8018-2",
-        title: "Phase 2: SaaS Application UX Milestone Deliverables",
+        title: "Phase 2: UI/UX Design Milestone Deliverables",
         amount: 240,
         status: "completed",
         dueDate: "2026-01-15",
@@ -2544,7 +2478,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8019",
     title: "Minimalist Modern Tech Logo & Vector Brand Identity System",
-    category: "UI/UX & Product Design",
+    category: "Graphics & Design",
     tier: "PREMIUM",
     gigId: "gig-20",
     totalAmount: 650,
@@ -2556,25 +2490,23 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-15",
       name: "Robin Christiansen",
       email: "robin.christiansen@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/lukas-weber.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-22",
-      name: "Gerard Wiegand",
-      title: "Logo & Brand Identity Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.99,
-      level: "TOP_RATED",
+      id: "usr-32",
+      name: "Ibrahim Fritsch",
+      title: "Brand & Identity Specialist",
+      avatar: "/images/avatars/valerie-mercier.jpg",
+      rating: 4.95,
+      level: "LEVEL_2",
     },
     requirements:
       "Execute Enterprise Architecture requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8019-1",
-        title: "Phase 1: Logo & Brand Identity Milestone Deliverables",
+        title: "Phase 1: Brand & Identity Milestone Deliverables",
         amount: 217,
         status: "completed",
         dueDate: "2026-03-23",
@@ -2582,7 +2514,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8019-2",
-        title: "Phase 2: Logo & Brand Identity Milestone Deliverables",
+        title: "Phase 2: Brand & Identity Milestone Deliverables",
         amount: 217,
         status: "completed",
         dueDate: "2026-03-23",
@@ -2590,7 +2522,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8019-3",
-        title: "Phase 3: Logo & Brand Identity Milestone Deliverables",
+        title: "Phase 3: Brand & Identity Milestone Deliverables",
         amount: 216,
         status: "completed",
         dueDate: "2026-03-23",
@@ -2627,7 +2559,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8020",
     title: "Complete Startup Brand Book, Custom Typography Guidelines & Pitch Deck",
-    category: "UI/UX & Product Design",
+    category: "Graphics & Design",
     tier: "BASIC",
     gigId: "gig-21",
     totalAmount: 290,
@@ -2639,16 +2571,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-18",
       name: "Minh Nguyen",
       email: "minh.nguyen@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mai-tran.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-23",
-      name: "Jules Wuckert",
-      title: "Logo & Brand Identity Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "f-2",
+      name: "Helena Rostova",
+      title: "Brand & Identity Specialist",
+      avatar: "/images/avatars/helena-rostova.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -2657,7 +2587,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8020-1",
-        title: "Phase 1: Logo & Brand Identity Milestone Deliverables",
+        title: "Phase 1: Brand & Identity Milestone Deliverables",
         amount: 145,
         status: "completed",
         dueDate: "Cancelled",
@@ -2665,7 +2595,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8020-2",
-        title: "Phase 2: Logo & Brand Identity Milestone Deliverables",
+        title: "Phase 2: Brand & Identity Milestone Deliverables",
         amount: 145,
         status: "pending",
         dueDate: "Cancelled",
@@ -2677,7 +2607,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8021",
     title: "Custom 3D Brand Asset Pack & Vector Iconography Set for Web & Mobile",
-    category: "UI/UX & Product Design",
+    category: "Graphics & Design",
     tier: "STANDARD",
     gigId: "gig-22",
     totalAmount: 420,
@@ -2689,16 +2619,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "f-1",
       name: "Alexandre Moreau",
       email: "alexandre.moreau@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-24",
-      name: "Luz Champlin",
-      title: "Logo & Brand Identity Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-14",
+      name: "Sandra Zieme-Luettgen",
+      title: "Brand & Identity Specialist",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -2707,7 +2635,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8021-1",
-        title: "Phase 1: Logo & Brand Identity Milestone Deliverables",
+        title: "Phase 1: Brand & Identity Milestone Deliverables",
         amount: 210,
         status: "completed",
         dueDate: "2026-01-28",
@@ -2715,7 +2643,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8021-2",
-        title: "Phase 2: Logo & Brand Identity Milestone Deliverables",
+        title: "Phase 2: Brand & Identity Milestone Deliverables",
         amount: 210,
         status: "completed",
         dueDate: "2026-01-28",
@@ -2752,7 +2680,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8022",
     title: "Photorealistic 3D Product Commercial Render & Animation in Cinema4D",
-    category: "UI/UX & Product Design",
+    category: "Graphics & Design",
     tier: "STANDARD",
     gigId: "gig-23",
     totalAmount: 710,
@@ -2764,16 +2692,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-3",
       name: "Emily Zhang",
       email: "emily.zhang@nexusventures.sg",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       company: "Nexus AI Ventures",
     },
     freelancer: {
-      id: "usr-25",
-      name: "Brandi Hegmann",
-      title: "Video & 3D Animation Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-17",
+      name: "Katrina Stehr",
+      title: "3D & Motion Specialist",
+      avatar: "/images/avatars/arthur-pendelton.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -2782,7 +2708,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8022-1",
-        title: "Phase 1: Video & 3D Animation Milestone Deliverables",
+        title: "Phase 1: 3D & Motion Milestone Deliverables",
         amount: 237,
         status: "completed",
         dueDate: "2026-03-10",
@@ -2790,7 +2716,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8022-2",
-        title: "Phase 2: Video & 3D Animation Milestone Deliverables",
+        title: "Phase 2: 3D & Motion Milestone Deliverables",
         amount: 237,
         status: "completed",
         dueDate: "2026-03-10",
@@ -2798,7 +2724,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8022-3",
-        title: "Phase 3: Video & 3D Animation Milestone Deliverables",
+        title: "Phase 3: 3D & Motion Milestone Deliverables",
         amount: 236,
         status: "completed",
         dueDate: "2026-03-10",
@@ -2835,7 +2761,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8023",
     title: "Interactive Three.js & WebGL 3D Experience for Modern Tech Marketing Sites",
-    category: "UI/UX & Product Design",
+    category: "Graphics & Design",
     tier: "STANDARD",
     gigId: "gig-24",
     totalAmount: 820,
@@ -2847,25 +2773,23 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-11",
       name: "Gregory Bayer",
       email: "gregory.bayer@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/minh-nguyen.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-26",
-      name: "Mai Tran",
-      title: "Video & 3D Animation Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.95,
-      level: "LEVEL_2",
+      id: "usr-22",
+      name: "Gerard Wiegand",
+      title: "3D & Motion Specialist",
+      avatar: "/images/avatars/sunita-rao.jpg",
+      rating: 4.99,
+      level: "TOP_RATED",
     },
     requirements:
       "Execute Production Monorepo requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8023-1",
-        title: "Phase 1: Video & 3D Animation Milestone Deliverables",
+        title: "Phase 1: 3D & Motion Milestone Deliverables",
         amount: 273,
         status: "completed",
         dueDate: "2026-02-17",
@@ -2873,7 +2797,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8023-2",
-        title: "Phase 2: Video & 3D Animation Milestone Deliverables",
+        title: "Phase 2: 3D & Motion Milestone Deliverables",
         amount: 273,
         status: "completed",
         dueDate: "2026-02-17",
@@ -2881,7 +2805,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8023-3",
-        title: "Phase 3: Video & 3D Animation Milestone Deliverables",
+        title: "Phase 3: 3D & Motion Milestone Deliverables",
         amount: 274,
         status: "completed",
         dueDate: "2026-02-17",
@@ -2930,18 +2854,16 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-14",
       name: "Sandra Zieme-Luettgen",
       email: "sandra.zieme-luettgen@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-27",
-      name: "Marcelino Bauch",
+      id: "f-3",
+      name: "Marcus Vance",
       title: "Autonomous AI Agents Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.95,
-      level: "LEVEL_2",
+      avatar: "/images/avatars/marcus-vance.jpg",
+      rating: 4.99,
+      level: "TOP_RATED",
     },
     requirements:
       "Execute Enterprise Architecture requirements with clean production code, modular architecture, and documentation.",
@@ -3013,25 +2935,23 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-17",
       name: "Katrina Stehr",
       email: "katrina.stehr@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/arthur-pendelton.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-28",
-      name: "Catalina Koelpin",
-      title: "LLM Fine-Tuning & RAG Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.99,
-      level: "TOP_RATED",
+      id: "usr-13",
+      name: "River Johns",
+      title: "AI & Machine Learning Specialist",
+      avatar: "/images/avatars/kwame-mensah.jpg",
+      rating: 4.95,
+      level: "LEVEL_2",
     },
     requirements:
       "Execute Starter Deliverable requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8025-1",
-        title: "Phase 1: LLM Fine-Tuning & RAG Milestone Deliverables",
+        title: "Phase 1: AI & Machine Learning Milestone Deliverables",
         amount: 210,
         status: "completed",
         dueDate: "2026-03-22",
@@ -3039,7 +2959,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8025-2",
-        title: "Phase 2: LLM Fine-Tuning & RAG Milestone Deliverables",
+        title: "Phase 2: AI & Machine Learning Milestone Deliverables",
         amount: 210,
         status: "in_progress",
         dueDate: "2026-03-22",
@@ -3063,16 +2983,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-20",
       name: "Mitchell Ankunding",
       email: "mitchell.ankunding@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/fatima-almansoor.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-29",
-      name: "Karianne Schmidt",
-      title: "LLM Fine-Tuning & RAG Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-23",
+      name: "Jules Wuckert",
+      title: "AI & Machine Learning Specialist",
+      avatar: "/images/avatars/jonas-vestergaard.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -3081,7 +2999,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8026-1",
-        title: "Phase 1: LLM Fine-Tuning & RAG Milestone Deliverables",
+        title: "Phase 1: AI & Machine Learning Milestone Deliverables",
         amount: 297,
         status: "completed",
         dueDate: "2026-02-28",
@@ -3089,7 +3007,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8026-2",
-        title: "Phase 2: LLM Fine-Tuning & RAG Milestone Deliverables",
+        title: "Phase 2: AI & Machine Learning Milestone Deliverables",
         amount: 297,
         status: "completed",
         dueDate: "2026-02-28",
@@ -3097,7 +3015,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8026-3",
-        title: "Phase 3: LLM Fine-Tuning & RAG Milestone Deliverables",
+        title: "Phase 3: AI & Machine Learning Milestone Deliverables",
         amount: 296,
         status: "completed",
         dueDate: "2026-02-28",
@@ -3146,18 +3064,16 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-2",
       name: "David Sterling",
       email: "david.sterling@apexcap.com",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       company: "Apex Capital Ventures",
     },
     freelancer: {
-      id: "usr-30",
-      name: "Shawn Gorczany",
+      id: "usr-33",
+      name: "Kasey King",
       title: "Autonomous AI Agents Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.99,
-      level: "TOP_RATED",
+      avatar: "/images/avatars/stefan-richter.jpg",
+      rating: 4.95,
+      level: "LEVEL_2",
     },
     requirements:
       "Execute Production Monorepo requirements with clean production code, modular architecture, and documentation.",
@@ -3229,25 +3145,23 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-5",
       name: "Liam O'Connor",
       email: "liam.oconnor@novadynamics.ie",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/liam-oconnor.jpg",
       company: "Nova Dynamics AI",
     },
     freelancer: {
-      id: "usr-31",
-      name: "Columbus Kuhic",
-      title: "Computer Vision & ML Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.95,
-      level: "LEVEL_2",
+      id: "f-3",
+      name: "Marcus Vance",
+      title: "AI & Machine Learning Specialist",
+      avatar: "/images/avatars/marcus-vance.jpg",
+      rating: 4.99,
+      level: "TOP_RATED",
     },
     requirements:
       "Execute Production Monorepo requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8028-1",
-        title: "Phase 1: Computer Vision & ML Milestone Deliverables",
+        title: "Phase 1: AI & Machine Learning Milestone Deliverables",
         amount: 223,
         status: "completed",
         dueDate: "2026-03-13",
@@ -3255,7 +3169,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8028-2",
-        title: "Phase 2: Computer Vision & ML Milestone Deliverables",
+        title: "Phase 2: AI & Machine Learning Milestone Deliverables",
         amount: 223,
         status: "completed",
         dueDate: "2026-03-13",
@@ -3263,7 +3177,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8028-3",
-        title: "Phase 3: Computer Vision & ML Milestone Deliverables",
+        title: "Phase 3: AI & Machine Learning Milestone Deliverables",
         amount: 224,
         status: "completed",
         dueDate: "2026-03-13",
@@ -3312,16 +3226,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-13",
       name: "River Johns",
       email: "river.johns@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/kwame-mensah.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-32",
-      name: "Ibrahim Fritsch",
-      title: "Computer Vision & ML Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-13",
+      name: "River Johns",
+      title: "AI & Machine Learning Specialist",
+      avatar: "/images/avatars/kwame-mensah.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -3330,7 +3242,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8029-1",
-        title: "Phase 1: Computer Vision & ML Milestone Deliverables",
+        title: "Phase 1: AI & Machine Learning Milestone Deliverables",
         amount: 297,
         status: "completed",
         dueDate: "2026-02-22",
@@ -3338,7 +3250,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8029-2",
-        title: "Phase 2: Computer Vision & ML Milestone Deliverables",
+        title: "Phase 2: AI & Machine Learning Milestone Deliverables",
         amount: 297,
         status: "completed",
         dueDate: "2026-02-22",
@@ -3346,7 +3258,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8029-3",
-        title: "Phase 3: Computer Vision & ML Milestone Deliverables",
+        title: "Phase 3: AI & Machine Learning Milestone Deliverables",
         amount: 296,
         status: "completed",
         dueDate: "2026-02-22",
@@ -3395,18 +3307,16 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-16",
       name: "David Herzog",
       email: "david.herzog@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/maya-patel.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-33",
-      name: "Kasey King",
+      id: "usr-23",
+      name: "Jules Wuckert",
       title: "Autonomous AI Agents Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.95,
-      level: "LEVEL_2",
+      avatar: "/images/avatars/jonas-vestergaard.jpg",
+      rating: 4.99,
+      level: "TOP_RATED",
     },
     requirements:
       "Execute Starter Deliverable requirements with clean production code, modular architecture, and documentation.",
@@ -3469,16 +3379,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-19",
       name: "Sherwood Barrows",
       email: "sherwood.barrows@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mateo-rossi.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-34",
-      name: "Hoang Le",
-      title: "LLM Fine-Tuning & RAG Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-33",
+      name: "Kasey King",
+      title: "AI & Machine Learning Specialist",
+      avatar: "/images/avatars/stefan-richter.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -3487,7 +3395,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8031-1",
-        title: "Phase 1: LLM Fine-Tuning & RAG Milestone Deliverables",
+        title: "Phase 1: AI & Machine Learning Milestone Deliverables",
         amount: 203,
         status: "completed",
         dueDate: "2026-03-27",
@@ -3495,7 +3403,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8031-2",
-        title: "Phase 2: LLM Fine-Tuning & RAG Milestone Deliverables",
+        title: "Phase 2: AI & Machine Learning Milestone Deliverables",
         amount: 203,
         status: "completed",
         dueDate: "2026-03-27",
@@ -3503,7 +3411,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8031-3",
-        title: "Phase 3: LLM Fine-Tuning & RAG Milestone Deliverables",
+        title: "Phase 3: AI & Machine Learning Milestone Deliverables",
         amount: 204,
         status: "completed",
         dueDate: "2026-03-27",
@@ -3552,16 +3460,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-1",
       name: "Marcus Thorne",
       email: "marcus.thorne@fintechcorp.io",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       company: "Fintech Corp Ltd",
     },
     freelancer: {
-      id: "usr-35",
-      name: "Domenico Hand",
+      id: "f-3",
+      name: "Marcus Vance",
       title: "Autonomous AI Agents Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/marcus-vance.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -3627,25 +3533,23 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-4",
       name: "Rachel Adams",
       email: "rachel.adams@horizonhealth.ca",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/rachel-adams.jpg",
       company: "Horizon Health Technologies",
     },
     freelancer: {
-      id: "usr-36",
-      name: "Belle Parisian",
-      title: "LLM Fine-Tuning & RAG Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.99,
-      level: "TOP_RATED",
+      id: "usr-13",
+      name: "River Johns",
+      title: "AI & Machine Learning Specialist",
+      avatar: "/images/avatars/kwame-mensah.jpg",
+      rating: 4.95,
+      level: "LEVEL_2",
     },
     requirements:
       "Execute Production Monorepo requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8033-1",
-        title: "Phase 1: LLM Fine-Tuning & RAG Milestone Deliverables",
+        title: "Phase 1: AI & Machine Learning Milestone Deliverables",
         amount: 210,
         status: "completed",
         dueDate: "2026-01-11",
@@ -3653,7 +3557,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8033-2",
-        title: "Phase 2: LLM Fine-Tuning & RAG Milestone Deliverables",
+        title: "Phase 2: AI & Machine Learning Milestone Deliverables",
         amount: 210,
         status: "completed",
         dueDate: "2026-01-11",
@@ -3661,7 +3565,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8033-3",
-        title: "Phase 3: LLM Fine-Tuning & RAG Milestone Deliverables",
+        title: "Phase 3: AI & Machine Learning Milestone Deliverables",
         amount: 210,
         status: "completed",
         dueDate: "2026-01-11",
@@ -3710,16 +3614,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-12",
       name: "Priscilla Mertz",
       email: "priscilla.mertz@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/aiko-tanaka.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-37",
-      name: "Bernie Rodriguez",
+      id: "usr-23",
+      name: "Jules Wuckert",
       title: "Autonomous AI Agents Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/jonas-vestergaard.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -3781,7 +3683,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8035",
     title: "Programmatic SEO Architecture with Next.js ISR for 50,000+ Indexed Pages",
-    category: "Technical SEO & Growth",
+    category: "Digital Marketing",
     tier: "BASIC",
     gigId: "gig-36",
     totalAmount: 290,
@@ -3793,16 +3695,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-15",
       name: "Robin Christiansen",
       email: "robin.christiansen@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/lukas-weber.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-38",
-      name: "Eleonore Marks",
-      title: "Programmatic SEO Architecture Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-39",
+      name: "Loy Cremin",
+      title: "Technical SEO Specialist",
+      avatar: "/images/avatars/linnea-holm.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -3811,7 +3711,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8035-1",
-        title: "Phase 1: Programmatic SEO Architecture Milestone Deliverables",
+        title: "Phase 1: Technical SEO Milestone Deliverables",
         amount: 145,
         status: "completed",
         dueDate: "2026-02-16",
@@ -3819,7 +3719,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8035-2",
-        title: "Phase 2: Programmatic SEO Architecture Milestone Deliverables",
+        title: "Phase 2: Technical SEO Milestone Deliverables",
         amount: 145,
         status: "in_progress",
         dueDate: "2026-02-16",
@@ -3831,7 +3731,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8036",
     title: "SaaS Conversion Rate Optimization (CRO) Audit & Multi-Variant Growth Plan",
-    category: "Technical SEO & Growth",
+    category: "Digital Marketing",
     tier: "STANDARD",
     gigId: "gig-37",
     totalAmount: 410,
@@ -3843,16 +3743,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-18",
       name: "Minh Nguyen",
       email: "minh.nguyen@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mai-tran.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-39",
-      name: "Loy Cremin",
-      title: "Conversion Rate Optimization Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "f-4",
+      name: "Sophia Lindqvist",
+      title: "Growth & CRO Specialist",
+      avatar: "/images/avatars/sophia-chen.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -3861,7 +3759,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8036-1",
-        title: "Phase 1: Conversion Rate Optimization Milestone Deliverables",
+        title: "Phase 1: Growth & CRO Milestone Deliverables",
         amount: 205,
         status: "completed",
         dueDate: "2026-01-23",
@@ -3869,7 +3767,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8036-2",
-        title: "Phase 2: Conversion Rate Optimization Milestone Deliverables",
+        title: "Phase 2: Growth & CRO Milestone Deliverables",
         amount: 205,
         status: "completed",
         dueDate: "2026-01-23",
@@ -3901,7 +3799,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8037",
     title: "Full-Funnel Multi-Touch Attribution & Google Analytics 4 Server-Side Setup",
-    category: "Technical SEO & Growth",
+    category: "Digital Marketing",
     tier: "STANDARD",
     gigId: "gig-38",
     totalAmount: 490,
@@ -3913,16 +3811,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "f-1",
       name: "Alexandre Moreau",
       email: "alexandre.moreau@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-40",
-      name: "Chanelle Treutel",
-      title: "Attribution & Analytics Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-19",
+      name: "Sherwood Barrows",
+      title: "Technical SEO Specialist",
+      avatar: "/images/avatars/mateo-rossi.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -3931,7 +3827,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8037-1",
-        title: "Phase 1: Attribution & Analytics Milestone Deliverables",
+        title: "Phase 1: Technical SEO Milestone Deliverables",
         amount: 245,
         status: "completed",
         dueDate: "2026-03-28",
@@ -3939,7 +3835,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8037-2",
-        title: "Phase 2: Attribution & Analytics Milestone Deliverables",
+        title: "Phase 2: Technical SEO Milestone Deliverables",
         amount: 245,
         status: "completed",
         dueDate: "2026-03-28",
@@ -3971,7 +3867,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8038",
     title: "Core Web Vitals & Technical Speed Audit for 100 Mobile Lighthouse Score",
-    category: "Technical SEO & Growth",
+    category: "Digital Marketing",
     tier: "STANDARD",
     gigId: "gig-39",
     totalAmount: 350,
@@ -3983,16 +3879,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-3",
       name: "Emily Zhang",
       email: "emily.zhang@nexusventures.sg",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       company: "Nexus AI Ventures",
     },
     freelancer: {
-      id: "usr-41",
-      name: "Hope Jacobi",
-      title: "Programmatic SEO Architecture Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-34",
+      name: "Hoang Le",
+      title: "Technical SEO Specialist",
+      avatar: "/images/avatars/anh-pham.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -4001,7 +3895,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8038-1",
-        title: "Phase 1: Programmatic SEO Architecture Milestone Deliverables",
+        title: "Phase 1: Technical SEO Milestone Deliverables",
         amount: 175,
         status: "completed",
         dueDate: "2026-02-06",
@@ -4009,7 +3903,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8038-2",
-        title: "Phase 2: Programmatic SEO Architecture Milestone Deliverables",
+        title: "Phase 2: Technical SEO Milestone Deliverables",
         amount: 175,
         status: "completed",
         dueDate: "2026-02-06",
@@ -4041,7 +3935,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8039",
     title: "B2B SaaS Cold Outbound Email Infrastructure & Deliverability Warmup Setup",
-    category: "Technical SEO & Growth",
+    category: "Digital Marketing",
     tier: "PREMIUM",
     gigId: "gig-40",
     totalAmount: 770,
@@ -4053,25 +3947,23 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-11",
       name: "Gregory Bayer",
       email: "gregory.bayer@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/minh-nguyen.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "f-1",
-      name: "Alexandre Moreau",
-      title: "Conversion Rate Optimization Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-      rating: 4.99,
-      level: "TOP_RATED",
+      id: "usr-39",
+      name: "Loy Cremin",
+      title: "Growth & CRO Specialist",
+      avatar: "/images/avatars/linnea-holm.jpg",
+      rating: 4.95,
+      level: "LEVEL_2",
     },
     requirements:
       "Execute Enterprise Architecture requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8039-1",
-        title: "Phase 1: Conversion Rate Optimization Milestone Deliverables",
+        title: "Phase 1: Growth & CRO Milestone Deliverables",
         amount: 257,
         status: "completed",
         dueDate: "2026-01-16",
@@ -4079,7 +3971,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8039-2",
-        title: "Phase 2: Conversion Rate Optimization Milestone Deliverables",
+        title: "Phase 2: Growth & CRO Milestone Deliverables",
         amount: 257,
         status: "completed",
         dueDate: "2026-01-16",
@@ -4087,7 +3979,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8039-3",
-        title: "Phase 3: Conversion Rate Optimization Milestone Deliverables",
+        title: "Phase 3: Growth & CRO Milestone Deliverables",
         amount: 256,
         status: "completed",
         dueDate: "2026-01-16",
@@ -4119,7 +4011,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8040",
     title: "Mixpanel & PostHog Event Taxonomy Architecture for Product Analytics",
-    category: "Technical SEO & Growth",
+    category: "Digital Marketing",
     tier: "BASIC",
     gigId: "gig-41",
     totalAmount: 270,
@@ -4131,25 +4023,23 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-14",
       name: "Sandra Zieme-Luettgen",
       email: "sandra.zieme-luettgen@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "f-2",
-      name: "Helena Rostova",
-      title: "Attribution & Analytics Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
-      rating: 4.99,
-      level: "TOP_RATED",
+      id: "f-4",
+      name: "Sophia Lindqvist",
+      title: "Technical SEO Specialist",
+      avatar: "/images/avatars/sophia-chen.jpg",
+      rating: 4.95,
+      level: "LEVEL_2",
     },
     requirements:
       "Execute Starter Deliverable requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8040-1",
-        title: "Phase 1: Attribution & Analytics Milestone Deliverables",
+        title: "Phase 1: Technical SEO Milestone Deliverables",
         amount: 135,
         status: "completed",
         dueDate: "Cancelled",
@@ -4157,7 +4047,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8040-2",
-        title: "Phase 2: Attribution & Analytics Milestone Deliverables",
+        title: "Phase 2: Technical SEO Milestone Deliverables",
         amount: 135,
         status: "pending",
         dueDate: "Cancelled",
@@ -4169,7 +4059,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8041",
     title: "International Multi-Region Hreflang & Subfolder SEO Localization Engine",
-    category: "Technical SEO & Growth",
+    category: "Digital Marketing",
     tier: "STANDARD",
     gigId: "gig-42",
     totalAmount: 450,
@@ -4181,25 +4071,23 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-17",
       name: "Katrina Stehr",
       email: "katrina.stehr@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/arthur-pendelton.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "f-3",
-      name: "Marcus Vance",
-      title: "Programmatic SEO Architecture Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
-      rating: 4.99,
-      level: "TOP_RATED",
+      id: "usr-19",
+      name: "Sherwood Barrows",
+      title: "Technical SEO Specialist",
+      avatar: "/images/avatars/mateo-rossi.jpg",
+      rating: 4.95,
+      level: "LEVEL_2",
     },
     requirements:
       "Execute Production Monorepo requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8041-1",
-        title: "Phase 1: Programmatic SEO Architecture Milestone Deliverables",
+        title: "Phase 1: Technical SEO Milestone Deliverables",
         amount: 225,
         status: "completed",
         dueDate: "2026-02-22",
@@ -4207,7 +4095,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8041-2",
-        title: "Phase 2: Programmatic SEO Architecture Milestone Deliverables",
+        title: "Phase 2: Technical SEO Milestone Deliverables",
         amount: 225,
         status: "completed",
         dueDate: "2026-02-22",
@@ -4239,7 +4127,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8042",
     title: "Comprehensive OpenAPI 3.1 & Interactive Mintlify Developer Documentation",
-    category: "Technical Writing",
+    category: "Writing & Translation",
     tier: "STANDARD",
     gigId: "gig-43",
     totalAmount: 340,
@@ -4251,16 +4139,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-20",
       name: "Mitchell Ankunding",
       email: "mitchell.ankunding@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/fatima-almansoor.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "f-4",
-      name: "Sophia Lindqvist",
-      title: "API & Developer Documentation Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+      id: "usr-18",
+      name: "Minh Nguyen",
+      title: "API Documentation Specialist",
+      avatar: "/images/avatars/mai-tran.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -4269,7 +4155,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8042-1",
-        title: "Phase 1: API & Developer Documentation Milestone Deliverables",
+        title: "Phase 1: API Documentation Milestone Deliverables",
         amount: 170,
         status: "completed",
         dueDate: "2026-01-26",
@@ -4277,7 +4163,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8042-2",
-        title: "Phase 2: API & Developer Documentation Milestone Deliverables",
+        title: "Phase 2: API Documentation Milestone Deliverables",
         amount: 170,
         status: "completed",
         dueDate: "2026-01-26",
@@ -4314,7 +4200,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8043",
     title: "FinTech, AI & Web3 Architecture Whitepaper with Formal Mathematical Proofs",
-    category: "Technical Writing",
+    category: "Writing & Translation",
     tier: "STANDARD",
     gigId: "gig-44",
     totalAmount: 780,
@@ -4326,25 +4212,23 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-2",
       name: "David Sterling",
       email: "david.sterling@apexcap.com",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       company: "Apex Capital Ventures",
     },
     freelancer: {
-      id: "usr-edge-overflow",
-      name: "Dr. Bartholomew Alexander Montgomery-Fitzgerald III",
-      title: "Fintech & Web3 Whitepapers Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.99,
-      level: "TOP_RATED",
+      id: "usr-26",
+      name: "Mai Tran",
+      title: "Technical Writing Specialist",
+      avatar: "/images/avatars/hoang-le.jpg",
+      rating: 4.95,
+      level: "LEVEL_2",
     },
     requirements:
       "Execute Production Monorepo requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8043-1",
-        title: "Phase 1: Fintech & Web3 Whitepapers Milestone Deliverables",
+        title: "Phase 1: Technical Writing Milestone Deliverables",
         amount: 260,
         status: "completed",
         dueDate: "2026-03-28",
@@ -4352,7 +4236,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8043-2",
-        title: "Phase 2: Fintech & Web3 Whitepapers Milestone Deliverables",
+        title: "Phase 2: Technical Writing Milestone Deliverables",
         amount: 260,
         status: "completed",
         dueDate: "2026-03-28",
@@ -4360,7 +4244,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8043-3",
-        title: "Phase 3: Fintech & Web3 Whitepapers Milestone Deliverables",
+        title: "Phase 3: Technical Writing Milestone Deliverables",
         amount: 260,
         status: "completed",
         dueDate: "2026-03-28",
@@ -4397,7 +4281,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8044",
     title: "Developer SDK Quickstart Guides, Code Snippets & Postman Public Workspace",
-    category: "Technical Writing",
+    category: "Writing & Translation",
     tier: "PREMIUM",
     gigId: "gig-45",
     totalAmount: 560,
@@ -4409,16 +4293,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-5",
       name: "Liam O'Connor",
       email: "liam.oconnor@novadynamics.ie",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/liam-oconnor.jpg",
       company: "Nova Dynamics AI",
     },
     freelancer: {
-      id: "usr-edge-brandnew",
-      name: "Oliver Bennett",
-      title: "API & Developer Documentation Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-38",
+      name: "Eleonore Marks",
+      title: "API Documentation Specialist",
+      avatar: "/images/avatars/leila-haddad.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -4427,7 +4309,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8044-1",
-        title: "Phase 1: API & Developer Documentation Milestone Deliverables",
+        title: "Phase 1: API Documentation Milestone Deliverables",
         amount: 280,
         status: "completed",
         dueDate: "2026-02-12",
@@ -4435,7 +4317,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8044-2",
-        title: "Phase 2: API & Developer Documentation Milestone Deliverables",
+        title: "Phase 2: API Documentation Milestone Deliverables",
         amount: 280,
         status: "completed",
         dueDate: "2026-02-12",
@@ -4472,7 +4354,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8045",
     title: "System Architecture RFC & High-Level Engineering Specifications Document",
-    category: "Technical Writing",
+    category: "Writing & Translation",
     tier: "BASIC",
     gigId: "gig-46",
     totalAmount: 280,
@@ -4484,25 +4366,23 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-13",
       name: "River Johns",
       email: "river.johns@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/kwame-mensah.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-edge-fast-response",
-      name: "Chloe Nguyen (Minh Chau)",
-      title: "System Architecture Specs Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.99,
-      level: "TOP_RATED",
+      id: "usr-18",
+      name: "Minh Nguyen",
+      title: "System Architecture Specialist",
+      avatar: "/images/avatars/mai-tran.jpg",
+      rating: 4.95,
+      level: "LEVEL_2",
     },
     requirements:
       "Execute Starter Deliverable requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8045-1",
-        title: "Phase 1: System Architecture Specs Milestone Deliverables",
+        title: "Phase 1: System Architecture Milestone Deliverables",
         amount: 140,
         status: "completed",
         dueDate: "2026-01-12",
@@ -4510,7 +4390,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8045-2",
-        title: "Phase 2: System Architecture Specs Milestone Deliverables",
+        title: "Phase 2: System Architecture Milestone Deliverables",
         amount: 140,
         status: "in_progress",
         dueDate: "2026-01-12",
@@ -4522,7 +4402,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8046",
     title: "Self-Hosted Docusaurus Developer Portal with Search & Versioning",
-    category: "Technical Writing",
+    category: "Writing & Translation",
     tier: "STANDARD",
     gigId: "gig-47",
     totalAmount: 390,
@@ -4534,25 +4414,23 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-16",
       name: "David Herzog",
       email: "david.herzog@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/maya-patel.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-edge-slow-response",
-      name: "Torsten Lindemann",
-      title: "API & Developer Documentation Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.95,
-      level: "LEVEL_2",
+      id: "usr-28",
+      name: "Catalina Koelpin",
+      title: "API Documentation Specialist",
+      avatar: "/images/avatars/sarah-jenkins.jpg",
+      rating: 4.99,
+      level: "TOP_RATED",
     },
     requirements:
       "Execute Production Monorepo requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8046-1",
-        title: "Phase 1: API & Developer Documentation Milestone Deliverables",
+        title: "Phase 1: API Documentation Milestone Deliverables",
         amount: 195,
         status: "completed",
         dueDate: "2026-03-19",
@@ -4560,7 +4438,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8046-2",
-        title: "Phase 2: API & Developer Documentation Milestone Deliverables",
+        title: "Phase 2: API Documentation Milestone Deliverables",
         amount: 195,
         status: "completed",
         dueDate: "2026-03-19",
@@ -4597,7 +4475,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8047",
     title: "Security & SOC2 Compliance Policy Documentation for Enterprise Audits",
-    category: "Technical Writing",
+    category: "Writing & Translation",
     tier: "STANDARD",
     gigId: "gig-48",
     totalAmount: 630,
@@ -4609,16 +4487,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-19",
       name: "Sherwood Barrows",
       email: "sherwood.barrows@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mateo-rossi.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-edge-suspended",
-      name: "Sergei Romanov",
-      title: "Fintech & Web3 Whitepapers Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-38",
+      name: "Eleonore Marks",
+      title: "Technical Writing Specialist",
+      avatar: "/images/avatars/leila-haddad.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -4627,7 +4503,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8047-1",
-        title: "Phase 1: Fintech & Web3 Whitepapers Milestone Deliverables",
+        title: "Phase 1: Technical Writing Milestone Deliverables",
         amount: 210,
         status: "completed",
         dueDate: "2026-02-27",
@@ -4635,7 +4511,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8047-2",
-        title: "Phase 2: Fintech & Web3 Whitepapers Milestone Deliverables",
+        title: "Phase 2: Technical Writing Milestone Deliverables",
         amount: 210,
         status: "completed",
         dueDate: "2026-02-27",
@@ -4643,7 +4519,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8047-3",
-        title: "Phase 3: Fintech & Web3 Whitepapers Milestone Deliverables",
+        title: "Phase 3: Technical Writing Milestone Deliverables",
         amount: 210,
         status: "completed",
         dueDate: "2026-02-27",
@@ -4680,7 +4556,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8048",
     title: "Database Disaster Recovery & Runbook Incident Response Guidelines",
-    category: "Technical Writing",
+    category: "Writing & Translation",
     tier: "STANDARD",
     gigId: "gig-49",
     totalAmount: 470,
@@ -4692,16 +4568,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-1",
       name: "Marcus Thorne",
       email: "marcus.thorne@fintechcorp.io",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       company: "Fintech Corp Ltd",
     },
     freelancer: {
-      id: "usr-11",
-      name: "Gregory Bayer",
-      title: "System Architecture Specs Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-18",
+      name: "Minh Nguyen",
+      title: "System Architecture Specialist",
+      avatar: "/images/avatars/mai-tran.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -4710,7 +4584,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8048-1",
-        title: "Phase 1: System Architecture Specs Milestone Deliverables",
+        title: "Phase 1: System Architecture Milestone Deliverables",
         amount: 235,
         status: "completed",
         dueDate: "2026-01-28",
@@ -4718,7 +4592,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8048-2",
-        title: "Phase 2: System Architecture Specs Milestone Deliverables",
+        title: "Phase 2: System Architecture Milestone Deliverables",
         amount: 235,
         status: "completed",
         dueDate: "2026-01-28",
@@ -4755,7 +4629,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8049",
     title: "High-End 2D Motion Graphics & Kinetic Typography Explainer Video",
-    category: "UI/UX & Product Design",
+    category: "Graphics & Design",
     tier: "PREMIUM",
     gigId: "gig-50",
     totalAmount: 960,
@@ -4767,16 +4641,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-4",
       name: "Rachel Adams",
       email: "rachel.adams@horizonhealth.ca",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/rachel-adams.jpg",
       company: "Horizon Health Technologies",
     },
     freelancer: {
-      id: "usr-12",
-      name: "Priscilla Mertz",
-      title: "Video & 3D Animation Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-32",
+      name: "Ibrahim Fritsch",
+      title: "3D & Motion Specialist",
+      avatar: "/images/avatars/valerie-mercier.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -4785,7 +4657,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8049-1",
-        title: "Phase 1: Video & 3D Animation Milestone Deliverables",
+        title: "Phase 1: 3D & Motion Milestone Deliverables",
         amount: 320,
         status: "completed",
         dueDate: "2026-03-15",
@@ -4793,7 +4665,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8049-2",
-        title: "Phase 2: Video & 3D Animation Milestone Deliverables",
+        title: "Phase 2: 3D & Motion Milestone Deliverables",
         amount: 320,
         status: "completed",
         dueDate: "2026-03-15",
@@ -4801,7 +4673,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8049-3",
-        title: "Phase 3: Video & 3D Animation Milestone Deliverables",
+        title: "Phase 3: 3D & Motion Milestone Deliverables",
         amount: 320,
         status: "completed",
         dueDate: "2026-03-15",
@@ -4838,7 +4710,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8050",
     title: "App Store & SaaS Promo Video with UI Screencasts & Sound Design",
-    category: "UI/UX & Product Design",
+    category: "Graphics & Design",
     tier: "BASIC",
     gigId: "gig-51",
     totalAmount: 240,
@@ -4850,25 +4722,23 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-12",
       name: "Priscilla Mertz",
       email: "priscilla.mertz@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/aiko-tanaka.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-13",
-      name: "River Johns",
-      title: "Video & 3D Animation Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.95,
-      level: "LEVEL_2",
+      id: "f-2",
+      name: "Helena Rostova",
+      title: "3D & Motion Specialist",
+      avatar: "/images/avatars/helena-rostova.jpg",
+      rating: 4.99,
+      level: "TOP_RATED",
     },
     requirements:
       "Execute Starter Deliverable requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8050-1",
-        title: "Phase 1: Video & 3D Animation Milestone Deliverables",
+        title: "Phase 1: 3D & Motion Milestone Deliverables",
         amount: 120,
         status: "completed",
         dueDate: "2026-02-10",
@@ -4876,7 +4746,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8050-2",
-        title: "Phase 2: Video & 3D Animation Milestone Deliverables",
+        title: "Phase 2: 3D & Motion Milestone Deliverables",
         amount: 120,
         status: "in_review",
         dueDate: "2026-02-10",
@@ -4912,7 +4782,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8051",
     title: "Custom Lottie Animations for Web & Mobile App Micro-Interactions",
-    category: "UI/UX & Product Design",
+    category: "Graphics & Design",
     tier: "STANDARD",
     gigId: "gig-52",
     totalAmount: 280,
@@ -4924,16 +4794,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-15",
       name: "Robin Christiansen",
       email: "robin.christiansen@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/lukas-weber.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
       id: "usr-14",
       name: "Sandra Zieme-Luettgen",
-      title: "Video & 3D Animation Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      title: "3D & Motion Specialist",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -4942,7 +4810,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8051-1",
-        title: "Phase 1: Video & 3D Animation Milestone Deliverables",
+        title: "Phase 1: 3D & Motion Milestone Deliverables",
         amount: 140,
         status: "completed",
         dueDate: "2026-01-17",
@@ -4950,7 +4818,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8051-2",
-        title: "Phase 2: Video & 3D Animation Milestone Deliverables",
+        title: "Phase 2: 3D & Motion Milestone Deliverables",
         amount: 140,
         status: "completed",
         dueDate: "2026-01-17",
@@ -4987,7 +4855,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8052",
     title: "Blender 3D Isometric SaaS Scene & Architectural Tech Isometric Render",
-    category: "UI/UX & Product Design",
+    category: "Graphics & Design",
     tier: "STANDARD",
     gigId: "gig-53",
     totalAmount: 550,
@@ -4999,25 +4867,23 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-18",
       name: "Minh Nguyen",
       email: "minh.nguyen@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mai-tran.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-15",
-      name: "Robin Christiansen",
-      title: "Video & 3D Animation Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.99,
-      level: "TOP_RATED",
+      id: "usr-17",
+      name: "Katrina Stehr",
+      title: "3D & Motion Specialist",
+      avatar: "/images/avatars/arthur-pendelton.jpg",
+      rating: 4.95,
+      level: "LEVEL_2",
     },
     requirements:
       "Execute Production Monorepo requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8052-1",
-        title: "Phase 1: Video & 3D Animation Milestone Deliverables",
+        title: "Phase 1: 3D & Motion Milestone Deliverables",
         amount: 275,
         status: "completed",
         dueDate: "2026-03-24",
@@ -5025,7 +4891,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8052-2",
-        title: "Phase 2: Video & 3D Animation Milestone Deliverables",
+        title: "Phase 2: 3D & Motion Milestone Deliverables",
         amount: 275,
         status: "completed",
         dueDate: "2026-03-24",
@@ -5062,7 +4928,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8053",
     title: "Cinematic Product Reveal Trailer with Dynamic Particle Physics & CGI",
-    category: "UI/UX & Product Design",
+    category: "Graphics & Design",
     tier: "STANDARD",
     gigId: "gig-54",
     totalAmount: 790,
@@ -5074,16 +4940,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "f-1",
       name: "Alexandre Moreau",
       email: "alexandre.moreau@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-16",
-      name: "David Herzog",
-      title: "Video & 3D Animation Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-22",
+      name: "Gerard Wiegand",
+      title: "3D & Motion Specialist",
+      avatar: "/images/avatars/sunita-rao.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -5092,7 +4956,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8053-1",
-        title: "Phase 1: Video & 3D Animation Milestone Deliverables",
+        title: "Phase 1: 3D & Motion Milestone Deliverables",
         amount: 263,
         status: "completed",
         dueDate: "2026-02-28",
@@ -5100,7 +4964,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8053-2",
-        title: "Phase 2: Video & 3D Animation Milestone Deliverables",
+        title: "Phase 2: 3D & Motion Milestone Deliverables",
         amount: 263,
         status: "completed",
         dueDate: "2026-02-28",
@@ -5108,7 +4972,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8053-3",
-        title: "Phase 3: Video & 3D Animation Milestone Deliverables",
+        title: "Phase 3: 3D & Motion Milestone Deliverables",
         amount: 264,
         status: "completed",
         dueDate: "2026-02-28",
@@ -5145,7 +5009,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8054",
     title: "Mobile App Store Optimization (ASO) & Fastlane Automated Release Pipeline",
-    category: "Web Development",
+    category: "Programming & Tech",
     tier: "PREMIUM",
     gigId: "gig-55",
     totalAmount: 650,
@@ -5157,16 +5021,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-3",
       name: "Emily Zhang",
       email: "emily.zhang@nexusventures.sg",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       company: "Nexus AI Ventures",
     },
     freelancer: {
-      id: "usr-17",
-      name: "Katrina Stehr",
-      title: "Mobile App Development Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-14",
+      name: "Sandra Zieme-Luettgen",
+      title: "Mobile Development Specialist",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -5175,7 +5037,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8054-1",
-        title: "Phase 1: Mobile App Development Milestone Deliverables",
+        title: "Phase 1: Mobile Development Milestone Deliverables",
         amount: 217,
         status: "completed",
         dueDate: "2026-01-09",
@@ -5183,7 +5045,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8054-2",
-        title: "Phase 2: Mobile App Development Milestone Deliverables",
+        title: "Phase 2: Mobile Development Milestone Deliverables",
         amount: 217,
         status: "completed",
         dueDate: "2026-01-09",
@@ -5191,7 +5053,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8054-3",
-        title: "Phase 3: Mobile App Development Milestone Deliverables",
+        title: "Phase 3: Mobile Development Milestone Deliverables",
         amount: 216,
         status: "completed",
         dueDate: "2026-01-09",
@@ -5228,7 +5090,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8055",
     title: "Real-Time Chat & Geolocation Tracking Mobile App in React Native",
-    category: "Web Development",
+    category: "Programming & Tech",
     tier: "BASIC",
     gigId: "gig-56",
     totalAmount: 340,
@@ -5240,16 +5102,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-11",
       name: "Gregory Bayer",
       email: "gregory.bayer@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/minh-nguyen.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-18",
-      name: "Minh Nguyen",
-      title: "Mobile App Development Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-24",
+      name: "Luz Champlin",
+      title: "Mobile Development Specialist",
+      avatar: "/images/avatars/beatrice-dupont.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -5258,7 +5118,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8055-1",
-        title: "Phase 1: Mobile App Development Milestone Deliverables",
+        title: "Phase 1: Mobile Development Milestone Deliverables",
         amount: 170,
         status: "completed",
         dueDate: "2026-03-09",
@@ -5266,7 +5126,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8055-2",
-        title: "Phase 2: Mobile App Development Milestone Deliverables",
+        title: "Phase 2: Mobile Development Milestone Deliverables",
         amount: 170,
         status: "in_progress",
         dueDate: "2026-03-09",
@@ -5278,7 +5138,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8056",
     title: "Audio Streaming & Podcast Mobile Application with Background Playback",
-    category: "Web Development",
+    category: "Programming & Tech",
     tier: "STANDARD",
     gigId: "gig-57",
     totalAmount: 600,
@@ -5290,16 +5150,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-14",
       name: "Sandra Zieme-Luettgen",
       email: "sandra.zieme-luettgen@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-19",
-      name: "Sherwood Barrows",
-      title: "Mobile App Development Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-34",
+      name: "Hoang Le",
+      title: "Mobile Development Specialist",
+      avatar: "/images/avatars/anh-pham.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -5308,7 +5166,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8056-1",
-        title: "Phase 1: Mobile App Development Milestone Deliverables",
+        title: "Phase 1: Mobile Development Milestone Deliverables",
         amount: 200,
         status: "completed",
         dueDate: "2026-02-17",
@@ -5316,7 +5174,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8056-2",
-        title: "Phase 2: Mobile App Development Milestone Deliverables",
+        title: "Phase 2: Mobile Development Milestone Deliverables",
         amount: 200,
         status: "completed",
         dueDate: "2026-02-17",
@@ -5324,7 +5182,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8056-3",
-        title: "Phase 3: Mobile App Development Milestone Deliverables",
+        title: "Phase 3: Mobile Development Milestone Deliverables",
         amount: 200,
         status: "completed",
         dueDate: "2026-02-17",
@@ -5361,7 +5219,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8057",
     title: "Secure FinTech Mobile Wallet UI with Biometric Vault & Push Notification Rails",
-    category: "Web Development",
+    category: "Programming & Tech",
     tier: "STANDARD",
     gigId: "gig-58",
     totalAmount: 710,
@@ -5373,16 +5231,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-17",
       name: "Katrina Stehr",
       email: "katrina.stehr@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/arthur-pendelton.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-20",
-      name: "Mitchell Ankunding",
-      title: "Mobile App Development Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-14",
+      name: "Sandra Zieme-Luettgen",
+      title: "Mobile Development Specialist",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -5391,7 +5247,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8057-1",
-        title: "Phase 1: Mobile App Development Milestone Deliverables",
+        title: "Phase 1: Mobile Development Milestone Deliverables",
         amount: 237,
         status: "completed",
         dueDate: "2026-01-23",
@@ -5399,7 +5255,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8057-2",
-        title: "Phase 2: Mobile App Development Milestone Deliverables",
+        title: "Phase 2: Mobile Development Milestone Deliverables",
         amount: 237,
         status: "completed",
         dueDate: "2026-01-23",
@@ -5407,7 +5263,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8057-3",
-        title: "Phase 3: Mobile App Development Milestone Deliverables",
+        title: "Phase 3: Mobile Development Milestone Deliverables",
         amount: 236,
         status: "completed",
         dueDate: "2026-01-23",
@@ -5444,7 +5300,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8058",
     title: "Headless Shopify Next.js Storefront with Algolia InstantSearch",
-    category: "Web Development",
+    category: "Programming & Tech",
     tier: "STANDARD",
     gigId: "gig-59",
     totalAmount: 580,
@@ -5456,16 +5312,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-20",
       name: "Mitchell Ankunding",
       email: "mitchell.ankunding@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/fatima-almansoor.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-21",
-      name: "Hattie Heidenreich",
-      title: "Next.js & React 19 Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-15",
+      name: "Robin Christiansen",
+      title: "Web Development Specialist",
+      avatar: "/images/avatars/lukas-weber.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -5474,7 +5328,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8058-1",
-        title: "Phase 1: Next.js & React 19 Milestone Deliverables",
+        title: "Phase 1: Web Development Milestone Deliverables",
         amount: 290,
         status: "completed",
         dueDate: "2026-03-27",
@@ -5482,7 +5336,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8058-2",
-        title: "Phase 2: Next.js & React 19 Milestone Deliverables",
+        title: "Phase 2: Web Development Milestone Deliverables",
         amount: 290,
         status: "completed",
         dueDate: "2026-03-27",
@@ -5519,7 +5373,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8059",
     title: "Multi-Tenant B2B SaaS Auth Engine with RBAC & Organization Invitations",
-    category: "Web Development",
+    category: "Programming & Tech",
     tier: "PREMIUM",
     gigId: "gig-60",
     totalAmount: 950,
@@ -5531,16 +5385,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-2",
       name: "David Sterling",
       email: "david.sterling@apexcap.com",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       company: "Apex Capital Ventures",
     },
     freelancer: {
-      id: "usr-22",
-      name: "Gerard Wiegand",
-      title: "Full-Stack Node.js Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-23",
+      name: "Jules Wuckert",
+      title: "Backend Development Specialist",
+      avatar: "/images/avatars/jonas-vestergaard.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -5549,7 +5401,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8059-1",
-        title: "Phase 1: Full-Stack Node.js Milestone Deliverables",
+        title: "Phase 1: Backend Development Milestone Deliverables",
         amount: 317,
         status: "completed",
         dueDate: "2026-02-28",
@@ -5557,7 +5409,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8059-2",
-        title: "Phase 2: Full-Stack Node.js Milestone Deliverables",
+        title: "Phase 2: Backend Development Milestone Deliverables",
         amount: 317,
         status: "completed",
         dueDate: "2026-02-28",
@@ -5565,7 +5417,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8059-3",
-        title: "Phase 3: Full-Stack Node.js Milestone Deliverables",
+        title: "Phase 3: Backend Development Milestone Deliverables",
         amount: 316,
         status: "completed",
         dueDate: "2026-02-28",
@@ -5602,7 +5454,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8060",
     title: "Interactive Storybook UI Component Documentation with Automated Visual Regression",
-    category: "UI/UX & Product Design",
+    category: "Graphics & Design",
     tier: "BASIC",
     gigId: "gig-61",
     totalAmount: 230,
@@ -5614,16 +5466,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-5",
       name: "Liam O'Connor",
       email: "liam.oconnor@novadynamics.ie",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/liam-oconnor.jpg",
       company: "Nova Dynamics AI",
     },
     freelancer: {
-      id: "usr-23",
-      name: "Jules Wuckert",
-      title: "Design Systems & Figma Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "f-2",
+      name: "Helena Rostova",
+      title: "Design Systems Specialist",
+      avatar: "/images/avatars/helena-rostova.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -5632,7 +5482,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8060-1",
-        title: "Phase 1: Design Systems & Figma Milestone Deliverables",
+        title: "Phase 1: Design Systems Milestone Deliverables",
         amount: 115,
         status: "completed",
         dueDate: "Cancelled",
@@ -5640,7 +5490,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8060-2",
-        title: "Phase 2: Design Systems & Figma Milestone Deliverables",
+        title: "Phase 2: Design Systems Milestone Deliverables",
         amount: 115,
         status: "pending",
         dueDate: "Cancelled",
@@ -5664,16 +5514,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-13",
       name: "River Johns",
       email: "river.johns@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/kwame-mensah.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-24",
-      name: "Luz Champlin",
-      title: "LLM Fine-Tuning & RAG Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-13",
+      name: "River Johns",
+      title: "AI & Machine Learning Specialist",
+      avatar: "/images/avatars/kwame-mensah.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -5682,7 +5530,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8061-1",
-        title: "Phase 1: LLM Fine-Tuning & RAG Milestone Deliverables",
+        title: "Phase 1: AI & Machine Learning Milestone Deliverables",
         amount: 230,
         status: "completed",
         dueDate: "2026-03-16",
@@ -5690,7 +5538,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8061-2",
-        title: "Phase 2: LLM Fine-Tuning & RAG Milestone Deliverables",
+        title: "Phase 2: AI & Machine Learning Milestone Deliverables",
         amount: 230,
         status: "completed",
         dueDate: "2026-03-16",
@@ -5698,7 +5546,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8061-3",
-        title: "Phase 3: LLM Fine-Tuning & RAG Milestone Deliverables",
+        title: "Phase 3: AI & Machine Learning Milestone Deliverables",
         amount: 230,
         status: "completed",
         dueDate: "2026-03-16",
@@ -5735,7 +5583,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   {
     id: "ORD-8062",
     title: "Developer Onboarding Runbooks & Architecture ADR Documentation Template",
-    category: "Technical Writing",
+    category: "Writing & Translation",
     tier: "STANDARD",
     gigId: "gig-63",
     totalAmount: 320,
@@ -5747,16 +5595,14 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-16",
       name: "David Herzog",
       email: "david.herzog@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/maya-patel.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-25",
-      name: "Brandi Hegmann",
-      title: "Fintech & Web3 Whitepapers Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "usr-38",
+      name: "Eleonore Marks",
+      title: "Technical Writing Specialist",
+      avatar: "/images/avatars/leila-haddad.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
@@ -5765,7 +5611,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8062-1",
-        title: "Phase 1: Fintech & Web3 Whitepapers Milestone Deliverables",
+        title: "Phase 1: Technical Writing Milestone Deliverables",
         amount: 160,
         status: "completed",
         dueDate: "2026-02-18",
@@ -5773,7 +5619,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       },
       {
         id: "m-ORD-8062-2",
-        title: "Phase 2: Fintech & Web3 Whitepapers Milestone Deliverables",
+        title: "Phase 2: Technical Writing Milestone Deliverables",
         amount: 160,
         status: "completed",
         dueDate: "2026-02-18",
@@ -5809,58 +5655,64 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   },
   {
     id: "ORD-8063",
-    title: "Targeted Rapid Security Code Audit & Dependency CVE Scan",
-    category: "Web Development",
+    title: "Enterprise Corporate Strategy & Executive Advisory",
+    category: "Business & Consulting",
     tier: "STANDARD",
-    gigId: "gig-edge-single-tier",
-    totalAmount: 350,
+    gigId: "gig-64",
+    totalAmount: 650,
     status: "completed",
     createdAt: "2026-01-19",
-    deliveryDate: "2026-01-21",
+    deliveryDate: "2026-01-26",
     role: "CLIENT",
     client: {
       id: "usr-19",
       name: "Sherwood Barrows",
       email: "sherwood.barrows@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mateo-rossi.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "f-1",
-      name: "Alexandre Moreau",
-      title: "Cloud & DevOps Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-      rating: 4.99,
-      level: "TOP_RATED",
+      id: "usr-11",
+      name: "Gregory Bayer",
+      title: "Corporate Strategy Specialist",
+      avatar: "/images/avatars/minh-nguyen.jpg",
+      rating: 4.95,
+      level: "LEVEL_2",
     },
     requirements:
-      "Execute Single Rapid CVE Audit Package requirements with clean production code, modular architecture, and documentation.",
+      "Execute Production Monorepo requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8063-1",
-        title: "Phase 1: Cloud & DevOps Milestone Deliverables",
-        amount: 175,
+        title: "Phase 1: Corporate Strategy Milestone Deliverables",
+        amount: 217,
         status: "completed",
-        dueDate: "2026-01-21",
+        dueDate: "2026-01-26",
         approvedAt: "2026-01-19T18:00:00Z",
       },
       {
         id: "m-ORD-8063-2",
-        title: "Phase 2: Cloud & DevOps Milestone Deliverables",
-        amount: 175,
+        title: "Phase 2: Corporate Strategy Milestone Deliverables",
+        amount: 217,
         status: "completed",
-        dueDate: "2026-01-21",
+        dueDate: "2026-01-26",
+        approvedAt: "2026-01-19T18:00:00Z",
+      },
+      {
+        id: "m-ORD-8063-3",
+        title: "Phase 3: Corporate Strategy Milestone Deliverables",
+        amount: 216,
+        status: "completed",
+        dueDate: "2026-01-26",
         approvedAt: "2026-01-19T18:00:00Z",
       },
     ],
     deliveries: [
       {
         id: "del-ORD-8063-1",
-        milestoneId: "m-ORD-8063-2",
+        milestoneId: "m-ORD-8063-3",
         note: "All source code, Docker configs, and automated test suites pushed and verified. Zero CVE vulnerabilities detected.",
-        submittedAt: "2026-01-21",
+        submittedAt: "2026-01-26",
         files: [
           {
             name: "production-release.zip",
@@ -5884,12 +5736,11 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   },
   {
     id: "ORD-8064",
-    title:
-      "Enterprise Heterogeneous Multi-Cloud High-Throughput Zero-Downtime Microservices Architecture with Formal Cryptographic Verification, Kubernetes Orchestration, and Distributed Transaction Observability",
-    category: "Web Development",
+    title: "Startup Financial Valuation Model & Investor Pitch Deck",
+    category: "Business & Consulting",
     tier: "PREMIUM",
-    gigId: "gig-edge-overflow-title",
-    totalAmount: 850,
+    gigId: "gig-65",
+    totalAmount: 950,
     status: "completed",
     createdAt: "2026-03-24",
     deliveryDate: "2026-03-28",
@@ -5898,42 +5749,40 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-1",
       name: "Marcus Thorne",
       email: "marcus.thorne@fintechcorp.io",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       company: "Fintech Corp Ltd",
     },
     freelancer: {
-      id: "usr-edge-overflow",
-      name: "Dr. Bartholomew Alexander Montgomery-Fitzgerald III",
-      title: "Full-Stack Node.js Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.99,
-      level: "TOP_RATED",
+      id: "usr-12",
+      name: "Priscilla Mertz",
+      title: "Financial Modeling Specialist",
+      avatar: "/images/avatars/aiko-tanaka.jpg",
+      rating: 4.95,
+      level: "LEVEL_2",
     },
     requirements:
-      "Execute Premium Architecture requirements with clean production code, modular architecture, and documentation.",
+      "Execute Enterprise Architecture requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8064-1",
-        title: "Phase 1: Full-Stack Node.js Milestone Deliverables",
-        amount: 283,
+        title: "Phase 1: Financial Modeling Milestone Deliverables",
+        amount: 317,
         status: "completed",
         dueDate: "2026-03-28",
         approvedAt: "2026-03-24T18:00:00Z",
       },
       {
         id: "m-ORD-8064-2",
-        title: "Phase 2: Full-Stack Node.js Milestone Deliverables",
-        amount: 283,
+        title: "Phase 2: Financial Modeling Milestone Deliverables",
+        amount: 317,
         status: "completed",
         dueDate: "2026-03-28",
         approvedAt: "2026-03-24T18:00:00Z",
       },
       {
         id: "m-ORD-8064-3",
-        title: "Phase 3: Full-Stack Node.js Milestone Deliverables",
-        amount: 284,
+        title: "Phase 3: Financial Modeling Milestone Deliverables",
+        amount: 316,
         status: "completed",
         dueDate: "2026-03-28",
         approvedAt: "2026-03-24T18:00:00Z",
@@ -5968,49 +5817,47 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   },
   {
     id: "ORD-8065",
-    title: "Accessible Tailwind CSS & React 19 UI Component Library",
-    category: "Web Development",
+    title: "Web3 Tokenomics, DAO Governance & Crypto Venture Advisory",
+    category: "Business & Consulting",
     tier: "BASIC",
-    gigId: "gig-edge-zero-orders",
-    totalAmount: 220,
+    gigId: "gig-66",
+    totalAmount: 420,
     status: "active",
     createdAt: "2026-02-02",
-    deliveryDate: "2026-02-05",
+    deliveryDate: "2026-02-06",
     role: "BOTH",
     client: {
       id: "usr-client-4",
       name: "Rachel Adams",
       email: "rachel.adams@horizonhealth.ca",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/rachel-adams.jpg",
       company: "Horizon Health Technologies",
     },
     freelancer: {
-      id: "usr-edge-brandnew",
-      name: "Oliver Bennett",
-      title: "Next.js & React 19 Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.95,
-      level: "LEVEL_2",
+      id: "usr-36",
+      name: "Belle Parisian",
+      title: "Corporate Strategy Specialist",
+      avatar: "/images/avatars/dmitri-volkov.jpg",
+      rating: 4.99,
+      level: "TOP_RATED",
     },
     requirements:
-      "Execute Starter Package requirements with clean production code, modular architecture, and documentation.",
+      "Execute Starter Deliverable requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8065-1",
-        title: "Phase 1: Next.js & React 19 Milestone Deliverables",
-        amount: 110,
+        title: "Phase 1: Corporate Strategy Milestone Deliverables",
+        amount: 210,
         status: "completed",
-        dueDate: "2026-02-05",
+        dueDate: "2026-02-06",
         approvedAt: "2026-02-02T18:00:00Z",
       },
       {
         id: "m-ORD-8065-2",
-        title: "Phase 2: Next.js & React 19 Milestone Deliverables",
-        amount: 110,
+        title: "Phase 2: Corporate Strategy Milestone Deliverables",
+        amount: 210,
         status: "in_progress",
-        dueDate: "2026-02-05",
+        dueDate: "2026-02-06",
       },
     ],
     deliveries: [],
@@ -6018,72 +5865,78 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   },
   {
     id: "ORD-8066",
-    title: "Draft Experimental Quantum Computing Simulator with Qiskit & Python",
-    category: "AI & Automation",
+    title: "Fractional CTO & Digital Architecture Transformation Advisory",
+    category: "Business & Consulting",
     tier: "STANDARD",
-    gigId: "gig-edge-draft",
-    totalAmount: 450,
+    gigId: "gig-67",
+    totalAmount: 850,
     status: "completed",
     createdAt: "2026-01-07",
-    deliveryDate: "2026-01-12",
+    deliveryDate: "2026-01-16",
     role: "CLIENT",
     client: {
       id: "usr-12",
       name: "Priscilla Mertz",
       email: "priscilla.mertz@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/aiko-tanaka.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "f-3",
-      name: "Marcus Vance",
-      title: "Autonomous AI Agents Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+      id: "usr-23",
+      name: "Jules Wuckert",
+      title: "Corporate Strategy Specialist",
+      avatar: "/images/avatars/jonas-vestergaard.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
     requirements:
-      "Execute Standard Package requirements with clean production code, modular architecture, and documentation.",
+      "Execute Production Monorepo requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8066-1",
-        title: "Phase 1: Autonomous AI Agents Milestone Deliverables",
-        amount: 225,
+        title: "Phase 1: Corporate Strategy Milestone Deliverables",
+        amount: 283,
         status: "completed",
-        dueDate: "2026-01-12",
+        dueDate: "2026-01-16",
         approvedAt: "2026-01-07T18:00:00Z",
       },
       {
         id: "m-ORD-8066-2",
-        title: "Phase 2: Autonomous AI Agents Milestone Deliverables",
-        amount: 225,
+        title: "Phase 2: Corporate Strategy Milestone Deliverables",
+        amount: 283,
         status: "completed",
-        dueDate: "2026-01-12",
+        dueDate: "2026-01-16",
+        approvedAt: "2026-01-07T18:00:00Z",
+      },
+      {
+        id: "m-ORD-8066-3",
+        title: "Phase 3: Corporate Strategy Milestone Deliverables",
+        amount: 284,
+        status: "completed",
+        dueDate: "2026-01-16",
         approvedAt: "2026-01-07T18:00:00Z",
       },
     ],
     deliveries: [
       {
         id: "del-ORD-8066-1",
-        milestoneId: "m-ORD-8066-2",
-        note: "RAG pipeline implemented with hybrid retrieval (BM25 + Cohere Re-ranker), evaluation dataset, and low latency benchmarks.",
-        submittedAt: "2026-01-12",
+        milestoneId: "m-ORD-8066-3",
+        note: "All source code, Docker configs, and automated test suites pushed and verified. Zero CVE vulnerabilities detected.",
+        submittedAt: "2026-01-16",
         files: [
           {
-            name: "rag-eval-report.pdf",
-            size: "4.8 MB",
-            type: "pdf",
-          },
-          {
-            name: "vector-pipeline.zip",
-            size: "8.9 MB",
+            name: "production-release.zip",
+            size: "14.2 MB",
             type: "zip",
           },
           {
-            name: "api-contract.pdf",
-            size: "1.5 MB",
+            name: "architecture-blueprint.pdf",
+            size: "3.4 MB",
+            type: "pdf",
+          },
+          {
+            name: "e2e-test-results.pdf",
+            size: "1.1 MB",
             type: "pdf",
           },
         ],
@@ -6093,49 +5946,47 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   },
   {
     id: "ORD-8067",
-    title: "Full-Stack Enterprise Cloud SaaS Suite with Maximum Add-on Options",
-    category: "Web Development",
+    title: "Market Research, Competitive Intelligence & TAM Sizing Report",
+    category: "Business & Consulting",
     tier: "STANDARD",
-    gigId: "gig-edge-max-addons",
-    totalAmount: 450,
+    gigId: "gig-68",
+    totalAmount: 410,
     status: "completed",
     createdAt: "2026-03-12",
-    deliveryDate: "2026-03-17",
+    deliveryDate: "2026-03-16",
     role: "FREELANCER",
     client: {
       id: "usr-15",
       name: "Robin Christiansen",
       email: "robin.christiansen@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/lukas-weber.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "f-1",
-      name: "Alexandre Moreau",
-      title: "Next.js & React 19 Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-      rating: 4.99,
-      level: "TOP_RATED",
+      id: "usr-24",
+      name: "Luz Champlin",
+      title: "Corporate Strategy Specialist",
+      avatar: "/images/avatars/beatrice-dupont.jpg",
+      rating: 4.95,
+      level: "LEVEL_2",
     },
     requirements:
-      "Execute Standard Package requirements with clean production code, modular architecture, and documentation.",
+      "Execute Production Monorepo requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8067-1",
-        title: "Phase 1: Next.js & React 19 Milestone Deliverables",
-        amount: 225,
+        title: "Phase 1: Corporate Strategy Milestone Deliverables",
+        amount: 205,
         status: "completed",
-        dueDate: "2026-03-17",
+        dueDate: "2026-03-16",
         approvedAt: "2026-03-12T18:00:00Z",
       },
       {
         id: "m-ORD-8067-2",
-        title: "Phase 2: Next.js & React 19 Milestone Deliverables",
-        amount: 225,
+        title: "Phase 2: Corporate Strategy Milestone Deliverables",
+        amount: 205,
         status: "completed",
-        dueDate: "2026-03-17",
+        dueDate: "2026-03-16",
         approvedAt: "2026-03-12T18:00:00Z",
       },
     ],
@@ -6144,7 +5995,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
         id: "del-ORD-8067-1",
         milestoneId: "m-ORD-8067-2",
         note: "All source code, Docker configs, and automated test suites pushed and verified. Zero CVE vulnerabilities detected.",
-        submittedAt: "2026-03-17",
+        submittedAt: "2026-03-16",
         files: [
           {
             name: "production-release.zip",
@@ -6168,49 +6019,47 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   },
   {
     id: "ORD-8068",
-    title: "Full-Stack Next.js 15 & Node.js Production Architecture with Clean Code",
-    category: "Web Development",
+    title: "Targeted Rapid Security Code Audit & Dependency CVE Scan",
+    category: "Programming & Tech",
     tier: "STANDARD",
-    gigId: "gig-1",
-    totalAmount: 450,
+    gigId: "gig-edge-single-tier",
+    totalAmount: 350,
     status: "completed",
     createdAt: "2026-02-17",
-    deliveryDate: "2026-02-22",
+    deliveryDate: "2026-02-19",
     role: "BOTH",
     client: {
       id: "usr-18",
       name: "Minh Nguyen",
       email: "minh.nguyen@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/mai-tran.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
       id: "f-1",
       name: "Alexandre Moreau",
-      title: "Next.js & React 19 Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      title: "Cybersecurity Specialist",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
     requirements:
-      "Execute Production Monorepo requirements with clean production code, modular architecture, and documentation.",
+      "Execute Single Rapid CVE Audit Package requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8068-1",
-        title: "Phase 1: Next.js & React 19 Milestone Deliverables",
-        amount: 225,
+        title: "Phase 1: Cybersecurity Milestone Deliverables",
+        amount: 175,
         status: "completed",
-        dueDate: "2026-02-22",
+        dueDate: "2026-02-19",
         approvedAt: "2026-02-17T18:00:00Z",
       },
       {
         id: "m-ORD-8068-2",
-        title: "Phase 2: Next.js & React 19 Milestone Deliverables",
-        amount: 225,
+        title: "Phase 2: Cybersecurity Milestone Deliverables",
+        amount: 175,
         status: "completed",
-        dueDate: "2026-02-22",
+        dueDate: "2026-02-19",
         approvedAt: "2026-02-17T18:00:00Z",
       },
     ],
@@ -6219,7 +6068,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
         id: "del-ORD-8068-1",
         milestoneId: "m-ORD-8068-2",
         note: "All source code, Docker configs, and automated test suites pushed and verified. Zero CVE vulnerabilities detected.",
-        submittedAt: "2026-02-22",
+        submittedAt: "2026-02-19",
         files: [
           {
             name: "production-release.zip",
@@ -6243,11 +6092,12 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   },
   {
     id: "ORD-8069",
-    title: "High-Converting SaaS Landing Page in Next.js & Framer Motion",
-    category: "Web Development",
+    title:
+      "Enterprise Heterogeneous Multi-Cloud High-Throughput Zero-Downtime Microservices Architecture with Formal Cryptographic Verification, Kubernetes Orchestration, and Distributed Transaction Observability",
+    category: "Programming & Tech",
     tier: "PREMIUM",
-    gigId: "gig-2",
-    totalAmount: 590,
+    gigId: "gig-edge-overflow-title",
+    totalAmount: 850,
     status: "completed",
     createdAt: "2026-01-22",
     deliveryDate: "2026-01-28",
@@ -6256,34 +6106,40 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "f-1",
       name: "Alexandre Moreau",
       email: "alexandre.moreau@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "f-3",
-      name: "Marcus Vance",
-      title: "Next.js & React 19 Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+      id: "usr-edge-overflow",
+      name: "Dr. Bartholomew Alexander Montgomery-Fitzgerald III",
+      title: "DevOps & Cloud Specialist",
+      avatar: "/images/avatars/bart-montgomery.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
     requirements:
-      "Execute Enterprise Architecture requirements with clean production code, modular architecture, and documentation.",
+      "Execute Premium Architecture requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8069-1",
-        title: "Phase 1: Next.js & React 19 Milestone Deliverables",
-        amount: 295,
+        title: "Phase 1: DevOps & Cloud Milestone Deliverables",
+        amount: 283,
         status: "completed",
         dueDate: "2026-01-28",
         approvedAt: "2026-01-22T18:00:00Z",
       },
       {
         id: "m-ORD-8069-2",
-        title: "Phase 2: Next.js & React 19 Milestone Deliverables",
-        amount: 295,
+        title: "Phase 2: DevOps & Cloud Milestone Deliverables",
+        amount: 283,
+        status: "completed",
+        dueDate: "2026-01-28",
+        approvedAt: "2026-01-22T18:00:00Z",
+      },
+      {
+        id: "m-ORD-8069-3",
+        title: "Phase 3: DevOps & Cloud Milestone Deliverables",
+        amount: 284,
         status: "completed",
         dueDate: "2026-01-28",
         approvedAt: "2026-01-22T18:00:00Z",
@@ -6292,7 +6148,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     deliveries: [
       {
         id: "del-ORD-8069-1",
-        milestoneId: "m-ORD-8069-2",
+        milestoneId: "m-ORD-8069-3",
         note: "All source code, Docker configs, and automated test suites pushed and verified. Zero CVE vulnerabilities detected.",
         submittedAt: "2026-01-28",
         files: [
@@ -6318,11 +6174,11 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   },
   {
     id: "ORD-8070",
-    title: "Scalable GraphQL & REST Microservices Backend in NestJS and Redis",
-    category: "Web Development",
+    title: "Accessible Tailwind CSS & React 19 UI Component Library",
+    category: "Programming & Tech",
     tier: "BASIC",
-    gigId: "gig-3",
-    totalAmount: 320,
+    gigId: "gig-edge-zero-orders",
+    totalAmount: 220,
     status: "delivered",
     createdAt: "2026-03-27",
     deliveryDate: "2026-03-28",
@@ -6331,34 +6187,32 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-3",
       name: "Emily Zhang",
       email: "emily.zhang@nexusventures.sg",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-emily.jpg",
       company: "Nexus AI Ventures",
     },
     freelancer: {
-      id: "f-4",
-      name: "Sophia Lindqvist",
-      title: "Full-Stack Node.js Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+      id: "usr-edge-brandnew",
+      name: "Oliver Bennett",
+      title: "Web Development Specialist",
+      avatar: "/images/avatars/oliver-bennett.jpg",
       rating: 4.95,
       level: "LEVEL_2",
     },
     requirements:
-      "Execute Starter Deliverable requirements with clean production code, modular architecture, and documentation.",
+      "Execute Starter Package requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8070-1",
-        title: "Phase 1: Full-Stack Node.js Milestone Deliverables",
-        amount: 160,
+        title: "Phase 1: Web Development Milestone Deliverables",
+        amount: 110,
         status: "completed",
         dueDate: "2026-03-28",
         approvedAt: "2026-03-27T18:00:00Z",
       },
       {
         id: "m-ORD-8070-2",
-        title: "Phase 2: Full-Stack Node.js Milestone Deliverables",
-        amount: 160,
+        title: "Phase 2: Web Development Milestone Deliverables",
+        amount: 110,
         status: "in_review",
         dueDate: "2026-03-28",
       },
@@ -6392,80 +6246,70 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   },
   {
     id: "ORD-8071",
-    title: "High-Performance Go (Golang) Microservice Engine with gRPC & RabbitMQ",
-    category: "Web Development",
+    title: "Draft Experimental Quantum Computing Simulator with Qiskit & Python",
+    category: "AI & Automation",
     tier: "STANDARD",
-    gigId: "gig-4",
-    totalAmount: 720,
+    gigId: "gig-edge-draft",
+    totalAmount: 450,
     status: "completed",
     createdAt: "2026-02-05",
-    deliveryDate: "2026-02-13",
+    deliveryDate: "2026-02-10",
     role: "BOTH",
     client: {
       id: "usr-11",
       name: "Gregory Bayer",
       email: "gregory.bayer@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/minh-nguyen.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-edge-overflow",
-      name: "Dr. Bartholomew Alexander Montgomery-Fitzgerald III",
-      title: "Full-Stack Node.js Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "f-3",
+      name: "Marcus Vance",
+      title: "AI & Machine Learning Specialist",
+      avatar: "/images/avatars/marcus-vance.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
     requirements:
-      "Execute Production Monorepo requirements with clean production code, modular architecture, and documentation.",
+      "Execute Standard Package requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8071-1",
-        title: "Phase 1: Full-Stack Node.js Milestone Deliverables",
-        amount: 240,
+        title: "Phase 1: AI & Machine Learning Milestone Deliverables",
+        amount: 225,
         status: "completed",
-        dueDate: "2026-02-13",
+        dueDate: "2026-02-10",
         approvedAt: "2026-02-05T18:00:00Z",
       },
       {
         id: "m-ORD-8071-2",
-        title: "Phase 2: Full-Stack Node.js Milestone Deliverables",
-        amount: 240,
+        title: "Phase 2: AI & Machine Learning Milestone Deliverables",
+        amount: 225,
         status: "completed",
-        dueDate: "2026-02-13",
-        approvedAt: "2026-02-05T18:00:00Z",
-      },
-      {
-        id: "m-ORD-8071-3",
-        title: "Phase 3: Full-Stack Node.js Milestone Deliverables",
-        amount: 240,
-        status: "completed",
-        dueDate: "2026-02-13",
+        dueDate: "2026-02-10",
         approvedAt: "2026-02-05T18:00:00Z",
       },
     ],
     deliveries: [
       {
         id: "del-ORD-8071-1",
-        milestoneId: "m-ORD-8071-3",
-        note: "All source code, Docker configs, and automated test suites pushed and verified. Zero CVE vulnerabilities detected.",
-        submittedAt: "2026-02-13",
+        milestoneId: "m-ORD-8071-2",
+        note: "RAG pipeline implemented with hybrid retrieval (BM25 + Cohere Re-ranker), evaluation dataset, and low latency benchmarks.",
+        submittedAt: "2026-02-10",
         files: [
           {
-            name: "production-release.zip",
-            size: "14.2 MB",
-            type: "zip",
-          },
-          {
-            name: "architecture-blueprint.pdf",
-            size: "3.4 MB",
+            name: "rag-eval-report.pdf",
+            size: "4.8 MB",
             type: "pdf",
           },
           {
-            name: "e2e-test-results.pdf",
-            size: "1.1 MB",
+            name: "vector-pipeline.zip",
+            size: "8.9 MB",
+            type: "zip",
+          },
+          {
+            name: "api-contract.pdf",
+            size: "1.5 MB",
             type: "pdf",
           },
         ],
@@ -6475,49 +6319,47 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   },
   {
     id: "ORD-8072",
-    title: "Zero-Downtime AWS ECS & Terraform Infrastructure as Code Setup",
-    category: "Web Development",
+    title: "Full-Stack Enterprise Cloud SaaS Suite with Maximum Add-on Options",
+    category: "Programming & Tech",
     tier: "STANDARD",
-    gigId: "gig-5",
-    totalAmount: 580,
+    gigId: "gig-edge-max-addons",
+    totalAmount: 450,
     status: "completed",
     createdAt: "2026-01-10",
-    deliveryDate: "2026-01-16",
+    deliveryDate: "2026-01-15",
     role: "CLIENT",
     client: {
       id: "usr-14",
       name: "Sandra Zieme-Luettgen",
       email: "sandra.zieme-luettgen@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/nadia-belkacem.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-edge-brandnew",
-      name: "Oliver Bennett",
-      title: "Cloud & DevOps Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.95,
-      level: "LEVEL_2",
+      id: "f-1",
+      name: "Alexandre Moreau",
+      title: "Web Development Specialist",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
+      rating: 4.99,
+      level: "TOP_RATED",
     },
     requirements:
-      "Execute Production Monorepo requirements with clean production code, modular architecture, and documentation.",
+      "Execute Standard Package requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8072-1",
-        title: "Phase 1: Cloud & DevOps Milestone Deliverables",
-        amount: 290,
+        title: "Phase 1: Web Development Milestone Deliverables",
+        amount: 225,
         status: "completed",
-        dueDate: "2026-01-16",
+        dueDate: "2026-01-15",
         approvedAt: "2026-01-10T18:00:00Z",
       },
       {
         id: "m-ORD-8072-2",
-        title: "Phase 2: Cloud & DevOps Milestone Deliverables",
-        amount: 290,
+        title: "Phase 2: Web Development Milestone Deliverables",
+        amount: 225,
         status: "completed",
-        dueDate: "2026-01-16",
+        dueDate: "2026-01-15",
         approvedAt: "2026-01-10T18:00:00Z",
       },
     ],
@@ -6526,7 +6368,7 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
         id: "del-ORD-8072-1",
         milestoneId: "m-ORD-8072-2",
         note: "All source code, Docker configs, and automated test suites pushed and verified. Zero CVE vulnerabilities detected.",
-        submittedAt: "2026-01-16",
+        submittedAt: "2026-01-15",
         files: [
           {
             name: "production-release.zip",
@@ -6550,29 +6392,27 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   },
   {
     id: "ORD-8073",
-    title: "Kubernetes Production Cluster Setup with ArgoCD GitOps Pipeline",
-    category: "Web Development",
+    title: "Full-Stack Next.js 15 & Node.js Production Architecture with Clean Code",
+    category: "Programming & Tech",
     tier: "STANDARD",
-    gigId: "gig-6",
-    totalAmount: 850,
+    gigId: "gig-1",
+    totalAmount: 450,
     status: "completed",
     createdAt: "2026-03-15",
-    deliveryDate: "2026-03-24",
+    deliveryDate: "2026-03-20",
     role: "FREELANCER",
     client: {
       id: "usr-17",
       name: "Katrina Stehr",
       email: "katrina.stehr@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/arthur-pendelton.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-edge-fast-response",
-      name: "Chloe Nguyen (Minh Chau)",
-      title: "Cloud & DevOps Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      id: "f-1",
+      name: "Alexandre Moreau",
+      title: "Web Development Specialist",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       rating: 4.99,
       level: "TOP_RATED",
     },
@@ -6581,35 +6421,27 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
     milestones: [
       {
         id: "m-ORD-8073-1",
-        title: "Phase 1: Cloud & DevOps Milestone Deliverables",
-        amount: 283,
+        title: "Phase 1: Web Development Milestone Deliverables",
+        amount: 225,
         status: "completed",
-        dueDate: "2026-03-24",
+        dueDate: "2026-03-20",
         approvedAt: "2026-03-15T18:00:00Z",
       },
       {
         id: "m-ORD-8073-2",
-        title: "Phase 2: Cloud & DevOps Milestone Deliverables",
-        amount: 283,
+        title: "Phase 2: Web Development Milestone Deliverables",
+        amount: 225,
         status: "completed",
-        dueDate: "2026-03-24",
-        approvedAt: "2026-03-15T18:00:00Z",
-      },
-      {
-        id: "m-ORD-8073-3",
-        title: "Phase 3: Cloud & DevOps Milestone Deliverables",
-        amount: 284,
-        status: "completed",
-        dueDate: "2026-03-24",
+        dueDate: "2026-03-20",
         approvedAt: "2026-03-15T18:00:00Z",
       },
     ],
     deliveries: [
       {
         id: "del-ORD-8073-1",
-        milestoneId: "m-ORD-8073-3",
+        milestoneId: "m-ORD-8073-2",
         note: "All source code, Docker configs, and automated test suites pushed and verified. Zero CVE vulnerabilities detected.",
-        submittedAt: "2026-03-24",
+        submittedAt: "2026-03-20",
         files: [
           {
             name: "production-release.zip",
@@ -6633,66 +6465,56 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   },
   {
     id: "ORD-8074",
-    title: "Audited Solidity Smart Contracts with Formal ERC-20 & ERC-721 Security",
-    category: "Web Development",
+    title: "High-Converting SaaS Landing Page in Next.js & Framer Motion",
+    category: "Programming & Tech",
     tier: "PREMIUM",
-    gigId: "gig-7",
-    totalAmount: 1400,
+    gigId: "gig-2",
+    totalAmount: 590,
     status: "completed",
     createdAt: "2026-02-20",
-    deliveryDate: "2026-02-28",
+    deliveryDate: "2026-02-27",
     role: "BOTH",
     client: {
       id: "usr-20",
       name: "Mitchell Ankunding",
       email: "mitchell.ankunding@tascora.test",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/fatima-almansoor.jpg",
       company: "Enterprise Partner",
     },
     freelancer: {
-      id: "usr-edge-slow-response",
-      name: "Torsten Lindemann",
-      title: "Smart Contracts & Web3 Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.95,
-      level: "LEVEL_2",
+      id: "f-3",
+      name: "Marcus Vance",
+      title: "Web Development Specialist",
+      avatar: "/images/avatars/marcus-vance.jpg",
+      rating: 4.99,
+      level: "TOP_RATED",
     },
     requirements:
       "Execute Enterprise Architecture requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8074-1",
-        title: "Phase 1: Smart Contracts & Web3 Milestone Deliverables",
-        amount: 467,
+        title: "Phase 1: Web Development Milestone Deliverables",
+        amount: 295,
         status: "completed",
-        dueDate: "2026-02-28",
+        dueDate: "2026-02-27",
         approvedAt: "2026-02-20T18:00:00Z",
       },
       {
         id: "m-ORD-8074-2",
-        title: "Phase 2: Smart Contracts & Web3 Milestone Deliverables",
-        amount: 467,
+        title: "Phase 2: Web Development Milestone Deliverables",
+        amount: 295,
         status: "completed",
-        dueDate: "2026-02-28",
-        approvedAt: "2026-02-20T18:00:00Z",
-      },
-      {
-        id: "m-ORD-8074-3",
-        title: "Phase 3: Smart Contracts & Web3 Milestone Deliverables",
-        amount: 466,
-        status: "completed",
-        dueDate: "2026-02-28",
+        dueDate: "2026-02-27",
         approvedAt: "2026-02-20T18:00:00Z",
       },
     ],
     deliveries: [
       {
         id: "del-ORD-8074-1",
-        milestoneId: "m-ORD-8074-3",
+        milestoneId: "m-ORD-8074-2",
         note: "All source code, Docker configs, and automated test suites pushed and verified. Zero CVE vulnerabilities detected.",
-        submittedAt: "2026-02-28",
+        submittedAt: "2026-02-27",
         files: [
           {
             name: "production-release.zip",
@@ -6716,11 +6538,11 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
   },
   {
     id: "ORD-8075",
-    title: "DeFi Staking Protocol & Cross-Chain Bridge Web3 Integration",
-    category: "Web Development",
+    title: "Scalable GraphQL & REST Microservices Backend in NestJS and Redis",
+    category: "Programming & Tech",
     tier: "BASIC",
-    gigId: "gig-8",
-    totalAmount: 520,
+    gigId: "gig-3",
+    totalAmount: 320,
     status: "active",
     createdAt: "2026-01-25",
     deliveryDate: "2026-01-28",
@@ -6729,34 +6551,32 @@ export const INITIAL_ORDERS: DashboardOrder[] = [
       id: "usr-client-2",
       name: "David Sterling",
       email: "david.sterling@apexcap.com",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       company: "Apex Capital Ventures",
     },
     freelancer: {
-      id: "usr-edge-suspended",
-      name: "Sergei Romanov",
-      title: "Smart Contracts & Web3 Specialist",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      rating: 4.95,
-      level: "LEVEL_2",
+      id: "usr-21",
+      name: "Hattie Heidenreich",
+      title: "Backend Development Specialist",
+      avatar: "/images/avatars/tariq-sterling.jpg",
+      rating: 4.99,
+      level: "TOP_RATED",
     },
     requirements:
       "Execute Starter Deliverable requirements with clean production code, modular architecture, and documentation.",
     milestones: [
       {
         id: "m-ORD-8075-1",
-        title: "Phase 1: Smart Contracts & Web3 Milestone Deliverables",
-        amount: 260,
+        title: "Phase 1: Backend Development Milestone Deliverables",
+        amount: 160,
         status: "completed",
         dueDate: "2026-01-28",
         approvedAt: "2026-01-25T18:00:00Z",
       },
       {
         id: "m-ORD-8075-2",
-        title: "Phase 2: Smart Contracts & Web3 Milestone Deliverables",
-        amount: 260,
+        title: "Phase 2: Backend Development Milestone Deliverables",
+        amount: 160,
         status: "in_progress",
         dueDate: "2026-01-28",
       },

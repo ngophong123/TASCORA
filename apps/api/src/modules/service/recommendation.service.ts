@@ -11,7 +11,7 @@ export class RecommendationService {
     // For a real production app, we wouldn't fetch ALL, but rather filter candidates first
     // Since we don't have ML yet, we'll fetch up to 100 recent/active services to score them
     const candidates = await prisma.service.findMany({
-      where: { status: 'PUBLISHED' },
+      where: { status: 'PUBLISHED', seller: { status: 'APPROVED' } },
       take: 100,
       include: {
         category: true,
@@ -24,7 +24,7 @@ export class RecommendationService {
             ratingAverage: true,
             ratingCount: true,
             status: true,
-            user: { select: { email: true } }
+            id: true, firstName: true, lastName: true, avatar: true
           }
         }
       },

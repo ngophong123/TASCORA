@@ -114,14 +114,14 @@ export function MobileDashboardNav() {
                       T
                     </div>
                   </div>
-                  <span className="font-extrabold text-base tracking-tight text-[#0B0B14]">
+                  <span className="font-extrabold text-base tracking-tight text-[#0A0A23]">
                     TASCORA
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsMobileDrawerOpen(false)}
-                  className="p-1.5 rounded-lg text-[#6B6B7B] hover:text-[#0B0B14] hover:bg-black/[0.04]"
+                  className="p-1.5 rounded-lg text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-black/[0.04]"
                   aria-label="Close menu"
                 >
                   <X className="w-5 h-5" />
@@ -138,7 +138,7 @@ export function MobileDashboardNav() {
                   <div className="flex items-center gap-2">
                     <ArrowRightLeft className="w-4 h-4 text-blue-600" />
                     <div>
-                      <span className="text-xs font-bold text-[#0B0B14] block">
+                      <span className="text-xs font-bold text-[#0A0A23] block">
                         {role === "CLIENT" ? t("modeClient") : t("modeFreelancer")}
                       </span>
                       <span className="text-[10px] text-[#6B6B7B]">Tap to switch</span>
@@ -171,7 +171,7 @@ export function MobileDashboardNav() {
                         "flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors",
                         isActive
                           ? "bg-blue-50 text-blue-900 border border-blue-200/60 font-bold"
-                          : "text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-[#FAFAFC]"
+                          : "text-[#4B4B5C] hover:text-[#0A0A23] hover:bg-[#FAFAFC]"
                       )}
                     >
                       <div className="flex items-center gap-3">
@@ -210,12 +210,12 @@ export function MobileDashboardNav() {
                   {role === "CLIENT" ? (
                     <>
                       <ShieldCheck className="w-4 h-4 text-blue-600 shrink-0" />
-                      <span>100% Escrow Protection</span>
+                      <span>Order payments and refunds</span>
                     </>
                   ) : (
                     <>
                       <Zap className="w-4 h-4 text-amber-500 shrink-0" />
-                      <span>Profile Strength: 85%</span>
+                      <span>Manage your seller profile</span>
                     </>
                   )}
                 </div>
@@ -241,7 +241,7 @@ export function MobileDashboardNav() {
               href={tab.href}
               className={cn(
                 "relative flex flex-col items-center justify-center py-1 px-2 rounded-xl text-[10px] font-semibold transition-colors flex-1",
-                isActive ? "text-blue-700" : "text-[#6B6B7B] hover:text-[#0B0B14]"
+                isActive ? "text-blue-700" : "text-[#6B6B7B] hover:text-[#0A0A23]"
               )}
             >
               <div className="relative">

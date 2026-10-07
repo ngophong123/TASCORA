@@ -1,11 +1,19 @@
-import { test, expect } from "@playwright/test"
+import { test, expect } from "../support/live-fixtures"
+import type { Page } from "@playwright/test"
+
+async function visibleSwitcher(page: Page, isMobile: boolean) {
+  const switcher = page.locator('[data-testid="language-switcher"]:visible').first()
+  if (isMobile && !(await switcher.isVisible())) await page.getByTestId("mobile-menu-toggle").click()
+  await expect(switcher).toBeVisible()
+  return switcher
+}
 
 test.describe("Language Switching (i18n)", () => {
-  test("switches between English and Vietnamese seamlessly", async ({ page }) => {
+  test("switches between English and Vietnamese seamlessly", async ({ page, isMobile }) => {
     await page.goto("/")
 
     // Find the header language switcher
-    const switcher = page.getByTestId("language-switcher").first()
+    const switcher = await visibleSwitcher(page, isMobile)
     await expect(switcher).toBeVisible()
 
     // Initially in English
@@ -30,6 +38,7 @@ test.describe("Language Switching (i18n)", () => {
 
     // Content should now be translated into Vietnamese
     await expect(page.locator("body")).toContainText("Khám phá dịch vụ")
+    await visibleSwitcher(page, isMobile)
     await expect(switcher).toContainText("VI")
 
     // Switch back to English
@@ -47,12 +56,13 @@ test.describe("Language Switching (i18n)", () => {
 
     // English text should be restored
     await expect(page.locator("body")).toContainText("Explore Services")
+    await visibleSwitcher(page, isMobile)
     await expect(switcher).toContainText("EN")
   })
 
-  test("language switcher supports keyboard interactions (Escape to dismiss)", async ({ page }) => {
+  test("language switcher supports keyboard interactions (Escape to dismiss)", async ({ page, isMobile }) => {
     await page.goto("/")
-    const switcher = page.getByTestId("language-switcher").first()
+    const switcher = await visibleSwitcher(page, isMobile)
     await expect(switcher).toBeVisible()
 
     // Open dropdown
@@ -65,12 +75,12 @@ test.describe("Language Switching (i18n)", () => {
     await expect(dropdown).not.toBeVisible()
   })
 
-  test("preserves current route path when switching locale", async ({ page }) => {
+  test("preserves current route path when switching locale", async ({ page, isMobile }) => {
     // Navigate to /services in English
     await page.goto("/services")
     await expect(page).toHaveURL(/\/services/)
 
-    const switcher = page.getByTestId("language-switcher").first()
+    const switcher = await visibleSwitcher(page, isMobile)
     await expect(switcher).toBeVisible()
 
     // Switch to Vietnamese

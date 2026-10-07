@@ -113,24 +113,26 @@ export function TransactionsTable({
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-[rgba(15,15,30,0.08)] shadow-[0_1px_3px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col">
+    <div className="stripe-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden flex flex-col">
       {/* Table Toolbar */}
-      <div className="p-4 sm:p-5 border-b border-[rgba(15,15,30,0.06)] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="p-4 sm:p-5 border-b border-slate-200/60 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h3 className="text-base font-semibold text-[#0B0B14] tracking-tight">{title}</h3>
-          <p className="text-xs text-[#6B6B7B] mt-0.5">{subtitle}</p>
+          <h3 className="font-display text-base font-bold text-slate-900 dark:text-white tracking-tight">
+            {title}
+          </h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{subtitle}</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           {/* Search Input */}
           <div className="relative w-full sm:w-56">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#6B6B7B]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search ID, client, method..."
-              className="w-full rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] pl-8.5 pr-3 py-1.5 text-xs text-[#0B0B14] placeholder:text-[#6B6B7B] outline-none focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+              className="w-full rounded-xl border border-slate-200/80 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 pl-8.5 pr-3 py-1.5 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-primary focus:ring-1 focus:ring-primary transition-all"
             />
           </div>
 
@@ -139,16 +141,16 @@ export function TransactionsTable({
             onClick={handleExportCSV}
             variant="outline"
             size="sm"
-            className="h-8.5 px-3 text-xs text-[#0B0B14] border-[rgba(15,15,30,0.12)] hover:bg-[#F4F4F8] flex items-center gap-1.5"
+            className="h-8.5 px-3 text-xs text-slate-900 dark:text-white border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-1.5 cursor-pointer"
           >
-            <Download className="h-3.5 w-3.5 text-blue-600" />
+            <Download className="h-3.5 w-3.5 text-primary" />
             <span>Export CSV</span>
           </Button>
         </div>
       </div>
 
       {/* Filter Tabs */}
-      <div className="px-4 sm:px-5 py-2.5 bg-[#FAFAFC]/60 border-b border-[rgba(15,15,30,0.06)] flex items-center gap-1 overflow-x-auto">
+      <div className="px-4 sm:px-5 py-2.5 bg-slate-50/60 dark:bg-slate-800/40 border-b border-slate-200/60 dark:border-slate-800 flex items-center gap-1 overflow-x-auto">
         {(
           [
             { id: "ALL", label: "All Transactions" },
@@ -161,10 +163,10 @@ export function TransactionsTable({
           <button
             key={tab.id}
             onClick={() => setSelectedType(tab.id)}
-            className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
+            className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
               selectedType === tab.id
-                ? "bg-white text-blue-700 shadow-xs border border-[rgba(15,15,30,0.08)]"
-                : "text-[#6B6B7B] hover:text-[#0B0B14] hover:bg-[#F4F4F8]"
+                ? "bg-white dark:bg-slate-900 text-primary shadow-xs border border-slate-200/80 dark:border-slate-700"
+                : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
             }`}
           >
             {tab.label}
@@ -176,7 +178,7 @@ export function TransactionsTable({
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-[rgba(15,15,30,0.06)] bg-[#FAFAFC]/80 text-[11px] font-semibold text-[#6B6B7B] uppercase tracking-wider">
+            <tr className="border-b border-slate-200/60 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               <th className="py-3 px-4 sm:px-5">Transaction ID</th>
               <th className="py-3 px-3">Date</th>
               <th className="py-3 px-3">Type</th>
@@ -187,10 +189,13 @@ export function TransactionsTable({
               <th className="py-3 px-3 text-center">Receipt</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[rgba(15,15,30,0.04)] text-xs">
+          <tbody className="divide-y divide-slate-200/40 dark:divide-slate-800/40 text-xs">
             {filteredTransactions.length === 0 ? (
               <tr>
-                <td colSpan={8} className="py-12 text-center text-xs text-[#6B6B7B]">
+                <td
+                  colSpan={8}
+                  className="py-12 text-center text-xs text-slate-500 dark:text-slate-400"
+                >
                   No transactions match your search or filter criteria.
                 </td>
               </tr>
@@ -198,16 +203,21 @@ export function TransactionsTable({
               filteredTransactions.map((tx) => {
                 const isPositive = tx.amount > 0
                 return (
-                  <tr key={tx.id} className="hover:bg-[#FAFAFC] transition-colors group">
+                  <tr
+                    key={tx.id}
+                    className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group"
+                  >
                     {/* ID */}
-                    <td className="py-3.5 px-4 sm:px-5 font-mono text-[11px] font-semibold text-blue-700 whitespace-nowrap">
+                    <td className="py-3.5 px-4 sm:px-5 font-mono text-[11px] font-semibold text-primary whitespace-nowrap">
                       {tx.id}
                     </td>
 
                     {/* Date */}
-                    <td className="py-3.5 px-3 whitespace-nowrap text-[#4B4B5C]">
+                    <td className="py-3.5 px-3 whitespace-nowrap text-slate-600 dark:text-slate-300">
                       <div>{tx.date}</div>
-                      <div className="text-[10px] text-[#6B6B7B]">{tx.timestamp}</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                        {tx.timestamp}
+                      </div>
                     </td>
 
                     {/* Type Badge */}
@@ -215,16 +225,21 @@ export function TransactionsTable({
 
                     {/* Description & Order */}
                     <td className="py-3.5 px-4 max-w-xs">
-                      <p className="font-medium text-[#0B0B14] truncate">{tx.description}</p>
+                      <p className="font-semibold text-slate-900 dark:text-white truncate">
+                        {tx.description}
+                      </p>
                       {tx.counterpartName && (
-                        <p className="text-[11px] text-[#6B6B7B] mt-0.5">
-                          Counterpart: <span className="text-[#4B4B5C]">{tx.counterpartName}</span>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                          Counterpart:{" "}
+                          <span className="text-slate-700 dark:text-slate-300 font-medium">
+                            {tx.counterpartName}
+                          </span>
                         </p>
                       )}
                     </td>
 
                     {/* Method */}
-                    <td className="py-3.5 px-3 whitespace-nowrap font-medium text-[#4B4B5C]">
+                    <td className="py-3.5 px-3 whitespace-nowrap font-medium text-slate-600 dark:text-slate-300">
                       {tx.method}
                     </td>
 
@@ -237,7 +252,9 @@ export function TransactionsTable({
                     <td className="py-3.5 px-4 sm:px-5 text-right whitespace-nowrap">
                       <span
                         className={`font-mono text-xs font-bold ${
-                          isPositive ? "text-emerald-600" : "text-[#0B0B14]"
+                          isPositive
+                            ? "text-emerald-600 dark:text-emerald-400"
+                            : "text-slate-900 dark:text-white"
                         }`}
                       >
                         {isPositive ? "+" : ""}${Math.abs(tx.amount).toFixed(2)}
@@ -255,7 +272,7 @@ export function TransactionsTable({
                           })
                         }
                         title="Download Tax Receipt"
-                        className="p-1 text-[#6B6B7B] hover:text-blue-600 hover:bg-[#F4F4F8] rounded transition-colors inline-flex items-center justify-center"
+                        className="p-1 text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors inline-flex items-center justify-center cursor-pointer"
                       >
                         <FileText className="h-4 w-4" />
                       </button>

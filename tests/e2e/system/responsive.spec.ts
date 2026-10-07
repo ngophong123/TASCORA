@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test"
+import { test, expect } from "../support/live-fixtures"
 
 test.describe("Responsive Viewports & Adaptive Layouts", () => {
   test("mobile viewport (375x667): collapses navbar to mobile drawer toggle and has no horizontal overflow", async ({

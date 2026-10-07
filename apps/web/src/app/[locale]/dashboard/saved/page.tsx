@@ -5,44 +5,57 @@ import { Link } from "@/i18n/routing"
 import { Bookmark, Star, MessageSquare, ArrowUpRight, Trash2, Compass } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useDashboard } from "@/context/DashboardContext"
-import {
-  SAVED_SPECIALISTS,
-  SAVED_GIGS,
-  type SavedSpecialist,
-  type SavedGigItem,
-} from "@/data/dashboard/saved"
+import type { SavedSpecialist, SavedGigItem } from "@/data/dashboard/saved"
+import { requestData, jsonRequest, profileName, imageUrl, type Service } from "@/lib/marketplace"
+import { useApiResource } from "@/hooks/useApiResource"
+import { ApiState } from "@/components/feedback/ApiState"
 
 export default function SavedPage() {
   const { showToast } = useDashboard()
-  const [activeTab, setActiveTab] = React.useState<"specialists" | "gigs">("specialists")
-  const [specialists, setSpecialists] = React.useState<SavedSpecialist[]>(SAVED_SPECIALISTS)
-  const [gigs, setGigs] = React.useState<SavedGigItem[]>(SAVED_GIGS)
+  const [activeTab, setActiveTab] = React.useState<"specialists" | "gigs">("gigs")
+  const specialists: SavedSpecialist[] = []
+  const resource = useApiResource<Service[]>("/api/v1/favorites")
+  const gigs: SavedGigItem[] = (resource.data || []).map((s) => ({
+    id: s.id,
+    title: s.title,
+    sellerName: profileName(s.seller),
+    sellerAvatar: imageUrl(s.seller.avatar),
+    coverImage: imageUrl(s.images[0]?.url),
+    rating: s.ratingAverage,
+    reviewsCount: s.ratingCount,
+    startingPrice: s.packages.length ? Math.min(...s.packages.map((p) => Number(p.price))) : 0,
+    category: s.category.name,
+    deliveryDays: s.packages[0]?.deliveryDays || 0,
+    savedAt: "",
+  }))
 
   const handleRemoveSpecialist = (id: string, name: string) => {
-    setSpecialists((prev) => prev.filter((s) => s.id !== id))
-    showToast({
-      title: "Removed from Saved",
-      message: `${name} has been removed from your saved specialists list.`,
-      type: "info",
-    })
+    void id
+    void name
+    showToast({ title: "Specialist bookmarks are not implemented", type: "info" })
   }
-
-  const handleRemoveGig = (id: string, title: string) => {
-    setGigs((prev) => prev.filter((g) => g.id !== id))
-    showToast({
-      title: "Removed from Saved",
-      message: `"${title}" has been removed from your saved gigs.`,
-      type: "info",
-    })
+  const handleRemoveGig = async (id: string, title: string) => {
+    void title
+    try {
+      await requestData(`/api/v1/favorites/${id}`, jsonRequest("DELETE"))
+      resource.reload()
+      showToast({ title: "Service removed from saved", type: "success" })
+    } catch (error) {
+      showToast({
+        title: error instanceof Error ? error.message : "Unable to remove favorite",
+        type: "error",
+      })
+    }
   }
 
   return (
     <div className="space-y-6">
+      <ApiState loading={resource.loading} error={resource.error} retry={resource.reload} />
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight text-[#0B0B14]">
+            <h1 className="text-2xl font-semibold tracking-tight text-[#0A0A23]">
               Saved Talents & Services
             </h1>
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
@@ -60,7 +73,7 @@ export default function SavedPage() {
           <Button
             variant="outline"
             size="sm"
-            className="h-9 px-3.5 text-xs text-[#0B0B14] border-[rgba(15,15,30,0.12)] hover:bg-[#F4F4F8] flex items-center gap-1.5"
+            className="h-9 px-3.5 text-xs text-[#0A0A23] border-[rgba(15,15,30,0.12)] hover:bg-[#F4F4F8] flex items-center gap-1.5"
           >
             <Compass className="h-3.5 w-3.5 text-blue-600" />
             <span>Explore More Services</span>
@@ -75,7 +88,7 @@ export default function SavedPage() {
           className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all ${
             activeTab === "specialists"
               ? "bg-blue-600 text-white shadow-xs"
-              : "text-[#6B6B7B] hover:text-[#0B0B14] hover:bg-[#F4F4F8]"
+              : "text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-[#F4F4F8]"
           }`}
         >
           Saved Specialists ({specialists.length})
@@ -86,7 +99,7 @@ export default function SavedPage() {
           className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all ${
             activeTab === "gigs"
               ? "bg-blue-600 text-white shadow-xs"
-              : "text-[#6B6B7B] hover:text-[#0B0B14] hover:bg-[#F4F4F8]"
+              : "text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-[#F4F4F8]"
           }`}
         >
           Saved Services ({gigs.length})
@@ -98,7 +111,7 @@ export default function SavedPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {specialists.length === 0 ? (
             <div className="col-span-2 py-16 text-center text-xs text-[#6B6B7B] bg-white rounded-2xl border border-[rgba(15,15,30,0.08)]">
-              You have no saved specialists.
+              Specialist bookmarks are not implemented. Saved services use your account.
             </div>
           ) : (
             specialists.map((spec) => (
@@ -116,7 +129,7 @@ export default function SavedPage() {
                       />
                       <div>
                         <div className="flex items-center gap-2">
-                          <h3 className="text-sm font-semibold text-[#0B0B14]">{spec.name}</h3>
+                          <h3 className="text-sm font-semibold text-[#0A0A23]">{spec.name}</h3>
                           <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200/60">
                             {spec.badge === "TOP_RATED" ? "Top Rated" : "Verified Pro"}
                           </span>
@@ -138,7 +151,7 @@ export default function SavedPage() {
                   <div className="grid grid-cols-3 gap-2 py-3 mt-3 border-y border-[rgba(15,15,30,0.06)] text-[11px]">
                     <div>
                       <span className="text-[#6B6B7B] block text-[10px]">Hourly Rate</span>
-                      <span className="font-mono font-bold text-[#0B0B14]">
+                      <span className="font-mono font-bold text-[#0A0A23]">
                         ${spec.hourlyRate}/hr
                       </span>
                     </div>
@@ -151,7 +164,7 @@ export default function SavedPage() {
                     </div>
                     <div>
                       <span className="text-[#6B6B7B] block text-[10px]">Projects</span>
-                      <span className="font-medium text-[#0B0B14]">
+                      <span className="font-medium text-[#0A0A23]">
                         {spec.completedProjects} done
                       </span>
                     </div>
@@ -176,7 +189,7 @@ export default function SavedPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="w-full text-xs font-medium text-[#0B0B14] border-[rgba(15,15,30,0.12)] hover:bg-[#F4F4F8] flex items-center justify-center gap-1.5"
+                      className="w-full text-xs font-medium text-[#0A0A23] border-[rgba(15,15,30,0.12)] hover:bg-[#F4F4F8] flex items-center justify-center gap-1.5"
                     >
                       <MessageSquare className="h-3.5 w-3.5 text-blue-600" />
                       <span>Message</span>
@@ -200,7 +213,7 @@ export default function SavedPage() {
       )}
 
       {/* TAB 2: Saved Gigs */}
-      {activeTab === "gigs" && (
+      {activeTab === "gigs" && !resource.loading && !resource.error && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {gigs.length === 0 ? (
             <div className="col-span-2 py-16 text-center text-xs text-[#6B6B7B] bg-white rounded-2xl border border-[rgba(15,15,30,0.08)]">
@@ -226,14 +239,15 @@ export default function SavedPage() {
                       </span>
 
                       <button
-                        onClick={() => handleRemoveGig(gig.id, gig.title)}
+                        aria-label={`Remove saved service ${gig.title}`}
+                        onClick={() => void handleRemoveGig(gig.id, gig.title)}
                         className="text-[#6B6B7B] hover:text-rose-600 p-1"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>
                     </div>
 
-                    <h4 className="text-xs font-semibold text-[#0B0B14] line-clamp-2 mt-1.5">
+                    <h4 className="text-xs font-semibold text-[#0A0A23] line-clamp-2 mt-1.5">
                       {gig.title}
                     </h4>
 
@@ -255,7 +269,7 @@ export default function SavedPage() {
                   <div className="flex items-center justify-between pt-2 border-t border-[rgba(15,15,30,0.06)]">
                     <span className="text-xs">
                       From{" "}
-                      <strong className="font-mono font-bold text-[#0B0B14]">
+                      <strong className="font-mono font-bold text-[#0A0A23]">
                         ${gig.startingPrice}
                       </strong>
                     </span>

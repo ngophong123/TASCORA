@@ -74,8 +74,7 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
       id: "f-1",
       name: "Alexandre Moreau",
       title: "Senior Full-Stack Architect",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       online: true,
       lastSeen: "Active now",
       rating: 4.99,
@@ -190,8 +189,7 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
       id: "f-2",
       name: "Helena Rostova",
       title: "Principal Brand & Product Designer",
-      avatar:
-        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/helena-rostova.jpg",
       online: true,
       lastSeen: "Active now",
       rating: 5,
@@ -290,8 +288,7 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
       id: "f-3",
       name: "Marcus Vance",
       title: "AI Engineer & Research Lead",
-      avatar:
-        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/dmitri-volkov.jpg",
       online: false,
       lastSeen: "2 hours ago",
       rating: 4.96,
@@ -390,8 +387,7 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
       id: "f-1",
       name: "Alexandre Moreau",
       title: "Senior Full-Stack Architect",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       online: true,
       lastSeen: "Active now",
       rating: 4.99,
@@ -470,8 +466,7 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
       id: "usr-client-2",
       name: "David Sterling",
       title: "Managing Director • Apex Capital Ventures",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/david-sterling.jpg",
       online: false,
       lastSeen: "Yesterday",
       rating: 5,
@@ -560,8 +555,7 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
       id: "usr-client-5",
       name: "Liam O'Connor",
       title: "CTO • Nova Dynamics AI",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/client-marcus.jpg",
       online: true,
       lastSeen: "Active now",
       rating: 4.9,
@@ -648,8 +642,7 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
       id: "usr-edge-brandnew",
       name: "Oliver Bennett",
       title: "Junior Full-Stack Engineer",
-      avatar:
-        "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/chloe-laurent.jpg",
       online: true,
       lastSeen: "Active now",
       rating: 0,
@@ -707,8 +700,7 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
       id: "f-4",
       name: "Sophia Lindqvist",
       title: "B2B SaaS Growth & SEO Strategist",
-      avatar:
-        "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/rachel-adams.jpg",
       online: false,
       lastSeen: "3 hours ago",
       rating: 4.94,
@@ -766,8 +758,7 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
       id: "usr-edge-fast-response",
       name: "Chloe Nguyen (Minh Chau)",
       title: "Senior Cloud & DevOps Engineer",
-      avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/alexandre-moreau.jpg",
       online: true,
       lastSeen: "Active now",
       rating: 5,
@@ -822,8 +813,7 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
       id: "usr-client-4",
       name: "Rachel Adams",
       title: "Head of Product • Horizon Health Technologies",
-      avatar:
-        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+      avatar: "/images/avatars/helena-rostova.jpg",
       online: false,
       lastSeen: "4 hours ago",
       rating: 4.95,

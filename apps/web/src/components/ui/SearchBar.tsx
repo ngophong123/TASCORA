@@ -34,7 +34,11 @@ export function SearchBar() {
   const [isFocused, setIsFocused] = React.useState(false)
   const [showDropdown, setShowDropdown] = React.useState(false)
   const [isSearching, setIsSearching] = React.useState(false)
+  const [isHydrated, setIsHydrated] = React.useState(false)
   const wrapperRef = React.useRef<HTMLDivElement>(null)
+  React.useEffect(() => {
+    setIsHydrated(true)
+  }, [])
 
   const filteredSuggestions = React.useMemo(() => {
     if (!query.trim()) return []
@@ -83,44 +87,45 @@ export function SearchBar() {
       <form
         onSubmit={handleSubmit}
         className={cn(
-          "relative w-full rounded-2xl sm:rounded-full p-2 sm:p-2",
-          "bg-white/95 backdrop-blur-xl border border-[rgba(15,15,30,0.12)]",
-          "shadow-[0_8px_24px_-8px_rgba(15,15,30,0.12)]",
-          "flex flex-col sm:flex-row items-center gap-2 transition-all duration-300",
+          "relative w-full rounded-lg p-2 sm:p-2",
+          "bg-white border border-[#E2E8F0]",
+          "shadow-xs",
+          "flex flex-col sm:flex-row items-center gap-2 transition-all duration-200",
           isFocused
-            ? "border-blue-600 ring-2 ring-blue-500/25 shadow-[0_12px_32px_-8px_rgba(37,99,235,0.25)]"
-            : "hover:border-[rgba(15,15,30,0.2)]"
+            ? "border-[#635BFF] ring-2 ring-[#635BFF]/15 shadow-sm"
+            : "hover:border-[#CBD5E1]"
         )}
       >
         {/* Category Selector on the Left */}
-        <div className="relative flex items-center shrink-0 w-full sm:w-auto px-3 sm:px-2 border-b sm:border-b-0 sm:border-r border-[rgba(15,15,30,0.1)] pb-2 sm:pb-0">
+        <div className="relative flex items-center shrink-0 w-full sm:w-auto px-3 sm:px-2 border-b sm:border-b-0 sm:border-r border-[#E2E8F0] pb-2 sm:pb-0">
           <select
             data-testid="hero-category-select"
+            disabled={!isHydrated}
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full sm:w-auto appearance-none bg-transparent text-xs font-medium text-[#4B4B5C] hover:text-[#0B0B14] pr-7 pl-2 py-1.5 outline-none cursor-pointer transition-colors"
+            className="w-full sm:w-auto appearance-none bg-transparent text-xs font-medium text-[#475569] hover:text-[#0F172A] pr-7 pl-2 py-1.5 outline-none cursor-pointer transition-colors"
             aria-label={t("filterCategoryAria")}
           >
-            <option value="all" className="bg-white text-[#0B0B14]">
+            <option value="all" className="bg-white text-[#0F172A]">
               {t("categoryAll")}
             </option>
-            <option value="programming" className="bg-white text-[#0B0B14]">
+            <option value="programming" className="bg-white text-[#0F172A]">
               {t("categoryProgramming")}
             </option>
-            <option value="design" className="bg-white text-[#0B0B14]">
+            <option value="design" className="bg-white text-[#0F172A]">
               {t("categoryDesign")}
             </option>
-            <option value="ai" className="bg-white text-[#0B0B14]">
+            <option value="ai" className="bg-white text-[#0F172A]">
               {t("categoryAi")}
             </option>
-            <option value="marketing" className="bg-white text-[#0B0B14]">
+            <option value="marketing" className="bg-white text-[#0F172A]">
               {t("categoryMarketing")}
             </option>
-            <option value="video" className="bg-white text-[#0B0B14]">
+            <option value="video" className="bg-white text-[#0F172A]">
               {t("categoryVideo")}
             </option>
           </select>
-          <ChevronDown className="pointer-events-none absolute right-2 h-3.5 w-3.5 text-[#6B6B7B]" />
+          <ChevronDown className="pointer-events-none absolute right-2 h-3.5 w-3.5 text-[#64748B]" />
         </div>
 
         {/* Search Input in Middle */}
@@ -128,12 +133,13 @@ export function SearchBar() {
           <Search
             className={cn(
               "h-4 w-4 shrink-0 transition-all duration-200",
-              isSearching ? "text-blue-500 animate-spin" : "text-blue-600"
+              isSearching ? "text-[#635BFF] animate-spin" : "text-[#64748B]"
             )}
           />
           <input
             type="text"
             data-testid="hero-search-input"
+            disabled={!isHydrated}
             value={query}
             onChange={(e) => {
               setQuery(e.target.value)
@@ -145,7 +151,7 @@ export function SearchBar() {
             }}
             onBlur={() => setIsFocused(false)}
             placeholder={t("placeholder")}
-            className="w-full bg-transparent border-none outline-none text-sm sm:text-base text-[#0B0B14] placeholder:text-[#6B6B7B] py-1.5"
+            className="w-full bg-transparent border-none outline-none text-sm sm:text-base text-[#0F172A] placeholder:text-[#94A3B8] py-1.5"
           />
           {query && !isSearching && (
             <button
@@ -154,7 +160,7 @@ export function SearchBar() {
                 setQuery("")
                 setShowDropdown(false)
               }}
-              className="p-1 text-[#6B6B7B] hover:text-[#0B0B14] transition-colors"
+              className="p-1 text-[#64748B] hover:text-[#0F172A] transition-colors"
               aria-label={t("clearSearch")}
             >
               <X className="h-4 w-4" />
@@ -162,17 +168,17 @@ export function SearchBar() {
           )}
         </div>
 
-        {/* Gradient Search Pill Button */}
+        {/* Search Button */}
         <div className="w-full sm:w-auto px-1 sm:px-0">
           <Button
             type="submit"
             data-testid="hero-search-submit"
+            disabled={!isHydrated}
             size="md"
             variant="primary"
-            pill
             isLoading={isSearching}
             loadingText={t("searching")}
-            className="w-full sm:w-auto px-7 shadow-md"
+            className="w-full sm:w-auto px-6 shadow-xs"
           >
             <span>{t("searchButton")}</span>
             <ArrowRight className="h-3.5 w-3.5" />
@@ -181,26 +187,26 @@ export function SearchBar() {
 
         {/* Autocomplete Dropdown */}
         {showDropdown && filteredSuggestions.length > 0 && (
-          <div className="absolute top-[calc(100%+8px)] left-0 right-0 z-50 rounded-2xl bg-white/98 backdrop-blur-2xl border border-[rgba(15,15,30,0.1)] shadow-[0_20px_50px_rgba(15,15,30,0.12)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-            <div className="px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-[#6B6B7B] border-b border-[rgba(15,15,30,0.06)] flex items-center justify-between">
+          <div className="absolute top-[calc(100%+8px)] left-0 right-0 z-50 rounded-lg bg-white border border-[#E2E8F0] shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
+            <div className="px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-[#64748B] border-b border-[#E2E8F0] flex items-center justify-between">
               <span>{t("suggestedMatches")}</span>
-              <Sparkles className="h-3 w-3 text-blue-600" />
+              <Sparkles className="h-3 w-3 text-[#635BFF]" />
             </div>
-            <div className="divide-y divide-[rgba(15,15,30,0.06)]">
+            <div className="divide-y divide-[#E2E8F0]">
               {filteredSuggestions.map((item, idx) => (
                 <button
                   key={idx}
                   type="button"
                   onMouseDown={() => handleSelectSuggestion(item.text)}
-                  className="w-full px-4 py-3 text-left flex items-center justify-between hover:bg-blue-50/70 transition-colors group cursor-pointer"
+                  className="w-full px-4 py-3 text-left flex items-center justify-between hover:bg-[#F8FAFC] transition-colors group cursor-pointer"
                 >
                   <div className="flex items-center gap-2.5">
-                    <Search className="h-3.5 w-3.5 text-blue-600 group-hover:scale-110 transition-transform" />
-                    <span className="text-sm text-[#0B0B14] group-hover:text-blue-950 font-medium">
+                    <Search className="h-3.5 w-3.5 text-[#635BFF] group-hover:scale-105 transition-transform" />
+                    <span className="text-sm text-[#0F172A] group-hover:text-[#635BFF] font-medium">
                       {item.text}
                     </span>
                   </div>
-                  <span className="text-xs text-[#6B6B7B] group-hover:text-blue-700 transition-colors font-medium">
+                  <span className="text-xs text-[#64748B] group-hover:text-[#635BFF] transition-colors font-medium">
                     {item.category}
                   </span>
                 </button>
@@ -212,12 +218,12 @@ export function SearchBar() {
 
       {/* Popular Chips Row */}
       <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mt-4 text-[11px] sm:text-xs">
-        <span className="text-[#6B6B7B] font-medium mr-1">{t("popularLabel")}</span>
+        <span className="text-[#64748B] font-medium mr-1">{t("popularLabel")}</span>
         {POPULAR_TAGS.map((tag) => (
           <Link
             key={tag}
             href={`/explore?q=${encodeURIComponent(tag)}`}
-            className="px-2.5 sm:px-3 py-1 rounded-full bg-[#F4F4F8] border border-[rgba(15,15,30,0.08)] text-[#4B4B5C] hover:text-blue-700 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200"
+            className="px-2.5 sm:px-3 py-1 rounded-md bg-[#F1F5F9] border border-[#E2E8F0] text-[#475569] hover:text-[#635BFF] hover:border-[#635BFF]/30 hover:bg-[#635BFF]/10 transition-colors duration-150"
           >
             {tag}
           </Link>

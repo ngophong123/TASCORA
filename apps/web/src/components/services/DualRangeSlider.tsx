@@ -139,7 +139,7 @@ export function DualRangeSlider({ min, max, onChange, step = 10 }: DualRangeSlid
                   commitMin(Number((e.target as HTMLInputElement).value))
                 }
               }}
-              className="w-full h-9 pl-7 pr-2 rounded-lg border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] text-xs font-mono text-[#0B0B14] focus:border-blue-600 focus:bg-white focus:outline-none transition-colors"
+              className="w-full h-9 pl-7 pr-2 rounded-lg border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] text-xs font-mono text-[#0A0A23] focus:border-blue-600 focus:bg-white focus:outline-none transition-colors"
             />
           </div>
         </div>
@@ -172,7 +172,7 @@ export function DualRangeSlider({ min, max, onChange, step = 10 }: DualRangeSlid
                   commitMax(Number((e.target as HTMLInputElement).value))
                 }
               }}
-              className="w-full h-9 pl-7 pr-2 rounded-lg border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] text-xs font-mono text-[#0B0B14] focus:border-blue-600 focus:bg-white focus:outline-none transition-colors"
+              className="w-full h-9 pl-7 pr-2 rounded-lg border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] text-xs font-mono text-[#0A0A23] focus:border-blue-600 focus:bg-white focus:outline-none transition-colors"
             />
           </div>
         </div>

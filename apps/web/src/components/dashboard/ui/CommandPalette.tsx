@@ -254,13 +254,13 @@ export function CommandPalette() {
                   setSelectedIndex(0)
                 }}
                 placeholder="Type a command, page, or action..."
-                className="w-full h-14 bg-transparent text-sm text-[#0B0B14] placeholder-[#8B8B9B] focus:outline-none"
+                className="w-full h-14 bg-transparent text-sm text-[#0A0A23] placeholder-[#8B8B9B] focus:outline-none"
               />
               {query && (
                 <button
                   type="button"
                   onClick={() => setQuery("")}
-                  className="p-1 rounded-md text-[#8B8B9B] hover:text-[#0B0B14]"
+                  className="p-1 rounded-md text-[#8B8B9B] hover:text-[#0A0A23]"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -307,7 +307,7 @@ export function CommandPalette() {
                           <Icon className="w-4 h-4" />
                         </div>
                         <div className="truncate">
-                          <span className="text-xs font-semibold block text-[#0B0B14] truncate">
+                          <span className="text-xs font-semibold block text-[#0A0A23] truncate">
                             {item.title}
                           </span>
                           {item.subtitle && (

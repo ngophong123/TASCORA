@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test"
+import { test, expect } from "../support/live-fixtures"
 
 test.describe("Dashboard Flows", () => {
   test("overview page loads key metrics and stat cards", async ({ page }) => {
@@ -20,7 +20,7 @@ test.describe("Dashboard Flows", () => {
     await page.goto("/dashboard/orders")
 
     // Orders table or container should be visible
-    const ordersContainer = page.getByTestId("orders-table")
+    const ordersContainer = isMobile ? page.locator('[data-testid^="order-card-"]:visible').first() : page.getByTestId("orders-table")
     await expect(ordersContainer).toBeVisible()
 
     // Status filter tabs should exist
@@ -70,6 +70,7 @@ test.describe("Dashboard Flows", () => {
     // Conversation items should be listed
     const conversations = page.locator('[data-testid^="conversation-item-"]')
     await expect(conversations.first()).toBeVisible()
+    await conversations.first().click()
 
     // Message input textarea should be available
     const messageInput = page.getByTestId("message-input")
@@ -94,12 +95,19 @@ test.describe("Dashboard Flows", () => {
   })
 
   test("gig wizard navigates step progression and validates form interaction", async ({ page }) => {
+    await page.goto('/login')
+    await page.locator('input[placeholder="name@company.com"]').fill('seller@example.test')
+    await page.locator('input[type="password"]').first().fill('E2E-password-123!')
+    await page.locator('form button[type="submit"]').first().click()
+    await expect(page).toHaveURL(/seller\/dashboard/)
     await page.goto("/dashboard/gigs/new")
 
-    // Verify step 1 title input is populated
+    // A new service must start blank, then persist deliberate seller input.
     const titleInput = page.getByTestId("wizard-gig-title-input")
     await expect(titleInput).toBeVisible()
-    await expect(titleInput).not.toBeEmpty()
+    await expect(titleInput).toBeEmpty()
+    await titleInput.fill('A verified seller service draft')
+    await page.locator('select').first().selectOption({ index: 1 })
 
     const nextBtn = page.getByTestId("wizard-next-btn")
     const prevBtn = page.getByTestId("wizard-prev-btn")
@@ -112,8 +120,11 @@ test.describe("Dashboard Flows", () => {
     const step2Btn = page.getByTestId("wizard-step-2")
     await expect(step2Btn).toBeVisible()
 
+    await page.locator('input[type="text"]').first().fill('Basic package')
+    await page.locator('input[type="number"]').first().fill('25')
     // Advance to Step 3: Description
     await nextBtn.click()
+    await page.locator('textarea').first().fill('A complete and persistent service description for customers.')
     const step3Btn = page.getByTestId("wizard-step-3")
     await expect(step3Btn).toBeVisible()
 

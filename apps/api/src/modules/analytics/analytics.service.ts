@@ -44,19 +44,16 @@ export class AnalyticsService {
       }
     });
 
-    // 4. Mock Data for views and conversion rate (as requested in Phase 19 MVP)
-    // To make it look a bit realistic, we'll hash the sellerId to get a stable random number
-    const hash = sellerId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const profileViews = 150 + (hash % 500); 
-    const conversionRate = (1.5 + (hash % 10) * 0.3).toFixed(1); 
-
     return {
-      totalEarnings,
+      totalEarnings: null,
+      completedOrderValue: totalEarnings,
       activeOrdersCount,
       completedOrdersCount,
       averageRating: seller.ratingAverage,
-      profileViews, // Mocked
-      conversionRate: Number(conversionRate) // Mocked %
+      profileViews: null,
+      conversionRate: null,
+      sellerStatus: seller.status,
+      sellerLevel: seller.level
     };
   }
 }

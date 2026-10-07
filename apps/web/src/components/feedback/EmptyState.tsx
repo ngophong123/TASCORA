@@ -37,7 +37,7 @@ export function EmptyState({
         {icon || <SearchX className="h-7 w-7 stroke-[1.5]" />}
       </div>
 
-      <h3 className="font-semibold text-base text-[#0B0B14] mb-1.5">{title}</h3>
+      <h3 className="font-semibold text-base text-[#0A0A23] mb-1.5">{title}</h3>
       <p className="text-xs text-[#6B6B7B] max-w-xs mb-6 leading-relaxed">{message}</p>
 
       {actionLabel && onAction && (

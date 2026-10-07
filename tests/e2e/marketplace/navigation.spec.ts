@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test"
+import { test, expect } from "../support/live-fixtures"
 
 test.describe("Navigation & Layout", () => {
   test("homepage loads successfully with 200 status and brand title", async ({ page }) => {

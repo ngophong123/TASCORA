@@ -10,13 +10,13 @@
     "typecheck": "pnpm --filter \"./apps/*\" exec tsc --noEmit",
     "prepare": "husky",
     "test": "pnpm test:quick",
-    "test:quick": "pnpm typecheck && pnpm lint:strict && pnpm test:unit",
+    "test:quick": "pnpm typecheck && pnpm lint:strict && pnpm lint:api && pnpm test:unit",
     "test:unit": "vitest run tests/unit",
     "test:unit:watch": "vitest tests/unit",
     "test:api": "vitest run tests/api",
     "test:security": "vitest run tests/security",
     "test:feature": "playwright test",
-    "test:full": "pnpm typecheck && pnpm lint:strict && pnpm test:unit && pnpm test:api && pnpm test:security && pnpm test:e2e --project=chromium && pnpm build",
+    "test:full": "pnpm typecheck && pnpm lint:strict && pnpm lint:api && pnpm test:unit && pnpm test:api && pnpm test:security && pnpm test:e2e --project=chromium && pnpm build",
     "test:release": "pnpm test:full && pnpm test:e2e && pnpm lhci:mobile",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
@@ -27,7 +27,10 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
-    "seed": "tsx scripts/generate-seed-data.ts"
+    "seed": "tsx scripts/generate-seed-data.ts",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:migrate:status": "prisma migrate status",
+    "lint:api": "pnpm --filter @taskora/api lint"
   },
   "lint-staged": {
     "apps/web/src/**/*.{js,jsx,ts,tsx}": [
@@ -57,10 +60,14 @@
     "supertest": "^7.3.0",
     "tsx": "^4.23.15",
     "typescript": "^5.3.3",
-    "vitest": "^5.0.2"
+    "vitest": "^5.0.2",
+    "express": "^4.18.2",
+    "bcryptjs": "^3.0.3",
+    "@aws-sdk/client-s3": "^3"
   },
   "engines": {
     "node": ">=20.0.0",
     "pnpm": ">=8.0.0"
-  }
+  },
+  "packageManager": "pnpm@12.4.1"
 }

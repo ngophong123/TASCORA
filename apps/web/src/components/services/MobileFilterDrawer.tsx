@@ -105,7 +105,7 @@ export function MobileFilterDrawer({
             <div className="flex items-center justify-between px-5 py-3.5 border-b border-[rgba(15,15,30,0.08)] bg-[#FAFAFC]">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal className="w-4 h-4 text-blue-600" />
-                <h3 id="mobile-filter-title" className="font-semibold text-sm text-[#0B0B14]">
+                <h3 id="mobile-filter-title" className="font-semibold text-sm text-[#0A0A23]">
                   Filter Services
                 </h3>
               </div>
@@ -113,7 +113,7 @@ export function MobileFilterDrawer({
                 ref={closeButtonRef}
                 type="button"
                 onClick={onClose}
-                className="p-1.5 rounded-full hover:bg-black/[0.05] text-[#6B6B7B] hover:text-[#0B0B14] transition-colors focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-none"
+                className="p-1.5 rounded-full hover:bg-black/[0.05] text-[#6B6B7B] hover:text-[#0A0A23] transition-colors focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-none"
                 aria-label="Close filters drawer"
               >
                 <X className="w-5 h-5" />
