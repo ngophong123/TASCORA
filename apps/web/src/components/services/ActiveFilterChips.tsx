@@ -11,11 +11,7 @@ interface ActiveFilterChipsProps {
   className?: string
 }
 
-export function ActiveFilterChips({
-  chips,
-  onClearAll,
-  className,
-}: ActiveFilterChipsProps) {
+export function ActiveFilterChips({ chips, onClearAll, className }: ActiveFilterChipsProps) {
   if (chips.length === 0) return null
 
   return (
@@ -48,6 +44,7 @@ export function ActiveFilterChips({
 
       <button
         type="button"
+        data-testid="clear-all-filters"
         onClick={onClearAll}
         className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800 hover:underline px-2 py-1 transition-colors"
       >

@@ -5,24 +5,21 @@ import { Link } from "@/i18n/routing"
 import {
   Search,
   Plus,
-  MoreVertical,
-  Eye,
   Edit3,
   PauseCircle,
   PlayCircle,
   Trash2,
-  ExternalLink,
   Star,
   TrendingUp,
   ShoppingBag,
   DollarSign,
-  Layers,
-  Sparkles,
   ArrowUpRight,
 } from "lucide-react"
+import { UploadImage } from "@/components/ui/UploadImage"
 import { Button } from "@/components/ui/button"
 import { StatusBadge } from "@/components/ui/StatusBadge"
 import { type DashboardGig } from "@/data/dashboard/gigs"
+import { requestData, jsonRequest } from "@/lib/marketplace"
 import { useDashboard } from "@/context/DashboardContext"
 
 interface GigsListProps {
@@ -32,33 +29,51 @@ interface GigsListProps {
 export function GigsList({ initialGigs }: GigsListProps) {
   const { showToast } = useDashboard()
   const [gigs, setGigs] = React.useState<DashboardGig[]>(initialGigs)
+  React.useEffect(() => setGigs(initialGigs), [initialGigs])
   const [search, setSearch] = React.useState("")
-  const [statusFilter, setStatusFilter] = React.useState<"all" | "active" | "draft" | "paused">("all")
+  const [statusFilter, setStatusFilter] = React.useState<"all" | "active" | "draft" | "paused">(
+    "all"
+  )
 
-  const handleToggleStatus = (gigId: string) => {
-    setGigs((prev) =>
-      prev.map((g) => {
-        if (g.id === gigId) {
-          const newStatus = g.status === "active" ? "paused" : "active"
-          showToast({
-            title: `Gig ${newStatus === "active" ? "Activated" : "Paused"}`,
-            message: `"${g.title}" is now ${newStatus}.`,
-            type: "success",
-          })
-          return { ...g, status: newStatus }
-        }
-        return g
+  const handleToggleStatus = async (gigId: string) => {
+    const current = gigs.find((g) => g.id === gigId)
+    if (!current) return
+    const status = current.status === "active" ? "PAUSED" : "DRAFT"
+    try {
+      await requestData(
+        `/api/v1/marketplace/services/${gigId}/status`,
+        jsonRequest("PUT", { status })
+      )
+      setGigs((prev) =>
+        prev.map((g) =>
+          g.id === gigId ? { ...g, status: status === "PAUSED" ? "paused" : "draft" } : g
+        )
+      )
+      showToast({
+        title: status === "PAUSED" ? "Service paused" : "Draft awaiting administrator review",
+        type: "success",
       })
-    )
+    } catch (error) {
+      showToast({
+        title: error instanceof Error ? error.message : "Status update failed",
+        type: "error",
+      })
+    }
   }
-
-  const handleDelete = (gigId: string, title: string) => {
-    setGigs((prev) => prev.filter((g) => g.id !== gigId))
-    showToast({
-      title: "Gig Removed",
-      message: `"${title}" has been removed from your active catalog.`,
-      type: "info",
-    })
+  const handleDelete = async (gigId: string, title: string) => {
+    void title
+    try {
+      await requestData(
+        `/api/v1/marketplace/services/${gigId}/status`,
+        jsonRequest("PUT", { status: "PAUSED" })
+      )
+      setGigs((prev) => prev.map((g) => (g.id === gigId ? { ...g, status: "paused" } : g)))
+    } catch (error) {
+      showToast({
+        title: error instanceof Error ? error.message : "Unable to pause service",
+        type: "error",
+      })
+    }
   }
 
   const filteredGigs = gigs.filter((g) => {
@@ -73,8 +88,6 @@ export function GigsList({ initialGigs }: GigsListProps) {
 
   // Summary counts
   const totalOrders = gigs.reduce((acc, g) => acc + g.stats.orders, 0)
-  const totalRevenue = gigs.reduce((acc, g) => acc + g.stats.revenue, 0)
-  const totalImpressions = gigs.reduce((acc, g) => acc + g.stats.impressions, 0)
 
   return (
     <div className="space-y-6">
@@ -83,7 +96,7 @@ export function GigsList({ initialGigs }: GigsListProps) {
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-[rgba(15,15,30,0.08)] shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex items-center justify-between">
           <div>
             <span className="text-xs text-[#6B6B7B] block font-medium">Total Gig Orders</span>
-            <span className="text-2xl font-bold font-mono text-[#0B0B14] mt-1 block">
+            <span className="text-2xl font-bold font-mono text-[#0A0A23] mt-1 block">
               {totalOrders}
             </span>
           </div>
@@ -94,9 +107,11 @@ export function GigsList({ initialGigs }: GigsListProps) {
 
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-[rgba(15,15,30,0.08)] shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex items-center justify-between">
           <div>
-            <span className="text-xs text-[#6B6B7B] block font-medium">Lifetime Catalog Revenue</span>
-            <span className="text-2xl font-bold font-mono text-[#0B0B14] mt-1 block">
-              ${totalRevenue.toLocaleString()}
+            <span className="text-xs text-[#6B6B7B] block font-medium">
+              Lifetime Catalog Revenue
+            </span>
+            <span className="text-2xl font-bold font-mono text-[#0A0A23] mt-1 block">
+              Unavailable
             </span>
           </div>
           <span className="p-2.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100">
@@ -106,9 +121,11 @@ export function GigsList({ initialGigs }: GigsListProps) {
 
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-[rgba(15,15,30,0.08)] shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex items-center justify-between">
           <div>
-            <span className="text-xs text-[#6B6B7B] block font-medium">Marketplace Impressions</span>
-            <span className="text-2xl font-bold font-mono text-[#0B0B14] mt-1 block">
-              {totalImpressions.toLocaleString()}
+            <span className="text-xs text-[#6B6B7B] block font-medium">
+              Marketplace Impressions
+            </span>
+            <span className="text-2xl font-bold font-mono text-[#0A0A23] mt-1 block">
+              Unavailable
             </span>
           </div>
           <span className="p-2.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-100">
@@ -122,7 +139,7 @@ export function GigsList({ initialGigs }: GigsListProps) {
         {/* Table Toolbar */}
         <div className="p-4 sm:p-5 border-b border-[rgba(15,15,30,0.06)] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-2">
-            <h3 className="text-base font-semibold text-[#0B0B14] tracking-tight">
+            <h3 className="text-base font-semibold text-[#0A0A23] tracking-tight">
               Published Gigs & Services
             </h3>
             <span className="text-xs font-mono font-medium px-2 py-0.5 rounded-full bg-[#F4F4F8] text-[#4B4B5C]">
@@ -139,7 +156,7 @@ export function GigsList({ initialGigs }: GigsListProps) {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search gigs or tags..."
-                className="w-full rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] pl-8.5 pr-3 py-1.5 text-xs text-[#0B0B14] placeholder:text-[#6B6B7B] outline-none focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                className="w-full rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] pl-8.5 pr-3 py-1.5 text-xs text-[#0A0A23] placeholder:text-[#6B6B7B] outline-none focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
               />
             </div>
 
@@ -161,8 +178,14 @@ export function GigsList({ initialGigs }: GigsListProps) {
           {(
             [
               { id: "all", label: `All Gigs (${gigs.length})` },
-              { id: "active", label: `Active (${gigs.filter((g) => g.status === "active").length})` },
-              { id: "paused", label: `Paused (${gigs.filter((g) => g.status === "paused").length})` },
+              {
+                id: "active",
+                label: `Active (${gigs.filter((g) => g.status === "active").length})`,
+              },
+              {
+                id: "paused",
+                label: `Paused (${gigs.filter((g) => g.status === "paused").length})`,
+              },
               { id: "draft", label: `Draft (${gigs.filter((g) => g.status === "draft").length})` },
             ] as const
           ).map((tab) => (
@@ -172,7 +195,7 @@ export function GigsList({ initialGigs }: GigsListProps) {
               className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
                 statusFilter === tab.id
                   ? "bg-white text-blue-700 shadow-xs border border-[rgba(15,15,30,0.08)]"
-                  : "text-[#6B6B7B] hover:text-[#0B0B14] hover:bg-[#F4F4F8]"
+                  : "text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-[#F4F4F8]"
               }`}
             >
               {tab.label}
@@ -184,9 +207,7 @@ export function GigsList({ initialGigs }: GigsListProps) {
         <div className="divide-y divide-[rgba(15,15,30,0.04)]">
           {filteredGigs.length === 0 ? (
             <div className="py-16 text-center space-y-3">
-              <p className="text-xs text-[#6B6B7B]">
-                No gigs found matching your filter criteria.
-              </p>
+              <p className="text-xs text-[#6B6B7B]">No gigs found matching your filter criteria.</p>
               <Link href="/dashboard/gigs/new">
                 <Button variant="outline" size="sm" className="text-xs text-blue-700">
                   Create your first gig
@@ -201,8 +222,8 @@ export function GigsList({ initialGigs }: GigsListProps) {
               >
                 {/* Left: Thumbnail & Title */}
                 <div className="flex items-start gap-3.5 min-w-0 flex-1">
-                  <img
-                    src={gig.coverImage}
+                  <UploadImage
+                    source={gig.coverImage}
                     alt={gig.title}
                     className="h-16 w-24 rounded-xl object-cover border border-[rgba(15,15,30,0.08)] shadow-xs shrink-0"
                   />
@@ -218,12 +239,17 @@ export function GigsList({ initialGigs }: GigsListProps) {
                       </span>
                     </div>
 
-                    <h4 className="text-sm font-semibold text-[#0B0B14] hover:text-blue-600 transition-colors line-clamp-1">
+                    <h4 className="text-sm font-semibold text-[#0A0A23] hover:text-blue-600 transition-colors line-clamp-1">
                       {gig.title}
                     </h4>
 
                     <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#6B6B7B]">
-                      <span>Starting at <strong className="font-mono text-[#0B0B14] font-bold">${gig.startingPrice}</strong></span>
+                      <span>
+                        Starting at{" "}
+                        <strong className="font-mono text-[#0A0A23] font-bold">
+                          ${gig.startingPrice}
+                        </strong>
+                      </span>
                       <span>•</span>
                       <span>Updated {gig.updatedAt}</span>
                     </div>
@@ -233,34 +259,42 @@ export function GigsList({ initialGigs }: GigsListProps) {
                 {/* Center: Analytics Metrics */}
                 <div className="grid grid-cols-4 gap-4 px-2 md:px-6 py-2 md:py-0 border-y md:border-y-0 md:border-x border-[rgba(15,15,30,0.06)] text-center shrink-0">
                   <div>
-                    <span className="text-[10px] text-[#6B6B7B] block uppercase tracking-wider">Impressions</span>
-                    <span className="font-mono text-xs font-semibold text-[#0B0B14]">
-                      {gig.stats.impressions.toLocaleString()}
+                    <span className="text-[10px] text-[#6B6B7B] block uppercase tracking-wider">
+                      Impressions
+                    </span>
+                    <span className="font-mono text-xs font-semibold text-[#0A0A23]">
+                      Unavailable
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-[#6B6B7B] block uppercase tracking-wider">Clicks</span>
-                    <span className="font-mono text-xs font-semibold text-[#0B0B14]">
-                      {gig.stats.clicks.toLocaleString()}
+                    <span className="text-[10px] text-[#6B6B7B] block uppercase tracking-wider">
+                      Clicks
+                    </span>
+                    <span className="font-mono text-xs font-semibold text-[#0A0A23]">
+                      Unavailable
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-[#6B6B7B] block uppercase tracking-wider">Orders</span>
+                    <span className="text-[10px] text-[#6B6B7B] block uppercase tracking-wider">
+                      Orders
+                    </span>
                     <span className="font-mono text-xs font-semibold text-blue-700">
                       {gig.stats.orders}
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-[#6B6B7B] block uppercase tracking-wider">Revenue</span>
+                    <span className="text-[10px] text-[#6B6B7B] block uppercase tracking-wider">
+                      Revenue
+                    </span>
                     <span className="font-mono text-xs font-bold text-emerald-600">
-                      ${gig.stats.revenue.toLocaleString()}
+                      Unavailable
                     </span>
                   </div>
                 </div>
 
                 {/* Right: Actions */}
                 <div className="flex items-center justify-end gap-1.5 shrink-0">
-                  <Link href={`/dashboard/gigs/new?edit=${gig.id}`}>
+                  <Link href={`/dashboard/gigs/${gig.id}/edit`}>
                     <Button
                       variant="outline"
                       size="sm"
@@ -272,11 +306,11 @@ export function GigsList({ initialGigs }: GigsListProps) {
                   </Link>
 
                   <Button
-                    onClick={() => handleToggleStatus(gig.id)}
+                    onClick={() => void handleToggleStatus(gig.id)}
                     variant="outline"
                     size="sm"
                     className="h-8 px-2.5 text-xs text-[#4B4B5C] border-[rgba(15,15,30,0.12)] hover:bg-[#F4F4F8] flex items-center gap-1"
-                    title={gig.status === "active" ? "Pause gig" : "Activate gig"}
+                    title={gig.status === "active" ? "Pause gig" : "Request review"}
                   >
                     {gig.status === "active" ? (
                       <>
@@ -286,7 +320,7 @@ export function GigsList({ initialGigs }: GigsListProps) {
                     ) : (
                       <>
                         <PlayCircle className="h-3.5 w-3.5 text-emerald-600" />
-                        <span className="hidden sm:inline">Activate</span>
+                        <span className="hidden sm:inline">Request review</span>
                       </>
                     )}
                   </Button>
@@ -295,7 +329,7 @@ export function GigsList({ initialGigs }: GigsListProps) {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-8 w-8 p-0 text-[#6B6B7B] hover:text-[#0B0B14]"
+                      className="h-8 w-8 p-0 text-[#6B6B7B] hover:text-[#0A0A23]"
                       title="View Public Service Page"
                     >
                       <ArrowUpRight className="h-4 w-4" />
@@ -303,9 +337,9 @@ export function GigsList({ initialGigs }: GigsListProps) {
                   </Link>
 
                   <button
-                    onClick={() => handleDelete(gig.id, gig.title)}
+                    onClick={() => void handleDelete(gig.id, gig.title)}
                     className="p-2 text-[#6B6B7B] hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors"
-                    title="Delete gig"
+                    title="Pause service"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

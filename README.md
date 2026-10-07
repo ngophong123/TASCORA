@@ -12,18 +12,18 @@ Tagline:
 
 You are acting as a complete senior engineering team:
 
-* Software Architect
-* Product Manager
-* UX/UI Designer
-* Frontend Engineer
-* Backend Engineer
-* Database Engineer
-* Real-time Systems Engineer
-* Security Engineer
-* DevOps Engineer
-* QA Engineer
-* Performance Engineer
-* Technical Writer
+- Software Architect
+- Product Manager
+- UX/UI Designer
+- Frontend Engineer
+- Backend Engineer
+- Database Engineer
+- Real-time Systems Engineer
+- Security Engineer
+- DevOps Engineer
+- QA Engineer
+- Performance Engineer
+- Technical Writer
 
 Build TASKORA as a serious production-style freelance marketplace.
 
@@ -43,40 +43,40 @@ TASKORA is a marketplace where:
 
 BUYERS:
 
-* discover services
-* compare sellers
-* purchase packages
-* communicate with sellers
-* submit requirements
-* track orders
-* request revisions
-* receive deliveries
-* complete orders
-* leave reviews
+- discover services
+- compare sellers
+- purchase packages
+- communicate with sellers
+- submit requirements
+- track orders
+- request revisions
+- receive deliveries
+- complete orders
+- leave reviews
 
 SELLERS:
 
-* create services
-* configure packages
-* manage orders
-* communicate with buyers
-* deliver work
-* handle revisions
-* track earnings
-* monitor analytics
-* build their reputation
+- create services
+- configure packages
+- manage orders
+- communicate with buyers
+- deliver work
+- handle revisions
+- track earnings
+- monitor analytics
+- build their reputation
 
 ADMINS:
 
-* manage users
-* moderate services
-* manage categories
-* monitor orders
-* manage disputes
-* manage reports
-* configure marketplace settings
-* inspect audit logs
-* monitor platform health
+- manage users
+- moderate services
+- manage categories
+- monitor orders
+- manage disputes
+- manage reports
+- configure marketplace settings
+- inspect audit logs
+- monitor platform health
 
 ---
 
@@ -146,20 +146,20 @@ Every stage must be connected.
 
 ## Frontend
 
-* Next.js latest stable version
-* TypeScript
-* React
-* App Router
-* Tailwind CSS
-* shadcn/ui
-* TanStack Query
-* Zustand
-* React Hook Form
-* Zod
-* dnd-kit
-* Socket.IO Client
-* Recharts
-* Lucide React
+- Next.js latest stable version
+- TypeScript
+- React
+- App Router
+- Tailwind CSS
+- shadcn/ui
+- TanStack Query
+- Zustand
+- React Hook Form
+- Zod
+- dnd-kit
+- Socket.IO Client
+- Recharts
+- Lucide React
 
 Strict TypeScript.
 
@@ -171,20 +171,20 @@ Do not use JavaScript for application code.
 
 Use:
 
-* Node.js
-* TypeScript
-* Express.js
-* Prisma ORM
-* PostgreSQL
-* Redis
-* Socket.IO
-* JWT
-* bcrypt
-* Zod
-* Helmet
-* CORS
-* express-rate-limit
-* Pino
+- Node.js
+- TypeScript
+- Express.js
+- Prisma ORM
+- PostgreSQL
+- Redis
+- Socket.IO
+- JWT
+- bcrypt
+- Zod
+- Helmet
+- CORS
+- express-rate-limit
+- Pino
 
 Architecture:
 
@@ -213,16 +213,16 @@ Structure:
 taskora/
 
 ├── apps/
-│   ├── web/
-│   ├── api/
-│   └── admin/
+│ ├── web/
+│ ├── api/
+│ └── admin/
 │
 ├── packages/
-│   ├── ui/
-│   ├── types/
-│   ├── config/
-│   ├── eslint-config/
-│   └── tsconfig/
+│ ├── ui/
+│ ├── types/
+│ ├── config/
+│ ├── eslint-config/
+│ └── tsconfig/
 │
 ├── prisma/
 ├── docs/
@@ -230,7 +230,7 @@ taskora/
 ├── docker/
 ├── scripts/
 ├── .github/
-│   └── workflows/
+│ └── workflows/
 │
 ├── docker-compose.yml
 ├── pnpm-workspace.yaml
@@ -322,17 +322,17 @@ PENDING_VERIFICATION
 
 Implement:
 
-* registration
-* login
-* logout
-* refresh token
-* email verification
-* forgot password
-* reset password
-* change password
-* profile update
-* avatar
-* account status
+- registration
+- login
+- logout
+- refresh token
+- email verification
+- forgot password
+- reset password
+- change password
+- profile update
+- avatar
+- account status
 
 ---
 
@@ -342,21 +342,21 @@ Create secure session management.
 
 Track:
 
-* session ID
-* user ID
-* refresh token hash
-* device information
-* IP where appropriate
-* created time
-* last activity
-* expiration
-* revoked state
+- session ID
+- user ID
+- refresh token hash
+- device information
+- IP where appropriate
+- created time
+- last activity
+- expiration
+- revoked state
 
 Allow users to:
 
-* view active sessions
-* revoke a session
-* logout from all devices
+- view active sessions
+- revoke a session
+- logout from all devices
 
 ---
 
@@ -429,14 +429,14 @@ Keep sensitive verification data separated from normal user profile data.
 
 Implement:
 
-* rating
-* review count
-* completed orders
-* completion rate
-* cancellation rate
-* response rate
-* average response time
-* on-time delivery rate
+- rating
+- review count
+- completed orders
+- completion rate
+- cancellation rate
+- response rate
+- average response time
+- on-time delivery rate
 
 Create seller levels:
 
@@ -465,12 +465,12 @@ Category
 
 Admin can:
 
-* create
-* update
-* delete
-* activate
-* deactivate
-* reorder
+- create
+- update
+- delete
+- activate
+- deactivate
+- reorder
 
 Use slugs.
 
@@ -482,13 +482,13 @@ Prevent deletion when category has active services unless explicitly handled.
 
 Seller can:
 
-* create
-* edit
-* save draft
-* publish
-* pause
-* archive
-* duplicate
+- create
+- edit
+- save draft
+- publish
+- pause
+- archive
+- duplicate
 
 Service lifecycle:
 
@@ -526,12 +526,12 @@ Premium
 
 Each package:
 
-* title
-* description
-* price
-* delivery days
-* revisions
-* features
+- title
+- description
+- price
+- delivery days
+- revisions
+- features
 
 Allow seller to customize package names.
 
@@ -541,15 +541,15 @@ Allow seller to customize package names.
 
 Support:
 
-* title
-* description
-* images
-* category
-* tags
-* packages
-* FAQs
-* requirements
-* delivery information
+- title
+- description
+- images
+- category
+- tags
+- packages
+- FAQs
+- requirements
+- delivery information
 
 Use rich text safely.
 
@@ -561,32 +561,32 @@ Sanitize user-generated content.
 
 Implement:
 
-* keyword search
-* category
-* subcategory
-* price range
-* rating
-* delivery time
-* seller level
-* language
-* online/available
-* package type
+- keyword search
+- category
+- subcategory
+- price range
+- rating
+- delivery time
+- seller level
+- language
+- online/available
+- package type
 
 Sort:
 
-* recommended
-* popular
-* newest
-* rating
-* price low-high
-* price high-low
+- recommended
+- popular
+- newest
+- rating
+- price low-high
+- price high-low
 
 Implement:
 
-* pagination
-* cursor pagination where useful
-* debounced search
-* database indexes
+- pagination
+- cursor pagination where useful
+- debounced search
+- database indexes
 
 Prepare architecture for Elasticsearch/OpenSearch later.
 
@@ -600,14 +600,14 @@ Initially use deterministic scoring.
 
 Factors:
 
-* category match
-* keyword match
-* rating
-* review count
-* order count
-* seller level
-* recent activity
-* service popularity
+- category match
+- keyword match
+- rating
+- review count
+- order count
+- seller level
+- recent activity
+- service popularity
 
 Create:
 
@@ -623,9 +623,9 @@ Architecture must allow ML recommendation later.
 
 Users can:
 
-* favorite services
-* unfavorite
-* view favorites
+- favorite services
+- unfavorite
+- view favorites
 
 Prevent duplicate favorites.
 
@@ -637,10 +637,10 @@ Implement cart support.
 
 Buyer can:
 
-* add service package
-* remove item
-* update quantity where applicable
-* view cart
+- add service package
+- remove item
+- update quantity where applicable
+- view cart
 
 For services that should only have quantity 1, enforce this business rule.
 
@@ -664,8 +664,7 @@ Never trust frontend prices.
 
 Backend recalculates:
 
-subtotal
-+
+subtotal +
 platform fee
 ------------
 
@@ -683,16 +682,16 @@ Coupon
 
 Fields:
 
-* code
-* type
-* value
-* minimum order
-* maximum discount
-* usage limit
-* per-user limit
-* start date
-* expiry date
-* active
+- code
+- type
+- value
+- minimum order
+- maximum discount
+- usage limit
+- per-user limit
+- start date
+- expiry date
+- active
 
 Types:
 
@@ -744,19 +743,19 @@ Prepare architecture for future Stripe integration.
 
 Order contains:
 
-* order number
-* buyer
-* seller
-* service
-* package
-* price snapshot
-* requirements
-* deadline
-* platform fee
-* discount
-* total
-* status
-* payment status
+- order number
+- buyer
+- seller
+- service
+- package
+- price snapshot
+- requirements
+- deadline
+- platform fee
+- discount
+- total
+- status
+- payment status
 
 Important:
 
@@ -807,21 +806,20 @@ Backend must validate every transition.
 
 Calculate delivery deadline from:
 
-order creation
-+
+order creation +
 package deliveryDays
 
 Track:
 
-* deadline
-* remaining time
-* overdue state
+- deadline
+- remaining time
+- overdue state
 
 Create background jobs for:
 
-* deadline reminders
-* overdue orders
-* abandoned orders
+- deadline reminders
+- overdue orders
+- abandoned orders
 
 ---
 
@@ -850,14 +848,14 @@ Buyer submits requirements after purchase.
 
 Support:
 
-* text
-* structured fields
-* attachments
+- text
+- structured fields
+- attachments
 
 Seller can:
 
-* view requirements
-* request clarification
+- view requirements
+- request clarification
 
 Buyer can update requirements only when allowed by order state.
 
@@ -869,16 +867,16 @@ Seller can deliver work.
 
 Delivery contains:
 
-* message
-* attachments
-* createdAt
+- message
+- attachments
+- createdAt
 
 Support multiple deliveries.
 
 Buyer can:
 
-* accept delivery
-* request revision
+- accept delivery
+- request revision
 
 ---
 
@@ -888,15 +886,15 @@ Package has revision limit.
 
 Track:
 
-* allowed revisions
-* used revisions
+- allowed revisions
+- used revisions
 
 Prevent unlimited revisions.
 
 If revision limit is exceeded:
 
-* require seller agreement
-* or create dispute
+- require seller agreement
+- or create dispute
 
 ---
 
@@ -936,17 +934,17 @@ Every order has its own conversation.
 
 Features:
 
-* send message
-* receive message
-* typing
-* online status
-* offline status
-* read receipts
-* unread count
-* pagination
-* attachments
-* system messages
-* message timestamps
+- send message
+- receive message
+- typing
+- online status
+- offline status
+- read receipts
+- unread count
+- pagination
+- attachments
+- system messages
+- message timestamps
 
 Rooms:
 
@@ -962,10 +960,10 @@ Admins may access through controlled moderation routes.
 
 Prevent:
 
-* unauthorized room joining
-* message spoofing
-* cross-order message access
-* malicious payloads
+- unauthorized room joining
+- message spoofing
+- cross-order message access
+- malicious payloads
 
 Validate every Socket.IO event server-side.
 
@@ -997,8 +995,8 @@ Allow participants to search their order conversation.
 
 Search:
 
-* message content
-* sender
+- message content
+- sender
 
 Use database search initially.
 
@@ -1026,12 +1024,12 @@ SYSTEM
 
 Support:
 
-* realtime
-* persistent
-* unread counter
-* mark read
-* mark all read
-* notification preferences
+- realtime
+- persistent
+- unread counter
+- mark read
+- mark all read
+- notification preferences
 
 ---
 
@@ -1068,14 +1066,14 @@ Use Redis + BullMQ or equivalent job queue.
 
 Jobs:
 
-* emails
-* notifications
-* order reminders
-* overdue orders
-* review reminders
-* analytics processing
-* cleanup expired tokens
-* abandoned checkout cleanup
+- emails
+- notifications
+- order reminders
+- overdue orders
+- review reminders
+- analytics processing
+- cleanup expired tokens
+- abandoned checkout cleanup
 
 Create workers separately from API process.
 
@@ -1087,9 +1085,9 @@ Create virtual wallet.
 
 Fields:
 
-* available balance
-* pending balance
-* total earnings
+- available balance
+- pending balance
+- total earnings
 
 Wallet transactions:
 
@@ -1149,16 +1147,16 @@ Rating:
 
 Review:
 
-* rating
-* comment
+- rating
+- comment
 
 Rules:
 
-* completed order only
-* one review per order
-* buyer must own order
-* seller cannot review own service as buyer
-* cancelled orders cannot be reviewed
+- completed order only
+- one review per order
+- buyer must own order
+- seller cannot review own service as buyer
+- cancelled orders cannot be reviewed
 
 ---
 
@@ -1166,10 +1164,10 @@ Rules:
 
 Admin can:
 
-* inspect review
-* hide review
-* restore review
-* delete review where policy allows
+- inspect review
+- hide review
+- restore review
+- delete review where policy allows
 
 Keep moderation history in AuditLog.
 
@@ -1181,14 +1179,14 @@ Buyer or seller can open dispute.
 
 Dispute:
 
-* order
-* openedBy
-* reason
-* description
-* evidence
-* status
-* admin notes
-* resolution
+- order
+- openedBy
+- reason
+- description
+- evidence
+- status
+- admin notes
+- resolution
 
 Statuses:
 
@@ -1206,10 +1204,10 @@ Admin can resolve.
 
 Users can report:
 
-* service
-* user
-* review
-* message
+- service
+- user
+- review
+- message
 
 Create report queue for admins.
 
@@ -1251,25 +1249,25 @@ Pages:
 
 Show:
 
-* GMV
-* platform revenue
-* seller earnings
-* orders
-* completed orders
-* cancelled orders
-* active users
-* new users
-* active sellers
-* service growth
-* conversion rate
+- GMV
+- platform revenue
+- seller earnings
+- orders
+- completed orders
+- cancelled orders
+- active users
+- new users
+- active sellers
+- service growth
+- conversion rate
 
 Charts:
 
-* daily revenue
-* monthly revenue
-* orders
-* users
-* seller growth
+- daily revenue
+- monthly revenue
+- orders
+- users
+- seller growth
 
 ---
 
@@ -1347,25 +1345,25 @@ timestamp
 
 Implement:
 
-* Helmet
-* CORS
-* CSP where practical
-* secure cookies
-* rate limiting
-* authentication
-* authorization
-* ownership checks
-* input validation
-* output sanitization
-* file validation
-* MIME validation
-* upload size limits
-* request body limits
-* brute-force protection
-* refresh token rotation
-* token revocation
-* password hashing
-* security headers
+- Helmet
+- CORS
+- CSP where practical
+- secure cookies
+- rate limiting
+- authentication
+- authorization
+- ownership checks
+- input validation
+- output sanitization
+- file validation
+- MIME validation
+- upload size limits
+- request body limits
+- brute-force protection
+- refresh token rotation
+- token revocation
+- password hashing
+- security headers
 
 Never expose:
 
@@ -1471,10 +1469,10 @@ Use consistent HTTP status codes.
 
 Implement idempotency for:
 
-* payment creation
-* order creation where appropriate
-* webhook-like operations
-* wallet operations
+- payment creation
+- order creation where appropriate
+- webhook-like operations
+- wallet operations
 
 Prevent duplicate operations caused by retries.
 
@@ -1530,10 +1528,10 @@ S3-compatible object storage.
 
 Validate:
 
-* MIME
-* extension
-* size
-* filename
+- MIME
+- extension
+- size
+- filename
 
 Generate safe filenames.
 
@@ -1543,10 +1541,10 @@ Generate safe filenames.
 
 For service images:
 
-* validate
-* resize
-* optimize
-* generate thumbnails where practical
+- validate
+- resize
+- optimize
+- generate thumbnails where practical
 
 Do not serve huge original images unnecessarily.
 
@@ -1591,22 +1589,22 @@ Use TanStack Query.
 
 Server state:
 
-* services
-* orders
-* messages
-* notifications
-* reviews
-* analytics
-* users
+- services
+- orders
+- messages
+- notifications
+- reviews
+- analytics
+- users
 
 Client state:
 
 Zustand:
 
-* sidebar
-* theme
-* temporary checkout
-* UI state
+- sidebar
+- theme
+- temporary checkout
+- UI state
 
 Do not use Zustand as a replacement for server state.
 
@@ -1653,12 +1651,12 @@ TASKORA
 
 Style:
 
-* premium
-* modern
-* clean
-* trustworthy
-* professional
-* startup/SaaS
+- premium
+- modern
+- clean
+- trustworthy
+- professional
+- startup/SaaS
 
 Avoid copying Fiverr or Upwork.
 
@@ -1676,10 +1674,10 @@ Use consistent spacing, typography and visual hierarchy.
 
 Support:
 
-* desktop
-* laptop
-* tablet
-* mobile
+- desktop
+- laptop
+- tablet
+- mobile
 
 Seller Kanban must have a usable mobile representation.
 
@@ -1705,13 +1703,13 @@ Persist preference.
 
 Implement:
 
-* semantic HTML
-* keyboard navigation
-* focus states
-* accessible forms
-* aria labels
-* screen reader support
-* sufficient contrast
+- semantic HTML
+- keyboard navigation
+- focus states
+- accessible forms
+- aria labels
+- screen reader support
+- sufficient contrast
 
 ---
 
@@ -1719,13 +1717,13 @@ Implement:
 
 Implement:
 
-* metadata
-* dynamic service metadata
-* canonical URLs
-* sitemap
-* robots.txt
-* Open Graph
-* structured data where appropriate
+- metadata
+- dynamic service metadata
+- canonical URLs
+- sitemap
+- robots.txt
+- Open Graph
+- structured data where appropriate
 
 Use SEO-friendly slugs.
 
@@ -1767,14 +1765,14 @@ Do not collect unnecessary sensitive information.
 
 Show:
 
-* impressions
-* views
-* favorites
-* orders
-* revenue
-* conversion
-* rating
-* response rate
+- impressions
+- views
+- favorites
+- orders
+- revenue
+- conversion
+- rating
+- response rate
 
 Date filters:
 
@@ -1790,13 +1788,13 @@ custom
 
 Show:
 
-* total orders
-* active orders
-* completed orders
-* total spending
-* recent orders
-* favorite services
-* recent messages
+- total orders
+- active orders
+- completed orders
+- total spending
+- recent orders
+- favorite services
+- recent messages
 
 ---
 
@@ -1804,14 +1802,14 @@ Show:
 
 Show:
 
-* revenue
-* pending balance
-* active orders
-* completed orders
-* rating
-* response rate
-* conversion
-* recent activity
+- revenue
+- pending balance
+- active orders
+- completed orders
+- rating
+- response rate
+- conversion
+- recent activity
 
 ---
 
@@ -1819,13 +1817,13 @@ Show:
 
 All admin tables should support:
 
-* search
-* filtering
-* sorting
-* pagination
-* bulk selection where appropriate
-* bulk actions where safe
-* column visibility where useful
+- search
+- filtering
+- sorting
+- pagination
+- bulk selection where appropriate
+- bulk actions where safe
+- column visibility where useful
 
 ---
 
@@ -1851,13 +1849,13 @@ Never return raw stack traces.
 
 Implement:
 
-* structured logging
-* request IDs
-* health endpoint
-* readiness endpoint
-* database health
-* Redis health
-* Socket.IO health where practical
+- structured logging
+- request IDs
+- health endpoint
+- readiness endpoint
+- database health
+- Redis health
+- Socket.IO health where practical
 
 Endpoints:
 
@@ -1870,21 +1868,21 @@ Endpoints:
 
 Optimize:
 
-* database queries
-* indexes
-* pagination
-* caching
-* images
-* bundle size
-* rendering
-* API payload size
+- database queries
+- indexes
+- pagination
+- caching
+- images
+- bundle size
+- rendering
+- API payload size
 
 Use Redis for:
 
-* platform settings
-* frequently accessed categories
-* selected service cache
-* rate limiting where appropriate
+- platform settings
+- frequently accessed categories
+- selected service cache
+- rate limiting where appropriate
 
 Never cache private user data incorrectly.
 
@@ -1928,23 +1926,23 @@ Do not cache sensitive data without a clear strategy.
 
 Unit tests:
 
-* auth service
-* order state machine
-* pricing service
-* coupon service
-* review rules
-* wallet service
-* permission checks
+- auth service
+- order state machine
+- pricing service
+- coupon service
+- review rules
+- wallet service
+- permission checks
 
 Integration tests:
 
-* registration
-* login
-* service creation
-* order creation
-* payment
-* review
-* dispute
+- registration
+- login
+- service creation
+- order creation
+- payment
+- review
+- dispute
 
 E2E:
 
@@ -1986,15 +1984,15 @@ This flow must work from beginning to end.
 
 Test:
 
-* connection
-* authentication
-* room authorization
-* send message
-* receive message
-* typing
-* read receipt
-* order status event
-* notification event
+- connection
+- authentication
+- room authorization
+- send message
+- receive message
+- typing
+- read receipt
+- order status event
+- notification event
 
 Ensure unauthorized users cannot join private rooms.
 
@@ -2067,10 +2065,10 @@ Document database backup strategy.
 
 Production documentation should explain:
 
-* automated backups
-* retention
-* restoration
-* disaster recovery
+- automated backups
+- retention
+- restoration
+- disaster recovery
 
 ---
 
@@ -2155,11 +2153,11 @@ Use OpenAPI/Swagger.
 
 Document:
 
-* authentication
-* request bodies
-* responses
-* errors
-* permissions
+- authentication
+- request bodies
+- responses
+- errors
+- permissions
 
 Swagger should be accessible only in appropriate environments if desired.
 
@@ -2173,14 +2171,14 @@ docs/security.md
 
 Explain:
 
-* authentication
-* authorization
-* token management
-* rate limiting
-* validation
-* file security
-* Socket.IO authorization
-* secret management
+- authentication
+- authorization
+- token management
+- rate limiting
+- validation
+- file security
+- Socket.IO authorization
+- secret management
 
 ---
 
@@ -2210,12 +2208,12 @@ docs/database.md
 
 Explain:
 
-* entities
-* relationships
-* indexes
-* important constraints
-* transactions
-* state machines
+- entities
+- relationships
+- indexes
+- important constraints
+- transactions
+- state machines
 
 ---
 
@@ -2227,13 +2225,13 @@ docs/realtime.md
 
 Document:
 
-* Socket.IO connection
-* authentication
-* rooms
-* events
-* message persistence
-* notifications
-* authorization
+- Socket.IO connection
+- authentication
+- rooms
+- events
+- message persistence
+- notifications
+- authorization
 
 ---
 
@@ -2551,25 +2549,25 @@ Do not consider Taskora finished simply because the application starts.
 
 Taskora is finished only when:
 
-* architecture is clean
-* database is consistent
-* APIs are documented
-* authentication is secure
-* authorization is enforced
-* realtime communication works
-* orders follow valid state transitions
-* payments are idempotent
-* wallet calculations are correct
-* reviews follow business rules
-* admin controls work
-* background jobs work
-* tests pass
-* Docker works
-* CI passes
-* UI is responsive
-* accessibility is reasonable
-* documentation is complete
-* production configuration is documented
+- architecture is clean
+- database is consistent
+- APIs are documented
+- authentication is secure
+- authorization is enforced
+- realtime communication works
+- orders follow valid state transitions
+- payments are idempotent
+- wallet calculations are correct
+- reviews follow business rules
+- admin controls work
+- background jobs work
+- tests pass
+- Docker works
+- CI passes
+- UI is responsive
+- accessibility is reasonable
+- documentation is complete
+- production configuration is documented
 
 ---
 
@@ -2614,18 +2612,142 @@ Then implement PHASE 1 only.
 
 After completing PHASE 1:
 
-* run lint
-* run typecheck
-* run tests
-* verify build
-* report changed files
-* report commands
-* report remaining work
+- run lint
+- run typecheck
+- run tests
+- verify build
+- report changed files
+- report commands
+- report remaining work
 
 Then wait for the next phase.
-
-The final product name must remain:
 
 # TASKORA
 
 ## Connect. Work. Deliver.
+
+---
+
+# 101. QUALITY & TESTING TOOLCHAIN
+
+TASKORA employs an enterprise-grade automated quality assurance toolchain to prevent regressions across code quality, types, user journeys, accessibility, and web vitals performance.
+
+### 1. The 4-Tier Testing Model (Enterprise QA Strategy)
+
+TASCORA implements a hierarchical, risk-driven testing model to balance lightning-fast feedback during active coding with rock-solid reliability before production deployment:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 1. FAST DEV LOOP (<15s)  : pnpm test:quick                  │
+│    Typecheck (tsc) + Lint (ESLint strict) + Vitest (unit)   │
+├─────────────────────────────────────────────────────────────┤
+│ 2. FEATURE QA (15-30s)   : pnpm test:feature <spec-path>    │
+│    Targeted Playwright E2E spec for current feature branch  │
+├─────────────────────────────────────────────────────────────┤
+│ 3. FULL INTEGRATION (2m) : pnpm test:full                   │
+│    Type + Lint + Unit + 26 E2E Tests (Chromium) + Build     │
+├─────────────────────────────────────────────────────────────┤
+│ 4. RELEASE QA (5m+)      : pnpm test:release                │
+│    Cross-Browser E2E + Lighthouse CI + WCAG 2.1 AA Audits   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### Daily Command Quick-Sheet:
+
+```bash
+# Tier 1: Run continuously while coding (Typecheck + Lint + Unit tests in <1s)
+pnpm test:quick
+
+# Tier 2: Run after editing a specific feature (e.g. Search, Order, Responsive)
+pnpm test:feature tests/e2e/search-and-filter.spec.ts --project=chromium
+pnpm test:feature tests/e2e/gig-detail-and-order.spec.ts --project=chromium
+
+# Tier 3: Run before git push or opening a PR (Comprehensive local validation)
+pnpm test:full
+
+# Tier 4: Run before deployment / release tag / portfolio showcase
+pnpm test:release
+
+# Unit test interactive watch mode
+pnpm test:unit:watch
+```
+
+### 2. Code Quality & Formatting
+
+```bash
+# Run strict TypeScript typecheck (zero tolerance for type errors or any leaks)
+pnpm typecheck
+
+# Run strict ESLint validation (zero warnings, zero errors)
+pnpm lint:strict
+
+# Run Vitest fast unit tests
+pnpm test:unit
+```
+
+### 3. End-to-End (E2E) Testing with Playwright
+
+Playwright tests user flows against an active or automatically spawned local server:
+
+```bash
+# Run all E2E tests headless on Chromium
+pnpm test:e2e --project=chromium
+
+
+# Run all E2E tests across both desktop and mobile viewports
+pnpm test:e2e
+
+# Run tests in interactive UI mode with time-travel debugger
+pnpm test:e2e:ui
+
+# Run tests in headed browser mode
+pnpm exec playwright test --headed
+
+# Open the HTML test report
+pnpm test:e2e:report
+```
+
+#### Test Suite Structure (Domain-Driven Organization):
+
+- **Auth Domain (`tests/e2e/auth/`)**:
+  - `auth-flows.spec.ts`: Sign-in form rendering, password visibility toggle, buyer vs seller role switching on registration, and validation guards.
+- **Marketplace Domain (`tests/e2e/marketplace/`)**:
+  - `navigation.spec.ts`: Page loads, desktop mega menu interaction, mobile hamburger drawer, and footer links.
+  - `search-and-filter.spec.ts`: Hero search redirect, category/rating filtering, clear filters, and pagination.
+  - `gig-detail-and-order.spec.ts`: Service detail view, package tier switching, dynamic add-ons calculation, and escrow checkout modal.
+- **Dashboard Domain (`tests/e2e/dashboard/`)**:
+  - `dashboard-flows.spec.ts`: Metric stat cards, order status filter tabs, order detail drawer, chat messaging, and gig creation wizard.
+- **System & Quality Domain (`tests/e2e/system/`)**:
+  - `language-switch.spec.ts`: Seamless EN/VI locale switching, keyboard dismiss, and route path persistence.
+  - `accessibility.spec.ts`: Automated WCAG 2.1 AA audits via `@axe-core/playwright` ensuring 0 critical or serious violations.
+  - `responsive.spec.ts`: Cross-device verification across mobile (375x667), tablet (768x1024), and desktop (1280x800) with zero horizontal overflow.
+
+### 4. Lighthouse CI Performance & Audits
+
+Lighthouse CI validates performance, SEO, accessibility, and best practices:
+
+```bash
+# First build the Next.js production bundle
+pnpm build
+
+# Run mobile audits (default LHCI profile)
+pnpm lhci:mobile
+
+# Run desktop audits
+pnpm lhci:desktop
+```
+
+#### Enforced Quality Thresholds (`lighthouserc.js`):
+
+- **Accessibility**: $\ge 90\%$ (Fail on error)
+- **Best Practices**: $\ge 85\%$ (Fail on error)
+- **SEO**: $\ge 90\%$ (Fail on error)
+- **Performance**: $\ge 80\%$ (Warning threshold), $\ge 65\%$ (Minimum threshold)
+
+### 5. Git Pre-Commit Hooks & Continuous Integration
+
+- **Husky & lint-staged**: Automatically executes on `git commit`, running `eslint --fix` and `prettier --write` only on staged files before allowing commits.
+- **GitHub Actions (`.github/workflows/quality.yml`)**:
+  1. `lint-and-typecheck`: Validates strict typing and linting rules on push and pull requests to `main`.
+  2. `e2e-tests`: Automatically spins up Next.js server and executes all 26 Playwright test flows on Chromium.
+  3. `lighthouse`: Builds production assets and audits Core Web Vitals, generating artifact summaries.

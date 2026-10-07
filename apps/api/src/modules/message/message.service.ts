@@ -1,5 +1,8 @@
 import { prisma } from '../../lib/prisma';
 import { getIO } from '../../lib/socket';
+import { publicSellerSelect } from '../../lib/public-profile';
+import { HttpError } from '../../lib/errors';
+import { assertOwnedUpload } from '../upload/references';
 
 export class MessageService {
   static async getConversations(userId: string) {
@@ -11,9 +14,9 @@ export class MessageService {
         ]
       },
       include: {
-        participant1: { select: { id: true, buyerProfile: true, sellerProfile: true } },
-        participant2: { select: { id: true, buyerProfile: true, sellerProfile: true } },
-        order: { select: { id: true, status: true } },
+        participant1: { select: { id: true, buyerProfile: true, sellerProfile: { select: publicSellerSelect } } },
+        participant2: { select: { id: true, buyerProfile: true, sellerProfile: { select: publicSellerSelect } } },
+        order: { include: { service: true, package: true } },
         messages: {
           orderBy: { createdAt: 'desc' },
           take: 1
@@ -28,9 +31,9 @@ export class MessageService {
       where: { id: conversationId }
     });
 
-    if (!conversation) throw new Error('Conversation not found');
+    if (!conversation) throw new HttpError(404, 'Conversation not found');
     if (conversation.participant1Id !== userId && conversation.participant2Id !== userId) {
-      throw new Error('Unauthorized');
+      throw new HttpError(403, 'Unauthorized');
     }
 
     return prisma.message.findMany({
@@ -42,32 +45,37 @@ export class MessageService {
   }
 
   static async sendMessage(conversationId: string, senderId: string, content: string, attachmentUrl?: string) {
+    assertOwnedUpload(attachmentUrl, senderId);
     const conversation = await prisma.conversation.findUnique({
       where: { id: conversationId }
     });
 
-    if (!conversation) throw new Error('Conversation not found');
+    if (!conversation) throw new HttpError(404, 'Conversation not found');
     if (conversation.participant1Id !== senderId && conversation.participant2Id !== senderId) {
-      throw new Error('Unauthorized');
+      throw new HttpError(403, 'Unauthorized');
     }
 
-    const message = await prisma.message.create({
-      data: {
-        conversationId,
-        senderId,
-        content,
-        attachmentUrl
-      }
-    });
-
     const isParticipant1 = conversation.participant1Id === senderId;
-    await prisma.conversation.update({
-      where: { id: conversationId },
-      data: {
-        lastMessageAt: new Date(),
-        unreadCount2: isParticipant1 ? { increment: 1 } : conversation.unreadCount2,
-        unreadCount1: !isParticipant1 ? { increment: 1 } : conversation.unreadCount1,
-      }
+    const message = await prisma.$transaction(async tx => {
+      await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtext(${`chat:${conversationId}`}))`;
+      const created = await tx.message.create({
+        data: {
+          conversationId,
+          senderId,
+          content,
+          attachmentUrl
+        }
+      });
+
+      await tx.conversation.update({
+        where: { id: conversationId },
+        data: {
+          lastMessageAt: new Date(),
+          ...(isParticipant1 ? { unreadCount2: { increment: 1 } } : { unreadCount1: { increment: 1 } }),
+        }
+      });
+      await tx.notification.create({ data: { userId: isParticipant1 ? conversation.participant2Id : conversation.participant1Id, type: 'NEW_MESSAGE', title: 'New message', message: 'You have a new conversation message.', data: { conversationId } } });
+      return created;
     });
 
     // Fallback: emit from HTTP as well if sent via REST API

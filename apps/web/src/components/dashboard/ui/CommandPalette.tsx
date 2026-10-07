@@ -16,7 +16,6 @@ import {
   Wallet,
   ArrowRightLeft,
   PlusCircle,
-  ExternalLink,
   X,
   Compass,
 } from "lucide-react"
@@ -199,14 +198,10 @@ export function CommandPalette() {
         setCommandPaletteOpen(false)
       } else if (e.key === "ArrowDown") {
         e.preventDefault()
-        setSelectedIndex((prev) =>
-          prev < filteredCommands.length - 1 ? prev + 1 : 0
-        )
+        setSelectedIndex((prev) => (prev < filteredCommands.length - 1 ? prev + 1 : 0))
       } else if (e.key === "ArrowUp") {
         e.preventDefault()
-        setSelectedIndex((prev) =>
-          prev > 0 ? prev - 1 : filteredCommands.length - 1
-        )
+        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : filteredCommands.length - 1))
       } else if (e.key === "Enter" && filteredCommands.length > 0) {
         e.preventDefault()
         const selected = filteredCommands[selectedIndex]
@@ -259,13 +254,13 @@ export function CommandPalette() {
                   setSelectedIndex(0)
                 }}
                 placeholder="Type a command, page, or action..."
-                className="w-full h-14 bg-transparent text-sm text-[#0B0B14] placeholder-[#8B8B9B] focus:outline-none"
+                className="w-full h-14 bg-transparent text-sm text-[#0A0A23] placeholder-[#8B8B9B] focus:outline-none"
               />
               {query && (
                 <button
                   type="button"
                   onClick={() => setQuery("")}
-                  className="p-1 rounded-md text-[#8B8B9B] hover:text-[#0B0B14]"
+                  className="p-1 rounded-md text-[#8B8B9B] hover:text-[#0A0A23]"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -306,15 +301,13 @@ export function CommandPalette() {
                         <div
                           className={cn(
                             "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors",
-                            isSelected
-                              ? "bg-blue-600 text-white"
-                              : "bg-[#F4F4F8] text-[#6B6B7B]"
+                            isSelected ? "bg-blue-600 text-white" : "bg-[#F4F4F8] text-[#6B6B7B]"
                           )}
                         >
                           <Icon className="w-4 h-4" />
                         </div>
                         <div className="truncate">
-                          <span className="text-xs font-semibold block text-[#0B0B14] truncate">
+                          <span className="text-xs font-semibold block text-[#0A0A23] truncate">
                             {item.title}
                           </span>
                           {item.subtitle && (

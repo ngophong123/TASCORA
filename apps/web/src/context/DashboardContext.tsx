@@ -2,8 +2,10 @@
 
 import * as React from "react"
 import { type DashboardRole, type NotificationItem, type ToastItem } from "@/data/dashboard/types"
-import { MOCK_NOTIFICATIONS } from "@/data/dashboard/notifications"
-import { INITIAL_ORDERS, type DashboardOrder, type DeliveryFile } from "@/data/dashboard/orders"
+import { requestData, jsonRequest, type Order, type Profile } from "@/lib/marketplace"
+import { dashboardOrder } from "@/lib/dashboard-adapters"
+import { useApiResource } from "@/hooks/useApiResource"
+import { type DashboardOrder, type DeliveryFile } from "@/data/dashboard/orders"
 
 interface DashboardContextType {
   role: DashboardRole
@@ -16,6 +18,9 @@ interface DashboardContextType {
   setIsMobileDrawerOpen: (open: boolean) => void
   commandPaletteOpen: boolean
   setCommandPaletteOpen: (open: boolean) => void
+  notificationLoading: boolean
+  notificationError: string
+  reloadNotifications: () => void
   notifications: NotificationItem[]
   unreadCount: number
   markAsRead: (id: string) => void
@@ -24,18 +29,29 @@ interface DashboardContextType {
   showToast: (toast: Omit<ToastItem, "id">) => void
   dismissToast: () => void
 
+  account: {
+    id: string
+    email: string
+    role: string
+    buyerProfile: Profile | null
+    sellerProfile: Profile | null
+  } | null
+  rawOrders: Order[]
+  ordersLoading: boolean
+  ordersError: string
+  reloadOrders: () => void
   // Orders State & Actions
   orders: DashboardOrder[]
   selectedOrderId: string | null
   setSelectedOrderId: (id: string | null) => void
-  approveMilestone: (orderId: string, milestoneId: string) => void
-  requestRevision: (orderId: string, note: string) => void
+  approveMilestone: (orderId: string, milestoneId: string) => Promise<void>
+  requestRevision: (orderId: string, note: string) => Promise<void>
   deliverWork: (
     orderId: string,
     milestoneId: string,
     note: string,
     files: DeliveryFile[]
-  ) => void
+  ) => Promise<void>
 }
 
 const DashboardContext = React.createContext<DashboardContextType | null>(null)
@@ -50,28 +66,86 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
   // Command Palette (Cmd+K)
   const [commandPaletteOpen, setCommandPaletteOpen] = React.useState(false)
   // Notifications
-  const [notifications, setNotifications] = React.useState<NotificationItem[]>(MOCK_NOTIFICATIONS)
+  const [notifications, setNotifications] = React.useState<NotificationItem[]>([])
   // Toast
   const [toast, setToast] = React.useState<ToastItem | null>(null)
 
   // Orders State
-  const [orders, setOrders] = React.useState<DashboardOrder[]>(INITIAL_ORDERS)
+  const accountResource = useApiResource<{
+    id: string
+    email: string
+    role: string
+    buyerProfile: Profile | null
+    sellerProfile: Profile | null
+  }>("/api/v1/profile/me")
+  const account = accountResource.data
+  const reloadAccount = accountResource.reload
+  React.useEffect(() => {
+    const change = (event: StorageEvent) => {
+      if (event.key === "user" || event.key === "token") reloadAccount()
+    }
+    window.addEventListener("storage", change)
+    return () => window.removeEventListener("storage", change)
+  }, [reloadAccount])
+  React.useEffect(() => {
+    const reload = reloadAccount
+    window.addEventListener("profile-updated", reload)
+    return () => window.removeEventListener("profile-updated", reload)
+  }, [reloadAccount])
+  const orderResource = useApiResource<Order[]>(
+    account ? `/api/v1/orders/${role === "FREELANCER" ? "my-sales" : "my-purchases"}` : null
+  )
+  const notificationResource = useApiResource<
+    {
+      id: string
+      title: string
+      message: string
+      createdAt: string
+      isRead: boolean
+      type: string
+    }[]
+  >(account ? "/api/v1/notifications" : null)
+  const rawOrders = React.useMemo(() => orderResource.data || [], [orderResource.data])
+  const orders = React.useMemo(
+    () => rawOrders.map((order) => dashboardOrder(order, role === "FREELANCER")),
+    [rawOrders, role]
+  )
+  const ordersLoading = accountResource.loading || Boolean(account && orderResource.loading)
+  const ordersError = accountResource.error || orderResource.error
+  const reloadOrders = orderResource.reload
+  const initializedAccount = React.useRef("")
+  React.useEffect(() => {
+    if (account && initializedAccount.current !== account.id) {
+      initializedAccount.current = account.id
+      setRoleState(account.sellerProfile ? "FREELANCER" : "CLIENT")
+    }
+  }, [account])
+  React.useEffect(() => {
+    setNotifications(
+      (notificationResource.data || []).map((n) => ({
+        id: n.id,
+        title: n.title,
+        description: n.message,
+        timestamp: new Date(n.createdAt).toLocaleString(),
+        read: n.isRead,
+        type: n.type === "NEW_MESSAGE" ? "message" : n.type === "ORDER_UPDATE" ? "order" : "system",
+        role: "BOTH",
+      }))
+    )
+  }, [notificationResource.data])
+  React.useEffect(() => {
+    if (!account) return
+    const timer = setInterval(notificationResource.reload, 15000)
+    return () => clearInterval(timer)
+  }, [account, notificationResource.reload])
   const [selectedOrderId, setSelectedOrderId] = React.useState<string | null>(null)
 
   // Initialize from localStorage safely
   React.useEffect(() => {
     try {
-      const savedRole = localStorage.getItem("tascora_dashboard_role") as DashboardRole | null
-      if (savedRole === "CLIENT" || savedRole === "FREELANCER") {
-        setRoleState(savedRole)
-      }
       const savedCollapse = localStorage.getItem("tascora_sidebar_collapsed")
       if (savedCollapse !== null) {
         setSidebarCollapsedState(savedCollapse === "true")
-      }
-      const savedOrders = localStorage.getItem("tascora_dashboard_orders")
-      if (savedOrders) {
-        setOrders(JSON.parse(savedOrders))
       }
     } catch {
       // Ignore localStorage errors
@@ -90,22 +164,21 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [])
 
-  const setRole = React.useCallback((newRole: DashboardRole) => {
-    setRoleState(newRole)
-    try {
-      localStorage.setItem("tascora_dashboard_role", newRole)
-    } catch {}
-  }, [])
+  const setRole = React.useCallback(
+    (newRole: DashboardRole) => {
+      if (newRole === "FREELANCER" && !account?.sellerProfile) return
+      setRoleState(newRole)
+      try {
+        localStorage.setItem("tascora_dashboard_role", newRole)
+      } catch {}
+    },
+    [account]
+  )
 
   const toggleRole = React.useCallback(() => {
-    setRoleState((prev) => {
-      const next = prev === "CLIENT" ? "FREELANCER" : "CLIENT"
-      try {
-        localStorage.setItem("tascora_dashboard_role", next)
-      } catch {}
-      return next
-    })
-  }, [])
+    if (account?.sellerProfile)
+      setRoleState((prev) => (prev === "CLIENT" ? "FREELANCER" : "CLIENT"))
+  }, [account])
 
   const setSidebarCollapsed = React.useCallback((collapsed: boolean) => {
     setSidebarCollapsedState(collapsed)
@@ -124,21 +197,30 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     })
   }, [])
 
-  // Notification actions
-  const markAsRead = React.useCallback((id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    )
-  }, [])
-
+  const reloadNotifications = notificationResource.reload
+  React.useEffect(() => {
+    window.addEventListener("notifications-updated", reloadNotifications)
+    return () => window.removeEventListener("notifications-updated", reloadNotifications)
+  }, [reloadNotifications])
+  // Read status is persisted before local UI updates.
+  const markAsRead = React.useCallback(
+    (id: string) => {
+      void requestData(`/api/v1/notifications/${id}/read`, jsonRequest("PUT"))
+        .then(() =>
+          setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)))
+        )
+        .catch(() => reloadNotifications())
+    },
+    [reloadNotifications]
+  )
   const markAllAsRead = React.useCallback(() => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
-  }, [])
+    void requestData("/api/v1/notifications/read-all", jsonRequest("PUT"))
+      .then(() => setNotifications((prev) => prev.map((n) => ({ ...n, read: true }))))
+      .catch(() => reloadNotifications())
+  }, [reloadNotifications])
 
   const unreadCount = React.useMemo(() => {
-    return notifications.filter(
-      (n) => !n.read && (n.role === "BOTH" || n.role === role)
-    ).length
+    return notifications.filter((n) => !n.read && (n.role === "BOTH" || n.role === role)).length
   }, [notifications, role])
 
   // Toast actions
@@ -146,187 +228,48 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     setToast(null)
   }, [])
 
-  const showToast = React.useCallback(
-    (item: Omit<ToastItem, "id">) => {
-      const id = `toast-${Date.now()}`
-      setToast({ ...item, id })
-      const duration = item.duration || 4000
-      setTimeout(() => {
-        setToast((current) => (current?.id === id ? null : current))
-      }, duration)
-    },
-    []
-  )
+  const showToast = React.useCallback((item: Omit<ToastItem, "id">) => {
+    const id = `toast-${Date.now()}`
+    setToast({ ...item, id })
+    const duration = item.duration || 4000
+    setTimeout(() => {
+      setToast((current) => (current?.id === id ? null : current))
+    }, duration)
+  }, [])
 
-  // Order Actions
+  const changeOrder = React.useCallback(
+    async (orderId: string, status: string, message?: string) => {
+      await requestData(
+        `/api/v1/orders/${orderId}/status`,
+        jsonRequest("POST", { status, message })
+      )
+      reloadOrders()
+      showToast({
+        title: "Order updated",
+        message: "The server saved the order status. Financial settlement is unavailable.",
+        type: "success",
+      })
+    },
+    [reloadOrders, showToast]
+  )
   const approveMilestone = React.useCallback(
-    (orderId: string, milestoneId: string) => {
-      setOrders((prev) => {
-        const nextOrders = prev.map((order) => {
-          if (order.id !== orderId) return order
-
-          let allCompleted = true
-          let approvedAmount = 0
-          const updatedMilestones = order.milestones.map((m, idx) => {
-            if (m.id === milestoneId) {
-              approvedAmount = m.amount
-              return { ...m, status: "completed" as const, approvedAt: "Today, just now" }
-            }
-            // If previous milestone completed and next was pending, advance it
-            if (m.status === "pending" && order.milestones[idx - 1]?.id === milestoneId) {
-              return { ...m, status: "in_progress" as const }
-            }
-            if (m.status !== "completed") {
-              allCompleted = false
-            }
-            return m
-          })
-
-          const newStatus = allCompleted ? ("completed" as const) : ("active" as const)
-
-          return {
-            ...order,
-            status: newStatus,
-            milestones: updatedMilestones,
-          }
-        })
-
-        try {
-          localStorage.setItem("tascora_dashboard_orders", JSON.stringify(nextOrders))
-        } catch {}
-
-        return nextOrders
-      })
-
-      showToast({
-        title: "Payment Released & Milestone Approved",
-        message: "Escrow funds have been successfully transferred to the specialist's wallet.",
-        type: "success",
-      })
-
-      // Add notification
-      setNotifications((prev) => [
-        {
-          id: `notif-${Date.now()}`,
-          title: `Milestone payment released for ${orderId}`,
-          description: "Escrow contract updated with digital receipt signature.",
-          timestamp: "Just now",
-          read: false,
-          type: "payment",
-          role: "BOTH",
-        },
-        ...prev,
-      ])
-    },
-    [showToast]
+    async (id: string) => changeOrder(id, "COMPLETED"),
+    [changeOrder]
   )
-
   const requestRevision = React.useCallback(
-    (orderId: string, note: string) => {
-      setOrders((prev) => {
-        const nextOrders = prev.map((order) => {
-          if (order.id !== orderId) return order
-
-          const updatedMilestones = order.milestones.map((m) =>
-            m.status === "in_review" ? { ...m, status: "in_progress" as const } : m
-          )
-
-          const newRevision = {
-            id: `rev-${Date.now()}`,
-            requestedAt: "Today, just now",
-            note,
-          }
-
-          return {
-            ...order,
-            status: "active" as const,
-            milestones: updatedMilestones,
-            revisions: [newRevision, ...order.revisions],
-          }
-        })
-
-        try {
-          localStorage.setItem("tascora_dashboard_orders", JSON.stringify(nextOrders))
-        } catch {}
-
-        return nextOrders
-      })
-
-      showToast({
-        title: "Revision Request Submitted",
-        message: "The specialist has been notified with your change instructions.",
-        type: "info",
-      })
-
-      setNotifications((prev) => [
-        {
-          id: `notif-${Date.now()}`,
-          title: `Revision requested on ${orderId}`,
-          description: note.slice(0, 75) + "...",
-          timestamp: "Just now",
-          read: false,
-          type: "order",
-          role: "BOTH",
-        },
-        ...prev,
-      ])
-    },
-    [showToast]
+    async (id: string, note: string) => changeOrder(id, "IN_REVISION", note),
+    [changeOrder]
   )
-
   const deliverWork = React.useCallback(
-    (orderId: string, milestoneId: string, note: string, files: DeliveryFile[]) => {
-      setOrders((prev) => {
-        const nextOrders = prev.map((order) => {
-          if (order.id !== orderId) return order
-
-          const updatedMilestones = order.milestones.map((m) =>
-            m.id === milestoneId ? { ...m, status: "in_review" as const } : m
-          )
-
-          const newDelivery = {
-            id: `del-${Date.now()}`,
-            milestoneId,
-            note,
-            submittedAt: "Today, just now",
-            files: files.length > 0 ? files : [{ name: "deliverables-package.zip", size: "18.4 MB", type: "zip" as const }],
-          }
-
-          return {
-            ...order,
-            status: "delivered" as const,
-            milestones: updatedMilestones,
-            deliveries: [newDelivery, ...order.deliveries],
-          }
-        })
-
-        try {
-          localStorage.setItem("tascora_dashboard_orders", JSON.stringify(nextOrders))
-        } catch {}
-
-        return nextOrders
-      })
-
-      showToast({
-        title: "Milestone Deliverable Submitted",
-        message: "Files delivered! The client has been notified to review and release payment.",
-        type: "success",
-      })
-
-      setNotifications((prev) => [
-        {
-          id: `notif-${Date.now()}`,
-          title: `New files delivered for ${orderId}`,
-          description: note.slice(0, 75) + "...",
-          timestamp: "Just now",
-          read: false,
-          type: "order",
-          role: "BOTH",
-        },
-        ...prev,
-      ])
+    async (id: string, milestone: string, note: string, files: DeliveryFile[]) => {
+      void milestone
+      await requestData(
+        `/api/v1/orders/${id}/delivery`,
+        jsonRequest("POST", { message: note, files: files.flatMap((f) => (f.url ? [f.url] : [])) })
+      )
+      reloadOrders()
     },
-    [showToast]
+    [reloadOrders]
   )
 
   const value = React.useMemo(
@@ -341,6 +284,10 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
       setIsMobileDrawerOpen,
       commandPaletteOpen,
       setCommandPaletteOpen,
+      notificationLoading:
+        accountResource.loading || Boolean(account && notificationResource.loading),
+      notificationError: accountResource.error || notificationResource.error,
+      reloadNotifications,
       notifications,
       unreadCount,
       markAsRead,
@@ -348,6 +295,11 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
       toast,
       showToast,
       dismissToast,
+      account,
+      rawOrders,
+      ordersLoading,
+      ordersError,
+      reloadOrders,
       orders,
       selectedOrderId,
       setSelectedOrderId,
@@ -364,6 +316,11 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
       setSidebarCollapsed,
       isMobileDrawerOpen,
       commandPaletteOpen,
+      accountResource.loading,
+      accountResource.error,
+      notificationResource.loading,
+      notificationResource.error,
+      reloadNotifications,
       notifications,
       unreadCount,
       markAsRead,
@@ -371,6 +328,11 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
       toast,
       showToast,
       dismissToast,
+      account,
+      rawOrders,
+      ordersLoading,
+      ordersError,
+      reloadOrders,
       orders,
       selectedOrderId,
       approveMilestone,
@@ -379,9 +341,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     ]
   )
 
-  return (
-    <DashboardContext.Provider value={value}>{children}</DashboardContext.Provider>
-  )
+  return <DashboardContext.Provider value={value}>{children}</DashboardContext.Provider>
 }
 
 export function useDashboard() {

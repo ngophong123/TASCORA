@@ -5,22 +5,69 @@
   "scripts": {
     "dev": "pnpm --filter \"./apps/*\" dev",
     "build": "pnpm --filter \"./apps/*\" build",
-    "lint": "pnpm --filter \"./apps/*\" lint",
-    "test": "pnpm --recursive test",
+    "lint": "pnpm --filter web lint",
+    "lint:strict": "pnpm --filter web lint:strict",
+    "typecheck": "pnpm --filter \"./apps/*\" exec tsc --noEmit",
+    "prepare": "husky",
+    "test": "pnpm test:quick",
+    "test:quick": "pnpm typecheck && pnpm lint:strict && pnpm lint:api && pnpm test:unit",
+    "test:unit": "vitest run tests/unit",
+    "test:unit:watch": "vitest tests/unit",
+    "test:api": "vitest run tests/api",
+    "test:security": "vitest run tests/security",
+    "test:feature": "playwright test",
+    "test:full": "pnpm typecheck && pnpm lint:strict && pnpm lint:api && pnpm test:unit && pnpm test:api && pnpm test:security && pnpm test:e2e --project=chromium && pnpm build",
+    "test:release": "pnpm test:full && pnpm test:e2e && pnpm lhci:mobile",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report",
+    "lhci:mobile": "lhci autorun",
+    "lhci:desktop": "lhci autorun --collect.settings.preset=desktop",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "seed": "tsx scripts/generate-seed-data.ts",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:migrate:status": "prisma migrate status",
+    "lint:api": "pnpm --filter @taskora/api lint"
+  },
+  "lint-staged": {
+    "apps/web/src/**/*.{js,jsx,ts,tsx}": [
+      "pnpm --filter web exec eslint --fix",
+      "prettier --write"
+    ],
+    "**/*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@prisma/client": "^5.10.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@faker-js/faker": "^10.6.0",
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.63.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/supertest": "^7.2.1",
+    "dotenv": "^18.0.5",
+    "husky": "^9.1.7",
+    "jsonwebtoken": "^9.0.3",
+    "lint-staged": "^17.5.1",
+    "prettier": "^3.9.9",
     "prisma": "^5.10.0",
-    "typescript": "^5.3.3"
+    "supertest": "^7.3.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.3.3",
+    "vitest": "^5.0.2",
+    "express": "^4.18.2",
+    "bcryptjs": "^3.0.3",
+    "@aws-sdk/client-s3": "^3"
   },
   "engines": {
     "node": ">=20.0.0",
     "pnpm": ">=8.0.0"
-  }
+  },
+  "packageManager": "pnpm@12.4.1"
 }

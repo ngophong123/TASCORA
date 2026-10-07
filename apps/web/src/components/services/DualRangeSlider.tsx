@@ -10,12 +10,7 @@ interface DualRangeSliderProps {
   step?: number
 }
 
-export function DualRangeSlider({
-  min,
-  max,
-  onChange,
-  step = 10,
-}: DualRangeSliderProps) {
+export function DualRangeSlider({ min, max, onChange, step = 10 }: DualRangeSliderProps) {
   const [localMin, setLocalMin] = React.useState(min)
   const [localMax, setLocalMax] = React.useState(max)
 
@@ -31,8 +26,14 @@ export function DualRangeSlider({
   const minLimit = PRICE_BOUNDS.min
   const maxLimit = PRICE_BOUNDS.max
 
-  const minPercent = Math.max(0, Math.min(100, ((localMin - minLimit) / (maxLimit - minLimit)) * 100))
-  const maxPercent = Math.max(0, Math.min(100, ((localMax - minLimit) / (maxLimit - minLimit)) * 100))
+  const minPercent = Math.max(
+    0,
+    Math.min(100, ((localMin - minLimit) / (maxLimit - minLimit)) * 100)
+  )
+  const maxPercent = Math.max(
+    0,
+    Math.min(100, ((localMax - minLimit) / (maxLimit - minLimit)) * 100)
+  )
 
   const handleMinSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Math.min(Number(e.target.value), localMax - step)
@@ -113,7 +114,10 @@ export function DualRangeSlider({
       {/* Numeric inputs row */}
       <div className="flex items-center gap-3">
         <div className="flex-1">
-          <label className="text-[11px] font-medium uppercase tracking-wider text-[#6B6B7B] block mb-1">
+          <label
+            htmlFor="min-price-input"
+            className="text-[11px] font-medium uppercase tracking-wider text-[#6B6B7B] block mb-1"
+          >
             Min ($)
           </label>
           <div className="relative">
@@ -121,6 +125,8 @@ export function DualRangeSlider({
               $
             </span>
             <input
+              id="min-price-input"
+              aria-label="Minimum price"
               type="number"
               min={minLimit}
               max={localMax - step}
@@ -133,7 +139,7 @@ export function DualRangeSlider({
                   commitMin(Number((e.target as HTMLInputElement).value))
                 }
               }}
-              className="w-full h-9 pl-7 pr-2 rounded-lg border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] text-xs font-mono text-[#0B0B14] focus:border-blue-600 focus:bg-white focus:outline-none transition-colors"
+              className="w-full h-9 pl-7 pr-2 rounded-lg border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] text-xs font-mono text-[#0A0A23] focus:border-blue-600 focus:bg-white focus:outline-none transition-colors"
             />
           </div>
         </div>
@@ -141,7 +147,10 @@ export function DualRangeSlider({
         <span className="text-[#9CA3AF] text-sm font-medium self-end mb-2">—</span>
 
         <div className="flex-1">
-          <label className="text-[11px] font-medium uppercase tracking-wider text-[#6B6B7B] block mb-1">
+          <label
+            htmlFor="max-price-input"
+            className="text-[11px] font-medium uppercase tracking-wider text-[#6B6B7B] block mb-1"
+          >
             Max ($)
           </label>
           <div className="relative">
@@ -149,6 +158,8 @@ export function DualRangeSlider({
               $
             </span>
             <input
+              id="max-price-input"
+              aria-label="Maximum price"
               type="number"
               min={localMin + step}
               max={maxLimit}
@@ -161,7 +172,7 @@ export function DualRangeSlider({
                   commitMax(Number((e.target as HTMLInputElement).value))
                 }
               }}
-              className="w-full h-9 pl-7 pr-2 rounded-lg border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] text-xs font-mono text-[#0B0B14] focus:border-blue-600 focus:bg-white focus:outline-none transition-colors"
+              className="w-full h-9 pl-7 pr-2 rounded-lg border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] text-xs font-mono text-[#0A0A23] focus:border-blue-600 focus:bg-white focus:outline-none transition-colors"
             />
           </div>
         </div>

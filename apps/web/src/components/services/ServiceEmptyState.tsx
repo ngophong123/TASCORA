@@ -8,10 +8,7 @@ interface ServiceEmptyStateProps {
   onSelectSuggestion: (query: string) => void
 }
 
-export function ServiceEmptyState({
-  onClearFilters,
-  onSelectSuggestion,
-}: ServiceEmptyStateProps) {
+export function ServiceEmptyState({ onClearFilters, onSelectSuggestion }: ServiceEmptyStateProps) {
   const suggestions = ["Next.js", "Mobile App", "AI Chatbot", "Figma UI", "Logo Design", "SEO"]
 
   return (
@@ -26,11 +23,10 @@ export function ServiceEmptyState({
         </span>
       </div>
 
-      <h3 className="text-lg font-semibold text-[#0B0B14] mb-2">
-        No matching services found
-      </h3>
+      <h3 className="text-lg font-semibold text-[#0A0A23] mb-2">No matching services found</h3>
       <p className="text-sm text-[#6B6B7B] max-w-md mb-6 leading-relaxed">
-        We couldn’t find any gigs matching your exact combination of filters. Try broadening your budget, changing delivery time, or clearing some keywords.
+        We couldn’t find any gigs matching your exact combination of filters. Try broadening your
+        budget, changing delivery time, or clearing some keywords.
       </p>
 
       {/* Action button */}

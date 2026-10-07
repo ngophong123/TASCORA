@@ -1,0 +1,40 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="favicon-g1" x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stopColor="#635BFF" />
+      <stop offset="50%" stopColor="#8A2BE2" />
+      <stop offset="100%" stopColor="#DF1B41" />
+    </linearGradient>
+    <linearGradient id="favicon-g2" x1="16" y1="4" x2="30" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stopColor="#DF1B41" />
+      <stop offset="60%" stopColor="#FF6B00" />
+      <stop offset="100%" stopColor="#FFAA00" />
+    </linearGradient>
+    <linearGradient id="favicon-g3" x1="6" y1="12" x2="22" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stopColor="#635BFF" />
+      <stop offset="100%" stopColor="#4338CA" />
+    </linearGradient>
+    <linearGradient id="favicon-gloss" x1="8" y1="4" x2="24" y2="14" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.45" />
+      <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+    </linearGradient>
+  </defs>
+
+  <!-- Squircle container -->
+  <rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="#FFFFFF" stroke="rgba(10, 10, 35, 0.12)" stroke-width="1" />
+  <rect x="2" y="2" width="28" height="28" rx="8" fill="url(#favicon-g1)" fill-opacity="0.08" />
+
+  <!-- TASCORA T-Prism Glyph -->
+  <!-- Top Crossbar -->
+  <path d="M6.5 9.5C6.5 8.11929 7.61929 7 9 7H23C24.3807 7 25.5 8.11929 25.5 9.5C25.5 10.8807 24.3807 12 23 12H9C7.61929 12 6.5 10.8807 6.5 9.5Z" fill="url(#favicon-g1)" />
+  <path d="M7 9C7 8.17157 7.67157 7.5 8.5 7.5H23.5C24.3284 7.5 25 8.17157 25 9C25 9.82843 24.3284 10.5 23.5 10.5H8.5C7.67157 10.5 7 9.82843 7 9Z" fill="url(#favicon-gloss)" />
+
+  <!-- Vertical Stem -->
+  <path d="M13.25 11.5H18.75V22C18.75 23.3807 17.6307 24.5 16.25 24.5H15.75C14.3693 24.5 13.25 23.3807 13.25 22V11.5Z" fill="url(#favicon-g3)" />
+
+  <!-- Diagonal Wedge -->
+  <path d="M18.75 14L24.5 18C25.3284 18.5756 25.3284 19.8037 24.5 20.3793L20 23.5C19.1716 24.0756 18.75 23.708 18.75 22.7V14Z" fill="url(#favicon-g2)" fill-opacity="0.95" />
+
+  <!-- Precision Milestone Node -->
+  <circle cx="16" cy="9.5" r="1.5" fill="#FFFFFF" fill-opacity="0.9" />
+</svg>

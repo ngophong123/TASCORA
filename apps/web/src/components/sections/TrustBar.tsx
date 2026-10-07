@@ -5,17 +5,7 @@ import { useTranslations } from "next-intl"
 import { motion } from "framer-motion"
 import { Marquee } from "@/components/ui/Marquee"
 import { fadeUpVariants, VIEWPORT_ONCE } from "@/lib/motion"
-
-const BRAND_LOGOS = [
-  { name: "NEXUS LABS", font: "font-mono font-bold tracking-widest" },
-  { name: "STRATOS", font: "font-sans font-black tracking-tighter uppercase" },
-  { name: "HYPERION", font: "font-mono font-semibold tracking-wider" },
-  { name: "VERTEX AI", font: "font-sans font-bold tracking-tight uppercase" },
-  { name: "CHRONO CLOUD", font: "font-mono font-medium tracking-wide" },
-  { name: "AETHER DATA", font: "font-sans font-extrabold tracking-widest uppercase" },
-  { name: "SYNAPSE", font: "font-mono font-bold tracking-tight" },
-  { name: "MONOLITH", font: "font-sans font-black tracking-widest" },
-]
+import { FICTIONAL_ENTERPRISE_WORDMARKS } from "@/components/ui/BrandWordmarks"
 
 export function TrustBar() {
   const t = useTranslations("trustBar")
@@ -34,19 +24,19 @@ export function TrustBar() {
         </p>
       </motion.div>
 
-
-      <Marquee speed={35} className="py-2">
-        {BRAND_LOGOS.map((brand, idx) => (
-          <div
-            key={idx}
-            className="flex items-center gap-3 text-lg sm:text-xl text-[#0B0B14] transition-all duration-300 cursor-default group"
-          >
-            <div className="h-2 w-2 rounded-full bg-[#0B0B14]/20 group-hover:bg-blue-600 group-hover:shadow-[0_0_8px_rgba(37,99,235,0.5)] transition-all" />
-            <span className={`${brand.font} opacity-50 group-hover:opacity-100 group-hover:scale-105 transition-all text-[#0B0B14]`}>
-              {brand.name}
-            </span>
-          </div>
-        ))}
+      <Marquee speed={32} className="py-3 items-center">
+        {FICTIONAL_ENTERPRISE_WORDMARKS.map((brand) => {
+          const Wordmark = brand.Component
+          return (
+            <div
+              key={brand.id}
+              className="flex items-center justify-center px-6 sm:px-8 text-[#4B4B5C] transition-all duration-300 cursor-default group"
+              title={brand.name}
+            >
+              <Wordmark className="h-6 sm:h-7 w-auto opacity-50 group-hover:opacity-100 group-hover:text-[#0A0A23] group-hover:scale-105 transition-all duration-300" />
+            </div>
+          )
+        })}
       </Marquee>
     </section>
   )

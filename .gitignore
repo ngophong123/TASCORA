@@ -16,3 +16,20 @@ yarn-error.log*
 .vercel
 *.tsbuildinfo
 next-env.d.ts
+
+# Test & Audit Artifacts
+test-results/
+test-results-*/
+playwright-report/
+.lighthouseci/
+blob-report/
+
+
+# Environment variants may contain credentials
+.env.*
+!.env.example
+!.env.staging.example
+
+# Development user uploads never enter Git or images
+.uploads/
+**/.uploads/

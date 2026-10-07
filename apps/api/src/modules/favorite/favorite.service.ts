@@ -1,14 +1,17 @@
+import { publicSellerSelect } from '../../lib/public-profile';
+import { Prisma } from '@prisma/client';
+import { HttpError } from '../../lib/errors';
 import { prisma } from '../../lib/prisma';
 
 export class FavoriteService {
   static async addFavorite(userId: string, serviceId: string) {
     // Check if the service exists
-    const service = await prisma.service.findUnique({
-      where: { id: serviceId }
+    const service = await prisma.service.findFirst({
+      where: { id: serviceId, status: 'PUBLISHED', seller: { status: 'APPROVED', user: { status: 'ACTIVE' } } }
     });
 
-    if (!service) {
-      throw new Error('Service not found');
+    if (!service || service.status !== 'PUBLISHED') {
+      throw new HttpError(404, 'Service not found');
     }
 
     // Upsert or just create. Unique constraint will throw if exists.
@@ -21,10 +24,10 @@ export class FavoriteService {
         }
       });
       return favorite;
-    } catch (error: any) {
+    } catch (error) {
       // P2002 is Prisma's unique constraint violation error code
-      if (error.code === 'P2002') {
-        throw new Error('Already favorited');
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        throw new HttpError(409, 'Already favorited');
       }
       throw error;
     }
@@ -41,9 +44,9 @@ export class FavoriteService {
         }
       });
       return { success: true };
-    } catch (error: any) {
-      if (error.code === 'P2025') {
-        throw new Error('Favorite not found');
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+        throw new HttpError(404, 'Favorite not found');
       }
       throw error;
     }
@@ -51,15 +54,11 @@ export class FavoriteService {
 
   static async getMyFavorites(userId: string) {
     const favorites = await prisma.favorite.findMany({
-      where: { userId },
+      where: { userId, service: { status: 'PUBLISHED', seller: { status: 'APPROVED', user: { status: 'ACTIVE' } } } },
       include: {
         service: {
           include: {
-            seller: {
-              include: {
-                user: { select: { email: true } }
-              }
-            },
+            seller: { select: publicSellerSelect },
             category: true,
             packages: true,
             images: true

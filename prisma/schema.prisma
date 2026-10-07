@@ -63,13 +63,17 @@ enum OrderStatus {
   COMPLETED
   CANCELLED
   DISPUTED
+  REFUNDED
 }
 
 enum TransactionStatus {
   PENDING
+  PROCESSING
   SUCCEEDED
   FAILED
   REFUNDED
+  CANCELLED
+  PARTIALLY_REFUNDED
 }
 
 enum PayoutStatus {
@@ -415,6 +419,11 @@ model Order {
   completedAt     DateTime?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
+  currency        String      @default("usd")
+  platformFeeBps  Int?
+  purchaseSnapshot Json?
+  checkoutKey     String?
+  lastDeliveredAt DateTime?
 
   // Phase 21: Coupon
   couponId        String?
@@ -437,6 +446,12 @@ model Order {
   
   // Phase 15
   conversation    Conversation?
+  financialEntries FinancialEntry[]
+  refunds         Refund[]
+  dispute         MarketplaceDispute?
+
+  @@unique([buyerId, checkoutKey])
+  @@index([status, lastDeliveredAt])
 
   @@map("orders")
 }
@@ -471,9 +486,11 @@ model OrderDelivery {
   message     String
   files       String[]
   createdAt   DateTime @default(now())
+  requestKey  String?
 
   order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   revisions   OrderRevision[]
+  @@unique([orderId, requestKey])
 
   @@map("order_deliveries")
 }
@@ -514,9 +531,13 @@ model Transaction {
   status          TransactionStatus @default(PENDING)
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
+  attemptKey      String?           @unique
+  refundedAmount  Decimal           @default(0) @db.Decimal(10, 2)
 
   order           Order             @relation(fields: [orderId], references: [id])
   escrow          Escrow?
+  refunds         Refund[]
+  financialEntries FinancialEntry[]
 
   @@map("transactions")
 }
@@ -543,13 +564,18 @@ model Payout {
   sellerProfileId String
   escrowId        String       @unique
   amount          Decimal      @db.Decimal(10, 2)
-  stripePayoutId  String?
+  stripePayoutId  String?      @unique
   status          PayoutStatus @default(PENDING)
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
+  requestKey      String?
+  attempt         Int          @default(1)
+  failureReason   String?
 
   seller          SellerProfile @relation(fields: [sellerProfileId], references: [id])
   escrow          Escrow        @relation(fields: [escrowId], references: [id])
+  financialEntries FinancialEntry[]
+  @@unique([sellerProfileId, requestKey])
 
   @@map("payouts")
 }
@@ -644,11 +670,90 @@ model Notification {
   isRead    Boolean          @default(false)
   data      Json?            
   createdAt DateTime         @default(now())
+  sourceKey String?          @unique
+  financialEntryId String?
+  financialEntry FinancialEntry? @relation(fields: [financialEntryId], references: [id])
 
   user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("notifications")
+}
+
+// Append-only monetary movements and domain audit. Amounts are decimal USD;
+// safe integer minor units are used for calculations in the domain layer.
+model FinancialEntry {
+  id            String @id @default(cuid())
+  eventKey      String @unique
+  orderId       String
+  transactionId String?
+  refundId      String?
+  payoutId      String?
+  actorId       String?
+  type          String
+  reason        String?
+  providerId    String?
+  amount        Decimal @default(0) @db.Decimal(12, 2)
+  pendingDelta  Decimal @default(0) @db.Decimal(12, 2)
+  availableDelta Decimal @default(0) @db.Decimal(12, 2)
+  reservedDelta Decimal @default(0) @db.Decimal(12, 2)
+  paidDelta     Decimal @default(0) @db.Decimal(12, 2)
+  feeDelta      Decimal @default(0) @db.Decimal(12, 2)
+  notifyUserId  String?
+  createdAt     DateTime @default(now())
+  order         Order @relation(fields: [orderId], references: [id])
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
+  refund        Refund? @relation(fields: [refundId], references: [id])
+  payout        Payout? @relation(fields: [payoutId], references: [id])
+  notifications Notification[]
+  @@index([orderId, createdAt])
+  @@map("financial_entries")
+}
+
+model Refund {
+  id             String @id @default(cuid())
+  orderId        String
+  transactionId  String
+  requestKey     String
+  actorId        String
+  reason         String
+  amount         Decimal @db.Decimal(10, 2)
+  status         TransactionStatus @default(PENDING)
+  stripeRefundId String? @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  order          Order @relation(fields: [orderId], references: [id])
+  transaction    Transaction @relation(fields: [transactionId], references: [id])
+  financialEntries FinancialEntry[]
+  @@unique([orderId, requestKey])
+  @@index([status])
+  @@map("refunds")
+}
+
+model MarketplaceDispute {
+  id          String @id @default(cuid())
+  orderId     String @unique
+  openedBy    String
+  category    String
+  description String
+  status      String @default("OPEN")
+  resolvedBy  String?
+  resolutionReason String?
+  resolvedAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  order       Order @relation(fields: [orderId], references: [id])
+  @@index([status, createdAt])
+  @@map("marketplace_disputes")
+}
+
+model ProviderEvent {
+  id          String @id
+  type        String
+  objectId    String
+  payloadHash String
+  createdAt   DateTime @default(now())
+  @@map("provider_events")
 }
 
 // --- PHASE 21: COUPONS ---

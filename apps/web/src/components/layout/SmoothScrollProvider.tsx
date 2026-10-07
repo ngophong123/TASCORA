@@ -23,13 +23,20 @@ interface SmoothScrollProviderProps {
 export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
   const [lenisInstance, setLenisInstance] = React.useState<Lenis | null>(null)
   const pathname = usePathname()
+  const nativeScroll = /(^|\/)dashboard(\/|$)/.test(pathname)
   const lenisRef = React.useRef<Lenis | null>(null)
 
   React.useEffect(() => {
+    // Workspace forms, drawers and message panes use native scrolling.
+    if (nativeScroll) {
+      const previous = document.documentElement.style.scrollBehavior
+      document.documentElement.style.scrollBehavior = "auto"
+      return () => {
+        document.documentElement.style.scrollBehavior = previous
+      }
+    }
     // 1. Accessibility guardrail: Check if user prefers reduced motion
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    )
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
 
     if (prefersReducedMotion.matches) {
       // Respect user choice: disable Lenis, use native browser scrolling
@@ -76,14 +83,42 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
       lenisRef.current = null
       setLenisInstance(null)
     }
-  }, [])
+  }, [nativeScroll])
 
-  // Reset scroll to top on route change if needed
+  // Handle route change and hash scrolling
   React.useEffect(() => {
-    if (lenisRef.current) {
+    if (!lenisRef.current) return
+
+    const hash = window.location.hash
+    if (hash) {
+      setTimeout(() => {
+        const target = document.querySelector(hash)
+        if (target) {
+          lenisRef.current?.scrollTo(target as HTMLElement, { offset: -80, duration: 1.1 })
+        } else {
+          lenisRef.current?.scrollTo(0, { immediate: true })
+        }
+      }, 150)
+    } else {
       lenisRef.current.scrollTo(0, { immediate: true })
     }
   }, [pathname])
+
+  // Listen to hashchange events so Lenis scrolls smoothly to any hash target
+  React.useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash
+      if (hash && lenisRef.current) {
+        const target = document.querySelector(hash)
+        if (target) {
+          lenisRef.current.scrollTo(target as HTMLElement, { offset: -80, duration: 1.1 })
+        }
+      }
+    }
+
+    window.addEventListener("hashchange", handleHashChange)
+    return () => window.removeEventListener("hashchange", handleHashChange)
+  }, [])
 
   return (
     <SmoothScrollContext.Provider value={{ lenis: lenisInstance }}>

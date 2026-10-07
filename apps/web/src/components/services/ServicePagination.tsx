@@ -53,14 +53,18 @@ export function ServicePagination({
     <nav
       role="navigation"
       aria-label="Pagination Navigation"
-      className={cn("flex items-center justify-center gap-1 sm:gap-1.5 mt-10 pt-6 border-t border-[rgba(15,15,30,0.08)]", className)}
+      className={cn(
+        "flex items-center justify-center gap-1 sm:gap-1.5 mt-10 pt-6 border-t border-[rgba(15,15,30,0.08)]",
+        className
+      )}
     >
       {/* Previous Button */}
       <button
         type="button"
+        data-testid="pagination-prev"
         onClick={() => handlePageClick(currentPage - 1)}
         disabled={currentPage === 1}
-        className="inline-flex items-center justify-center h-9 sm:h-10 px-3 sm:px-3.5 rounded-xl border border-[rgba(15,15,30,0.12)] bg-white text-xs sm:text-sm font-medium text-[#0B0B14] hover:bg-[#FAFAFC] disabled:opacity-40 disabled:pointer-events-none transition-colors"
+        className="inline-flex items-center justify-center h-9 sm:h-10 px-3 sm:px-3.5 rounded-xl border border-[rgba(15,15,30,0.12)] bg-white text-xs sm:text-sm font-medium text-[#0A0A23] hover:bg-[#FAFAFC] disabled:opacity-40 disabled:pointer-events-none transition-colors"
         aria-label="Go to previous page"
       >
         <ChevronLeft className="w-4 h-4 mr-1" />
@@ -88,6 +92,7 @@ export function ServicePagination({
             <button
               key={pageNum}
               type="button"
+              data-testid={`pagination-page-${pageNum}`}
               onClick={() => handlePageClick(pageNum)}
               aria-current={isActive ? "page" : undefined}
               aria-label={`Go to page ${pageNum}`}
@@ -107,9 +112,10 @@ export function ServicePagination({
       {/* Next Button */}
       <button
         type="button"
+        data-testid="pagination-next"
         onClick={() => handlePageClick(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="inline-flex items-center justify-center h-9 sm:h-10 px-3 sm:px-3.5 rounded-xl border border-[rgba(15,15,30,0.12)] bg-white text-xs sm:text-sm font-medium text-[#0B0B14] hover:bg-[#FAFAFC] disabled:opacity-40 disabled:pointer-events-none transition-colors"
+        className="inline-flex items-center justify-center h-9 sm:h-10 px-3 sm:px-3.5 rounded-xl border border-[rgba(15,15,30,0.12)] bg-white text-xs sm:text-sm font-medium text-[#0A0A23] hover:bg-[#FAFAFC] disabled:opacity-40 disabled:pointer-events-none transition-colors"
         aria-label="Go to next page"
       >
         <span className="hidden sm:inline">Next</span>

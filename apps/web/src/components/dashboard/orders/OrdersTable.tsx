@@ -4,19 +4,9 @@ import * as React from "react"
 import { useDashboard } from "@/context/DashboardContext"
 import { type DashboardOrder } from "@/data/dashboard/orders"
 import { StatusBadge } from "@/components/ui/StatusBadge"
+import { AvatarImage } from "@/components/ui/AvatarImage"
 import { motion } from "framer-motion"
-import {
-  Search,
-  X,
-  ArrowUpDown,
-  Clock,
-  ArrowRight,
-  Eye,
-  ChevronLeft,
-  ChevronRight,
-  CheckCircle2,
-  Package,
-} from "lucide-react"
+import { Search, X, Clock, ArrowRight, Eye, ChevronLeft, ChevronRight, Package } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface OrdersTableProps {
@@ -115,21 +105,22 @@ export function OrdersTable({ onSelectOrder }: OrdersTableProps) {
             <button
               key={tab.id}
               type="button"
+              role="tab"
+              aria-selected={isActive}
+              data-testid={`order-tab-${tab.id}`}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
                 "relative flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap select-none",
                 isActive
                   ? "text-blue-900 font-bold"
-                  : "text-[#6B6B7B] hover:text-[#0B0B14] hover:bg-[#FAFAFC]"
+                  : "text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-[#FAFAFC]"
               )}
             >
               <span>{tab.label}</span>
               <span
                 className={cn(
                   "px-2 py-0.5 rounded-full text-[10px] font-mono font-bold transition-colors",
-                  isActive
-                    ? "bg-blue-100 text-blue-800"
-                    : "bg-[#F4F4F8] text-[#8B8B9B]"
+                  isActive ? "bg-blue-100 text-blue-800" : "bg-[#F4F4F8] text-[#8B8B9B]"
                 )}
               >
                 {tab.count}
@@ -157,13 +148,13 @@ export function OrdersTable({ onSelectOrder }: OrdersTableProps) {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by order ID, title, or counterparty..."
-            className="w-full h-10 pl-10 pr-9 rounded-xl border border-[rgba(15,15,30,0.12)] bg-white text-xs text-[#0B0B14] placeholder-[#8B8B9B] focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500/15 transition-all shadow-2xs"
+            className="w-full h-10 pl-10 pr-9 rounded-xl border border-[rgba(15,15,30,0.12)] bg-white text-xs text-[#0A0A23] placeholder-[#8B8B9B] focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500/15 transition-all shadow-2xs"
           />
           {searchQuery && (
             <button
               type="button"
               onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8B8B9B] hover:text-[#0B0B14]"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8B8B9B] hover:text-[#0A0A23]"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -172,13 +163,11 @@ export function OrdersTable({ onSelectOrder }: OrdersTableProps) {
 
         {/* Sort selector */}
         <div className="flex items-center gap-2 shrink-0">
-          <span className="text-xs text-[#6B6B7B] font-medium hidden sm:inline">
-            Sort by:
-          </span>
+          <span className="text-xs text-[#6B6B7B] font-medium hidden sm:inline">Sort by:</span>
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
-            className="h-10 px-3 rounded-xl border border-[rgba(15,15,30,0.12)] bg-white text-xs font-semibold text-[#0B0B14] focus:border-blue-600 focus:outline-none shadow-2xs cursor-pointer"
+            onChange={(e) => setSortBy(e.target.value as "newest" | "amount_desc" | "amount_asc")}
+            className="h-10 px-3 rounded-xl border border-[rgba(15,15,30,0.12)] bg-white text-xs font-semibold text-[#0A0A23] focus:border-blue-600 focus:outline-none shadow-2xs cursor-pointer"
           >
             <option value="newest">Newest First</option>
             <option value="amount_desc">Amount: High to Low</option>
@@ -194,7 +183,7 @@ export function OrdersTable({ onSelectOrder }: OrdersTableProps) {
             <div className="w-12 h-12 rounded-2xl bg-gray-50 border border-gray-200 flex items-center justify-center mx-auto text-gray-400">
               <Package className="w-6 h-6" />
             </div>
-            <h3 className="text-sm font-bold text-[#0B0B14]">No orders found</h3>
+            <h3 className="text-sm font-bold text-[#0A0A23]">No orders found</h3>
             <p className="text-xs text-[#6B6B7B] max-w-sm mx-auto">
               No milestone orders match your selected filters or search query.
             </p>
@@ -215,14 +204,14 @@ export function OrdersTable({ onSelectOrder }: OrdersTableProps) {
           <>
             {/* Desktop Table View (>= md) */}
             <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-left text-xs">
+              <table data-testid="orders-table" className="w-full text-left text-xs">
                 <thead>
                   <tr className="border-b border-[rgba(15,15,30,0.06)] bg-[#FAFAFC] text-[11px] font-semibold text-[#6B6B7B] uppercase tracking-wider">
                     <th className="py-3 px-4">Order ID & Scope</th>
                     <th className="py-3 px-4">{isClient ? "Specialist" : "Client"}</th>
                     <th className="py-3 px-4">Tier</th>
                     <th className="py-3 px-4">Milestones / Delivery</th>
-                    <th className="py-3 px-4 text-right">Escrow Amount</th>
+                    <th className="py-3 px-4 text-right">Order Amount</th>
                     <th className="py-3 px-4 text-center">Status</th>
                     <th className="py-3 px-4 text-right">Action</th>
                   </tr>
@@ -230,21 +219,24 @@ export function OrdersTable({ onSelectOrder }: OrdersTableProps) {
                 <tbody className="divide-y divide-[rgba(15,15,30,0.05)]">
                   {paginatedOrders.map((order) => {
                     const counterpart = isClient ? order.freelancer : order.client
-                    const approvedCount = order.milestones.filter((m) => m.status === "completed").length
+                    const approvedCount = order.milestones.filter(
+                      (m) => m.status === "completed"
+                    ).length
 
                     return (
                       <tr
                         key={order.id}
+                        data-testid={`order-row-${order.id}`}
                         onClick={() => onSelectOrder(order)}
                         className="hover:bg-[#FAFAFC] transition-colors cursor-pointer group"
                       >
                         {/* Order ID & Scope */}
                         <td className="py-4 px-4 max-w-xs">
                           <div className="space-y-1">
-                            <span className="font-mono text-xs font-bold text-[#0B0B14]">
+                            <span className="font-mono text-xs font-bold text-[#0A0A23]">
                               {order.id}
                             </span>
-                            <h4 className="font-semibold text-xs text-[#0B0B14] line-clamp-1 group-hover:text-blue-700 transition-colors">
+                            <h4 className="font-semibold text-xs text-[#0A0A23] line-clamp-1 group-hover:text-blue-700 transition-colors">
                               {order.title}
                             </h4>
                             <span className="text-[10px] text-[#8B8B9B] block">
@@ -256,17 +248,23 @@ export function OrdersTable({ onSelectOrder }: OrdersTableProps) {
                         {/* Counterpart */}
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-2.5">
-                            <img
+                            <AvatarImage
                               src={counterpart.avatar}
+                              name={counterpart.name}
+                              size={32}
+                              rounded="full"
                               alt={counterpart.name}
-                              className="w-8 h-8 rounded-full object-cover border border-[rgba(15,15,30,0.1)] shrink-0"
                             />
                             <div className="truncate max-w-[130px]">
-                              <span className="font-bold text-xs text-[#0B0B14] block truncate">
+                              <span className="font-bold text-xs text-[#0A0A23] block truncate">
                                 {counterpart.name}
                               </span>
                               <span className="text-[10px] text-[#6B6B7B] block truncate">
-                                {"title" in counterpart ? counterpart.title : ("company" in counterpart ? counterpart.company : "")}
+                                {"title" in counterpart
+                                  ? counterpart.title
+                                  : "company" in counterpart
+                                    ? counterpart.company
+                                    : ""}
                               </span>
                             </div>
                           </div>
@@ -296,14 +294,14 @@ export function OrdersTable({ onSelectOrder }: OrdersTableProps) {
 
                         {/* Escrow Amount */}
                         <td className="py-4 px-4 text-right">
-                          <span className="font-mono font-bold text-sm text-[#0B0B14]">
-                            ${order.totalAmount}.00
+                          <span className="font-mono font-bold text-sm text-[#0A0A23]">
+                            ${Number(order.totalAmount).toFixed(2)}
                           </span>
                         </td>
 
                         {/* Status Badge */}
                         <td className="py-4 px-4 text-center">
-                          <StatusBadge status={order.status} />
+                          <StatusBadge status={order.serverStatus || order.status} />
                         </td>
 
                         {/* Action */}
@@ -314,7 +312,7 @@ export function OrdersTable({ onSelectOrder }: OrdersTableProps) {
                               e.stopPropagation()
                               onSelectOrder(order)
                             }}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-[rgba(15,15,30,0.12)] bg-white group-hover:bg-blue-50 group-hover:border-blue-300 group-hover:text-blue-700 text-xs font-semibold text-[#0B0B14] transition-all shadow-2xs"
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-[rgba(15,15,30,0.12)] bg-white group-hover:bg-blue-50 group-hover:border-blue-300 group-hover:text-blue-700 text-xs font-semibold text-[#0A0A23] transition-all shadow-2xs"
                           >
                             <span>Details</span>
                             <Eye className="w-3.5 h-3.5" />
@@ -334,38 +332,37 @@ export function OrdersTable({ onSelectOrder }: OrdersTableProps) {
                 return (
                   <div
                     key={order.id}
+                    data-testid={`order-card-${order.id}`}
                     onClick={() => onSelectOrder(order)}
                     className="p-3.5 space-y-3 hover:bg-[#FAFAFC] rounded-xl transition-colors cursor-pointer"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs font-bold text-[#0B0B14]">
+                        <span className="font-mono text-xs font-bold text-[#0A0A23]">
                           {order.id}
                         </span>
                         <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-blue-50 text-blue-700 border border-blue-200/60">
                           {order.tier}
                         </span>
                       </div>
-                      <StatusBadge status={order.status} />
+                      <StatusBadge status={order.serverStatus || order.status} />
                     </div>
 
-                    <h4 className="text-xs font-bold text-[#0B0B14] leading-snug">
-                      {order.title}
-                    </h4>
+                    <h4 className="text-xs font-bold text-[#0A0A23] leading-snug">{order.title}</h4>
 
                     <div className="flex items-center justify-between text-xs pt-1">
                       <div className="flex items-center gap-2">
-                        <img
+                        <AvatarImage
                           src={counterpart.avatar}
+                          name={counterpart.name}
+                          size={24}
+                          rounded="full"
                           alt={counterpart.name}
-                          className="w-6 h-6 rounded-full object-cover border"
                         />
-                        <span className="font-semibold text-[#0B0B14]">
-                          {counterpart.name}
-                        </span>
+                        <span className="font-semibold text-[#0A0A23]">{counterpart.name}</span>
                       </div>
-                      <span className="font-mono font-bold text-sm text-[#0B0B14]">
-                        ${order.totalAmount}.00
+                      <span className="font-mono font-bold text-sm text-[#0A0A23]">
+                        ${Number(order.totalAmount).toFixed(2)}
                       </span>
                     </div>
 

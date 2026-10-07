@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     title: "Explore Professional Services — TASCORA",
     description:
       "Hire top 1% vetted independent developers, designers, and specialists worldwide with milestone escrow protection.",
-    url: "https://tascora.com/services",
+    url: "/services",
     siteName: "TASCORA",
     locale: "en_US",
     type: "website",
@@ -29,14 +29,10 @@ export const metadata: Metadata = {
       "Hire top 1% vetted independent developers, designers, and specialists worldwide with milestone escrow protection.",
   },
   alternates: {
-    canonical: "https://tascora.com/services",
+    canonical: "/services",
   },
 }
 
-export default function ServicesLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function ServicesLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }

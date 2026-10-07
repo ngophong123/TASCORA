@@ -57,15 +57,40 @@ export function EnterpriseCode() {
   const [copied, setCopied] = React.useState(false)
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(CODE_SNIPPET)
+    void navigator.clipboard.writeText(CODE_SNIPPET)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
 
   return (
-    <section className="py-16 sm:py-24 md:py-36 border-b border-[rgba(15,15,30,0.08)] bg-[#FFFFFF] relative overflow-hidden" id="enterprise">
-      {/* Ambient background lighting */}
-      <div className="absolute top-1/2 -right-48 w-96 h-96 bg-blue-300/15 rounded-full blur-[160px] pointer-events-none" />
+    <section
+      className="py-16 sm:py-24 md:py-36 border-y border-white/10 bg-[#0B1026] text-white relative overflow-hidden"
+      id="enterprise"
+    >
+      {/* Stripe-Inspired Ambient Flowing Gradient Mesh in Dark Section */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div
+          className="absolute -top-[30%] -right-[10%] w-[600px] sm:w-[900px] h-[500px] sm:h-[700px] rounded-full blur-[140px] opacity-[0.28] pointer-events-none animate-ambient-mesh"
+          style={{
+            background:
+              "linear-gradient(135deg, #4f46e5 0%, #7c3aed 32%, #ec4899 68%, #f97316 100%)",
+          }}
+        />
+        <div
+          className="absolute -bottom-[20%] -left-[10%] w-[500px] sm:w-[700px] h-[400px] sm:h-[600px] rounded-full blur-[140px] opacity-[0.16] pointer-events-none animate-ambient-mesh-slow"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, rgba(37, 99, 235, 0.45), transparent 70%)",
+          }}
+        />
+        <div
+          className="absolute inset-0 opacity-[0.04] pointer-events-none"
+          style={{
+            backgroundImage: `radial-gradient(rgba(255, 255, 255, 0.6) 1px, transparent 1px)`,
+            backgroundSize: "24px 24px",
+          }}
+        />
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
@@ -77,32 +102,31 @@ export function EnterpriseCode() {
             viewport={VIEWPORT_ONCE}
           >
             <motion.div variants={fadeUpVariants}>
-              <Badge variant="gradient" size="md">
-                <Building2 className="h-3.5 w-3.5 mr-1" />
+              <Badge
+                variant="outline"
+                size="md"
+                className="bg-white/10 text-white border-white/20 backdrop-blur-sm"
+              >
+                <Building2 className="h-3.5 w-3.5 mr-1 text-[#818CF8]" />
                 {t("badge")}
               </Badge>
             </motion.div>
 
-            <motion.h2
-              variants={fadeUpBlurVariants}
-              className="text-[clamp(32px,4.5vw,56px)] font-semibold tracking-[-0.03em] leading-[1.1] text-[#0B0B14]"
-            >
-              {t("titlePrefix")} <span className="text-accent-gradient">{t("titleHighlight")}</span>
+            <motion.h2 variants={fadeUpBlurVariants} className="stripe-section-heading text-white">
+              {t("titlePrefix")}{" "}
+              <span className="stripe-gradient-text-light">{t("titleHighlight")}</span>
             </motion.h2>
 
             <motion.p
               variants={fadeUpVariants}
               custom={0.1}
-              className="text-base text-[#4B4B5C] leading-relaxed"
+              className="text-base sm:text-lg text-slate-300 leading-relaxed font-normal"
             >
               {t("subtitle")}
             </motion.p>
 
             {/* Feature Bullets */}
-            <motion.div
-              className="space-y-4 pt-2"
-              variants={staggerContainerVariants}
-            >
+            <motion.div className="space-y-4 pt-2" variants={staggerContainerVariants}>
               {[
                 {
                   icon: ShieldCheck,
@@ -132,12 +156,12 @@ export function EnterpriseCode() {
                     variants={staggerChildCardVariants}
                     className="flex items-start gap-3.5"
                   >
-                    <div className="h-7 w-7 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shrink-0 mt-0.5 shadow-sm">
+                    <div className="h-8 w-8 rounded-lg bg-white/10 border border-white/15 flex items-center justify-center text-[#818CF8] shrink-0 mt-0.5 shadow-2xs">
                       <IconComponent className="h-4 w-4" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold text-[#0B0B14]">{bullet.title}</h4>
-                      <p className="text-xs text-[#4B4B5C] mt-0.5 leading-relaxed">{bullet.desc}</p>
+                      <h4 className="text-sm font-semibold text-white">{bullet.title}</h4>
+                      <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">{bullet.desc}</p>
                     </div>
                   </motion.div>
                 )
@@ -149,21 +173,22 @@ export function EnterpriseCode() {
               custom={0.2}
               className="pt-4 flex items-center gap-4"
             >
-              <Link href="/enterprise" className="w-full sm:w-auto">
-                <motion.div whileTap={buttonTapMotion.whileTap} className="w-full sm:w-auto inline-block">
+              <Link href="/register?role=client&plan=enterprise" className="w-full sm:w-auto">
+                <motion.div
+                  whileTap={buttonTapMotion.whileTap}
+                  className="w-full sm:w-auto inline-block"
+                >
                   <Button
                     variant="primary"
                     size="lg"
-                    pill
-                    className="w-full sm:w-auto px-8 shadow-md justify-center"
+                    className="w-full sm:w-auto px-8 shadow-sm justify-center"
                   >
                     <span>{t("ctaContact")}</span>
-                    <ArrowRight className="h-4 w-4" />
+                    <ArrowRight className="h-4 w-4 arrow-micro" />
                   </Button>
                 </motion.div>
               </Link>
             </motion.div>
-
           </motion.div>
 
           {/* RIGHT COLUMN: Styled Fake Code Editor Window (Stripe Style) */}
@@ -174,22 +199,23 @@ export function EnterpriseCode() {
             viewport={VIEWPORT_ONCE}
             variants={landingCardVariants}
           >
-            <div className="rounded-2xl bg-[#0D0D12] border border-slate-800 shadow-[0_24px_70px_-15px_rgba(15,15,30,0.35),0_0_30px_-10px_rgba(37,99,235,0.2)] overflow-hidden">
-
+            <div className="rounded-xl bg-[#080C1E] border border-white/12 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden">
               {/* macOS Window Title Bar */}
-              <div className="flex items-center justify-between px-4 py-3 bg-[#14141C] border-b border-white/8">
+              <div className="flex items-center justify-between px-4 py-3 bg-[#0F1636] border-b border-white/10">
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full bg-rose-500/80 hover:opacity-100 transition-opacity" />
                   <div className="h-3 w-3 rounded-full bg-amber-500/80 hover:opacity-100 transition-opacity" />
                   <div className="h-3 w-3 rounded-full bg-emerald-500/80 hover:opacity-100 transition-opacity" />
-                  <div className="ml-3 flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#0D0D12] border border-white/6 text-xs text-[#A1A1AA] font-mono">
+                  <div className="ml-3 flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#080C1E] border border-white/10 text-xs text-[#94A3B8] font-mono">
                     <FileCode2 className="h-3.5 w-3.5 text-blue-400" />
                     <span>create-project.ts</span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="text-[11px] font-mono text-[#71717A] hidden sm:inline">TypeScript</span>
+                  <span className="text-[11px] font-mono text-[#71717A] hidden sm:inline">
+                    TypeScript
+                  </span>
                   <button
                     type="button"
                     onClick={handleCopy}
@@ -197,28 +223,40 @@ export function EnterpriseCode() {
                     title={copied ? t("copiedButton") : t("copyButton")}
                     aria-label={copied ? t("copiedButton") : t("copyButton")}
                   >
-                    {copied ? <Check className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4" />}
+                    {copied ? (
+                      <Check className="h-4 w-4 text-emerald-400" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
                   </button>
                 </div>
               </div>
 
               {/* Code Area with Syntax Colors */}
               <div className="p-4 sm:p-6 font-mono text-[11px] sm:text-xs md:text-[13px] leading-relaxed overflow-x-auto text-[#D4D4D8] bg-[#0A0A0F]">
-                <div className="text-[#71717A] select-none mb-2">// 1. Initialize API request to lock dedicated escrow vault</div>
+                <div className="text-[#71717A] select-none mb-2">
+                  {"// 1. Initialize API request to lock dedicated escrow vault"}
+                </div>
                 <div>
-                  <span className="text-sky-400">const</span> response = <span className="text-sky-400">await</span>{" "}
+                  <span className="text-sky-400">const</span> response ={" "}
+                  <span className="text-sky-400">await</span>{" "}
                   <span className="text-blue-400">fetch</span>(
-                  <span className="text-emerald-400">&quot;https://api.tascora.com/v1/projects&quot;</span>, &#123;
+                  <span className="text-emerald-400">
+                    &quot;https://api.tascora.com/v1/projects&quot;
+                  </span>
+                  , &#123;
                 </div>
                 <div className="pl-4">
-                  <span className="text-[#A1A1AA]">method</span>: <span className="text-emerald-400">&quot;POST&quot;</span>,
+                  <span className="text-[#A1A1AA]">method</span>:{" "}
+                  <span className="text-emerald-400">&quot;POST&quot;</span>,
                 </div>
                 <div className="pl-4">
                   <span className="text-[#A1A1AA]">headers</span>: &#123;
                 </div>
                 <div className="pl-8">
                   <span className="text-emerald-400">&quot;Authorization&quot;</span>:{" "}
-                  <span className="text-emerald-400">&quot;Bearer tsk_live_9a8f2c3e4...&quot;</span>,
+                  <span className="text-emerald-400">&quot;Bearer tsk_live_9a8f2c3e4...&quot;</span>
+                  ,
                 </div>
                 <div className="pl-8">
                   <span className="text-emerald-400">&quot;Content-Type&quot;</span>:{" "}
@@ -226,11 +264,15 @@ export function EnterpriseCode() {
                 </div>
                 <div className="pl-4">&#125;,</div>
                 <div className="pl-4">
-                  <span className="text-[#A1A1AA]">body</span>: JSON.<span className="text-sky-400">stringify</span>(&#123;
+                  <span className="text-[#A1A1AA]">body</span>: JSON.
+                  <span className="text-sky-400">stringify</span>(&#123;
                 </div>
                 <div className="pl-8">
                   <span className="text-[#A1A1AA]">title</span>:{" "}
-                  <span className="text-emerald-400">&quot;AI Knowledge Graph Architecture&quot;</span>,
+                  <span className="text-emerald-400">
+                    &quot;AI Knowledge Graph Architecture&quot;
+                  </span>
+                  ,
                 </div>
                 <div className="pl-8">
                   <span className="text-[#A1A1AA]">escrowAmount</span>:{" "}
@@ -242,17 +284,20 @@ export function EnterpriseCode() {
                 <div className="pl-12">
                   &#123; <span className="text-[#A1A1AA]">name</span>:{" "}
                   <span className="text-emerald-400">&quot;Schema & Vector DB&quot;</span>,{" "}
-                  <span className="text-[#A1A1AA]">amount</span>: <span className="text-amber-400">1600</span> &#125;,
+                  <span className="text-[#A1A1AA]">amount</span>:{" "}
+                  <span className="text-amber-400">1600</span> &#125;,
                 </div>
                 <div className="pl-12">
                   &#123; <span className="text-[#A1A1AA]">name</span>:{" "}
                   <span className="text-emerald-400">&quot;Agent Tool Integration&quot;</span>,{" "}
-                  <span className="text-[#A1A1AA]">amount</span>: <span className="text-amber-400">2000</span> &#125;,
+                  <span className="text-[#A1A1AA]">amount</span>:{" "}
+                  <span className="text-amber-400">2000</span> &#125;,
                 </div>
                 <div className="pl-12">
                   &#123; <span className="text-[#A1A1AA]">name</span>:{" "}
                   <span className="text-emerald-400">&quot;Production QA & SLA&quot;</span>,{" "}
-                  <span className="text-[#A1A1AA]">amount</span>: <span className="text-amber-400">1200</span> &#125;
+                  <span className="text-[#A1A1AA]">amount</span>:{" "}
+                  <span className="text-amber-400">1200</span> &#125;
                 </div>
                 <div className="pl-8">],</div>
                 <div className="pl-8">
@@ -261,14 +306,18 @@ export function EnterpriseCode() {
                 </div>
                 <div className="pl-4">&#125;)</div>
                 <div>&#125;);</div>
-                <div className="mt-3 text-[#71717A]">// 2. Escrow contract generated & verified on network</div>
+                <div className="mt-3 text-[#71717A]">
+                  {"// 2. Escrow contract generated & verified on network"}
+                </div>
                 <div>
-                  <span className="text-sky-400">const</span> project = <span className="text-sky-400">await</span>{" "}
-                  response.<span className="text-blue-400">json</span>();
+                  <span className="text-sky-400">const</span> project ={" "}
+                  <span className="text-sky-400">await</span> response.
+                  <span className="text-blue-400">json</span>();
                 </div>
                 <div className="flex items-center gap-1">
                   console.<span className="text-blue-400">log</span>(
-                  <span className="text-emerald-400">&quot;Vault locked:&quot;</span>, project.escrowVaultId);
+                  <span className="text-emerald-400">&quot;Vault locked:&quot;</span>,
+                  project.escrowVaultId);
                   <span className="inline-block w-2 h-4 bg-blue-400 animate-pulse ml-1" />
                 </div>
               </div>
@@ -288,4 +337,3 @@ export function EnterpriseCode() {
     </section>
   )
 }
-

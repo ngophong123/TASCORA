@@ -33,9 +33,7 @@ export function NotificationsPopover() {
   }, [isOpen])
 
   // Filter notifications relevant to current role
-  const relevantNotifications = notifications.filter(
-    (n) => n.role === "BOTH" || n.role === role
-  )
+  const relevantNotifications = notifications.filter((n) => n.role === "BOTH" || n.role === role)
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
@@ -57,7 +55,7 @@ export function NotificationsPopover() {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-xl border border-[rgba(15,15,30,0.08)] bg-white text-[#4B4B5C] hover:text-[#0B0B14] hover:bg-[#FAFAFC] hover:border-[rgba(15,15,30,0.18)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+        className="relative p-2 rounded-xl border border-[rgba(15,15,30,0.08)] bg-white text-[#4B4B5C] hover:text-[#0A0A23] hover:bg-[#FAFAFC] hover:border-[rgba(15,15,30,0.18)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
         aria-label={`Notifications (${unreadCount} unread)`}
         aria-expanded={isOpen}
       >
@@ -79,7 +77,7 @@ export function NotificationsPopover() {
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-[rgba(15,15,30,0.08)] bg-[#FAFAFC]">
             <div className="flex items-center gap-2">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[#0B0B14]">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#0A0A23]">
                 Notifications
               </h3>
               {unreadCount > 0 && (
@@ -123,7 +121,7 @@ export function NotificationsPopover() {
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-1 mb-0.5">
-                      <h4 className="text-xs font-semibold text-[#0B0B14] truncate">
+                      <h4 className="text-xs font-semibold text-[#0A0A23] truncate">
                         {notif.title}
                       </h4>
                       {!notif.read && (

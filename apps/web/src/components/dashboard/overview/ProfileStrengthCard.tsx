@@ -13,9 +13,7 @@ interface ProfileStrengthCardProps {
 
 export function ProfileStrengthCard({ checklist, className }: ProfileStrengthCardProps) {
   const totalPoints = checklist.reduce((acc, i) => acc + i.points, 0)
-  const earnedPoints = checklist
-    .filter((i) => i.completed)
-    .reduce((acc, i) => acc + i.points, 0)
+  const earnedPoints = checklist.filter((i) => i.completed).reduce((acc, i) => acc + i.points, 0)
 
   const percent = Math.round((earnedPoints / totalPoints) * 100)
 
@@ -29,16 +27,16 @@ export function ProfileStrengthCard({ checklist, className }: ProfileStrengthCar
       <div className="flex items-center justify-between pb-4 border-b border-[rgba(15,15,30,0.06)] mb-4">
         <div className="flex items-center gap-2">
           <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
-          <h3 className="text-sm font-bold text-[#0B0B14]">Profile Strength</h3>
+          <h3 className="text-sm font-bold text-[#0A0A23]">Profile Strength</h3>
         </div>
-        <span className="text-sm font-bold font-mono text-blue-700">{percent}%</span>
+        <span className="text-sm font-bold font-mono text-[#4F46E5]">{percent}%</span>
       </div>
 
       {/* Progress Bar */}
       <div className="space-y-1.5 mb-5">
         <div className="w-full h-2 rounded-full bg-[#EAEAF0] overflow-hidden">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-blue-600 via-blue-500 to-sky-400 transition-all duration-500"
+            className="h-full rounded-full bg-gradient-to-r from-[#635BFF] via-[#DF1B41] to-[#FF8A00] transition-all duration-500"
             style={{ width: `${percent}%` }}
           />
         </div>
@@ -56,7 +54,7 @@ export function ProfileStrengthCard({ checklist, className }: ProfileStrengthCar
               "flex items-start gap-2.5 text-xs p-2.5 rounded-xl border transition-colors",
               item.completed
                 ? "bg-[#FAFAFC] border-[rgba(15,15,30,0.06)] text-[#4B4B5C]"
-                : "bg-white border-blue-200/80 text-[#0B0B14] shadow-2xs"
+                : "bg-white border-[#635BFF]/30 text-[#0A0A23] shadow-2xs"
             )}
           >
             {item.completed ? (

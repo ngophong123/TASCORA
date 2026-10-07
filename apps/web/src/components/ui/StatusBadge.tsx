@@ -32,10 +32,10 @@ const STATUS_CONFIG: Record<
   },
   completed: {
     label: "Completed",
-    bg: "bg-blue-50",
-    text: "text-blue-700",
-    dot: "bg-blue-600",
-    border: "border-blue-200",
+    bg: "bg-[#F4F3FF]",
+    text: "text-[#4F46E5]",
+    dot: "bg-[#635BFF]",
+    border: "border-[#635BFF]/25",
   },
   in_progress: {
     label: "In Progress",
@@ -92,9 +92,7 @@ export function StatusBadge({ status, className, size = "sm" }: StatusBadgeProps
   }
 
   const sizeClasses =
-    size === "sm"
-      ? "px-2.5 py-0.5 text-[11px] gap-1.5"
-      : "px-3 py-1 text-xs gap-2"
+    size === "sm" ? "px-2.5 py-0.5 text-[11px] gap-1.5" : "px-3 py-1 text-xs gap-2"
 
   return (
     <span

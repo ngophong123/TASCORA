@@ -1,17 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {
-  X,
-  CreditCard,
-  Building2,
-  CheckCircle2,
-  ArrowRight,
-  ShieldCheck,
-  Zap,
-  Loader2,
-  Sparkles,
-} from "lucide-react"
+import { X, CreditCard, Building2, ArrowRight, Zap, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface WithdrawDialogProps {
@@ -57,8 +47,8 @@ export function WithdrawDialog({
         destination === "stripe"
           ? "Stripe Express •••• 4242"
           : destination === "bank"
-          ? "Bank of America ACH •••• 9104"
-          : "PayPal (alexandre.dev@example.com)"
+            ? "Bank of America ACH •••• 9104"
+            : "PayPal (alexandre.dev@example.com)"
 
       onConfirmWithdraw(parsedAmount, destName)
       setIsProcessing(false)
@@ -83,9 +73,7 @@ export function WithdrawDialog({
               <Zap className="h-4 w-4" />
             </span>
             <div>
-              <h2 className="text-base font-semibold text-[#0B0B14]">
-                Withdraw Available Funds
-              </h2>
+              <h2 className="text-base font-semibold text-[#0A0A23]">Withdraw Available Funds</h2>
               <p className="text-xs text-[#6B6B7B]">
                 Transfer cleared earnings directly to your verified payout destination.
               </p>
@@ -94,7 +82,7 @@ export function WithdrawDialog({
 
           <button
             onClick={onClose}
-            className="p-1.5 text-[#6B6B7B] hover:text-[#0B0B14] hover:bg-[#F4F4F8] rounded-lg transition-colors"
+            className="p-1.5 text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-[#F4F4F8] rounded-lg transition-colors"
           >
             <X className="h-4 w-4" />
           </button>
@@ -103,15 +91,14 @@ export function WithdrawDialog({
         <form onSubmit={handleSubmit} className="mt-5 space-y-5">
           {/* Destination Selector */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-[#0B0B14]">
-              Select Payout Method
-            </label>
+            <label className="text-xs font-semibold text-[#0A0A23]">Select Payout Method</label>
 
             <div className="space-y-2">
               {/* Stripe Express */}
-              <label
+              <button
+                type="button"
                 onClick={() => setDestination("stripe")}
-                className={`flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${
+                className={`w-full text-left flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${
                   destination === "stripe"
                     ? "border-blue-600 bg-blue-50/50 shadow-xs ring-1 ring-blue-600"
                     : "border-[rgba(15,15,30,0.1)] hover:bg-[#FAFAFC]"
@@ -122,7 +109,7 @@ export function WithdrawDialog({
                     <CreditCard className="h-4 w-4" />
                   </span>
                   <div>
-                    <div className="text-xs font-semibold text-[#0B0B14]">
+                    <div className="text-xs font-semibold text-[#0A0A23]">
                       Stripe Express Debit (•••• 4242)
                     </div>
                     <div className="text-[11px] text-[#6B6B7B]">
@@ -133,12 +120,13 @@ export function WithdrawDialog({
                 <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                   Instant
                 </span>
-              </label>
+              </button>
 
               {/* Direct Bank ACH */}
-              <label
+              <button
+                type="button"
                 onClick={() => setDestination("bank")}
-                className={`flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${
+                className={`w-full text-left flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${
                   destination === "bank"
                     ? "border-blue-600 bg-blue-50/50 shadow-xs ring-1 ring-blue-600"
                     : "border-[rgba(15,15,30,0.1)] hover:bg-[#FAFAFC]"
@@ -149,7 +137,7 @@ export function WithdrawDialog({
                     <Building2 className="h-4 w-4" />
                   </span>
                   <div>
-                    <div className="text-xs font-semibold text-[#0B0B14]">
+                    <div className="text-xs font-semibold text-[#0A0A23]">
                       Bank of America ACH (•••• 9104)
                     </div>
                     <div className="text-[11px] text-[#6B6B7B]">
@@ -160,19 +148,17 @@ export function WithdrawDialog({
                 <span className="text-[10px] font-medium text-[#6B6B7B] bg-[#F4F4F8] px-2 py-0.5 rounded-full">
                   1-2 Days
                 </span>
-              </label>
+              </button>
             </div>
           </div>
 
           {/* Amount input */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs">
-              <span className="font-semibold text-[#0B0B14]">Withdrawal Amount</span>
+              <span className="font-semibold text-[#0A0A23]">Withdrawal Amount</span>
               <span className="text-[#6B6B7B]">
                 Available:{" "}
-                <strong className="text-[#0B0B14] font-mono">
-                  ${availableBalance.toFixed(2)}
-                </strong>
+                <strong className="text-[#0A0A23] font-mono">${availableBalance.toFixed(2)}</strong>
               </span>
             </div>
 
@@ -188,7 +174,7 @@ export function WithdrawDialog({
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"
-                className="w-full bg-transparent pl-8 pr-16 py-2.5 text-sm font-mono font-bold text-[#0B0B14] placeholder:text-[#6B6B7B] outline-none"
+                className="w-full bg-transparent pl-8 pr-16 py-2.5 text-sm font-mono font-bold text-[#0A0A23] placeholder:text-[#6B6B7B] outline-none"
               />
               <button
                 type="button"
@@ -210,7 +196,7 @@ export function WithdrawDialog({
           <div className="bg-[#FAFAFC] rounded-xl p-3.5 border border-[rgba(15,15,30,0.06)] space-y-2 text-xs">
             <div className="flex items-center justify-between text-[#6B6B7B]">
               <span>Gross Withdrawal</span>
-              <span className="font-mono text-[#0B0B14]">
+              <span className="font-mono text-[#0A0A23]">
                 ${parsedAmount > 0 ? parsedAmount.toFixed(2) : "0.00"}
               </span>
             </div>
@@ -220,7 +206,7 @@ export function WithdrawDialog({
                 {fee === 0 ? "Free ($0.00)" : `-$${fee.toFixed(2)}`}
               </span>
             </div>
-            <div className="flex items-center justify-between pt-2 border-t border-[rgba(15,15,30,0.06)] font-semibold text-[#0B0B14]">
+            <div className="flex items-center justify-between pt-2 border-t border-[rgba(15,15,30,0.06)] font-semibold text-[#0A0A23]">
               <span>Net Transfer Amount</span>
               <span className="font-mono text-sm font-bold text-blue-700">
                 ${netTransfer.toFixed(2)}

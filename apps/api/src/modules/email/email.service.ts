@@ -1,3 +1,4 @@
+import { isProduction, webUrl } from '../../lib/config';
 import nodemailer, { Transporter, TestAccount } from 'nodemailer';
 import { logger } from '../../server';
 
@@ -22,6 +23,7 @@ export class EmailService {
       });
       logger.info('Email service initialized with real SMTP credentials');
     } else {
+      if (isProduction) throw new Error('Production SMTP configuration is required');
       // Use Ethereal for testing
       this.testAccount = await nodemailer.createTestAccount();
       this.transporter = nodemailer.createTransport({
@@ -42,7 +44,7 @@ export class EmailService {
 
     try {
       const info = await this.transporter.sendMail({
-        from: '"Taskora System" <noreply@taskora.com>', // sender address
+        from: process.env.SMTP_FROM || '"Taskora System" <noreply@example.com>', // sender address
         to, // list of receivers
         subject, // Subject line
         html, // html body
@@ -63,6 +65,11 @@ export class EmailService {
   }
 
   // --- Specific Email Templates ---
+
+  static async sendVerificationEmail(to: string, token: string) {
+    const url = `${webUrl}/verify-email?token=${encodeURIComponent(token)}`;
+    return this.sendMail(to, 'Verify your TASCORA account', `<p>Confirm your email address using this link within one hour:</p><a href="${url}">Verify email</a>`);
+  }
 
   static async sendTestEmail(to: string) {
     const html = `
@@ -86,7 +93,7 @@ export class EmailService {
     const html = `
       <h2>You have a new message!</h2>
       <p><strong>${senderName}</strong> just sent you a message on Taskora.</p>
-      <a href="${process.env.NEXT_PUBLIC_WEB_URL}/messages">Click here to reply</a>
+      <a href="${webUrl}/dashboard/messages">Click here to reply</a>
     `;
     return this.sendMail(to, `New Message from ${senderName}`, html);
   }

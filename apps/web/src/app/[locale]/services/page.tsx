@@ -3,9 +3,10 @@
 import * as React from "react"
 import { Link } from "@/i18n/routing"
 import { useTranslations } from "next-intl"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { useServiceFilters } from "@/hooks/useServiceFilters"
-import { FILTER_CATEGORIES } from "@/data/serviceFilterOptions"
+import { useApiResource } from "@/hooks/useApiResource"
+import { ApiState } from "@/components/feedback/ApiState"
 import { GigCard } from "@/components/ui/GigCard"
 import { GigCardSkeleton } from "@/components/ui/GigCardSkeleton"
 import { ServiceFilterSidebar } from "@/components/services/ServiceFilterSidebar"
@@ -14,7 +15,7 @@ import { ActiveFilterChips } from "@/components/services/ActiveFilterChips"
 import { ServicePagination } from "@/components/services/ServicePagination"
 import { ServiceEmptyState } from "@/components/services/ServiceEmptyState"
 import { MobileFilterDrawer } from "@/components/services/MobileFilterDrawer"
-import { ChevronRight, Home, Sparkles } from "lucide-react"
+import { ChevronRight, Home } from "lucide-react"
 
 import type { Variants } from "framer-motion"
 
@@ -44,17 +45,21 @@ const itemVariants: Variants = {
 }
 
 function ServicesContent() {
+  const categories = useApiResource<
+    { id: string; name: string; slug: string; parentId: string | null }[]
+  >("/api/v1/marketplace/categories")
   const t = useTranslations("services")
   const tCommon = useTranslations("common")
   const tNav = useTranslations("nav")
 
   const {
     filters,
+    loading,
+    error,
     setFilter,
     toggleLevel,
     toggleLanguage,
     clearAllFilters,
-    filteredGigs,
     paginatedGigs,
     totalResults,
     totalPages,
@@ -90,8 +95,14 @@ function ServicesContent() {
   // Determine current category metadata
   const currentCategory = React.useMemo(() => {
     if (!filters.category || filters.category === "all") return null
-    return FILTER_CATEGORIES.find((c) => c.slug === filters.category) || null
-  }, [filters.category])
+    const category = categories.data?.find((c) => c.slug === filters.category)
+    return category
+      ? {
+          ...category,
+          subcategories: categories.data?.filter((c) => c.parentId === category.id) || [],
+        }
+      : null
+  }, [filters.category, categories.data])
 
   // Dynamic header title
   const pageTitle = React.useMemo(() => {
@@ -113,6 +124,7 @@ function ServicesContent() {
 
   return (
     <div className="min-h-screen bg-white">
+      <ApiState error={error} />
       {/* 1. Page Header with light blue ambient glow */}
       <section className="relative overflow-hidden pt-8 pb-10 sm:pb-12 border-b border-[rgba(15,15,30,0.06)] bg-gradient-to-b from-[#FAFAFC] to-white">
         {/* Subtle Ambient Radial Glow Blob */}
@@ -166,10 +178,9 @@ function ServicesContent() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
               <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200/60 text-xs font-semibold mb-3">
-                <Sparkles className="w-3.5 h-3.5 text-blue-600" />
                 <span>{t("badge")}</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#0B0B14]">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#0A0A23]">
                 {pageTitle}
               </h1>
               <p className="mt-2 text-xs sm:text-sm text-[#4B4B5C] max-w-2xl leading-relaxed">
@@ -221,13 +232,10 @@ function ServicesContent() {
           {/* Right Column: Listing & Results */}
           <main className="flex-1 min-w-0">
             {/* Active Filter Chips Bar */}
-            <ActiveFilterChips
-              chips={activeFilterChips}
-              onClearAll={clearAllFilters}
-            />
+            <ActiveFilterChips chips={activeFilterChips} onClearAll={clearAllFilters} />
 
             {/* Shimmer Skeleton or Empty State or Active Results */}
-            {isTransitioning ? (
+            {isTransitioning || loading ? (
               <div
                 className={
                   filters.view === "list"
@@ -259,16 +267,8 @@ function ServicesContent() {
                   }
                 >
                   {paginatedGigs.map((gig, idx) => (
-                    <motion.div
-                      key={gig.id}
-                      variants={itemVariants}
-                      layout
-                    >
-                      <GigCard
-                        gig={gig}
-                        view={filters.view}
-                        priority={idx < 6}
-                      />
+                    <motion.div key={gig.id} variants={itemVariants} layout>
+                      <GigCard gig={gig} view={filters.view} priority={idx < 6} />
                     </motion.div>
                   ))}
                 </motion.div>

@@ -21,7 +21,80 @@
     "viewAllSpecializedServices": "View all specialized services",
     "browseAllCategoryDisciplines": "Browse all category disciplines",
     "goToDashboard": "Go to Dashboard",
-    "megaMenuFooterNote": "Discover over 5,000+ verified specialists with milestone escrow protection."
+    "megaMenuFooterNote": "Discover over 5,000+ verified specialists with milestone escrow protection.",
+    "badgeHot": "Hot",
+    "megaMenu": {
+      "columns": {
+        "engineeringCloud": "Engineering & Cloud",
+        "aiDataSystems": "AI & Data Systems",
+        "designProductCraft": "Design & Product Craft",
+        "technical": "Technical",
+        "creative": "Creative",
+        "growthStrategy": "Growth & Strategy"
+      },
+      "items": {
+        "fullStack": {
+          "title": "Full-Stack Development",
+          "description": "Next.js, React, Node.js, and modern TypeScript architecture."
+        },
+        "cloudDevOps": {
+          "title": "Cloud Infrastructure & DevOps",
+          "description": "Docker, Kubernetes, AWS, and zero-downtime CI/CD."
+        },
+        "smartContracts": {
+          "title": "Smart Contracts & Web3",
+          "description": "Audited Solidity contracts and protocol architecture."
+        },
+        "aiAgents": {
+          "title": "Autonomous AI Agents",
+          "description": "Custom LangChain, AutoGen, and tool-augmented agent workflows."
+        },
+        "llmRag": {
+          "title": "LLM Fine-Tuning & RAG",
+          "description": "Vector databases, embeddings, and enterprise retrieval systems."
+        },
+        "computerVision": {
+          "title": "Computer Vision & Audio",
+          "description": "Multimodal AI models for production detection and speech."
+        },
+        "designSystems": {
+          "title": "Design Systems & UI/UX",
+          "description": "Figma tokens, accessible components, and SaaS workflows."
+        },
+        "brandIdentity": {
+          "title": "Editorial Brand Identity",
+          "description": "Bespoke logos, typography guidelines, and brand books."
+        },
+        "motion3d": {
+          "title": "3D Motion & Product Renders",
+          "description": "Cinema4D, Blender, and WebGL interactive experiences."
+        },
+        "catProgramming": {
+          "title": "Programming & Tech",
+          "description": "1,240+ specialized developers and engineers."
+        },
+        "catAi": {
+          "title": "AI & Machine Learning",
+          "description": "640+ research and automation practitioners."
+        },
+        "catDesign": {
+          "title": "Graphics & Design",
+          "description": "980+ digital craftspeople and art directors."
+        },
+        "catVideo": {
+          "title": "Video & Motion",
+          "description": "410+ commercial animators and editors."
+        },
+        "catMarketing": {
+          "title": "Digital Marketing",
+          "description": "810+ technical SEO and growth specialists."
+        },
+        "catBusiness": {
+          "title": "Business Consulting",
+          "description": "520+ strategic advisors and fractional executives."
+        }
+      }
+    }
   },
   "search": {
     "placeholder": "Try 'Next.js developer' or 'SaaS design system'...",
@@ -32,6 +105,7 @@
     "categoryMarketing": "Marketing",
     "categoryVideo": "Video & Animation",
     "searchButton": "Search",
+    "searching": "Searching...",
     "clearSearch": "Clear search",
     "suggestedMatches": "Suggested Matches",
     "popularLabel": "Popular:",
@@ -73,7 +147,7 @@
   "starProof": {
     "ratingScore": "4.98 / 5.0",
     "verifiedReviews": "Verified Reviews",
-    "reviewsSubtext": "Over {count} evaluated by founders & tech leads.",
+    "reviewsSubtext": "Over <bold>{count}</bold> evaluated by founders & tech leads.",
     "reviewsCountBold": "3,800+ completed milestones",
     "escrowProtection": "100% Escrow Protection",
     "onTimeCompletion": "99.4% On-Time Completion",

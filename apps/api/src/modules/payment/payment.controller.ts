@@ -2,35 +2,33 @@ import { Response, NextFunction, Request } from 'express';
 import { AuthRequest } from '../../middlewares/requireAuth';
 import { PaymentService } from './payment.service';
 import Stripe from 'stripe';
+import { isProduction } from '../../lib/config';
+import { HttpError } from '../../lib/errors';
+import { assertPaymentsEnabled } from '../../lib/payment-provider';
 
 export const createIntent = async (req: AuthRequest, res: Response, next: NextFunction) => {
-  try {
-    const buyerId = req.user!.userId;
-    const { orderId } = req.body;
-    const result = await PaymentService.createPaymentIntent(buyerId, orderId);
-    res.status(200).json({ success: true, data: result });
-  } catch (error) {
-    next(error);
-  }
+  try { const result = await PaymentService.createPaymentIntent(req.user!.userId, req.body.orderId); res.json({ success: true, data: result }); }
+  catch (error) { next(error); }
 };
-
-export const handleWebhook = async (req: Request, res: Response, next: NextFunction) => {
+export const handleWebhook = async (req: Request, res: Response, _next: NextFunction) => {
+  try { assertPaymentsEnabled(); }
+  catch (error) {
+    if (error instanceof HttpError) { res.status(error.status).json({ success: false, error: { code: error.code, message: error.message } }); return; }
+    res.status(503).json({ success: false, error: { code: 'PAYMENT_PROVIDER_UNAVAILABLE', message: 'Payments are temporarily unavailable in this environment.' } }); return;
+  }
+  let event: Stripe.Event;
   try {
-    const sig = req.headers['stripe-signature'];
-    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET || 'whsec_test_123';
-    
-    // We expect req.body to be the raw Buffer
-    const event = Stripe.webhooks.constructEvent(
-      req.body,
-      sig as string,
-      endpointSecret
-    );
-
-    await PaymentService.handleWebhookEvent(event);
-
-    res.json({ received: true });
-  } catch (err: any) {
-    console.error(`Webhook Error: ${err.message}`);
-    res.status(400).send(`Webhook Error: ${err.message}`);
+    const signature = req.headers['stripe-signature'];
+    const secret = process.env.STRIPE_WEBHOOK_SECRET;
+    if (!secret || typeof signature !== 'string' || !Buffer.isBuffer(req.body)) throw new Error('Invalid webhook');
+    event = Stripe.webhooks.constructEvent(req.body, signature, secret);
+    if (process.env.APP_ENV === 'staging' && event.livemode) throw new Error('Staging rejects live events');
+    const expectsLive = /^(sk|rk)_live_/.test(process.env.STRIPE_SECRET_KEY || '');
+    if (event.livemode !== expectsLive) throw new Error('Stripe mode mismatch');
+  } catch { res.status(400).json({ success: false, error: 'Invalid webhook signature or payload' }); return; }
+  try { await PaymentService.handleWebhookEvent(event); res.json({ received: true }); }
+  catch (error) {
+    const status = error instanceof HttpError && error.status === 400 ? 400 : 500;
+    res.status(status).json({ success: false, error: isProduction || !(error instanceof HttpError) ? 'Webhook processing failed' : error.message });
   }
 };

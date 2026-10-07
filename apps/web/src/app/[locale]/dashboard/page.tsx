@@ -1,51 +1,113 @@
 "use client"
 
 import * as React from "react"
+import { AccountOnboardingPanel } from "@/components/dashboard/AccountOnboardingPanel"
 import { Link } from "@/i18n/routing"
 import { useDashboard } from "@/context/DashboardContext"
-import {
-  FREELANCER_STATS,
-  CLIENT_STATS,
-  FREELANCER_CHART_DATA,
-  CLIENT_CHART_DATA,
-  FREELANCER_ACTIVE_ORDERS,
-  CLIENT_ACTIVE_ORDERS,
-  RECENT_ACTIVITIES,
-  PROFILE_CHECKLIST,
-  RECOMMENDED_SPECIALISTS,
-} from "@/data/dashboard/overview"
+import type { OverviewStatCardData, ActiveOrderRow, ActivityItem } from "@/data/dashboard/overview"
+import { profileName, imageUrl, type Service } from "@/lib/marketplace"
+import { useApiResource } from "@/hooks/useApiResource"
+import { ApiState } from "@/components/feedback/ApiState"
 import { StatCard } from "@/components/dashboard/overview/StatCard"
-import { RevenueAreaChart } from "@/components/dashboard/overview/RevenueAreaChart"
 import { ActiveOrdersTable } from "@/components/dashboard/overview/ActiveOrdersTable"
 import { ActivityFeed } from "@/components/dashboard/overview/ActivityFeed"
-import { ProfileStrengthCard } from "@/components/dashboard/overview/ProfileStrengthCard"
-import { RecommendedSpecialists } from "@/components/dashboard/overview/RecommendedSpecialists"
-import { Sparkles, ShoppingBag, PlusCircle, Compass } from "lucide-react"
+import { PlusCircle, Compass } from "lucide-react"
 
 export default function DashboardOverviewPage() {
-  const { role } = useDashboard()
-
+  const { role, rawOrders, ordersLoading, ordersError, reloadOrders, account } = useDashboard()
   const isFreelancer = role === "FREELANCER"
-  const stats = isFreelancer ? FREELANCER_STATS : CLIENT_STATS
-  const chartData = isFreelancer ? FREELANCER_CHART_DATA : CLIENT_CHART_DATA
-  const orders = isFreelancer ? FREELANCER_ACTIVE_ORDERS : CLIENT_ACTIVE_ORDERS
+  const services = useApiResource<Service[]>(
+    isFreelancer && account ? "/api/v1/services/seller/me" : null
+  )
+  const stat = (id: string, label: string, value: string): OverviewStatCardData => ({
+    id,
+    label,
+    value,
+    delta: "",
+    isPositive: true,
+    sparkline: [],
+    subtext: "",
+    iconName: "ShoppingBag",
+    iconColor: "text-blue-600 bg-blue-50",
+  })
+  const stats = [
+    stat(
+      "active",
+      "Active orders",
+      String(rawOrders.filter((o) => !["COMPLETED", "CANCELLED"].includes(o.status)).length)
+    ),
+    stat(
+      "completed",
+      "Completed orders",
+      String(rawOrders.filter((o) => o.status === "COMPLETED").length)
+    ),
+    stat(
+      "services",
+      isFreelancer ? "Your services" : "Purchases",
+      isFreelancer
+        ? services.data
+          ? String(services.data.length)
+          : "Unavailable"
+        : String(rawOrders.length)
+    ),
+    stat("earnings", "Available earnings", "Unavailable"),
+  ]
+  const orders: ActiveOrderRow[] = rawOrders.map((o) => ({
+    id: o.id,
+    title: o.service.title,
+    counterpartName: profileName(isFreelancer ? o.buyer?.buyerProfile : o.seller),
+    counterpartAvatar: imageUrl(isFreelancer ? o.buyer?.buyerProfile?.avatar : o.seller?.avatar),
+    counterpartRole: isFreelancer ? "Customer" : "Seller",
+    amount: `$${o.amount}`,
+    status:
+      o.status === "COMPLETED"
+        ? "completed"
+        : o.status === "DELIVERED"
+          ? "delivered"
+          : o.status === "PENDING"
+            ? "pending"
+            : "in_progress",
+    dueDate: o.deliveryDate ? new Date(o.deliveryDate).toLocaleDateString() : "Not scheduled",
+    progressPercent: 0,
+    currentMilestone: o.status,
+    totalMilestones: 0,
+  }))
+  const activities: ActivityItem[] = rawOrders.flatMap((o) =>
+    (o.activities || []).map((a) => ({
+      id: a.id,
+      type: "order" as const,
+      title: o.service.title,
+      description: a.description,
+      timestamp: new Date(a.createdAt).toLocaleString(),
+      user: {
+        name: profileName(isFreelancer ? o.buyer?.buyerProfile : o.seller),
+        avatar: imageUrl(isFreelancer ? o.buyer?.buyerProfile?.avatar : o.seller?.avatar),
+      },
+    }))
+  )
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
+      <AccountOnboardingPanel mode={role} />
+      {account?.role === "ADMIN" && (
+        <Link href="/dashboard/admin" className="underline">
+          Marketplace review
+        </Link>
+      )}
+      <ApiState loading={ordersLoading} error={ordersError} retry={reloadOrders} />
       {/* 1. Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[rgba(15,15,30,0.06)]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200/80 dark:border-slate-800">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200/60 text-xs font-semibold mb-2">
-            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-semibold mb-3">
             <span>{isFreelancer ? "Creator Studio" : "Client Workspace"}</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0B0B14] tracking-tight">
-            Welcome back, Alexandre
+          <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            Welcome back, {profileName(account?.sellerProfile || account?.buyerProfile)}
           </h1>
-          <p className="text-xs sm:text-sm text-[#6B6B7B] mt-1 leading-relaxed max-w-2xl">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1.5 leading-relaxed max-w-2xl">
             {isFreelancer
-              ? "Track your revenue growth, fulfill active milestone orders on schedule, and monitor your delivery metrics."
-              : "Review incoming milestone deliverables, approve escrow payment releases, and manage your hired specialists."}
+              ? "Manage your services and fulfill orders on schedule, and monitor your delivery metrics."
+              : "Review incoming milestone deliverables, manage order progress, and manage your hired specialists."}
           </p>
         </div>
 
@@ -53,7 +115,7 @@ export default function DashboardOverviewPage() {
           {isFreelancer ? (
             <Link
               href="/dashboard/gigs"
-              className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-sky-600 text-white text-xs font-semibold shadow-md hover:from-blue-700 hover:to-sky-700 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600 hover:from-indigo-500 hover:via-violet-500 hover:to-blue-500 text-white text-xs font-semibold shadow-md shadow-indigo-500/25 transition-all hover:scale-[1.01] active:scale-[0.98]"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Create New Gig</span>
@@ -61,7 +123,7 @@ export default function DashboardOverviewPage() {
           ) : (
             <Link
               href="/services"
-              className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-sky-600 text-white text-xs font-semibold shadow-md hover:from-blue-700 hover:to-sky-700 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600 hover:from-indigo-500 hover:via-violet-500 hover:to-blue-500 text-white text-xs font-semibold shadow-md shadow-indigo-500/25 transition-all hover:scale-[1.01] active:scale-[0.98]"
             >
               <Compass className="w-4 h-4" />
               <span>Hire Specialists</span>
@@ -72,42 +134,31 @@ export default function DashboardOverviewPage() {
 
       {/* 2. Stat Cards Grid (4 Cards with Sparklines & Delta Badges) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((item) => (
-          <StatCard key={item.id} data={item} />
-        ))}
+        {!ordersLoading &&
+          !ordersError &&
+          stats.map((item) => <StatCard key={item.id} data={item} />)}
       </div>
 
       {/* 3. Main Revenue / Spending Area Chart (Recharts) */}
-      <RevenueAreaChart
-        title={isFreelancer ? "Earnings Analytics" : "Escrow Spending Analytics"}
-        subtitle={isFreelancer ? "gross revenue in selected period" : "milestone disbursements"}
-        dataByRange={chartData}
-        badgeText={isFreelancer ? "Gross Revenue" : "Escrow Cleared"}
-      />
+      <section className="rounded-xl border border-slate-200 bg-white p-5 text-sm">
+        Earnings and settlement analytics are unavailable until financial release and payout
+        workflows are implemented.
+      </section>
 
       {/* 4. Two-Column Row: Active Orders Table & Sidebar (Activity / Checklist) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* Active Orders Table (2/3 width) */}
         <div className="lg:col-span-2">
-          <ActiveOrdersTable
-            orders={orders}
-            role={role}
-          />
+          <ActiveOrdersTable orders={orders} role={role} />
         </div>
 
         {/* Right Side Column (1/3 width): Profile Strength or Activity Feed */}
         <div className="space-y-6">
-          {isFreelancer && (
-            <ProfileStrengthCard checklist={PROFILE_CHECKLIST} />
-          )}
-          <ActivityFeed activities={RECENT_ACTIVITIES} />
+          <ActivityFeed activities={activities} />
         </div>
       </div>
 
       {/* 5. Client Mode Only: Recommended Specialists Showcase */}
-      {!isFreelancer && (
-        <RecommendedSpecialists specialists={RECOMMENDED_SPECIALISTS} />
-      )}
     </div>
   )
 }

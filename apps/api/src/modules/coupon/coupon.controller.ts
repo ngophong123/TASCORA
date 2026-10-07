@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client';
+import { HttpError } from '../../lib/errors';
 import { Response, NextFunction } from 'express';
 import { AuthRequest } from '../../middlewares/requireAuth';
 import { CouponService } from './coupon.service';
@@ -9,7 +11,8 @@ export const createCoupon = async (req: AuthRequest, res: Response, next: NextFu
     
     // Simple validation
     if (!code || !discountPercent) {
-      return res.status(400).json({ success: false, error: 'Code and discountPercent are required' });
+      res.status(400).json({ success: false, error: 'Code and discountPercent are required' });
+      return;
     }
 
     const coupon = await CouponService.createCoupon(userId, {
@@ -20,10 +23,10 @@ export const createCoupon = async (req: AuthRequest, res: Response, next: NextFu
     });
 
     res.status(201).json({ success: true, data: coupon });
-  } catch (error: any) {
-    if (error.code === 'P2002') {
-      res.status(400);
-      error.message = 'Coupon code already exists for this seller';
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      next(new HttpError(409, 'Coupon code already exists for this seller'));
+      return;
     }
     next(error);
   }
@@ -39,16 +42,17 @@ export const getSellerCoupons = async (req: AuthRequest, res: Response, next: Ne
   }
 };
 
-export const validateCoupon = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const validateCoupon = async (req: AuthRequest, res: Response, _next: NextFunction) => {
   try {
     const { code, serviceId } = req.body;
     if (!code || !serviceId) {
-      return res.status(400).json({ success: false, error: 'Code and serviceId are required' });
+      res.status(400).json({ success: false, error: 'Code and serviceId are required' });
+      return;
     }
 
     const result = await CouponService.validateCoupon(code, serviceId);
     res.status(200).json({ success: true, data: result });
-  } catch (error: any) {
-    res.status(400).json({ success: false, error: error.message });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error instanceof HttpError ? error.message : 'Coupon is invalid or unavailable' });
   }
 };

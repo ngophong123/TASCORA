@@ -8,7 +8,6 @@ interface SpotlightCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode
   accent?: AccentColor
   spotlightColor?: string
-  spotlightBorderColor?: string
   className?: string
 }
 
@@ -16,84 +15,87 @@ export function SpotlightCard({
   children,
   accent,
   spotlightColor,
-  spotlightBorderColor,
   className,
   ...props
 }: SpotlightCardProps) {
   const theme = accent ? getAccentTheme(accent) : undefined
-  const resolvedSpotlightColor = spotlightColor ?? theme?.spotlightSurface ?? "rgba(37, 99, 235, 0.08)"
-  const resolvedSpotlightBorderColor = spotlightBorderColor ?? theme?.spotlightBorder ?? "rgba(37, 99, 235, 0.25)"
+  const resolvedSpotlightColor =
+    spotlightColor ?? theme?.spotlightSurface ?? "rgba(99, 91, 255, 0.08)"
 
   const divRef = React.useRef<HTMLDivElement>(null)
-  const [isFocused, setIsFocused] = React.useState(false)
-  const [position, setPosition] = React.useState({ x: 0, y: 0 })
-  const [opacity, setOpacity] = React.useState(0)
+  const rafId = React.useRef<number | null>(null)
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!divRef.current || isFocused) return
+  React.useEffect(() => {
+    const el = divRef.current
+    if (!el) return
 
-    const div = divRef.current
-    const rect = div.getBoundingClientRect()
+    const isDesktop = window.matchMedia("(hover: hover) and (pointer: fine)").matches
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    if (!isDesktop || prefersReducedMotion) return
 
-    setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top })
-  }
+    const handlePointerMove = (e: PointerEvent) => {
+      if (rafId.current !== null) {
+        cancelAnimationFrame(rafId.current)
+      }
+      rafId.current = requestAnimationFrame(() => {
+        const rect = el.getBoundingClientRect()
+        const x = e.clientX - rect.left
+        const y = e.clientY - rect.top
+        el.style.setProperty("--mouse-x", `${x}px`)
+        el.style.setProperty("--mouse-y", `${y}px`)
+        el.style.setProperty("--mouse-opacity", "1")
+      })
+    }
 
-  const handleFocus = () => {
-    setIsFocused(true)
-    setOpacity(1)
-  }
+    const handlePointerEnter = () => {
+      el.style.setProperty("--mouse-opacity", "1")
+    }
 
-  const handleBlur = () => {
-    setIsFocused(false)
-    setOpacity(0)
-  }
+    const handlePointerLeave = () => {
+      if (rafId.current !== null) {
+        cancelAnimationFrame(rafId.current)
+        rafId.current = null
+      }
+      el.style.setProperty("--mouse-opacity", "0")
+    }
 
-  const handleMouseEnter = () => {
-    setOpacity(1)
-  }
+    el.addEventListener("pointermove", handlePointerMove, { passive: true })
+    el.addEventListener("pointerenter", handlePointerEnter, { passive: true })
+    el.addEventListener("pointerleave", handlePointerLeave, { passive: true })
 
-  const handleMouseLeave = () => {
-    setOpacity(0)
-  }
+    return () => {
+      el.removeEventListener("pointermove", handlePointerMove)
+      el.removeEventListener("pointerenter", handlePointerEnter)
+      el.removeEventListener("pointerleave", handlePointerLeave)
+      if (rafId.current !== null) {
+        cancelAnimationFrame(rafId.current)
+      }
+    }
+  }, [])
 
   return (
     <div
       ref={divRef}
-      onMouseMove={handleMouseMove}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
       className={cn(
-        "relative rounded-2xl border border-[rgba(15,15,30,0.08)] bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1 shadow-sm group",
-        theme
-          ? cn(theme.hoverBorderClass, theme.hoverShadowClass)
-          : "hover:border-blue-200 hover:shadow-[0_20px_40px_-12px_rgba(37,99,235,0.12),0_4px_12px_rgba(15,15,30,0.04)]",
+        "card-hover-gradient mouse-light-card relative rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 shadow-xs hover:shadow-[0_14px_34px_-8px_rgba(15,23,42,0.12)] group will-change-transform",
+        theme ? cn(theme.hoverBorderClass) : "hover:border-[#635BFF]/35",
         className
       )}
+      style={
+        {
+          "--mouse-x": "50%",
+          "--mouse-y": "50%",
+          "--mouse-opacity": "0",
+        } as React.CSSProperties
+      }
       {...props}
     >
-      {/* Dynamic Cursor Spotlight Radial (Surface) */}
+      {/* Dynamic Cursor Spotlight Radial (Surface) - 240px circle */}
       <div
-        className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        className="pointer-events-none absolute inset-0 rounded-[inherit] transition-opacity duration-280 ease-out z-[2]"
         style={{
-          opacity,
-          background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, ${resolvedSpotlightColor}, transparent 70%)`,
-        }}
-        aria-hidden="true"
-      />
-
-      {/* Dynamic Cursor Spotlight Border Glow */}
-      <div
-        className="pointer-events-none absolute -inset-[1px] rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        style={{
-          opacity,
-          background: `radial-gradient(320px circle at ${position.x}px ${position.y}px, ${resolvedSpotlightBorderColor}, transparent 75%)`,
-          mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-          maskComposite: "exclude",
-          WebkitMaskComposite: "xor",
-          padding: "1px",
+          opacity: "var(--mouse-opacity, 0)",
+          background: `radial-gradient(240px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), ${resolvedSpotlightColor}, transparent 65%)`,
         }}
         aria-hidden="true"
       />
@@ -102,4 +104,3 @@ export function SpotlightCard({
     </div>
   )
 }
-

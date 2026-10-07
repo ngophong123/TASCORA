@@ -8,7 +8,6 @@ import {
   RATING_OPTIONS,
   LANGUAGE_OPTIONS,
   PRICE_BOUNDS,
-  type FilterCategory,
 } from "@/data/serviceFilterOptions"
 import { type ServiceFilterState } from "@/hooks/useServiceFilters"
 import { type SellerLevel } from "@/data/gigs"
@@ -21,9 +20,7 @@ import {
   Check,
   Star,
   Zap,
-  Clock,
   ShieldCheck,
-  Globe2,
   SlidersHorizontal,
   Code2,
   Palette,
@@ -58,6 +55,7 @@ const CATEGORY_ICONS: Record<string, React.ElementType> = {
   TrendingUp,
 }
 
+import { useApiResource } from "@/hooks/useApiResource"
 export function ServiceFilterSidebar({
   filters,
   setFilter,
@@ -68,6 +66,25 @@ export function ServiceFilterSidebar({
   className,
   onApplyMobile,
 }: ServiceFilterSidebarProps) {
+  const categories = useApiResource<
+    {
+      id: string
+      name: string
+      slug: string
+      parentId: string | null
+      _count: { services: number }
+    }[]
+  >("/api/v1/marketplace/categories")
+  const liveCategories = (categories.data || [])
+    .filter((c) => !c.parentId)
+    .map((c) => ({
+      ...c,
+      iconName: FILTER_CATEGORIES.find((option) => option.slug === c.slug)?.iconName || "Code2",
+      count: c._count.services,
+      subcategories: (categories.data || [])
+        .filter((child) => child.parentId === c.id)
+        .map((child) => ({ ...child, count: child._count.services })),
+    }))
   // Collapsible section states
   const [openSections, setOpenSections] = React.useState<Record<string, boolean>>({
     categories: true,
@@ -94,14 +111,13 @@ export function ServiceFilterSidebar({
       <div className="flex items-center justify-between pb-4 mb-4 border-b border-[rgba(15,15,30,0.08)]">
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="w-4 h-4 text-blue-600" />
-          <h2 className="text-sm font-semibold text-[#0B0B14] uppercase tracking-wider">
-            Filters
-          </h2>
+          <h2 className="text-sm font-semibold text-[#0A0A23] uppercase tracking-wider">Filters</h2>
         </div>
 
         {hasActiveFilters && (
           <button
             type="button"
+            data-testid="clear-all-filters"
             onClick={clearAllFilters}
             className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-800 transition-colors"
           >
@@ -121,11 +137,13 @@ export function ServiceFilterSidebar({
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
               </span>
-              <span className="text-xs font-medium text-[#0B0B14]">Online now</span>
+              <span className="text-xs font-medium text-[#0A0A23]">Online now</span>
             </div>
             <input
               type="checkbox"
-              checked={filters.onlineOnly}
+              disabled
+              title="Live presence is unavailable"
+              checked={false}
               onChange={(e) => setFilter("onlineOnly", e.target.checked)}
               className="sr-only"
             />
@@ -149,13 +167,15 @@ export function ServiceFilterSidebar({
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-blue-600" />
               <div className="flex flex-col">
-                <span className="text-xs font-semibold text-[#0B0B14]">Pro Verified</span>
+                <span className="text-xs font-semibold text-[#0A0A23]">Pro Verified</span>
                 <span className="text-[10px] text-[#6B6B7B]">Vetted top 1% talent</span>
               </div>
             </div>
             <input
               type="checkbox"
-              checked={filters.proOnly}
+              disabled
+              title="Pro verification is not implemented"
+              checked={false}
               onChange={(e) => setFilter("proOnly", e.target.checked)}
               className="sr-only"
             />
@@ -180,7 +200,7 @@ export function ServiceFilterSidebar({
           <button
             type="button"
             onClick={() => toggleSection("categories")}
-            className="flex items-center justify-between w-full text-left font-semibold text-xs text-[#0B0B14] uppercase tracking-wider mb-2"
+            className="flex items-center justify-between w-full text-left font-semibold text-xs text-[#0A0A23] uppercase tracking-wider mb-2"
           >
             <span>Category</span>
             {openSections.categories ? (
@@ -195,23 +215,22 @@ export function ServiceFilterSidebar({
               {/* All Categories Option */}
               <button
                 type="button"
-                onClick={() => {
-                  setFilter("category", "all")
-                  setFilter("subCategory", "")
-                }}
+                onClick={() => setFilter("category", "all")}
                 className={cn(
                   "flex items-center justify-between w-full px-2.5 py-1.5 rounded-lg text-xs transition-colors",
                   filters.category === "all" || !filters.category
                     ? "bg-blue-50 text-blue-700 font-semibold"
-                    : "text-[#4B4B5C] hover:bg-[#F4F4F8] hover:text-[#0B0B14]"
+                    : "text-[#4B4B5C] hover:bg-[#F4F4F8] hover:text-[#0A0A23]"
                 )}
               >
                 <span>All Categories</span>
-                <span className="text-[11px] text-[#6B6B7B]">48</span>
+                <span className="text-[11px] text-[#6B6B7B]">
+                  {(categories.data || []).reduce((sum, c) => sum + c._count.services, 0)}
+                </span>
               </button>
 
               {/* Category Tree */}
-              {FILTER_CATEGORIES.map((cat) => {
+              {liveCategories.map((cat) => {
                 const isSelected = filters.category === cat.slug
                 const IconComponent = CATEGORY_ICONS[cat.iconName] || Code2
 
@@ -219,24 +238,22 @@ export function ServiceFilterSidebar({
                   <div key={cat.id} className="space-y-1">
                     <button
                       type="button"
-                      onClick={() => {
-                        if (isSelected) {
-                          setFilter("category", "all")
-                          setFilter("subCategory", "")
-                        } else {
-                          setFilter("category", cat.slug)
-                          setFilter("subCategory", "")
-                        }
-                      }}
+                      data-testid={`filter-category-${cat.slug}`}
+                      onClick={() => setFilter("category", isSelected ? "all" : cat.slug)}
                       className={cn(
                         "flex items-center justify-between w-full px-2.5 py-1.5 rounded-lg text-xs transition-all",
                         isSelected
                           ? "bg-blue-100/70 text-blue-800 font-semibold"
-                          : "text-[#4B4B5C] hover:bg-[#F4F4F8] hover:text-[#0B0B14]"
+                          : "text-[#4B4B5C] hover:bg-[#F4F4F8] hover:text-[#0A0A23]"
                       )}
                     >
                       <div className="flex items-center gap-2 truncate">
-                        <IconComponent className={cn("w-3.5 h-3.5 shrink-0", isSelected ? "text-blue-600" : "text-[#6B6B7B]")} />
+                        <IconComponent
+                          className={cn(
+                            "w-3.5 h-3.5 shrink-0",
+                            isSelected ? "text-blue-600" : "text-[#6B6B7B]"
+                          )}
+                        />
                         <span className="truncate">{cat.name}</span>
                       </div>
                       <span className="text-[11px] text-[#6B6B7B] ml-2 shrink-0">{cat.count}</span>
@@ -258,7 +275,7 @@ export function ServiceFilterSidebar({
                                 "flex items-center justify-between w-full px-2 py-1 rounded-md text-[11px] transition-colors",
                                 isSubSelected
                                   ? "bg-blue-50 text-blue-700 font-medium"
-                                  : "text-[#6B6B7B] hover:text-[#0B0B14] hover:bg-[#F4F4F8]"
+                                  : "text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-[#F4F4F8]"
                               )}
                             >
                               <span className="truncate">{sub.name}</span>
@@ -280,7 +297,7 @@ export function ServiceFilterSidebar({
           <button
             type="button"
             onClick={() => toggleSection("budget")}
-            className="flex items-center justify-between w-full text-left font-semibold text-xs text-[#0B0B14] uppercase tracking-wider mb-3"
+            className="flex items-center justify-between w-full text-left font-semibold text-xs text-[#0A0A23] uppercase tracking-wider mb-3"
           >
             <span>Budget</span>
             {openSections.budget ? (
@@ -308,7 +325,7 @@ export function ServiceFilterSidebar({
           <button
             type="button"
             onClick={() => toggleSection("delivery")}
-            className="flex items-center justify-between w-full text-left font-semibold text-xs text-[#0B0B14] uppercase tracking-wider mb-2"
+            className="flex items-center justify-between w-full text-left font-semibold text-xs text-[#0A0A23] uppercase tracking-wider mb-2"
           >
             <span>Delivery Time</span>
             {openSections.delivery ? (
@@ -321,7 +338,9 @@ export function ServiceFilterSidebar({
           {openSections.delivery && (
             <div className="space-y-1 mt-1">
               {DELIVERY_OPTIONS.map((opt) => {
-                const isSelected = filters.delivery === opt.id || (opt.id === "any" && (!filters.delivery || filters.delivery === "any"))
+                const isSelected =
+                  filters.delivery === opt.id ||
+                  (opt.id === "any" && (!filters.delivery || filters.delivery === "any"))
                 return (
                   <label
                     key={opt.id}
@@ -329,7 +348,7 @@ export function ServiceFilterSidebar({
                       "flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs cursor-pointer select-none transition-colors",
                       isSelected
                         ? "bg-blue-50 text-blue-800 font-medium"
-                        : "text-[#4B4B5C] hover:bg-[#F4F4F8] hover:text-[#0B0B14]"
+                        : "text-[#4B4B5C] hover:bg-[#F4F4F8] hover:text-[#0A0A23]"
                     )}
                   >
                     <div className="flex items-center gap-2">
@@ -370,7 +389,7 @@ export function ServiceFilterSidebar({
           <button
             type="button"
             onClick={() => toggleSection("levels")}
-            className="flex items-center justify-between w-full text-left font-semibold text-xs text-[#0B0B14] uppercase tracking-wider mb-2"
+            className="flex items-center justify-between w-full text-left font-semibold text-xs text-[#0A0A23] uppercase tracking-wider mb-2"
           >
             <span>Seller Level</span>
             {openSections.levels ? (
@@ -391,7 +410,7 @@ export function ServiceFilterSidebar({
                       "flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs cursor-pointer select-none transition-colors",
                       isChecked
                         ? "bg-blue-50 text-blue-800 font-medium"
-                        : "text-[#4B4B5C] hover:bg-[#F4F4F8] hover:text-[#0B0B14]"
+                        : "text-[#4B4B5C] hover:bg-[#F4F4F8] hover:text-[#0A0A23]"
                     )}
                   >
                     <div className="flex items-center gap-2">
@@ -415,7 +434,7 @@ export function ServiceFilterSidebar({
                     </div>
                     {level.id === "TOP_RATED" && (
                       <Badge variant="gradient" size="sm" className="text-[10px] py-0 px-1.5 h-4">
-                        ★ Top
+                        Top
                       </Badge>
                     )}
                   </label>
@@ -430,7 +449,7 @@ export function ServiceFilterSidebar({
           <button
             type="button"
             onClick={() => toggleSection("rating")}
-            className="flex items-center justify-between w-full text-left font-semibold text-xs text-[#0B0B14] uppercase tracking-wider mb-2"
+            className="flex items-center justify-between w-full text-left font-semibold text-xs text-[#0A0A23] uppercase tracking-wider mb-2"
           >
             <span>Customer Rating</span>
             {openSections.rating ? (
@@ -449,11 +468,12 @@ export function ServiceFilterSidebar({
                 return (
                   <label
                     key={opt.id}
+                    data-testid={`filter-rating-${opt.minRating}`}
                     className={cn(
                       "flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs cursor-pointer select-none transition-colors",
                       isSelected
                         ? "bg-blue-50 text-blue-800 font-medium"
-                        : "text-[#4B4B5C] hover:bg-[#F4F4F8] hover:text-[#0B0B14]"
+                        : "text-[#4B4B5C] hover:bg-[#F4F4F8] hover:text-[#0A0A23]"
                     )}
                   >
                     <div className="flex items-center gap-2">
@@ -498,7 +518,7 @@ export function ServiceFilterSidebar({
           <button
             type="button"
             onClick={() => toggleSection("languages")}
-            className="flex items-center justify-between w-full text-left font-semibold text-xs text-[#0B0B14] uppercase tracking-wider mb-2"
+            className="flex items-center justify-between w-full text-left font-semibold text-xs text-[#0A0A23] uppercase tracking-wider mb-2"
           >
             <span>Language</span>
             {openSections.languages ? (
@@ -519,7 +539,7 @@ export function ServiceFilterSidebar({
                       "flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs cursor-pointer select-none transition-colors",
                       isChecked
                         ? "bg-blue-50 text-blue-800 font-medium"
-                        : "text-[#4B4B5C] hover:bg-[#F4F4F8] hover:text-[#0B0B14]"
+                        : "text-[#4B4B5C] hover:bg-[#F4F4F8] hover:text-[#0A0A23]"
                     )}
                   >
                     <div className="flex items-center gap-2">

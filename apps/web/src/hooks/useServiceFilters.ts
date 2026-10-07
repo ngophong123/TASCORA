@@ -1,15 +1,14 @@
 "use client"
 
 import * as React from "react"
-import { useSearchParams, useRouter, usePathname } from "next/navigation"
-import { MOCK_GIGS, type Gig, type SellerLevel } from "@/data/gigs"
+import { useSearchParams } from "next/navigation"
+import { useRouter, usePathname } from "@/i18n/routing"
+import { type Gig, type SellerLevel } from "@/data/gigs"
 import {
   PRICE_BOUNDS,
   FILTER_CATEGORIES,
   DELIVERY_OPTIONS,
   SELLER_LEVEL_OPTIONS,
-  RATING_OPTIONS,
-  type SortOption,
 } from "@/data/serviceFilterOptions"
 
 export interface ServiceFilterState {
@@ -35,6 +34,7 @@ export interface ActiveFilterChip {
   onRemove: () => void
 }
 
+import { requestData, serviceGig, type Service } from "@/lib/marketplace"
 const PAGE_SIZE = 12
 
 export function useServiceFilters() {
@@ -42,6 +42,57 @@ export function useServiceFilters() {
   const router = useRouter()
   const pathname = usePathname()
 
+  const [liveGigs, setLiveGigs] = React.useState<Gig[]>([])
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState("")
+  React.useEffect(() => {
+    const controller = new AbortController()
+    async function load() {
+      try {
+        const first = await requestData<{ services: Service[]; totalPages: number }>(
+          "/api/v1/services?limit=50",
+          { signal: controller.signal }
+        )
+        const categories = await requestData<{ id: string; slug: string; name: string }[]>(
+          "/api/v1/marketplace/categories",
+          { signal: controller.signal }
+        )
+        const services = [...first.services]
+        for (let page = 2; page <= first.totalPages; page++) {
+          const more = await requestData<{ services: Service[] }>(
+            `/api/v1/services?limit=50&page=${page}`,
+            { signal: controller.signal }
+          )
+          services.push(...more.services)
+        }
+        if (!controller.signal.aborted)
+          setLiveGigs(
+            services.map((service) => {
+              const gig = serviceGig(service)
+              const parent = categories.find((c) => c.id === service.category.parentId)
+              return parent
+                ? {
+                    ...gig,
+                    categorySlug: parent.slug,
+                    categoryName: parent.name,
+                    subCategorySlug: service.category.slug,
+                    subCategoryName: service.category.name,
+                  }
+                : gig
+            })
+          )
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          setLiveGigs([])
+          setError(error instanceof Error ? error.message : "Catalog unavailable.")
+        }
+      } finally {
+        if (!controller.signal.aborted) setLoading(false)
+      }
+    }
+    void load()
+    return () => controller.abort()
+  }, [])
   // Parse filters from URL search params
   const filters: ServiceFilterState = React.useMemo(() => {
     const q = searchParams.get("q") || ""
@@ -49,8 +100,10 @@ export function useServiceFilters() {
     const subCategory = searchParams.get("subCategory") || ""
     const minPriceParam = searchParams.get("minPrice")
     const maxPriceParam = searchParams.get("maxPrice")
-    const minPrice = minPriceParam !== null ? Math.max(PRICE_BOUNDS.min, Number(minPriceParam)) : PRICE_BOUNDS.min
-    const maxPrice = maxPriceParam !== null ? Math.min(PRICE_BOUNDS.max, Number(maxPriceParam)) : PRICE_BOUNDS.max
+    const minPrice =
+      minPriceParam !== null ? Math.max(PRICE_BOUNDS.min, Number(minPriceParam)) : PRICE_BOUNDS.min
+    const maxPrice =
+      maxPriceParam !== null ? Math.min(PRICE_BOUNDS.max, Number(maxPriceParam)) : PRICE_BOUNDS.max
 
     const delivery = searchParams.get("delivery") || "any"
 
@@ -69,7 +122,9 @@ export function useServiceFilters() {
     const proOnly = searchParams.get("proOnly") === "true"
 
     const sortParam = searchParams.get("sort") as ServiceFilterState["sort"]
-    const sort = ["recommended", "rating_desc", "newest", "price_asc", "price_desc"].includes(sortParam)
+    const sort = ["recommended", "rating_desc", "newest", "price_asc", "price_desc"].includes(
+      sortParam
+    )
       ? sortParam
       : "recommended"
 
@@ -99,11 +154,18 @@ export function useServiceFilters() {
 
   // Push URL update helper
   const updateUrl = React.useCallback(
-    (newParams: Record<string, string | number | boolean | null | undefined | string[]>, resetPage = true) => {
+    (
+      newParams: Record<string, string | number | boolean | null | undefined | string[]>,
+      resetPage = true
+    ) => {
       const current = new URLSearchParams(searchParams.toString())
 
       if (resetPage && !("page" in newParams)) {
         current.delete("page")
+      }
+
+      if ("category" in newParams && !("subCategory" in newParams)) {
+        current.delete("subCategory")
       }
 
       Object.entries(newParams).forEach(([key, val]) => {
@@ -173,7 +235,7 @@ export function useServiceFilters() {
 
   // Filter and sort the gigs
   const filteredGigs = React.useMemo(() => {
-    let result = [...MOCK_GIGS]
+    let result = [...liveGigs]
 
     // Search query
     if (filters.q.trim()) {
@@ -199,9 +261,12 @@ export function useServiceFilters() {
     }
 
     // Price range
-    result = result.filter(
-      (g) => g.startingPrice >= filters.minPrice && g.startingPrice <= filters.maxPrice
-    )
+    if (searchParams.has("minPrice") || searchParams.has("maxPrice"))
+      result = result.filter(
+        (g) =>
+          (!searchParams.has("minPrice") || g.startingPrice >= filters.minPrice) &&
+          (!searchParams.has("maxPrice") || g.startingPrice <= filters.maxPrice)
+      )
 
     // Delivery time
     if (filters.delivery && filters.delivery !== "any") {
@@ -223,9 +288,7 @@ export function useServiceFilters() {
 
     // Languages
     if (filters.languages.length > 0) {
-      result = result.filter((g) =>
-        g.seller.languages.some((l) => filters.languages.includes(l))
-      )
+      result = result.filter((g) => g.seller.languages.some((l) => filters.languages.includes(l)))
     }
 
     // Toggles
@@ -262,7 +325,7 @@ export function useServiceFilters() {
     }
 
     return result
-  }, [filters])
+  }, [filters, liveGigs, searchParams])
 
   // Pagination calculation
   const totalResults = filteredGigs.length
@@ -368,6 +431,8 @@ export function useServiceFilters() {
 
   return {
     filters,
+    loading,
+    error,
     setFilter,
     toggleLevel,
     toggleLanguage,

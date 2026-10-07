@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { prisma } from '../../lib/prisma';
 import { getIO } from '../../lib/socket';
 
@@ -7,7 +8,7 @@ export class NotificationService {
     type: 'ORDER_UPDATE' | 'NEW_MESSAGE' | 'SYSTEM_ALERT',
     title: string,
     message: string,
-    data?: any
+    data?: Prisma.InputJsonValue
   ) {
     // Save to DB
     const notification = await prisma.notification.create({
@@ -16,7 +17,7 @@ export class NotificationService {
         type,
         title,
         message,
-        data: data || null
+        data: data ?? Prisma.JsonNull
       }
     });
 

@@ -1,8 +1,8 @@
 /**
  * TASCORA Multi-Color Gradient & Accent Design System
- * 
+ *
  * Provides typed palettes, contrast-safe gradient utilities, and component styling tokens.
- * Blue remains the primary brand anchor (#2563EB), while secondary accents (violet, pink, teal, amber, indigo)
+ * Indigo-violet is the primary brand anchor (#635BFF), while secondary accents (violet, pink, teal, amber, blue)
  * provide visual rhythm across sections and components.
  */
 
@@ -12,22 +12,22 @@ export interface AccentTheme {
   name: AccentColor
   label: string
   // Color stops
-  primary: string      // Base vibrant accent (e.g. #2563EB)
-  dark: string         // Dark stop for high contrast WCAG AA on white (e.g. #1D4ED8)
-  light: string        // Highlight stop for gradient ends (e.g. #38BDF8)
-  
+  primary: string // Base vibrant accent (e.g. #2563EB)
+  dark: string // Dark stop for high contrast WCAG AA on white (e.g. #1D4ED8)
+  light: string // Highlight stop for gradient ends (e.g. #38BDF8)
+
   // Tailwind utility classes
-  textGradientClass: string  // Class with background-clip: text (e.g. "text-gradient-blue")
+  textGradientClass: string // Class with background-clip: text (e.g. "text-gradient-blue")
   bgGradientSoftClass: string // Class with soft ambient gradient (e.g. "bg-gradient-blue-soft")
-  
+
   // Icon container styles
   iconBoxClass: string // Background + border + text for card icons
   iconHoverGradientClass: string // Gradient stops for hovered icon tiles
-  
+
   // SpotlightCard colors
   spotlightSurface: string // Subtly tinted cursor radial glow (e.g. "rgba(37, 99, 235, 0.08)")
-  spotlightBorder: string  // Focused border sweep glow (e.g. "rgba(37, 99, 235, 0.25)")
-  
+  spotlightBorder: string // Focused border sweep glow (e.g. "rgba(37, 99, 235, 0.25)")
+
   // Card hover interaction classes
   hoverBorderClass: string
   hoverShadowClass: string
@@ -38,7 +38,7 @@ export interface AccentTheme {
 
   // Avatar gradient (for featured freelancers / author badges)
   avatarGradientClass: string
-  
+
   // Decorative ambient blob color (rgba string for background lights)
   blobRgba: string
 }
@@ -141,31 +141,31 @@ export const ACCENT_THEMES: Record<AccentColor, AccentTheme> = {
   },
   indigo: {
     name: "indigo",
-    label: "Indigo",
-    primary: "#4338CA",
-    dark: "#3730A3",
+    label: "Indigo (Primary)",
+    primary: "#635BFF",
+    dark: "#4F46E5",
     light: "#818CF8",
     textGradientClass: "text-gradient-indigo",
     bgGradientSoftClass: "bg-gradient-indigo-soft",
-    iconBoxClass: "bg-indigo-50 border-indigo-200 text-indigo-700",
-    iconHoverGradientClass: "group-hover:from-indigo-600 group-hover:to-blue-400",
-    spotlightSurface: "rgba(67, 56, 202, 0.08)",
-    spotlightBorder: "rgba(67, 56, 202, 0.25)",
-    hoverBorderClass: "hover:border-indigo-300",
-    hoverShadowClass: "hover:shadow-[0_20px_40px_-12px_rgba(67,56,202,0.18)]",
-    hoverTextClass: "group-hover:text-indigo-700",
-    badgeClass: "bg-indigo-50 text-indigo-800 border-indigo-200",
-    avatarGradientClass: "from-indigo-600 to-blue-500",
-    blobRgba: "rgba(67, 56, 202, 0.16)",
+    iconBoxClass: "bg-[#635BFF]/10 border-[#635BFF]/20 text-[#635BFF]",
+    iconHoverGradientClass: "group-hover:from-[#635BFF] group-hover:to-indigo-400",
+    spotlightSurface: "rgba(99, 91, 255, 0.08)",
+    spotlightBorder: "rgba(99, 91, 255, 0.25)",
+    hoverBorderClass: "hover:border-[#635BFF]/40",
+    hoverShadowClass: "hover:shadow-[0_20px_40px_-12px_rgba(99,91,255,0.18)]",
+    hoverTextClass: "group-hover:text-[#635BFF]",
+    badgeClass: "bg-[#635BFF]/10 text-[#635BFF] border-[#635BFF]/25",
+    avatarGradientClass: "from-[#635BFF] to-indigo-500",
+    blobRgba: "rgba(99, 91, 255, 0.16)",
   },
 }
 
 /**
- * Safe accessor for accent theme with fallback to primary blue.
+ * Safe accessor for accent theme with fallback to primary indigo.
  */
 export function getAccentTheme(accent?: AccentColor | string): AccentTheme {
   if (accent && accent in ACCENT_THEMES) {
     return ACCENT_THEMES[accent as AccentColor]
   }
-  return ACCENT_THEMES.blue
+  return ACCENT_THEMES.indigo
 }

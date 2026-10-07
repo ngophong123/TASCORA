@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { SORT_OPTIONS, type SortOption } from "@/data/serviceFilterOptions"
+import { SORT_OPTIONS } from "@/data/serviceFilterOptions"
 import { type ServiceFilterState } from "@/hooks/useServiceFilters"
 import {
   Search,
@@ -77,7 +77,7 @@ export function ServiceToolbar({
     setFilter("q", "")
   }
 
-  const currentSort = SORT_OPTIONS.find((s) => s.key === filters.sort) || SORT_OPTIONS[0]
+  const currentSort = SORT_OPTIONS.find((s) => s.key === filters.sort) ?? SORT_OPTIONS[0]!
 
   return (
     <div
@@ -93,7 +93,7 @@ export function ServiceToolbar({
           <button
             type="button"
             onClick={onOpenMobileFilters}
-            className="lg:hidden relative inline-flex items-center gap-2 h-10 px-3.5 rounded-xl border border-[rgba(15,15,30,0.14)] bg-white text-xs font-medium text-[#0B0B14] hover:bg-[#FAFAFC] active:scale-95 transition-all shrink-0"
+            className="lg:hidden relative inline-flex items-center gap-2 h-10 px-3.5 rounded-xl border border-[rgba(15,15,30,0.14)] bg-white text-xs font-medium text-[#0A0A23] hover:bg-[#FAFAFC] active:scale-95 transition-all shrink-0"
             aria-label="Open filter menu"
           >
             <SlidersHorizontal className="w-4 h-4 text-blue-600" />
@@ -110,16 +110,18 @@ export function ServiceToolbar({
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B6B7B] pointer-events-none" />
             <input
               type="text"
+              data-testid="services-search-input"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search services, skills, or keywords..."
-              className="w-full h-10 pl-10 pr-9 rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] text-xs sm:text-sm text-[#0B0B14] placeholder-[#8B8B9B] focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/15 transition-all"
+              className="w-full h-10 pl-10 pr-9 rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] text-xs sm:text-sm text-[#0A0A23] placeholder-[#8B8B9B] focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/15 transition-all"
             />
             {searchInput && (
               <button
                 type="button"
+                data-testid="services-search-clear"
                 onClick={handleClearSearch}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded-full text-[#8B8B9B] hover:text-[#0B0B14] hover:bg-black/[0.06] transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded-full text-[#8B8B9B] hover:text-[#0A0A23] hover:bg-black/[0.06] transition-colors"
                 aria-label="Clear search query"
               >
                 <X className="w-3.5 h-3.5" />
@@ -131,16 +133,21 @@ export function ServiceToolbar({
         {/* Right Side: Sort dropdown & Grid/List view toggle */}
         <div className="flex items-center justify-between md:justify-end gap-3 shrink-0">
           {/* Result Count Indicator (Tablet/Desktop) */}
-          <div className="hidden sm:block text-xs text-[#6B6B7B] font-medium" aria-live="polite">
-            <span className="font-semibold text-[#0B0B14]">{totalResults}</span> results
+          <div
+            data-testid="services-result-count"
+            className="hidden sm:block text-xs text-[#6B6B7B] font-medium"
+            aria-live="polite"
+          >
+            <span className="font-semibold text-[#0A0A23]">{totalResults}</span> results
           </div>
 
           {/* Custom Sort Dropdown */}
           <div ref={sortRef} className="relative">
             <button
               type="button"
+              data-testid="services-sort-trigger"
               onClick={() => setIsSortOpen(!isSortOpen)}
-              className="inline-flex items-center gap-2 h-10 px-3.5 rounded-xl border border-[rgba(15,15,30,0.12)] bg-white text-xs font-medium text-[#0B0B14] hover:border-[rgba(15,15,30,0.22)] hover:bg-[#FAFAFC] transition-colors"
+              className="inline-flex items-center gap-2 h-10 px-3.5 rounded-xl border border-[rgba(15,15,30,0.12)] bg-white text-xs font-medium text-[#0A0A23] hover:border-[rgba(15,15,30,0.22)] hover:bg-[#FAFAFC] transition-colors"
               aria-haspopup="listbox"
               aria-expanded={isSortOpen}
             >
@@ -176,7 +183,7 @@ export function ServiceToolbar({
                         "flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-medium text-left transition-colors",
                         isSelected
                           ? "bg-blue-50 text-blue-700 font-semibold"
-                          : "text-[#4B4B5C] hover:bg-[#F4F4F8] hover:text-[#0B0B14]"
+                          : "text-[#4B4B5C] hover:bg-[#F4F4F8] hover:text-[#0A0A23]"
                       )}
                     >
                       <span>{opt.label}</span>
@@ -201,7 +208,7 @@ export function ServiceToolbar({
                 "p-1.5 rounded-lg transition-all",
                 filters.view === "grid"
                   ? "bg-white text-blue-700 shadow-sm"
-                  : "text-[#6B6B7B] hover:text-[#0B0B14]"
+                  : "text-[#6B6B7B] hover:text-[#0A0A23]"
               )}
               aria-label="Grid view"
               aria-pressed={filters.view === "grid"}
@@ -215,7 +222,7 @@ export function ServiceToolbar({
                 "p-1.5 rounded-lg transition-all",
                 filters.view === "list"
                   ? "bg-white text-blue-700 shadow-sm"
-                  : "text-[#6B6B7B] hover:text-[#0B0B14]"
+                  : "text-[#6B6B7B] hover:text-[#0A0A23]"
               )}
               aria-label="List view"
               aria-pressed={filters.view === "list"}

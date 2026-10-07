@@ -1,12 +1,14 @@
 import { Redis } from 'ioredis';
 
-const redisUrl = process.env.REDIS_URL || 'redis://localhost:6300';
+import { redisUrl } from './config';
 
 export const redis = new Redis(redisUrl, {
-  maxRetriesPerRequest: null,
+  maxRetriesPerRequest: 2,
+  lazyConnect: true,
+  connectTimeout: 5000,
   enableReadyCheck: false,
 });
 
-redis.on('error', (err) => {
-  console.error('Redis error:', err);
+redis.on('error', () => {
+  console.error('Redis connection unavailable');
 });

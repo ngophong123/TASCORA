@@ -4,7 +4,8 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: "default" | "gradient" | "secondary" | "outline" | "success" | "warning" | "cyan" | "luxury"
+  variant?:
+    "default" | "gradient" | "secondary" | "outline" | "success" | "warning" | "cyan" | "luxury"
   size?: "sm" | "md"
 }
 
@@ -16,33 +17,26 @@ export function Badge({
   ...props
 }: BadgeProps) {
   const sizeStyles = {
-    sm: "px-2.5 py-0.5 text-xs",
-    md: "px-3 py-1 text-xs sm:text-sm",
+    sm: "px-2 py-0.5 text-[11px]",
+    md: "px-2.5 py-1 text-xs",
   }[size]
 
   const variantStyles = {
-    default:
-      "bg-blue-50 border-blue-200/80 text-blue-700 hover:bg-blue-100/70",
-    gradient:
-      "bg-gradient-to-r from-blue-50 via-sky-50 to-teal-50 border-blue-200 text-blue-800",
-    luxury:
-      "bg-gradient-to-r from-blue-100/70 via-sky-50 to-teal-50 border-blue-200 text-blue-900 shadow-sm",
-    secondary:
-      "bg-[#F4F4F8] border-[rgba(15,15,30,0.08)] text-[#4B4B5C] hover:bg-[#EAEAF0]",
+    default: "bg-[#635BFF]/10 border-[#635BFF]/25 text-[#635BFF]",
+    gradient: "bg-[#F8FAFC] border-[#E2E8F0] text-[#0F172A] font-medium",
+    luxury: "bg-[#FEF3C7] border-[#FDE68A] text-[#92400E] font-medium",
+    secondary: "bg-[#F1F5F9] border-[#E2E8F0] text-[#334155]",
     outline:
-      "bg-transparent border-[rgba(15,15,30,0.14)] text-[#0B0B14] hover:border-blue-400",
-    success:
-      "bg-emerald-50 border-emerald-200 text-emerald-700",
-    warning:
-      "bg-amber-50 border-amber-200 text-amber-800",
-    cyan:
-      "bg-sky-50 border-sky-200 text-sky-700",
+      "bg-transparent border-[#CBD5E1] text-[#0F172A] hover:border-[#635BFF] hover:text-[#635BFF]",
+    success: "bg-[#ECFDF5] border-[#A7F3D0] text-[#047857]",
+    warning: "bg-[#FFFBEB] border-[#FDE68A] text-[#B45309]",
+    cyan: "bg-[#F0FDF4] border-[#BBF7D0] text-[#15803D]",
   }[variant]
 
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-1.5 font-medium rounded-full border transition-colors select-none",
+        "inline-flex items-center gap-1.5 font-medium rounded-md border transition-colors select-none",
         sizeStyles,
         variantStyles,
         className

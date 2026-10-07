@@ -11,7 +11,6 @@ import {
   CartesianGrid,
 } from "recharts"
 import { type ChartDataPoint } from "@/data/dashboard/overview"
-import { DollarSign, Calendar, TrendingUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface RevenueAreaChartProps {
@@ -56,9 +55,7 @@ export function RevenueAreaChart({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[rgba(15,15,30,0.06)]">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-base font-bold text-[#0B0B14] tracking-tight">
-              {title}
-            </h3>
+            <h3 className="text-base font-bold text-[#0A0A23] tracking-tight">{title}</h3>
             {badgeText && (
               <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200/60">
                 {badgeText}
@@ -66,13 +63,11 @@ export function RevenueAreaChart({
             )}
           </div>
           <div className="flex items-baseline gap-2 mt-1">
-            <span className="text-2xl font-extrabold text-[#0B0B14] font-mono">
+            <span className="text-2xl font-extrabold text-[#0A0A23] font-mono">
               {currencyPrefix}
               {totalAmount.toLocaleString()}
             </span>
-            <span className="text-xs text-[#6B6B7B]">
-              {subtitle || `total in selected period`}
-            </span>
+            <span className="text-xs text-[#6B6B7B]">{subtitle || `total in selected period`}</span>
           </div>
         </div>
 
@@ -92,7 +87,7 @@ export function RevenueAreaChart({
                 "px-3 py-1 rounded-lg text-xs font-semibold transition-all",
                 range === tab
                   ? "bg-white text-blue-900 shadow-2xs font-bold"
-                  : "text-[#6B6B7B] hover:text-[#0B0B14]"
+                  : "text-[#6B6B7B] hover:text-[#0A0A23]"
               )}
             >
               {tab.toUpperCase()}
@@ -105,10 +100,7 @@ export function RevenueAreaChart({
       <div className="w-full h-64 sm:h-72 mt-6">
         {mounted ? (
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart
-              data={currentData}
-              margin={{ top: 10, right: 10, left: -15, bottom: 0 }}
-            >
+            <AreaChart data={currentData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
               <defs>
                 <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#2563EB" stopOpacity={0.25} />
@@ -116,11 +108,7 @@ export function RevenueAreaChart({
                 </linearGradient>
               </defs>
 
-              <CartesianGrid
-                strokeDasharray="3 3"
-                vertical={false}
-                stroke="rgba(15,15,30,0.06)"
-              />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(15,15,30,0.06)" />
 
               <XAxis
                 dataKey="name"
@@ -139,16 +127,15 @@ export function RevenueAreaChart({
 
               <Tooltip
                 content={({ active, payload, label }) => {
-                  if (active && payload && payload.length) {
-                    const data = payload[0].payload as ChartDataPoint
+                  const firstPayload = payload?.[0]
+                  if (active && firstPayload) {
+                    const data = firstPayload.payload as ChartDataPoint
                     return (
                       <div className="bg-white p-3 rounded-xl border border-[rgba(15,15,30,0.12)] shadow-xl text-xs space-y-1">
-                        <span className="font-semibold text-[#6B6B7B] block">
-                          {label}
-                        </span>
+                        <span className="font-semibold text-[#6B6B7B] block">{label}</span>
                         <div className="flex items-center gap-2">
                           <span className="w-2 h-2 rounded-full bg-blue-600" />
-                          <span className="font-mono font-bold text-sm text-[#0B0B14]">
+                          <span className="font-mono font-bold text-sm text-[#0A0A23]">
                             {currencyPrefix}
                             {data.amount.toLocaleString()}
                           </span>

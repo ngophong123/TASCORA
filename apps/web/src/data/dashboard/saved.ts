@@ -1,3 +1,5 @@
+import { images } from "../images"
+
 export interface SavedSpecialist {
   id: string
   name: string
@@ -33,7 +35,7 @@ export const SAVED_SPECIALISTS: SavedSpecialist[] = [
     id: "spec-1",
     name: "Alexandre Moreau",
     title: "Senior Full-Stack Architect",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+    avatar: images.avatarAlexandre,
     badge: "TOP_RATED",
     hourlyRate: 95,
     rating: 4.9,
@@ -48,7 +50,7 @@ export const SAVED_SPECIALISTS: SavedSpecialist[] = [
     id: "spec-2",
     name: "Sophia Rodriguez",
     title: "AI & Machine Learning Engineer",
-    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+    avatar: images.avatarSophia,
     badge: "TOP_RATED",
     hourlyRate: 120,
     rating: 5.0,
@@ -63,7 +65,7 @@ export const SAVED_SPECIALISTS: SavedSpecialist[] = [
     id: "spec-3",
     name: "David Kael",
     title: "Lead Brand & Product Designer",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+    avatar: images.avatarReviewer1,
     badge: "PRO_VERIFIED",
     hourlyRate: 85,
     rating: 4.8,
@@ -78,7 +80,7 @@ export const SAVED_SPECIALISTS: SavedSpecialist[] = [
     id: "spec-4",
     name: "Elena Rostova",
     title: "Senior WebGL & Creative Developer",
-    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    avatar: images.avatarReviewer2,
     badge: "TOP_RATED",
     hourlyRate: 110,
     rating: 4.95,
@@ -96,8 +98,8 @@ export const SAVED_GIGS: SavedGigItem[] = [
     id: "sgig-1",
     title: "Production Next.js 15 & Node.js Scalable Architecture",
     sellerName: "Alexandre Moreau",
-    sellerAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-    coverImage: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80",
+    sellerAvatar: images.avatarAlexandre,
+    coverImage: images.gigWebDevelopment,
     rating: 4.96,
     reviewsCount: 42,
     startingPrice: 250,
@@ -109,8 +111,8 @@ export const SAVED_GIGS: SavedGigItem[] = [
     id: "sgig-2",
     title: "Autonomous AI Agents & LLM RAG Pipeline Integration",
     sellerName: "Sophia Rodriguez",
-    sellerAvatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
-    coverImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80",
+    sellerAvatar: images.avatarSophia,
+    coverImage: images.gigAiAgents,
     rating: 5.0,
     reviewsCount: 19,
     startingPrice: 350,
