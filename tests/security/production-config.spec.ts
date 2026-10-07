@@ -22,6 +22,11 @@ function productionEnv() {
 }
 
 describe("Production configuration safety", () => {
+  it("rejects invalid TRUST_PROXY during configuration validation", async () => {
+    productionEnv()
+    vi.stubEnv("TRUST_PROXY", "1.0")
+    await expect(import("../../apps/api/src/lib/config")).rejects.toThrow("TRUST_PROXY must be")
+  })
   it("allows explicit staging disabled payments without Stripe secrets while preserving secure defaults", async () => {
     productionEnv()
     vi.stubEnv("APP_ENV", "staging")
