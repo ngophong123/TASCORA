@@ -59,6 +59,9 @@ app.use(
 );
 app.use(express.json());
 
+// Platform probes must not consume the public API rate limit.
+app.use(healthRouter({ database: () => prisma.$queryRaw`SELECT 1`, redis: () => redis.ping() }));
+
 // Rate Limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -70,7 +73,6 @@ app.use(limiter);
 
 // Dependency readiness remains genuine; intentional staging payment disablement
 // does not stop non-payment flows. Provider configuration is not provider health.
-app.use(healthRouter({ database: () => prisma.$queryRaw`SELECT 1`, redis: () => redis.ping() }));
 
 // Routes
 app.use('/api/v1/uploads', uploadRouter());
