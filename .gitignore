@@ -33,3 +33,7 @@ blob-report/
 # Development user uploads never enter Git or images
 .uploads/
 **/.uploads/
+
+# Isolated frontend preview (source copy without environment files)
+.premium-preview/
+.premium-check/

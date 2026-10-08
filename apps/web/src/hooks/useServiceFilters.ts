@@ -45,7 +45,11 @@ export function useServiceFilters() {
   const [liveGigs, setLiveGigs] = React.useState<Gig[]>([])
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState("")
+  const [loadVersion, setLoadVersion] = React.useState(0)
+  const reload = React.useCallback(() => setLoadVersion((version) => version + 1), [])
   React.useEffect(() => {
+    setLoading(true)
+    setError("")
     const controller = new AbortController()
     async function load() {
       try {
@@ -92,7 +96,7 @@ export function useServiceFilters() {
     }
     void load()
     return () => controller.abort()
-  }, [])
+  }, [loadVersion])
   // Parse filters from URL search params
   const filters: ServiceFilterState = React.useMemo(() => {
     const q = searchParams.get("q") || ""
@@ -433,6 +437,7 @@ export function useServiceFilters() {
     filters,
     loading,
     error,
+    reload,
     setFilter,
     toggleLevel,
     toggleLanguage,

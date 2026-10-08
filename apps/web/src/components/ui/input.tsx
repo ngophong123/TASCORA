@@ -20,24 +20,20 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           aria-invalid={isError ? "true" : undefined}
           aria-describedby={isError && errorMessage ? errorId : undefined}
           className={cn(
-            "flex h-10 w-full rounded-xl border border-border bg-white px-3.5 py-2 text-sm text-[#0A0A23] placeholder:text-[#6B6B7B]",
+            "flex min-h-11 w-full rounded-lg border border-border-default bg-bg-surface px-3.5 py-2 text-base text-text-primary placeholder:text-text-muted",
             "outline-none transition-[border-color,box-shadow,background-color] duration-180 ease-out",
-            "focus:border-[#635BFF] focus:ring-2 focus:ring-[#635BFF]/20",
+            "focus:border-primary focus:ring-2 focus:ring-focus-ring/20",
             isError
-              ? "border-rose-500 focus:border-rose-600 focus:ring-rose-500/20 animate-micro-shake"
-              : "hover:border-[rgba(10,10,35,0.18)]",
-            "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-[#F4F4F8]",
+              ? "border-status-danger focus:border-status-danger focus:ring-status-danger/20"
+              : "hover:border-border-hover",
+            "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-bg-subtle",
             className
           )}
           ref={ref}
           {...props}
         />
         {isError && errorMessage && (
-          <p
-            id={errorId}
-            role="alert"
-            className="text-xs text-rose-500 font-medium animate-in fade-in slide-in-from-top-1 duration-200"
-          >
+          <p id={errorId} role="alert" className="text-sm text-status-danger font-medium">
             {errorMessage}
           </p>
         )}

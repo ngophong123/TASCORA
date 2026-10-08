@@ -10,6 +10,7 @@ import { SmoothScrollProvider } from "@/components/layout/SmoothScrollProvider"
 import { NavigationProgressBar } from "@/components/layout/NavigationProgressBar"
 import { PageTransition } from "@/components/layout/PageTransition"
 import "../globals.css"
+import "../premium.css"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -110,12 +111,15 @@ export default async function LocaleLayout({
       className={`${geistSans.variable} ${geistMono.variable}`}
       style={{ colorScheme: "light" }}
     >
-      <body className="font-sans antialiased min-h-screen flex flex-col bg-[#FFFFFF] text-[#0F172A] selection:bg-[#635BFF]/15 selection:text-[#635BFF]">
+      <body className="font-sans antialiased min-h-screen flex flex-col">
+        <a href="#main-content" className="premium-skip">
+          {locale === "vi" ? "Đến nội dung chính" : "Skip to content"}
+        </a>
         <NextIntlClientProvider messages={messages}>
           <NavigationProgressBar />
           <SmoothScrollProvider>
             <Navbar />
-            <main className="flex-1 flex flex-col">
+            <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col outline-none">
               <PageTransition>{children}</PageTransition>
             </main>
             <Footer />

@@ -1,8 +1,15 @@
-@import "tailwindcss";
+@import "tailwindcss" source("../");
 @import "tw-animate-css";
 @import "lenis/dist/lenis.css";
 
 @theme inline {
+  --color-surface-elevated: var(--surface-elevated);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-focus-ring: var(--focus-ring);
+  --color-disabled: var(--disabled);
   --color-bg-base: var(--background);
   --color-bg-surface: var(--surface);
   --color-bg-subtle: var(--subtle);
@@ -57,6 +64,8 @@
   --shadow-primary-lg: 0 8px 24px -6px rgba(99, 91, 255, 0.35);
   --shadow-card-hover: 0 16px 36px -8px rgba(15, 23, 42, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
 }
+
+/* Premium foundations: keep existing utility names compatible with live routes. */
 
 :root {
   /* TASCORA Surface Backgrounds */
@@ -184,7 +193,6 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
   }
   html {
     font-family: var(--font-sans);

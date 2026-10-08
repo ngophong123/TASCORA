@@ -1,32 +1,21 @@
 "use client"
 
-import { requestData, jsonRequest, serviceGig, type Service } from "@/lib/marketplace"
+import { requestData, serviceGig, type Service } from "@/lib/marketplace"
 import { ApiState } from "@/components/feedback/ApiState"
 import * as React from "react"
 import { Link, useRouter } from "@/i18n/routing"
 import { useSearchParams } from "next/navigation"
-import { motion, AnimatePresence } from "framer-motion"
-import {
-  Search,
-  Filter,
-  SlidersHorizontal,
-  Star,
-  Clock,
-  Heart,
-  X,
-  RotateCcw,
-  ShieldCheck,
-} from "lucide-react"
+import { Search, Filter, SlidersHorizontal, Star, Clock, X, RotateCcw } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
+import { GigCardSkeleton } from "@/components/ui/GigCardSkeleton"
+import { GigCard } from "@/components/ui/GigCard"
+import { useDialogFocus } from "@/hooks/useDialogFocus"
 import { useTranslations } from "next-intl"
-import { ServiceCardImage } from "@/components/ui/ServiceCardImage"
-import { AvatarImage } from "@/components/ui/AvatarImage"
-import { EASE_OUT_EXPO } from "@/lib/motion"
-import { getCategoryAccent } from "@/lib/categoryAccents"
 import { cn } from "@/lib/utils"
+import { ActiveFilterChips } from "@/components/services/ActiveFilterChips"
 
 export interface ExploreService {
+  record: Service
   id: string
   title: string
   description?: string
@@ -84,7 +73,26 @@ function ExploreContent() {
   const [services, setServices] = React.useState<ExploreService[]>([])
   const [error, setError] = React.useState("")
   const [allServices, setAllServices] = React.useState<ExploreService[]>([])
-  const [favorites, setFavorites] = React.useState<Record<string, boolean>>({})
+  const [loadVersion, setLoadVersion] = React.useState(0)
+  const drawerRef = React.useRef<HTMLDivElement>(null)
+  useDialogFocus(mobileFilterOpen, drawerRef, () => setMobileFilterOpen(false))
+  React.useEffect(() => {
+    setQuery(initialQ)
+    setCategory(initialCategory)
+    setSort(initialSort)
+    setMinPrice(initialMinPrice)
+    setMaxPrice(initialMaxPrice)
+    setMinRating(initialRating)
+    setDeliveryTime(initialDeliveryTime)
+  }, [
+    initialQ,
+    initialCategory,
+    initialSort,
+    initialMinPrice,
+    initialMaxPrice,
+    initialRating,
+    initialDeliveryTime,
+  ])
 
   // Sync state to URL and fetch
   const applyFilters = React.useCallback(
@@ -130,6 +138,7 @@ function ExploreContent() {
         const mapped: ExploreService[] = live.map((service) => {
           const gig = serviceGig(service)
           return {
+            record: service,
             id: gig.id,
             title: gig.title,
             description: gig.description,
@@ -166,6 +175,8 @@ function ExploreContent() {
         if (initialSort === "price_desc")
           result = result.sort((a, b) => b.startingPrice - a.startingPrice)
         if (initialSort === "rating") result = result.sort((a, b) => b.rating - a.rating)
+        if (initialSort === "popular")
+          result = result.sort((a, b) => b.reviewCount - a.reviewCount || b.rating - a.rating)
         if (!controller.signal.aborted) {
           setAllServices(mapped)
           setServices(result)
@@ -182,6 +193,7 @@ function ExploreContent() {
     void load()
     return () => controller.abort()
   }, [
+    loadVersion,
     initialQ,
     initialCategory,
     initialSort,
@@ -216,17 +228,6 @@ function ExploreContent() {
     router.push("/explore")
   }
 
-  const toggleFavorite = async (id: string, e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    try {
-      await requestData(`/api/v1/favorites/${id}`, jsonRequest(favorites[id] ? "DELETE" : "POST"))
-      setFavorites((prev) => ({ ...prev, [id]: !prev[id] }))
-    } catch (error) {
-      setError(error instanceof Error ? error.message : "Unable to save service.")
-    }
-  }
-
   const activeFilterCount = [
     category !== "all",
     minPrice !== "",
@@ -235,23 +236,43 @@ function ExploreContent() {
     deliveryTime !== "",
   ].filter(Boolean).length
 
+  const activeChips = [
+    { key: "q", value: initialQ, label: `Search: ${initialQ}` },
+    {
+      key: "category",
+      value: initialCategory !== "all" ? initialCategory : "",
+      label: CATEGORIES.find((c) => c.value === initialCategory)?.label || initialCategory,
+    },
+    { key: "minPrice", value: initialMinPrice, label: `Minimum: $${initialMinPrice}` },
+    { key: "maxPrice", value: initialMaxPrice, label: `Maximum: $${initialMaxPrice}` },
+    { key: "rating", value: initialRating, label: `${initialRating}+ rating` },
+    {
+      key: "deliveryTime",
+      value: initialDeliveryTime,
+      label: `Within ${initialDeliveryTime} days`,
+    },
+  ]
+    .filter((chip) => chip.value)
+    .map((chip) => ({
+      id: chip.key,
+      label: chip.label,
+      onRemove: () => applyFilters({ [chip.key]: "" }),
+    }))
+
   return (
-    <div className="container mx-auto px-4 md:px-8 py-10 min-h-screen">
-      <ApiState error={error} />
+    <div className="premium-container py-10 min-h-screen">
       {/* Header & Search Bar */}
       <div className="mb-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-border/50">
           <div>
-            <div className="flex items-center gap-2 text-xs text-text-muted mb-1">
+            <div className="flex items-center gap-2 text-sm text-text-muted mb-1">
               <Link href="/" className="hover:text-text-primary transition-colors">
                 {t("breadcrumbHome")}
               </Link>
               <span>/</span>
               <span className="text-text-primary">{t("breadcrumbExplore")}</span>
             </div>
-            <h1 className="font-display text-3xl md:text-4xl text-text-primary font-medium">
-              {t("title")}
-            </h1>
+            <h1 className="premium-title text-[var(--foreground)]">{t("title")}</h1>
           </div>
 
           {/* Quick Keyword Search Form */}
@@ -259,11 +280,12 @@ function ExploreContent() {
             <div className="relative flex-1 md:w-80">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
               <input
-                type="text"
+                type="search"
+                aria-label={t("searchPlaceholder")}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={t("searchPlaceholder")}
-                className="w-full rounded-xl border border-border bg-white pl-10 pr-4 py-2 text-sm text-text-primary placeholder:text-text-muted outline-none focus:border-blue-600/60 transition-colors"
+                className="w-full rounded-xl border border-border bg-[var(--surface)] pl-10 pr-12 py-2 text-sm text-text-primary placeholder:text-text-muted  focus:border-[var(--focus-ring)] transition-colors"
               />
               {query && (
                 <button
@@ -272,7 +294,8 @@ function ExploreContent() {
                     setQuery("")
                     applyFilters({ q: "" })
                   }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary"
+                  aria-label="Clear search"
+                  className="absolute right-0 top-0 flex h-11 w-11 items-center justify-center text-text-muted hover:text-text-primary"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -281,7 +304,7 @@ function ExploreContent() {
             <Button
               type="submit"
               size="sm"
-              className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white"
+              className="rounded-xl bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white"
             >
               {t("searchButton")}
             </Button>
@@ -299,10 +322,11 @@ function ExploreContent() {
                   setCategory(cat.value)
                   applyFilters({ category: cat.value === "all" ? "" : cat.value })
                 }}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                aria-pressed={isSelected}
+                className={`min-h-11 px-3.5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
                   isSelected
-                    ? "bg-blue-600 text-white shadow"
-                    : "bg-white border border-border text-text-secondary hover:text-text-primary hover:border-blue-600/40"
+                    ? "bg-[var(--primary)] text-white shadow"
+                    : "bg-[var(--surface)] border border-border text-text-secondary hover:text-text-primary hover:border-[var(--border-hover)]"
                 }`}
               >
                 {cat.label}
@@ -316,16 +340,16 @@ function ExploreContent() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Desktop Filter Sidebar */}
         <aside className="hidden lg:block space-y-6">
-          <div className="p-5 rounded-2xl border border-border bg-white space-y-6">
+          <div className="p-5 rounded-xl border border-border bg-[var(--surface)] space-y-6">
             <div className="flex items-center justify-between pb-4 border-b border-border/50">
               <span className="font-semibold text-sm text-text-primary flex items-center gap-2">
-                <SlidersHorizontal className="h-4 w-4 text-blue-600" />
+                <SlidersHorizontal className="h-4 w-4 text-[var(--primary)]" />
                 {t("filters")}
               </span>
               {activeFilterCount > 0 && (
                 <button
                   onClick={resetAllFilters}
-                  className="text-xs text-text-muted hover:text-blue-600 flex items-center gap-1 transition-colors"
+                  className="text-sm text-text-muted hover:text-[var(--primary)] flex items-center gap-1 transition-colors"
                 >
                   <RotateCcw className="h-3 w-3" />
                   {t("reset")}
@@ -335,31 +359,33 @@ function ExploreContent() {
 
             {/* Price Range */}
             <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-900 dark:text-white mb-3">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-900 dark:text-white mb-3">
                 {t("priceRange")}
               </h3>
               <div className="flex items-center gap-2">
                 <input
                   type="number"
+                  aria-label="Minimum price"
                   placeholder={t("min")}
                   value={minPrice}
                   onChange={(e) => setMinPrice(e.target.value)}
-                  className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs text-slate-900 dark:text-white outline-none focus:border-[#635BFF] focus:ring-2 focus:ring-[#635BFF]/15 transition-all duration-200 shadow-xs"
+                  className="min-w-0 w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-[var(--surface)] dark:bg-slate-900 px-3 py-2.5 text-sm text-slate-900 dark:text-white  focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--focus-ring)] transition-all duration-200 shadow-xs"
                 />
                 <span className="text-slate-400 font-mono">-</span>
                 <input
                   type="number"
+                  aria-label="Maximum price"
                   placeholder={t("max")}
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(e.target.value)}
-                  className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs text-slate-900 dark:text-white outline-none focus:border-[#635BFF] focus:ring-2 focus:ring-[#635BFF]/15 transition-all duration-200 shadow-xs"
+                  className="min-w-0 w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-[var(--surface)] dark:bg-slate-900 px-3 py-2.5 text-sm text-slate-900 dark:text-white  focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--focus-ring)] transition-all duration-200 shadow-xs"
                 />
               </div>
               <Button
                 variant="primary"
                 size="sm"
                 onClick={() => applyFilters({ minPrice, maxPrice })}
-                className="w-full mt-2.5 text-xs rounded-lg shadow-xs"
+                className="w-full mt-2.5 text-sm rounded-lg shadow-xs"
               >
                 {t("applyPrice")}
               </Button>
@@ -367,10 +393,10 @@ function ExploreContent() {
 
             {/* Rating Filter */}
             <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-900 dark:text-white mb-3">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-900 dark:text-white mb-3">
                 {t("minRating")}
               </h3>
-              <div className="space-y-1 text-xs">
+              <div className="space-y-1 text-sm">
                 {[
                   { label: t("rating49"), value: "4.9" },
                   { label: t("rating45"), value: "4.5" },
@@ -380,10 +406,10 @@ function ExploreContent() {
                   <label
                     key={item.value}
                     className={cn(
-                      "flex items-center justify-between cursor-pointer py-1.5 px-2.5 rounded-lg text-xs transition-colors duration-150 select-none",
+                      "flex items-center justify-between cursor-pointer py-2.5 px-2.5 rounded-lg text-sm transition-colors duration-150 select-none",
                       minRating === item.value
-                        ? "bg-[#635BFF]/[0.08] text-[#635BFF] font-semibold"
-                        : "text-slate-600 dark:text-slate-400 hover:bg-[#635BFF]/[0.04] hover:text-[#635BFF]"
+                        ? "bg-[var(--primary-subtle)] text-[var(--primary)] font-semibold"
+                        : "text-slate-600 dark:text-slate-400 hover:bg-[var(--primary-subtle)] hover:text-[var(--primary)]"
                     )}
                   >
                     <div className="flex items-center gap-2">
@@ -395,7 +421,7 @@ function ExploreContent() {
                           setMinRating(item.value)
                           applyFilters({ rating: item.value })
                         }}
-                        className="accent-[#635BFF]"
+                        className="accent-[var(--primary)]"
                       />
                       <span>{item.label}</span>
                     </div>
@@ -411,10 +437,10 @@ function ExploreContent() {
 
             {/* Delivery Time presets */}
             <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-900 dark:text-white mb-3">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-900 dark:text-white mb-3">
                 {t("deliveryWindow")}
               </h3>
-              <div className="space-y-1 text-xs">
+              <div className="space-y-1 text-sm">
                 {[
                   { label: t("delivery24h"), val: 1 },
                   { label: t("delivery3d"), val: 3 },
@@ -423,12 +449,16 @@ function ExploreContent() {
                 ].map((item, idx) => (
                   <button
                     key={idx}
-                    onClick={() => applyFilters({ deliveryTime: item.val.toString() })}
+                    aria-pressed={deliveryTime === item.val.toString()}
+                    onClick={() => {
+                      setDeliveryTime(item.val.toString())
+                      applyFilters({ deliveryTime: item.val.toString() })
+                    }}
                     className={cn(
-                      "w-full text-left py-1.5 px-2.5 rounded-lg text-xs transition-colors duration-150 flex items-center justify-between select-none cursor-pointer",
+                      "w-full text-left py-2.5 px-2.5 rounded-lg text-sm transition-colors duration-150 flex items-center justify-between select-none cursor-pointer",
                       deliveryTime === item.val.toString()
-                        ? "bg-[#635BFF]/[0.08] text-[#635BFF] font-semibold"
-                        : "text-slate-600 dark:text-slate-400 hover:bg-[#635BFF]/[0.04] hover:text-[#635BFF]"
+                        ? "bg-[var(--primary-subtle)] text-[var(--primary)] font-semibold"
+                        : "text-slate-600 dark:text-slate-400 hover:bg-[var(--primary-subtle)] hover:text-[var(--primary)]"
                     )}
                   >
                     <span>{item.label}</span>
@@ -441,10 +471,10 @@ function ExploreContent() {
         </aside>
 
         {/* Services Results Column */}
-        <main className="lg:col-span-3">
+        <div className="min-w-0 lg:col-span-3" aria-busy={loading}>
           {/* Top Bar: Count & Sort */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="text-xs text-text-muted">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+            <div className="text-sm text-text-muted">
               {t("showingServices", { count: services.length })}
             </div>
 
@@ -452,27 +482,28 @@ function ExploreContent() {
               {/* Mobile filter button */}
               <button
                 onClick={() => setMobileFilterOpen(true)}
-                className="lg:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-white text-xs text-text-primary"
+                className="lg:hidden flex items-center gap-1.5 px-3 py-2.5 rounded-lg border border-border bg-[var(--surface)] text-sm text-text-primary"
               >
-                <Filter className="h-3.5 w-3.5 text-blue-600" />
+                <Filter className="h-3.5 w-3.5 text-[var(--primary)]" />
                 <span>{t("filters")}</span>
                 {activeFilterCount > 0 && (
-                  <span className="h-4 w-4 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center font-bold">
+                  <span className="h-4 w-4 rounded-full bg-[var(--primary)] text-white text-xs flex items-center justify-center font-bold">
                     {activeFilterCount}
                   </span>
                 )}
               </button>
 
               {/* Sort selector */}
-              <div className="flex items-center gap-2 text-xs">
+              <div className="flex items-center gap-2 text-sm">
                 <span className="text-slate-500 hidden sm:inline">{t("sortBy")}</span>
                 <select
+                  aria-label={t("sortBy")}
                   value={sort}
                   onChange={(e) => {
                     setSort(e.target.value)
                     applyFilters({ sort: e.target.value })
                   }}
-                  className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 outline-none hover:border-[#635BFF]/40 focus:border-[#635BFF] focus:ring-2 focus:ring-[#635BFF]/15 transition-all duration-200 shadow-xs cursor-pointer"
+                  className="rounded-lg border border-slate-200 dark:border-slate-800 bg-[var(--surface)] dark:bg-slate-900 px-3 py-2.5 text-sm text-slate-800 dark:text-slate-200  hover:border-[var(--border-hover)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--focus-ring)] transition-all duration-200 shadow-xs cursor-pointer"
                 >
                   <option value="newest">{t("sortNewest")}</option>
                   <option value="rating">{t("sortRating")}</option>
@@ -484,31 +515,27 @@ function ExploreContent() {
             </div>
           </div>
 
+          <ActiveFilterChips chips={activeChips} onClearAll={resetAllFilters} />
+
           {/* Loading Skeletons */}
-          {loading ? (
+          {error ? (
+            <ApiState error={error} retry={() => setLoadVersion((version) => version + 1)} />
+          ) : loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="rounded-lg border border-[#E2E8F0] bg-white p-4 space-y-4">
-                  <Skeleton className="aspect-[16/10] w-full rounded-md" />
-                  <div className="flex items-center gap-3">
-                    <Skeleton className="h-6 w-6 rounded-md" />
-                    <Skeleton className="h-3.5 w-28" />
-                  </div>
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-3.5 w-3/4" />
-                </div>
+                <GigCardSkeleton key={i} />
               ))}
             </div>
           ) : services.length === 0 ? (
             /* Empty State */
-            <div className="rounded-2xl border border-border/60 bg-white p-8 sm:p-12 text-center flex flex-col items-center justify-center my-8">
-              <div className="h-12 w-12 rounded-full bg-blue-50 border border-blue-200/60 flex items-center justify-center text-blue-600 mb-4">
+            <div className="rounded-xl border border-border/60 bg-[var(--surface)] p-8 sm:p-12 text-center flex flex-col items-center justify-center my-8">
+              <div className="h-12 w-12 rounded-full bg-[var(--primary-subtle)] border border-[var(--border)] flex items-center justify-center text-[var(--primary)] mb-4">
                 <Search className="h-6 w-6" />
               </div>
               <h3 className="font-display text-xl text-text-primary font-medium mb-2">
                 {t("noServicesFound")}
               </h3>
-              <p className="text-xs sm:text-sm text-text-muted max-w-md mb-6 leading-relaxed">
+              <p className="text-sm sm:text-sm text-text-muted max-w-md mb-6 leading-relaxed">
                 {otherCategoryMatches.length > 0 && initialCategory !== "all"
                   ? `Không tìm thấy dịch vụ nào cho "${initialQ}" trong danh mục "${
                       CATEGORIES.find((c) => c.value === initialCategory)?.label || initialCategory
@@ -523,7 +550,7 @@ function ExploreContent() {
                       applyFilters({ category: "" })
                     }}
                     size="sm"
-                    className="rounded-full bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 gap-2 shadow-sm"
+                    className="rounded-full bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white font-medium px-5 gap-2 shadow-sm"
                   >
                     <Search className="h-3.5 w-3.5" />
                     Xem {otherCategoryMatches.length} kết quả trong Tất cả danh mục
@@ -543,145 +570,40 @@ function ExploreContent() {
           ) : (
             /* Results Grid */
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {services.map((service) => {
-                const isFav = favorites[service.id] || false
-                const catAccent = getCategoryAccent(
-                  service.subCategory || service.category || service.title
-                )
-                return (
-                  <Link
-                    key={service.id}
-                    href={`/services/${service.id}`}
-                    className="stripe-card group rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden flex flex-col justify-between transition-all duration-[280ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-[#635BFF]/35 shadow-xs hover:shadow-[0_12px_35px_rgba(15,23,42,0.10)] hover:-translate-y-1 active:scale-[0.99]"
-                  >
-                    <div>
-                      {/* Cover Image: Natural real photography without dark gradient smear */}
-                      <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100 dark:bg-slate-800 group-hover:[&_img]:scale-[1.03] [&_img]:transition-transform [&_img]:duration-350 [&_img]:ease-out">
-                        <ServiceCardImage
-                          src={service.coverImage}
-                          alt={service.title}
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        />
-
-                        {/* Minimalist Favorite Button */}
-                        <button
-                          type="button"
-                          onClick={(e) => void toggleFavorite(service.id, e)}
-                          className={cn(
-                            "absolute top-2.5 right-2.5 z-20 h-7 w-7 rounded-md bg-white/95 dark:bg-slate-900/90 backdrop-blur-sm border border-slate-200/80 dark:border-slate-700 flex items-center justify-center transition-all duration-200 active:scale-90 hover:scale-110",
-                            isFav
-                              ? "opacity-100 text-rose-600 fill-rose-600"
-                              : "opacity-0 sm:group-hover:opacity-100 text-slate-500 hover:text-rose-600 hover:bg-white"
-                          )}
-                          aria-label="Save to favorites"
-                        >
-                          <Heart
-                            className={cn(
-                              "h-3.5 w-3.5 transition-transform duration-200",
-                              isFav ? "fill-rose-500 text-rose-500 scale-110" : ""
-                            )}
-                          />
-                        </button>
-                      </div>
-
-                      {/* Card Body */}
-                      <div className="p-4">
-                        {/* Discipline category tag */}
-                        <span
-                          className={cn(
-                            "text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md inline-block mb-2 w-fit",
-                            catAccent.pillClass
-                          )}
-                        >
-                          {service.subCategory || service.category}
-                        </span>
-
-                        {/* Title */}
-                        <h3 className="font-semibold text-sm leading-snug text-slate-900 dark:text-white line-clamp-2 group-hover:text-primary transition-colors mb-2.5">
-                          {service.title}
-                        </h3>
-
-                        {/* Seller row */}
-                        <div className="flex items-center gap-2">
-                          <div className="transition-transform duration-200 group-hover:scale-105">
-                            <AvatarImage
-                              src={service.seller.avatar}
-                              name={service.seller.name}
-                              id={service.id}
-                              size={24}
-                              rounded="md"
-                              alt={service.seller.name}
-                            />
-                          </div>
-                          <div className="truncate text-xs">
-                            <span className="font-medium text-slate-700 dark:text-slate-300 truncate block">
-                              {service.seller.name}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Footer: Rating, Escrow micro-badge & Price */}
-                    <div className="px-4 py-3 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-1.5 text-slate-900 dark:text-white font-semibold">
-                        <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-500 transition-transform duration-200 group-hover:scale-110" />
-                        <span>{service.rating}</span>
-                        <span className="text-slate-500 dark:text-slate-400 font-normal text-[11px]">
-                          ({service.reviewCount})
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/70 dark:border-emerald-800/60 text-[10px] font-medium text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100/80 transition-colors">
-                        <ShieldCheck className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
-                        <span className="hidden sm:inline">Escrow</span>
-                      </div>
-
-                      <div className="text-right">
-                        <span className="text-[10px] uppercase tracking-wider font-mono text-slate-500 dark:text-slate-400 block leading-none mb-0.5">
-                          {t("fromPrice")}
-                        </span>
-                        <span className="font-bold text-slate-900 dark:text-white font-mono text-sm group-hover:text-primary transition-colors">
-                          ${service.startingPrice}
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                )
-              })}
+              {services.map((service) => (
+                <GigCard key={service.id} gig={serviceGig(service.record)} />
+              ))}
             </div>
           )}
-        </main>
+        </div>
       </div>
 
       {/* Mobile Filters Bottom Sheet Drawer */}
-      <AnimatePresence>
+      <div>
         {mobileFilterOpen && (
           <div className="fixed inset-0 z-50 flex flex-col justify-end lg:hidden">
             {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <div
               onClick={() => setMobileFilterOpen(false)}
-              className="fixed inset-0 bg-black/50 backdrop-blur-xs"
+              className="fixed inset-0 bg-black/50 "
               aria-hidden="true"
             />
 
             {/* Bottom Sheet Container */}
-            <motion.div
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ duration: 0.28, ease: EASE_OUT_EXPO }}
-              className="relative z-10 w-full max-h-[88vh] bg-white rounded-t-2xl border-t border-border shadow-2xl overflow-hidden flex flex-col"
+            <div
+              ref={drawerRef}
+              tabIndex={-1}
+              role="dialog"
+              aria-modal="true"
+              aria-label={t("filters")}
+              className="relative z-10 w-full max-h-[88dvh] bg-[var(--surface)] rounded-t-2xl border-t border-border shadow-[var(--shadow-lg)] overflow-hidden flex flex-col"
             >
               {/* Top Drag Handle & Title */}
               <div className="pt-3 pb-3 px-6 border-b border-border flex flex-col items-center">
                 <div className="w-12 h-1.5 rounded-full bg-slate-200 mb-3" />
                 <div className="w-full flex items-center justify-between">
                   <span className="font-semibold text-text-primary text-base flex items-center gap-2">
-                    <SlidersHorizontal className="h-4 w-4 text-[#635BFF]" />
+                    <SlidersHorizontal className="h-4 w-4 text-[var(--primary)]" />
                     {t("filters")}
                   </span>
                   <button
@@ -699,7 +621,7 @@ function ExploreContent() {
               <div className="p-6 overflow-y-auto space-y-6 flex-1">
                 {/* 1. Category */}
                 <div>
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-text-muted mb-2.5">
+                  <h4 className="text-sm font-semibold uppercase tracking-wider text-text-muted mb-2.5">
                     Category
                   </h4>
                   <div className="grid grid-cols-2 gap-2">
@@ -710,10 +632,10 @@ function ExploreContent() {
                           key={cat.value}
                           type="button"
                           onClick={() => setCategory(cat.value)}
-                          className={`min-h-[40px] px-3 py-2 rounded-lg text-xs font-medium text-left truncate transition-colors cursor-pointer border ${
+                          className={`min-h-[44px] px-3 py-2 rounded-lg text-sm font-medium text-left transition-colors cursor-pointer border ${
                             isSelected
-                              ? "bg-[#635BFF] text-white border-[#635BFF]"
-                              : "bg-slate-50 border-border text-text-secondary hover:text-text-primary"
+                              ? "bg-[var(--primary)] text-white border-[var(--primary)]"
+                              : "bg-[var(--subtle)] border-border text-text-secondary hover:text-text-primary"
                           }`}
                         >
                           {cat.label}
@@ -725,33 +647,31 @@ function ExploreContent() {
 
                 {/* 2. Price Range */}
                 <div>
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-text-muted mb-2.5">
+                  <h4 className="text-sm font-semibold uppercase tracking-wider text-text-muted mb-2.5">
                     {t("priceRange")}
                   </h4>
                   <div className="flex items-center gap-3">
                     <div className="flex-1">
-                      <span className="text-[10px] text-text-muted uppercase mb-1 block">
-                        Min ($)
-                      </span>
+                      <span className="text-xs text-text-muted uppercase mb-1 block">Min ($)</span>
                       <input
                         type="number"
+                        aria-label="Minimum price"
                         placeholder="0"
                         value={minPrice}
                         onChange={(e) => setMinPrice(e.target.value)}
-                        className="w-full min-h-[44px] rounded-lg border border-border bg-slate-50 px-3 py-2 text-sm text-text-primary outline-none focus:border-[#635BFF]"
+                        className="w-full min-h-[44px] rounded-lg border border-border bg-[var(--subtle)] px-3 py-2 text-sm text-text-primary  focus:border-[var(--primary)]"
                       />
                     </div>
                     <span className="text-text-muted pt-4">-</span>
                     <div className="flex-1">
-                      <span className="text-[10px] text-text-muted uppercase mb-1 block">
-                        Max ($)
-                      </span>
+                      <span className="text-xs text-text-muted uppercase mb-1 block">Max ($)</span>
                       <input
                         type="number"
+                        aria-label="Maximum price"
                         placeholder="1000+"
                         value={maxPrice}
                         onChange={(e) => setMaxPrice(e.target.value)}
-                        className="w-full min-h-[44px] rounded-lg border border-border bg-slate-50 px-3 py-2 text-sm text-text-primary outline-none focus:border-[#635BFF]"
+                        className="w-full min-h-[44px] rounded-lg border border-border bg-[var(--subtle)] px-3 py-2 text-sm text-text-primary  focus:border-[var(--primary)]"
                       />
                     </div>
                   </div>
@@ -759,7 +679,7 @@ function ExploreContent() {
 
                 {/* 3. Rating */}
                 <div>
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-text-muted mb-2.5">
+                  <h4 className="text-sm font-semibold uppercase tracking-wider text-text-muted mb-2.5">
                     Seller Rating
                   </h4>
                   <div className="space-y-1.5">
@@ -772,8 +692,8 @@ function ExploreContent() {
                         key={item.val}
                         className={`min-h-[44px] flex items-center justify-between px-3 py-2 rounded-lg border cursor-pointer transition-colors ${
                           minRating === item.val
-                            ? "border-[#635BFF] bg-[#635BFF]/5 text-text-primary"
-                            : "border-border bg-white text-text-secondary"
+                            ? "border-[var(--primary)] bg-[var(--primary-subtle)] text-text-primary"
+                            : "border-border bg-[var(--surface)] text-text-secondary"
                         }`}
                       >
                         <div className="flex items-center gap-2">
@@ -782,9 +702,9 @@ function ExploreContent() {
                             name="mobile-rating"
                             checked={minRating === item.val}
                             onChange={() => setMinRating(item.val)}
-                            className="accent-[#635BFF]"
+                            className="accent-[var(--primary)]"
                           />
-                          <span className="text-xs font-medium">{item.label}</span>
+                          <span className="text-sm font-medium">{item.label}</span>
                         </div>
                         {item.val && (
                           <div className="flex items-center text-amber-500">
@@ -798,7 +718,7 @@ function ExploreContent() {
 
                 {/* 4. Delivery Window */}
                 <div>
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-text-muted mb-2.5">
+                  <h4 className="text-sm font-semibold uppercase tracking-wider text-text-muted mb-2.5">
                     {t("deliveryWindow")}
                   </h4>
                   <div className="grid grid-cols-2 gap-2">
@@ -812,10 +732,10 @@ function ExploreContent() {
                         key={d.val}
                         type="button"
                         onClick={() => setDeliveryTime(d.val)}
-                        className={`min-h-[44px] px-3 py-2 rounded-lg text-xs font-medium flex items-center justify-between border transition-colors cursor-pointer ${
+                        className={`min-h-[44px] px-3 py-2 rounded-lg text-sm font-medium flex items-center justify-between border transition-colors cursor-pointer ${
                           deliveryTime === d.val
-                            ? "bg-[#635BFF] text-white border-[#635BFF]"
-                            : "bg-slate-50 border-border text-text-secondary hover:text-text-primary"
+                            ? "bg-[var(--primary)] text-white border-[var(--primary)]"
+                            : "bg-[var(--subtle)] border-border text-text-secondary hover:text-text-primary"
                         }`}
                       >
                         <span>{d.label}</span>
@@ -827,7 +747,7 @@ function ExploreContent() {
               </div>
 
               {/* Sticky Action Footer with Safe Area */}
-              <div className="p-4 border-t border-border bg-white flex gap-3 safe-area-bottom">
+              <div className="p-4 border-t border-border bg-[var(--surface)] flex gap-3 safe-area-bottom">
                 <Button
                   variant="outline"
                   size="md"
@@ -835,7 +755,7 @@ function ExploreContent() {
                     resetAllFilters()
                     setMobileFilterOpen(false)
                   }}
-                  className="flex-1 min-h-[44px] text-xs font-semibold"
+                  className="flex-1 min-h-[44px] text-sm font-semibold"
                 >
                   {t("reset")}
                 </Button>
@@ -852,15 +772,15 @@ function ExploreContent() {
                     })
                     setMobileFilterOpen(false)
                   }}
-                  className="flex-1 min-h-[44px] text-xs font-semibold"
+                  className="flex-1 min-h-[44px] text-sm font-semibold"
                 >
                   {t("apply")}
                 </Button>
               </div>
-            </motion.div>
+            </div>
           </div>
         )}
-      </AnimatePresence>
+      </div>
     </div>
   )
 }

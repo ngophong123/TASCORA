@@ -1,9 +1,11 @@
-"use client"
+﻿"use client"
 
 import * as React from "react"
 import { useSearchParams } from "next/navigation"
 import { Link } from "@/i18n/routing"
 import { getApiUrl } from "@/lib/api-url"
+import { AuthPanel, authInput, authLabel } from "@/components/auth/AuthPanel"
+import { Button } from "@/components/ui/button"
 
 function VerificationForm() {
   const params = useSearchParams()
@@ -46,45 +48,81 @@ function VerificationForm() {
     }
   }
   return (
-    <main className="mx-auto w-full max-w-lg p-8 space-y-5">
-      <h1 className="text-2xl font-bold">Verify your email</h1>
-      <p>Confirm your email address before signing in.</p>
+    <AuthPanel
+      title="Verify your email"
+      description="Confirm your email address before signing in."
+    >
       {params.get("token") && !verified && (
-        <button
+        <Button
+          type="button"
           onClick={() => void verify()}
           disabled={busy}
-          className="rounded-lg bg-indigo-600 text-white px-4 py-2"
+          isLoading={busy}
+          loadingText="Please wait…"
+          className="mb-5 w-full"
+          size="lg"
         >
           Verify email
-        </button>
+        </Button>
       )}
-      <p role="status">{message}</p>
+      <p
+        role="status"
+        aria-live="polite"
+        className={`text-sm leading-6 ${message ? "mb-5 rounded-lg border border-border-default bg-bg-subtle p-4" : ""}`}
+      >
+        {message}
+      </p>
       {!verified && (
-        <form onSubmit={resend} className="space-y-3">
-          <label className="block">
-            Email address
+        <form onSubmit={resend} className="space-y-5" aria-busy={busy}>
+          <div>
+            <label htmlFor="verification-email" className={authLabel}>
+              Email address
+            </label>
             <input
+              id="verification-email"
+              name="email"
               type="email"
+              autoComplete="email"
               required
+              disabled={busy}
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              className="block w-full rounded border p-2"
+              className={authInput}
             />
-          </label>
-          <button disabled={busy} className="rounded border px-4 py-2">
+          </div>
+          <Button
+            type="submit"
+            disabled={busy}
+            isLoading={busy}
+            loadingText="Please wait…"
+            variant={params.get("token") ? "outline" : "primary"}
+            className="w-full"
+            size="lg"
+          >
             Resend verification email
-          </button>
+          </Button>
         </form>
       )}
-      <Link href="/login" className="text-indigo-600 underline">
-        Sign in
-      </Link>
-    </main>
+      <div className="mt-6 border-t border-border-default pt-4">
+        <Link
+          href="/login"
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary hover:underline underline-offset-4"
+        >
+          Sign in
+        </Link>
+      </div>
+    </AuthPanel>
   )
 }
 export default function VerifyEmailPage() {
   return (
-    <React.Suspense fallback={<p>Loading?</p>}>
+    <React.Suspense
+      fallback={
+        <p role="status" className="px-4 py-12 text-center text-text-muted">
+          Loading…
+        </p>
+      }
+    >
       <VerificationForm />
     </React.Suspense>
   )

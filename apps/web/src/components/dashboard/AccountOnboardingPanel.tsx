@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import * as React from "react"
 import { requestData, jsonRequest, uploadFile } from "@/lib/marketplace"
@@ -130,23 +130,26 @@ export function AccountOnboardingPanel({ mode }: { mode?: "CLIENT" | "FREELANCER
     }
   }
   return (
-    <section className="rounded-xl border border-slate-200 p-5 space-y-3">
+    <section className="rounded-xl border border-border-default bg-bg-surface p-5 sm:p-6 space-y-4">
       <h2 className="text-lg font-semibold">Your account</h2>
-      <p role="status">{status}</p>
+      <p role="status" className="text-sm text-text-secondary">
+        {status}
+      </p>
       {!account ? (
         <Link href="/login" className="underline">
           Sign in
         </Link>
       ) : (
         <>
-          <p>
+          <p className="break-words text-sm text-text-secondary">
             {account.email}
             {account.sellerProfile?.status && ` · Seller status: ${account.sellerProfile.status}`}
           </p>
-          <label className="block text-sm">
+          <label className="block text-sm font-medium text-foreground">
             Avatar (public on your marketplace profile)
             <input
               disabled={busy}
+              className="mt-2 block min-h-11 w-full max-w-md rounded-lg border border-border-default bg-bg-subtle p-2 text-sm file:mr-3 file:rounded file:border-0 file:bg-bg-surface file:px-3 file:py-2 file:text-primary"
               type="file"
               accept="image/png,image/jpeg,image/webp"
               onChange={(event) => {
@@ -172,7 +175,7 @@ export function AccountOnboardingPanel({ mode }: { mode?: "CLIENT" | "FREELANCER
               }}
             />
           </label>
-          <form onSubmit={save} className="grid gap-3 sm:grid-cols-2">
+          <form onSubmit={save} className="grid gap-4 sm:grid-cols-2">
             {(
               [
                 "firstName",
@@ -183,7 +186,7 @@ export function AccountOnboardingPanel({ mode }: { mode?: "CLIENT" | "FREELANCER
                   : []),
               ] as (keyof typeof form)[]
             ).map((field) => (
-              <label key={field} className="block text-sm">
+              <label key={field} className="block text-sm font-medium text-foreground">
                 {
                   {
                     firstName: "First name",
@@ -202,11 +205,14 @@ export function AccountOnboardingPanel({ mode }: { mode?: "CLIENT" | "FREELANCER
                   onChange={(event) =>
                     setForm((previous) => ({ ...previous, [field]: event.target.value }))
                   }
-                  className="block w-full rounded border p-2"
+                  className="mt-2 block min-h-11 w-full rounded-lg border border-border-default bg-bg-surface px-3 py-2 text-base font-normal focus:border-primary focus:outline-none focus:ring-2 focus:ring-focus-ring/20"
                 />
               </label>
             ))}
-            <button disabled={busy} className="rounded border px-3 py-2">
+            <button
+              disabled={busy}
+              className="min-h-11 w-fit rounded-lg border border-border-default bg-bg-surface px-4 py-2 text-sm font-semibold hover:bg-bg-subtle disabled:opacity-50"
+            >
               Save profile
             </button>
           </form>
@@ -215,7 +221,7 @@ export function AccountOnboardingPanel({ mode }: { mode?: "CLIENT" | "FREELANCER
               <button
                 disabled={busy}
                 onClick={() => void submit()}
-                className="rounded border px-3 py-2"
+                className="min-h-11 w-fit rounded-lg border border-border-default bg-bg-surface px-4 py-2 text-sm font-semibold hover:bg-bg-subtle disabled:opacity-50"
               >
                 Submit seller profile for review
               </button>
