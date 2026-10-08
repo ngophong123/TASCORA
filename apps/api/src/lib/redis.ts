@@ -1,14 +1,7 @@
 import { Redis } from 'ioredis';
 
 import { redisUrl } from './config';
+import { attachRedisDiagnostics, redisOptions } from './redis-connection';
 
-export const redis = new Redis(redisUrl, {
-  maxRetriesPerRequest: 2,
-  lazyConnect: true,
-  connectTimeout: 5000,
-  enableReadyCheck: false,
-});
-
-redis.on('error', () => {
-  console.error('Redis connection unavailable');
-});
+export const redis = new Redis(redisUrl, redisOptions(redisUrl));
+attachRedisDiagnostics(redis);
