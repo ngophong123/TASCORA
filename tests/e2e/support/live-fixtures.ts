@@ -23,7 +23,7 @@ export function createStore() {
 }
 export const test = base.extend<{ marketplace: ReturnType<typeof createStore> }>({
   marketplace: async ({}, use) => { await use(createStore()); },
-  page: async ({ page, marketplace: state }, use) => {
+  page: async ({ page, marketplace: state }, use, testInfo) => {
     await page.addInitScript(() => { if (!localStorage.getItem('user')) { localStorage.setItem('user', JSON.stringify({ id: 'buyer', email: 'buyer@example.test', role: 'BUYER' })); localStorage.setItem('token', 'e2e-buyer') } });
     await page.addInitScript(() => {
       let clientSecret = '';
@@ -103,12 +103,13 @@ export const test = base.extend<{ marketplace: ReturnType<typeof createStore> }>
       await send(null,404);
     });
     if (process.env.PREMIUM_CATALOG_FIXTURE === '1') {
+      const frontend = new URL(String(testInfo.project.use.baseURL || 'http://localhost:3000'));
       // SSR and browser read the same per-test public records, including taxonomy
       // mutations. This loopback QA control never exists in production code.
       // Run fixture-server suites serially because its store is intentionally local.
       await page.route('**/*', async route => {
         const url = new URL(route.request().url());
-        if (route.request().isNavigationRequest() && url.hostname === 'localhost' && url.port === '3210') {
+        if (route.request().isNavigationRequest() && url.origin === frontend.origin) {
           const result = await page.request.post('http://localhost:3211/__lab/catalog', {
             data: { services: state.services, categories: state.categories },
           });

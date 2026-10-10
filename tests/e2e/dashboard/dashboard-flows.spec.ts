@@ -16,11 +16,17 @@ test.describe("Dashboard Flows", () => {
     await expect(firstValue).not.toBeEmpty()
   })
 
-  test("orders page filters by status tabs and inspects order detail drawer", async ({ page, isMobile }) => {
+  test("orders page filters by status tabs and inspects order detail drawer", async ({
+    page,
+    isMobile,
+    marketplace,
+  }) => {
     await page.goto("/dashboard/orders")
 
     // Orders table or container should be visible
-    const ordersContainer = isMobile ? page.locator('[data-testid^="order-card-"]:visible').first() : page.getByTestId("orders-table")
+    const ordersContainer = isMobile
+      ? page.locator('[data-testid^="order-card-"]:visible').first()
+      : page.getByTestId("orders-table")
     await expect(ordersContainer).toBeVisible()
 
     // Status filter tabs should exist
@@ -33,21 +39,39 @@ test.describe("Dashboard Flows", () => {
 
     // Click Active tab
     await tabActive.click()
-    await expect(tabActive).toHaveAttribute("aria-selected", "true")
+    await expect(tabActive).toHaveAttribute("aria-pressed", "true")
+    await expect(tabAll).toHaveAttribute("aria-pressed", "false")
+    const prefix = isMobile ? "order-card-" : "order-row-"
+    await expect(page.locator(`[data-testid^="${prefix}"]:visible`)).toHaveCount(1)
+    await expect(
+      page.getByTestId(
+        `${prefix}${marketplace.orders.find((order) => order.status === "IN_PROGRESS")!.id}`
+      )
+    ).toBeVisible()
 
     // Click Completed tab
     await tabCompleted.click()
-    await expect(tabCompleted).toHaveAttribute("aria-selected", "true")
+    await expect(tabCompleted).toHaveAttribute("aria-pressed", "true")
+    await expect(tabActive).toHaveAttribute("aria-pressed", "false")
+    await expect(page.locator(`[data-testid^="${prefix}"]:visible`)).toHaveCount(1)
+    await expect(
+      page.getByTestId(
+        `${prefix}${marketplace.orders.find((order) => order.status === "COMPLETED")!.id}`
+      )
+    ).toBeVisible()
 
     // Return to All tab
     await tabAll.click()
-    await expect(tabAll).toHaveAttribute("aria-selected", "true")
+    await expect(tabAll).toHaveAttribute("aria-pressed", "true")
+    await expect(page.locator(`[data-testid^="${prefix}"]:visible`)).toHaveCount(
+      marketplace.orders.length
+    )
 
     // Open detail drawer: click first order row or mobile card
     const orderItems = isMobile
       ? page.locator('[data-testid^="order-card-"]')
       : page.locator('[data-testid^="order-row-"]')
-    
+
     await expect(orderItems.first()).toBeVisible()
     await orderItems.first().click()
 
@@ -90,14 +114,16 @@ test.describe("Dashboard Flows", () => {
     await expect(messageInput).toHaveValue("")
 
     // The newly sent message should appear in chat bubbles
-    const sentBubble = page.locator('[data-testid="chat-message-bubble"]').filter({ hasText: uniqueText })
+    const sentBubble = page
+      .locator('[data-testid="chat-message-bubble"]')
+      .filter({ hasText: uniqueText })
     await expect(sentBubble).toBeVisible()
   })
 
   test("gig wizard navigates step progression and validates form interaction", async ({ page }) => {
-    await page.goto('/login')
-    await page.locator('input[placeholder="name@company.com"]').fill('seller@example.test')
-    await page.locator('input[type="password"]').first().fill('E2E-password-123!')
+    await page.goto("/login")
+    await page.locator('input[placeholder="name@company.com"]').fill("seller@example.test")
+    await page.locator('input[type="password"]').first().fill("E2E-password-123!")
     await page.locator('form button[type="submit"]').first().click()
     await expect(page).toHaveURL(/seller\/dashboard/)
     await page.goto("/dashboard/gigs/new")
@@ -106,8 +132,8 @@ test.describe("Dashboard Flows", () => {
     const titleInput = page.getByTestId("wizard-gig-title-input")
     await expect(titleInput).toBeVisible()
     await expect(titleInput).toBeEmpty()
-    await titleInput.fill('A verified seller service draft')
-    await page.locator('select').first().selectOption({ index: 1 })
+    await titleInput.fill("A verified seller service draft")
+    await page.locator("select").first().selectOption({ index: 1 })
 
     const nextBtn = page.getByTestId("wizard-next-btn")
     const prevBtn = page.getByTestId("wizard-prev-btn")
@@ -120,11 +146,14 @@ test.describe("Dashboard Flows", () => {
     const step2Btn = page.getByTestId("wizard-step-2")
     await expect(step2Btn).toBeVisible()
 
-    await page.locator('input[type="text"]').first().fill('Basic package')
-    await page.locator('input[type="number"]').first().fill('25')
+    await page.locator('input[type="text"]').first().fill("Basic package")
+    await page.locator('input[type="number"]').first().fill("25")
     // Advance to Step 3: Description
     await nextBtn.click()
-    await page.locator('textarea').first().fill('A complete and persistent service description for customers.')
+    await page
+      .locator("textarea")
+      .first()
+      .fill("A complete and persistent service description for customers.")
     const step3Btn = page.getByTestId("wizard-step-3")
     await expect(step3Btn).toBeVisible()
 

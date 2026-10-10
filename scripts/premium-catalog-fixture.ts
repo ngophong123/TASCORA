@@ -6,6 +6,9 @@ let outage = false;
 let delayMs = 100;
 http.createServer(async (request, response) => {
   const url = new URL(request.url!, 'http://localhost:3211');
+  if (url.pathname === '/__lab/health' && request.method === 'GET') {
+    response.writeHead(200, { 'Content-Type': 'application/json' }).end(JSON.stringify({ fixture: true })); return;
+  }
   if (url.pathname === '/__lab/catalog' && request.method === 'POST') {
     try {
       const chunks: Buffer[] = []; let bytes = 0;

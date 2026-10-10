@@ -29,6 +29,7 @@ export function Navbar() {
   const navRef = React.useRef<HTMLElement | null>(null)
   const drawerRef = React.useRef<HTMLDivElement | null>(null)
   const triggerRef = React.useRef<HTMLButtonElement | null>(null)
+  const hoverMenuRef = React.useRef<"explore" | "categories" | null>(null)
   useDialogFocus(mobileMenuOpen, drawerRef, () => setMobileMenuOpen(false))
 
   React.useEffect(() => {
@@ -45,12 +46,16 @@ export function Navbar() {
     if (!activeMenu) return
     const key = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
+        hoverMenuRef.current = null
         setActiveMenu(null)
         triggerRef.current?.focus()
       }
     }
     const outside = (event: MouseEvent) => {
-      if (!navRef.current?.contains(event.target as Node)) setActiveMenu(null)
+      if (!navRef.current?.contains(event.target as Node)) {
+        hoverMenuRef.current = null
+        setActiveMenu(null)
+      }
     }
     document.addEventListener("keydown", key)
     document.addEventListener("mousedown", outside)
@@ -116,7 +121,35 @@ export function Navbar() {
         </Link>
         <nav aria-label="Main navigation" className="hidden xl:flex items-center gap-1">
           {(["explore", "categories"] as const).map((menu) => (
-            <div key={menu} className="relative">
+            <div
+              key={menu}
+              className="relative"
+              onPointerEnter={(event) => {
+                if (event.pointerType !== "mouse" || !window.matchMedia("(hover: hover)").matches)
+                  return
+                triggerRef.current = event.currentTarget.querySelector("button")
+                hoverMenuRef.current = menu
+                setActiveMenu(menu)
+              }}
+              onPointerLeave={(event) => {
+                if (
+                  hoverMenuRef.current === menu &&
+                  !event.currentTarget.contains(document.activeElement)
+                ) {
+                  hoverMenuRef.current = null
+                  setActiveMenu(null)
+                }
+              }}
+              onBlur={(event) => {
+                if (
+                  hoverMenuRef.current === menu &&
+                  !event.currentTarget.contains(event.relatedTarget as Node | null)
+                ) {
+                  hoverMenuRef.current = null
+                  setActiveMenu(null)
+                }
+              }}
+            >
               <button
                 type="button"
                 data-testid={menu === "explore" ? "mega-menu-trigger" : undefined}
@@ -125,7 +158,9 @@ export function Navbar() {
                 className={control}
                 onClick={(event) => {
                   triggerRef.current = event.currentTarget
-                  setActiveMenu(activeMenu === menu ? null : menu)
+                  if (hoverMenuRef.current === menu) setActiveMenu(menu)
+                  else setActiveMenu(activeMenu === menu ? null : menu)
+                  hoverMenuRef.current = null
                 }}
               >
                 {menu === "explore" ? t("exploreServices") : t("categories")}

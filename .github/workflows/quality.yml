@@ -92,6 +92,8 @@ jobs:
         env:
           NEXT_PUBLIC_API_URL: https://api.example.com
           NEXT_PUBLIC_WEB_URL: https://web.example.com
+          # Public catalog now renders on the server; mock both SSR and browser.
+          PREMIUM_CATALOG_FIXTURE: "1"
           # Non-secret fixture marker; browser tests intercept Stripe.js and payment APIs.
           # Never use this as a staging/production provider credential.
           NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_fixture_only
