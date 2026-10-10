@@ -66,7 +66,7 @@ export function LanguageSwitcher({
         ref={triggerRef}
         type="button"
         data-testid="language-switcher"
-        aria-label={t("switchLanguage")}
+        aria-label={`${t("switchLanguage")} (${current.shortLabel})`}
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={id}

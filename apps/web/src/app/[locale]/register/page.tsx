@@ -122,7 +122,7 @@ function RegisterForm() {
           </span>
         </div>
       )}
-      <form onSubmit={handleSubmit} className="space-y-5" aria-busy={loading}>
+      <form method="post" onSubmit={handleSubmit} className="space-y-5" aria-busy={loading}>
         <div>
           <label htmlFor="register-email" className={authLabel}>
             {t("workEmail")}

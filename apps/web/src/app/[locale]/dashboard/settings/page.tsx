@@ -64,26 +64,25 @@ export default function SettingsPage() {
           </button>
         ))}
       </nav>
-      <section
-        id={`settings-${activeTab}`}
-        aria-label={tabs.find((tab) => tab.id === activeTab)?.label}
-      >
-        {activeTab === "profile" ? (
-          <AccountOnboardingPanel mode={role} />
-        ) : (
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 sm:p-8">
-            <span className="inline-block rounded-md bg-[var(--subtle)] px-3 py-1 text-xs font-medium text-[var(--text-muted)]">
-              Unavailable
-            </span>
-            <h2 className="mt-5 text-xl font-semibold text-[var(--foreground)]">
-              {unavailable[activeTab].title}
-            </h2>
-            <p className="mt-3 max-w-2xl text-base leading-relaxed text-[var(--text-secondary)]">
-              {unavailable[activeTab].description}
-            </p>
-          </div>
-        )}
-      </section>
+      {tabs.map(({ id, label }) => (
+        <section key={id} id={`settings-${id}`} aria-label={label} hidden={activeTab !== id}>
+          {activeTab !== id ? null : id === "profile" ? (
+            <AccountOnboardingPanel mode={role} />
+          ) : (
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 sm:p-8">
+              <span className="inline-block rounded-md bg-[var(--subtle)] px-3 py-1 text-xs font-medium text-[var(--text-muted)]">
+                Unavailable
+              </span>
+              <h2 className="mt-5 text-xl font-semibold text-[var(--foreground)]">
+                {unavailable[id].title}
+              </h2>
+              <p className="mt-3 max-w-2xl text-base leading-relaxed text-[var(--text-secondary)]">
+                {unavailable[id].description}
+              </p>
+            </div>
+          )}
+        </section>
+      ))}
     </div>
   )
 }

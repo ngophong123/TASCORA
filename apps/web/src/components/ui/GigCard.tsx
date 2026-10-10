@@ -5,7 +5,8 @@ import { Link } from "@/i18n/routing"
 import { Star, Heart, Clock } from "lucide-react"
 import { AvatarImage } from "@/components/ui/AvatarImage"
 import { ServiceCardImage } from "@/components/ui/ServiceCardImage"
-import { requestData, jsonRequest, type Service } from "@/lib/marketplace"
+import { requestData, jsonRequest } from "@/lib/marketplace"
+import { readFavorites } from "@/lib/favorites-read"
 import { cn } from "@/lib/utils"
 import type { Gig } from "@/data/gigs"
 
@@ -14,19 +15,28 @@ export interface GigCardProps {
   view?: "grid" | "list"
   className?: string
   priority?: boolean
+  headingLevel?: 2 | 3
   tier?: "standard" | "flagship"
 }
 
-export function GigCard({ gig, view = "grid", className, priority = false }: GigCardProps) {
+export function GigCard({
+  gig,
+  view = "grid",
+  className,
+  priority = false,
+  headingLevel = 3,
+}: GigCardProps) {
+  const Heading = headingLevel === 2 ? "h2" : "h3"
   const [isFavorite, setIsFavorite] = React.useState(false)
   const [favoriteError, setFavoriteError] = React.useState("")
   const [favoriteBusy, setFavoriteBusy] = React.useState(false)
   const errorId = React.useId()
   const list = view === "list"
   React.useEffect(() => {
-    if (!localStorage.getItem("user")) return
+    const user = localStorage.getItem("user")
+    if (!user) return
     let active = true
-    requestData<Service[]>("/api/v1/favorites")
+    readFavorites(`${user}\u0000${localStorage.getItem("token") || ""}`)
       .then((saved) => {
         if (active) setIsFavorite(saved.some((item) => item.id === gig.id))
       })
@@ -92,7 +102,7 @@ export function GigCard({ gig, view = "grid", className, priority = false }: Gig
         <p className="mb-2 text-xs font-medium text-[var(--text-muted)]">
           {gig.subCategoryName || gig.categoryName}
         </p>
-        <h3 className="mb-3 text-base font-medium leading-relaxed tracking-[-0.015em] text-[var(--foreground)]">
+        <Heading className="mb-3 text-base font-medium leading-relaxed tracking-[-0.015em] text-[var(--foreground)]">
           <Link
             href={`/services/${gig.id}`}
             data-testid="gig-card-link"
@@ -100,7 +110,7 @@ export function GigCard({ gig, view = "grid", className, priority = false }: Gig
           >
             {gig.title}
           </Link>
-        </h3>
+        </Heading>
         {list && (
           <p className="mb-4 line-clamp-2 text-sm leading-relaxed text-[var(--text-secondary)]">
             {gig.description}

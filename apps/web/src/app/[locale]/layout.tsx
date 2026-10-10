@@ -15,7 +15,9 @@ import "../premium.css"
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin", "vietnamese"],
-  display: "swap",
+  // Keep first-paint metrics stable when the font arrives late on slow links.
+  // Preload is retained; a quickly available Geist still paints normally.
+  display: "optional",
 })
 
 const geistMono = Geist_Mono({

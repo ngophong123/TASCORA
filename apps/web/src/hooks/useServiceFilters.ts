@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { useSearchParams } from "next/navigation"
-import { useRouter, usePathname } from "@/i18n/routing"
+import { updateCatalogUrl } from "@/lib/catalog-url"
 import { type Gig, type SellerLevel } from "@/data/gigs"
 import {
   PRICE_BOUNDS,
@@ -35,56 +35,44 @@ export interface ActiveFilterChip {
 }
 
 import { requestData, serviceGig, type Service } from "@/lib/marketplace"
+import { loadCatalog, type CatalogSnapshot } from "@/lib/catalog-data"
 const PAGE_SIZE = 12
 
-export function useServiceFilters() {
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const pathname = usePathname()
+function catalogGigs(catalog: CatalogSnapshot) {
+  return catalog.services.map((service: Service) => {
+    const gig = serviceGig(service)
+    const parent = catalog.categories.find((c) => c.id === service.category.parentId)
+    return parent
+      ? {
+          ...gig,
+          categorySlug: parent.slug,
+          categoryName: parent.name,
+          subCategorySlug: service.category.slug,
+          subCategoryName: service.category.name,
+        }
+      : gig
+  })
+}
 
-  const [liveGigs, setLiveGigs] = React.useState<Gig[]>([])
-  const [loading, setLoading] = React.useState(true)
-  const [error, setError] = React.useState("")
+export function useServiceFilters(initialCatalog?: CatalogSnapshot) {
+  const searchParams = useSearchParams()
+
+  const [liveGigs, setLiveGigs] = React.useState<Gig[]>(() =>
+    initialCatalog ? catalogGigs(initialCatalog) : []
+  )
+  const [loading, setLoading] = React.useState(!initialCatalog)
+  const [error, setError] = React.useState(initialCatalog?.error || "")
   const [loadVersion, setLoadVersion] = React.useState(0)
   const reload = React.useCallback(() => setLoadVersion((version) => version + 1), [])
   React.useEffect(() => {
+    if (initialCatalog && loadVersion === 0) return
     setLoading(true)
     setError("")
     const controller = new AbortController()
     async function load() {
       try {
-        const first = await requestData<{ services: Service[]; totalPages: number }>(
-          "/api/v1/services?limit=50",
-          { signal: controller.signal }
-        )
-        const categories = await requestData<{ id: string; slug: string; name: string }[]>(
-          "/api/v1/marketplace/categories",
-          { signal: controller.signal }
-        )
-        const services = [...first.services]
-        for (let page = 2; page <= first.totalPages; page++) {
-          const more = await requestData<{ services: Service[] }>(
-            `/api/v1/services?limit=50&page=${page}`,
-            { signal: controller.signal }
-          )
-          services.push(...more.services)
-        }
-        if (!controller.signal.aborted)
-          setLiveGigs(
-            services.map((service) => {
-              const gig = serviceGig(service)
-              const parent = categories.find((c) => c.id === service.category.parentId)
-              return parent
-                ? {
-                    ...gig,
-                    categorySlug: parent.slug,
-                    categoryName: parent.name,
-                    subCategorySlug: service.category.slug,
-                    subCategoryName: service.category.name,
-                  }
-                : gig
-            })
-          )
+        const catalog = await loadCatalog(requestData, controller.signal)
+        if (!controller.signal.aborted) setLiveGigs(catalogGigs(catalog))
       } catch (error) {
         if (!controller.signal.aborted) {
           setLiveGigs([])
@@ -96,7 +84,7 @@ export function useServiceFilters() {
     }
     void load()
     return () => controller.abort()
-  }, [loadVersion])
+  }, [loadVersion, initialCatalog])
   // Parse filters from URL search params
   const filters: ServiceFilterState = React.useMemo(() => {
     const q = searchParams.get("q") || ""
@@ -196,11 +184,9 @@ export function useServiceFilters() {
         }
       })
 
-      const query = current.toString()
-      const targetUrl = query ? `${pathname}?${query}` : pathname
-      router.push(targetUrl, { scroll: false })
+      updateCatalogUrl(current)
     },
-    [pathname, router, searchParams]
+    [searchParams]
   )
 
   // Direct filter setters
@@ -234,8 +220,8 @@ export function useServiceFilters() {
   )
 
   const clearAllFilters = React.useCallback(() => {
-    router.push(pathname, { scroll: false })
-  }, [pathname, router])
+    updateCatalogUrl(new URLSearchParams())
+  }, [])
 
   // Filter and sort the gigs
   const filteredGigs = React.useMemo(() => {

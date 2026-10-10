@@ -37,3 +37,5 @@ blob-report/
 # Isolated frontend preview (source copy without environment files)
 .premium-preview/
 .premium-check/
+.premium-payment-check/
+.premium-performance/

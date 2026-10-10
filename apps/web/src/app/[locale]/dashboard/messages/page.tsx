@@ -560,7 +560,7 @@ function MessagesContent() {
                   <h2 className="text-sm font-semibold text-[#0A0A23] truncate">
                     {activeConv.partner.name}
                   </h2>
-                  <span className="hidden sm:inline-flex items-center gap-0.5 text-[11px] font-medium text-amber-600 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">
+                  <span className="hidden sm:inline-flex items-center gap-0.5 text-[11px] font-medium text-[var(--status-warning)] bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">
                     <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
                     {activeConv.partner.rating}
                   </span>
@@ -836,7 +836,7 @@ function MessagesContent() {
                       {activeConv.partner.title}
                     </p>
                     <div className="flex items-center gap-1.5 mt-1">
-                      <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-amber-600">
+                      <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-[var(--status-warning)]">
                         <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
                         {activeConv.partner.rating}
                       </span>

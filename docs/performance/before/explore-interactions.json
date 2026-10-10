@@ -1,0 +1,277 @@
+{
+  "route": "/explore",
+  "viewport": "390x844",
+  "throttling": "none",
+  "fixture": true,
+  "idleRafCallbacksIn2Seconds": 125,
+  "lcpMs": 1716,
+  "cls": 0.6540204969446138,
+  "recordedInteractionCount": 2,
+  "recordedInteractionMaxMs": 48,
+  "eventThresholdMs": 16,
+  "longTasks": [97, 57, 135, 145],
+  "supported": [
+    "element",
+    "event",
+    "first-input",
+    "interaction-contentful-paint",
+    "largest-contentful-paint",
+    "layout-shift",
+    "long-animation-frame",
+    "longtask",
+    "mark",
+    "measure",
+    "navigation",
+    "paint",
+    "resource",
+    "soft-navigation",
+    "visibility-state"
+  ],
+  "resources": [
+    {
+      "name": "http://localhost:3210/_next/static/css/f7e295e0ba5e51d0.css",
+      "bytes": 25309,
+      "duration": 76.19999999995343
+    },
+    {
+      "name": "http://localhost:3210/_next/static/css/26f66b44f8c162f7.css",
+      "bytes": 2178,
+      "duration": 74.19999999995343
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/webpack-a85e9c539f4a85d5.js",
+      "bytes": 2054,
+      "duration": 71.10000000009313
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/ef9b57b1-9c5f512204fd769e.js",
+      "bytes": 63601,
+      "duration": 106.5
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+      "bytes": 66048,
+      "duration": 107.5
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/main-app-eb129468a2f02cc1.js",
+      "bytes": 817,
+      "duration": 77.30000000004657
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/5039-76745e3c17401e1c.js",
+      "bytes": 17181,
+      "duration": 90.5
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/699-8795353c8a0f7a8a.js",
+      "bytes": 12936,
+      "duration": 89.60000000009313
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/9982-9e43c86c3823c2ce.js",
+      "bytes": 6085,
+      "duration": 88.19999999995343
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/1922-8182a5e0a0b768c9.js",
+      "bytes": 5300,
+      "duration": 89.69999999995343
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/explore/page-a667d3b8cdf40316.js",
+      "bytes": 8250,
+      "duration": 98.5
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/886-c329da5ee365b0ae.js",
+      "bytes": 42257,
+      "duration": 109
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/3700-3a63a0cc2b3ccf00.js",
+      "bytes": 7886,
+      "duration": 103.10000000009313
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/layout-151db7c30ed64732.js",
+      "bytes": 9110,
+      "duration": 103.89999999990687
+    },
+    {
+      "name": "http://localhost:3210/_next/static/media/22a5144ee8d83bca-s.p.woff2",
+      "bytes": 29588,
+      "duration": 137.70000000018626
+    },
+    {
+      "name": "http://localhost:3210/?_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 591,
+      "duration": 92.39999999990687
+    },
+    {
+      "name": "http://localhost:3210/explore?category=programming&_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 603,
+      "duration": 129.89999999990687
+    },
+    {
+      "name": "http://localhost:3210/explore?category=design&_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 603,
+      "duration": 131.4000000001397
+    },
+    {
+      "name": "http://localhost:3210/explore?category=ai&_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 603,
+      "duration": 130.10000000009313
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/services?limit=50",
+      "bytes": 0,
+      "duration": 165.0999999998603
+    },
+    {
+      "name": "http://localhost:3210/?_rsc=OGEB1sNMwJGaS1Mp",
+      "bytes": 11199,
+      "duration": 58.4000000001397
+    },
+    {
+      "name": "http://localhost:3210/?_rsc=b-rwNT6R0kJkd_Ip",
+      "bytes": 1766,
+      "duration": 116.69999999995343
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/services?limit=50&page=2",
+      "bytes": 0,
+      "duration": 112.60000000009313
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/page-346f9fda91ce257c.js",
+      "bytes": 6174,
+      "duration": 74.19999999995343
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Ffull-stack-nextjs-node.jpg&w=384&q=75",
+      "bytes": 10202,
+      "duration": 121.89999999990687
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Ffavicon.svg&w=64&q=75",
+      "bytes": 1132,
+      "duration": 118.10000000009313
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fsaas-landing-page-frontend.jpg&w=384&q=75",
+      "bytes": 9760,
+      "duration": 118.19999999995343
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fapi-microservices-backend.jpg&w=384&q=75",
+      "bytes": 15046,
+      "duration": 115.80000000004657
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fgolang-microservices-terminal.jpg&w=384&q=75",
+      "bytes": 5586,
+      "duration": 121.4000000001397
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Faws-terraform-cloud-console.jpg&w=384&q=75",
+      "bytes": 4656,
+      "duration": 123.5999999998603
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fkubernetes-devops-workstation.jpg&w=384&q=75",
+      "bytes": 13914,
+      "duration": 134.60000000009313
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fsolidity-smart-contracts-code.jpg&w=384&q=75",
+      "bytes": 10064,
+      "duration": 137.30000000004657
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fdefi-web3-staking-protocol.jpg&w=384&q=75",
+      "bytes": 4236,
+      "duration": 135.5999999998603
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/favorites",
+      "bytes": 0,
+      "duration": 184.19999999995343
+    },
+    {
+      "name": "http://localhost:3210/services/c000000000000000000000001?_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 535,
+      "duration": 122.0999999998603
+    },
+    {
+      "name": "http://localhost:3210/services/c000000000000000000000001?_rsc=kRF1fExD8BlRIOzd",
+      "bytes": 1451,
+      "duration": 66.19999999995343
+    },
+    {
+      "name": "http://localhost:3210/_next/static/media/b66cf8e69499582a-s.p.woff2",
+      "bytes": 8268,
+      "duration": 58.199999999953434
+    },
+    {
+      "name": "http://localhost:3210/explore?_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 603,
+      "duration": 41.5
+    },
+    {
+      "name": "http://localhost:3210/categories?_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 605,
+      "duration": 41.5
+    },
+    {
+      "name": "http://localhost:3210/dashboard?_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 605,
+      "duration": 41.4000000001397
+    },
+    {
+      "name": "http://localhost:3210/explore?_rsc=--bL0kHDCIk4V099",
+      "bytes": 1775,
+      "duration": 72.5
+    },
+    {
+      "name": "http://localhost:3210/dashboard?_rsc=uR7XW0jBfGO3WC29",
+      "bytes": 2232,
+      "duration": 117.19999999995343
+    },
+    {
+      "name": "http://localhost:3210/categories?_rsc=RcjK84o8j9F72hTz",
+      "bytes": 1713,
+      "duration": 134.70000000018626
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/3129-f7ff05eda5867110.js",
+      "bytes": 4777,
+      "duration": 80.0999999998603
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/dashboard/page-7860ca5a9e1641d1.js",
+      "bytes": 6298,
+      "duration": 80.70000000018626
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/6873-bb11bec0e9f42d53.js",
+      "bytes": 2676,
+      "duration": 79.60000000009313
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/7394-1760a5b190332656.js",
+      "bytes": 11317,
+      "duration": 82.69999999995343
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/dashboard/layout-0f2e9713f40098c7.js",
+      "bytes": 457,
+      "duration": 74.69999999995343
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/categories/page-eb691ed98c5e38fb.js",
+      "bytes": 7281,
+      "duration": 44.300000000046566
+    }
+  ]
+}

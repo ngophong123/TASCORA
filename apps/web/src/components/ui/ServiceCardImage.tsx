@@ -92,7 +92,8 @@ export function ServiceCardImage({
         className={cn(
           "object-cover transition-[opacity,transform] duration-200 ease-out group-hover:scale-[1.02] motion-reduce:transition-none motion-reduce:transform-none",
           imgSrc === DEFAULT_FALLBACK && "object-contain p-[25%] opacity-40",
-          isLoaded ? "opacity-100" : "opacity-0",
+          // Server-rendered images must paint before hydration/onLoad handlers.
+          "opacity-100",
           className
         )}
       />

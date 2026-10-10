@@ -73,7 +73,7 @@ function VerificationForm() {
         {message}
       </p>
       {!verified && (
-        <form onSubmit={resend} className="space-y-5" aria-busy={busy}>
+        <form method="post" onSubmit={resend} className="space-y-5" aria-busy={busy}>
           <div>
             <label htmlFor="verification-email" className={authLabel}>
               Email address

@@ -73,7 +73,7 @@ function LoginForm() {
           {error}
         </p>
       )}
-      <form onSubmit={handleSubmit} className="space-y-5" aria-busy={loading}>
+      <form method="post" onSubmit={handleSubmit} className="space-y-5" aria-busy={loading}>
         <div>
           <label htmlFor="login-email" className={authLabel}>
             {t("workEmail")}

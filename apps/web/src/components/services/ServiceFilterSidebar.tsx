@@ -28,8 +28,10 @@ import {
   TrendingUp,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import type { CatalogCategory } from "@/lib/catalog-data"
 
 interface ServiceFilterSidebarProps {
+  initialCategories?: CatalogCategory[]
   filters: ServiceFilterState
   setFilter: <K extends keyof ServiceFilterState>(key: K, value: ServiceFilterState[K]) => void
   toggleLevel: (level: SellerLevel) => void
@@ -53,6 +55,7 @@ const CATEGORY_ICONS: Record<string, React.ElementType> = {
 
 import { useApiResource } from "@/hooks/useApiResource"
 export function ServiceFilterSidebar({
+  initialCategories,
   filters,
   setFilter,
   toggleLevel,
@@ -70,7 +73,7 @@ export function ServiceFilterSidebar({
       parentId: string | null
       _count: { services: number }
     }[]
-  >("/api/v1/marketplace/categories")
+  >("/api/v1/marketplace/categories", initialCategories)
   const liveCategories = (categories.data || [])
     .filter((c) => !c.parentId)
     .map((c) => ({

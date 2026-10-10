@@ -1,0 +1,32 @@
+[
+  {
+    "src": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fbusiness%2Fmarket-research-tam-sizing.jpg&w=3840&q=75",
+    "alt": "Market Research, Competitive Intelligence & TAM Sizing Report",
+    "loading": "lazy",
+    "rect": {
+      "x": 734.328125,
+      "y": 356.3125,
+      "width": 299.328125,
+      "height": 187.078125,
+      "top": 356.3125,
+      "right": 1033.65625,
+      "bottom": 543.390625,
+      "left": 734.328125
+    }
+  },
+  {
+    "src": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Faccessible-tailwind-components.jpg&w=3840&q=75",
+    "alt": "Accessible Tailwind CSS & React 19 UI Component Library",
+    "loading": "lazy",
+    "rect": {
+      "x": 734.328125,
+      "y": 778.390625,
+      "width": 299.328125,
+      "height": 187.078125,
+      "top": 778.390625,
+      "right": 1033.65625,
+      "bottom": 965.46875,
+      "left": 734.328125
+    }
+  }
+]

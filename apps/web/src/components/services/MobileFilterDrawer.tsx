@@ -6,8 +6,10 @@ import { ServiceFilterSidebar } from "./ServiceFilterSidebar"
 import { useDialogFocus } from "@/hooks/useDialogFocus"
 import { type ServiceFilterState } from "@/hooks/useServiceFilters"
 import { type SellerLevel } from "@/data/gigs"
+import type { CatalogCategory } from "@/lib/catalog-data"
 
 interface MobileFilterDrawerProps {
+  initialCategories?: CatalogCategory[]
   isOpen: boolean
   onClose: () => void
   filters: ServiceFilterState
@@ -19,6 +21,7 @@ interface MobileFilterDrawerProps {
   totalResults: number
 }
 export function MobileFilterDrawer({
+  initialCategories,
   isOpen,
   onClose,
   filters,
@@ -58,6 +61,7 @@ export function MobileFilterDrawer({
         </div>
         <div className="flex-1 overflow-y-auto overscroll-contain p-4">
           <ServiceFilterSidebar
+            initialCategories={initialCategories}
             filters={filters}
             setFilter={setFilter}
             toggleLevel={toggleLevel}

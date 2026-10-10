@@ -19,6 +19,10 @@ export function AuthPanel({
   description: string
   children: React.ReactNode
 }) {
+  const [hydrated, setHydrated] = React.useState(false)
+  React.useEffect(() => {
+    setHydrated(true)
+  }, [])
   return (
     <section className="px-4 py-12 sm:py-20" aria-labelledby="auth-title">
       <div className="mx-auto w-full max-w-lg rounded-xl border border-border-default bg-bg-surface p-6 sm:p-10">
@@ -32,7 +36,11 @@ export function AuthPanel({
           {title}
         </h1>
         <p className="mt-3 text-base leading-7 text-text-secondary">{description}</p>
-        <div className="mt-8">{children}</div>
+        <div className="mt-8">
+          <fieldset disabled={!hydrated} className="contents">
+            {children}
+          </fieldset>
+        </div>
       </div>
     </section>
   )

@@ -1,0 +1,298 @@
+{
+  "route": "/services",
+  "viewport": "390x844",
+  "throttling": "none",
+  "fixture": true,
+  "idleRafCallbacksIn2Seconds": 124,
+  "lcpMs": 1444,
+  "cls": 0,
+  "layoutShifts": [],
+  "recordedInteractionCount": 2,
+  "recordedInteractionMaxMs": 32,
+  "eventThresholdMs": 16,
+  "longTasks": [119, 53],
+  "supported": [
+    "element",
+    "event",
+    "first-input",
+    "interaction-contentful-paint",
+    "largest-contentful-paint",
+    "layout-shift",
+    "long-animation-frame",
+    "longtask",
+    "mark",
+    "measure",
+    "navigation",
+    "paint",
+    "resource",
+    "soft-navigation",
+    "visibility-state"
+  ],
+  "resources": [
+    {
+      "name": "http://localhost:3210/_next/static/css/f7e295e0ba5e51d0.css",
+      "bytes": 25309,
+      "duration": 43.799999999813735
+    },
+    {
+      "name": "http://localhost:3210/_next/static/css/26f66b44f8c162f7.css",
+      "bytes": 2178,
+      "duration": 100.3000000002794
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/webpack-a85e9c539f4a85d5.js",
+      "bytes": 2054,
+      "duration": 126.39999999990687
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/ef9b57b1-9c5f512204fd769e.js",
+      "bytes": 63601,
+      "duration": 152.29999999981374
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+      "bytes": 66048,
+      "duration": 154
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/main-app-eb129468a2f02cc1.js",
+      "bytes": 817,
+      "duration": 130.8000000002794
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/5039-76745e3c17401e1c.js",
+      "bytes": 17181,
+      "duration": 138.89999999990687
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/699-8795353c8a0f7a8a.js",
+      "bytes": 12936,
+      "duration": 137.39999999990687
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/9982-9e43c86c3823c2ce.js",
+      "bytes": 6085,
+      "duration": 139
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/6207-a63c0f45ec69d834.js",
+      "bytes": 2285,
+      "duration": 140.59999999962747
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/1922-efe0229370adff13.js",
+      "bytes": 5309,
+      "duration": 147.39999999990687
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/services/page-fff898a4544369b7.js",
+      "bytes": 10998,
+      "duration": 153
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/1004-4382eeee8be78389.js",
+      "bytes": 7946,
+      "duration": 150.79999999981374
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/layout-94e43ccd727b0abf.js",
+      "bytes": 9141,
+      "duration": 150.1999999997206
+    },
+    {
+      "name": "http://localhost:3210/_next/static/media/22a5144ee8d83bca-s.p.woff2",
+      "bytes": 29588,
+      "duration": 180.79999999981374
+    },
+    {
+      "name": "http://localhost:3210/?_rsc=QJggzmfiYOrO-GVC",
+      "bytes": 589,
+      "duration": 57.39999999990687
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/marketplace/categories",
+      "bytes": 0,
+      "duration": 132.39999999990687
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/marketplace/categories",
+      "bytes": 0,
+      "duration": 152.39999999990687
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/services?limit=50",
+      "bytes": 0,
+      "duration": 154.29999999981374
+    },
+    {
+      "name": "http://localhost:3210/services?_rsc=QJggzmfiYOrO-GVC",
+      "bytes": 601,
+      "duration": 117
+    },
+    {
+      "name": "http://localhost:3210/?_rsc=_cMqfvgOvZwHddAb",
+      "bytes": 11171,
+      "duration": 136.09999999962747
+    },
+    {
+      "name": "http://localhost:3210/?_rsc=RL_mgy6XSF8GVLwC",
+      "bytes": 1765,
+      "duration": 136.10000000009313
+    },
+    {
+      "name": "http://localhost:3210/services?_rsc=pp4R1BkkTaTqVuHc",
+      "bytes": 1862,
+      "duration": 49.5
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/marketplace/categories",
+      "bytes": 0,
+      "duration": 147.6999999997206
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/page-346f9fda91ce257c.js",
+      "bytes": 6174,
+      "duration": 45.60000000009313
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/services?limit=50&page=2",
+      "bytes": 0,
+      "duration": 66
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fenterprise-multicloud-architecture.jpg&w=384&q=75",
+      "bytes": 12266,
+      "duration": 73.70000000018626
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Ffavicon.svg&w=64&q=75",
+      "bytes": 1132,
+      "duration": 81.20000000018626
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fai%2Fcustom-llm-fine-tuning-lora.jpg&w=384&q=75",
+      "bytes": 14736,
+      "duration": 74.79999999981374
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fai%2Fzendesk-ai-customer-agent.jpg&w=384&q=75",
+      "bytes": 8180,
+      "duration": 88.5
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fsaas-auth-rbac-engine.jpg&w=384&q=75",
+      "bytes": 18206,
+      "duration": 104.5
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fai%2Fsynthetic-training-dataset-pipeline.jpg&w=384&q=75",
+      "bytes": 16310,
+      "duration": 119.29999999981374
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fbusiness%2Ffractional-cto-advisory.jpg&w=384&q=75",
+      "bytes": 16122,
+      "duration": 112.40000000037253
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fsolidity-smart-contracts-code.jpg&w=384&q=75",
+      "bytes": 10064,
+      "duration": 120.6999999997206
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fbusiness%2Fweb3-tokenomics-dao-strategy.jpg&w=384&q=75",
+      "bytes": 24426,
+      "duration": 128.89999999990687
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/favorites",
+      "bytes": 0,
+      "duration": 172.89999999990687
+    },
+    {
+      "name": "http://localhost:3210/services/c000000000000000000000070?_rsc=QJggzmfiYOrO-GVC",
+      "bytes": 536,
+      "duration": 112.70000000018626
+    },
+    {
+      "name": "http://localhost:3210/services/c000000000000000000000070?_rsc=cmkwg8RnUOogM8kv",
+      "bytes": 1454,
+      "duration": 65.10000000009313
+    },
+    {
+      "name": "http://localhost:3210/_next/static/media/b66cf8e69499582a-s.p.woff2",
+      "bytes": 8268,
+      "duration": 72.89999999990687
+    },
+    {
+      "name": "http://localhost:3210/explore?_rsc=QJggzmfiYOrO-GVC",
+      "bytes": 601,
+      "duration": 64.60000000009313
+    },
+    {
+      "name": "http://localhost:3210/categories?_rsc=QJggzmfiYOrO-GVC",
+      "bytes": 603,
+      "duration": 65.40000000037253
+    },
+    {
+      "name": "http://localhost:3210/dashboard?_rsc=QJggzmfiYOrO-GVC",
+      "bytes": 602,
+      "duration": 65.70000000018626
+    },
+    {
+      "name": "http://localhost:3210/explore?_rsc=4nOaKUoNEkEuxWAc",
+      "bytes": 1769,
+      "duration": 72.70000000018626
+    },
+    {
+      "name": "http://localhost:3210/categories?_rsc=EAcrc253hLEK09-A",
+      "bytes": 1710,
+      "duration": 72.10000000009313
+    },
+    {
+      "name": "http://localhost:3210/dashboard?_rsc=Ei9iPnIsAwxpR3ub",
+      "bytes": 2228,
+      "duration": 70.79999999981374
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/explore/page-a10b23c1bf1662a9.js",
+      "bytes": 8268,
+      "duration": 84.70000000018626
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/3129-f7ff05eda5867110.js",
+      "bytes": 4777,
+      "duration": 79.5
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/dashboard/page-7860ca5a9e1641d1.js",
+      "bytes": 6298,
+      "duration": 80.09999999962747
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/4625-3d0fd79d2461ac6e.js",
+      "bytes": 42803,
+      "duration": 96.20000000018626
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/8796-ef145fd654f94111.js",
+      "bytes": 2331,
+      "duration": 79.79999999981374
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/7394-115bfb5cd66774e6.js",
+      "bytes": 11329,
+      "duration": 79.79999999981374
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/dashboard/layout-dc9695b7a08a8199.js",
+      "bytes": 458,
+      "duration": 90.70000000018626
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/categories/page-eb691ed98c5e38fb.js",
+      "bytes": 7281,
+      "duration": 92.5
+    }
+  ]
+}

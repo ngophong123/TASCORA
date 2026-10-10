@@ -35,53 +35,65 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
         document.documentElement.style.scrollBehavior = previous
       }
     }
-    // 1. Accessibility guardrail: Check if user prefers reduced motion
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
-
-    if (prefersReducedMotion.matches) {
-      // Respect user choice: disable Lenis, use native browser scrolling
-      return
-    }
-
-    // 2. Initialize Lenis with refined parameters for smooth, natural momentum
-    const lenis = new Lenis({
-      lerp: 0.085, // Smooth inertia without feeling sluggish
-      duration: 1.1,
-      smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 1.5,
-      infinite: false,
-    })
-
-    lenisRef.current = lenis
-    setLenisInstance(lenis)
-
-    // 3. RAF Animation Loop
-    let rafId: number
-    function raf(time: number) {
-      lenis.raf(time)
-      rafId = requestAnimationFrame(raf)
-    }
-    rafId = requestAnimationFrame(raf)
-
-    // 4. Listen to preference change dynamically
-    const handleMotionChange = (e: MediaQueryListEvent) => {
-      if (e.matches) {
-        cancelAnimationFrame(rafId)
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)")
+    let dispose: (() => void) | undefined
+    const synchronize = () => {
+      dispose?.()
+      dispose = undefined
+      if (preference.matches) return
+      const lenis = new Lenis({
+        lerp: 0.085,
+        duration: 1.1,
+        smoothWheel: true,
+        wheelMultiplier: 1,
+        touchMultiplier: 1.5,
+        infinite: false,
+      })
+      lenisRef.current = lenis
+      setLenisInstance(lenis)
+      let rafId: number | null = null
+      const wake = () => {
+        if (rafId === null && !document.hidden) rafId = requestAnimationFrame(frame)
+      }
+      const frame = (time: number) => {
+        rafId = null
+        lenis.raf(time)
+        if (lenis.isScrolling === "smooth") wake()
+      }
+      // virtual-scroll is emitted before Lenis initializes its animation.
+      const offWheel = lenis.on("virtual-scroll", wake)
+      const offScroll = lenis.on("scroll", () => {
+        if (lenis.isScrolling === "smooth") wake()
+      })
+      const scrollTo = lenis.scrollTo.bind(lenis)
+      lenis.scrollTo = (...args: Parameters<Lenis["scrollTo"]>) => {
+        scrollTo(...args)
+        if (lenis.isScrolling === "smooth") wake()
+      }
+      const visibility = () => {
+        if (document.hidden) {
+          if (rafId !== null) cancelAnimationFrame(rafId)
+          rafId = null
+          // Finish at the currently visible position, not a stale offscreen target.
+          scrollTo(lenis.scroll, { immediate: true })
+        }
+      }
+      document.addEventListener("visibilitychange", visibility)
+      dispose = () => {
+        if (rafId !== null) cancelAnimationFrame(rafId)
+        offWheel()
+        offScroll()
+        document.removeEventListener("visibilitychange", visibility)
         lenis.destroy()
         lenisRef.current = null
         setLenisInstance(null)
       }
     }
-
-    prefersReducedMotion.addEventListener("change", handleMotionChange)
-
+    synchronize()
+    preference.addEventListener("change", synchronize)
     return () => {
-      prefersReducedMotion.removeEventListener("change", handleMotionChange)
-      cancelAnimationFrame(rafId)
-      lenis.destroy()
-      lenisRef.current = null
-      setLenisInstance(null)
+      preference.removeEventListener("change", synchronize)
+      dispose?.()
     }
   }, [nativeScroll])
 
@@ -91,7 +103,7 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
 
     const hash = window.location.hash
     if (hash) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         const target = document.querySelector(hash)
         if (target) {
           lenisRef.current?.scrollTo(target as HTMLElement, { offset: -80, duration: 1.1 })
@@ -99,9 +111,11 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
           lenisRef.current?.scrollTo(0, { immediate: true })
         }
       }, 150)
+      return () => clearTimeout(timer)
     } else {
       lenisRef.current.scrollTo(0, { immediate: true })
     }
+    return undefined
   }, [pathname])
 
   // Listen to hashchange events so Lenis scrolls smoothly to any hash target

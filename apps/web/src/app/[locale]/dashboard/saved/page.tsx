@@ -57,7 +57,11 @@ export default function SavedPage() {
       {!resource.loading && !resource.error && (
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           {!resource.data?.length && (
-            <div className="col-span-full rounded-xl border border-[var(--border)] bg-[var(--surface)] p-8 text-center">
+            <div
+              role="status"
+              data-testid="saved-services-empty"
+              className="col-span-full rounded-xl border border-[var(--border)] bg-[var(--surface)] p-8 text-center"
+            >
               <h2 className="text-lg font-semibold">Your shortlist starts here</h2>
               <p className="mt-2 text-sm text-[var(--text-secondary)]">
                 Save a service while browsing to find it here later.
