@@ -64,14 +64,14 @@ export function ServiceCardImage({
   return (
     <div
       className={cn(
-        "relative w-full h-full overflow-hidden bg-slate-100 dark:bg-slate-800 select-none",
+        "relative w-full h-full overflow-hidden bg-[var(--subtle)] select-none",
         containerClassName
       )}
     >
       {/* Loading Shimmer Skeleton */}
       {!isLoaded && (
         <div
-          className="absolute inset-0 z-0 animate-pulse bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800"
+          className="absolute inset-0 z-0 animate-pulse bg-[var(--muted-panel)] motion-reduce:animate-none"
           aria-hidden="true"
         />
       )}
@@ -85,13 +85,15 @@ export function ServiceCardImage({
         width={fill ? undefined : width}
         height={fill ? undefined : height}
         sizes={sizes}
-        priority={priority}
+        preload={priority}
         loading={priority ? undefined : "lazy"}
         onLoad={handleLoad}
         onError={handleError}
         className={cn(
-          "object-cover transition-all duration-300 ease-out will-change-transform group-hover:scale-[1.03]",
-          isLoaded ? "opacity-100" : "opacity-0",
+          "object-cover transition-[opacity,transform] duration-200 ease-out group-hover:scale-[1.02] motion-reduce:transition-none motion-reduce:transform-none",
+          imgSrc === DEFAULT_FALLBACK && "object-contain p-[25%] opacity-40",
+          // Server-rendered images must paint before hydration/onLoad handlers.
+          "opacity-100",
           className
         )}
       />

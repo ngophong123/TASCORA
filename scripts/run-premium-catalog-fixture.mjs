@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { createRequire } from 'node:module';
+import { spawn } from 'node:child_process';
+const requireTsx = createRequire(fs.realpathSync('node_modules/tsx/package.json'));
+const { build } = requireTsx('esbuild');
+const output = path.resolve('.premium-performance/catalog-fixture.mjs');
+fs.mkdirSync(path.dirname(output), { recursive: true });
+await build({ entryPoints: ['scripts/premium-catalog-fixture.ts'], outfile: output, bundle: true, platform: 'node', format: 'esm', packages: 'external', logLevel: 'error' });
+const child = spawn(process.execPath, [output], { stdio: 'inherit', cwd: process.cwd() });
+child.on('exit', code => process.exit(code || 0));
+for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => child.kill(signal));

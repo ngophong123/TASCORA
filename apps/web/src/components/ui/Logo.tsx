@@ -135,7 +135,7 @@ export function LogoMark({
       />
 
       {/* Central Keystone Anchor / Milestone Escrow Node in Indigo-Violet */}
-      <rect x="13.75" y="9" width="4.5" height="4" fill="#635BFF" />
+      <rect x="13.75" y="9" width="4.5" height="4" fill="var(--primary, #5046a5)" />
     </svg>
   )
 }
@@ -174,7 +174,7 @@ export function Logo({
       {...props}
     >
       {/* 1. Geometric Mark (if variant is full or mark) */}
-      {variant !== "mark" && <LogoMark size={glyphSize} theme={theme} />}
+      {variant !== "wordmark" && <LogoMark size={glyphSize} theme={theme} />}
 
       {/* 2. Typography Wordmark (if variant is full or wordmark) */}
       {variant !== "mark" && (

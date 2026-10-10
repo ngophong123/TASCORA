@@ -3,16 +3,7 @@
 import * as React from "react"
 import { SORT_OPTIONS } from "@/data/serviceFilterOptions"
 import { type ServiceFilterState } from "@/hooks/useServiceFilters"
-import {
-  Search,
-  X,
-  SlidersHorizontal,
-  LayoutGrid,
-  List,
-  ChevronDown,
-  Check,
-  ArrowUpDown,
-} from "lucide-react"
+import { Search, X, SlidersHorizontal, LayoutGrid, List } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface ServiceToolbarProps {
@@ -33,201 +24,120 @@ export function ServiceToolbar({
   className,
 }: ServiceToolbarProps) {
   const [searchInput, setSearchInput] = React.useState(filters.q)
-  const [isSortOpen, setIsSortOpen] = React.useState(false)
-  const sortRef = React.useRef<HTMLDivElement>(null)
-
-  // Sync search input if filters change from outside (e.g. chip removal)
   React.useEffect(() => {
     setSearchInput(filters.q)
   }, [filters.q])
-
-  // Click outside listener for sort dropdown
   React.useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (sortRef.current && !sortRef.current.contains(event.target as Node)) {
-        setIsSortOpen(false)
-      }
-    }
-    if (isSortOpen) {
-      document.addEventListener("mousedown", handleClickOutside)
-    }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [isSortOpen])
-
-  // Debounced search submit
-  React.useEffect(() => {
-    const handler = setTimeout(() => {
-      if (searchInput !== filters.q) {
-        setFilter("q", searchInput)
-      }
+    const timer = setTimeout(() => {
+      if (searchInput !== filters.q) setFilter("q", searchInput)
     }, 350)
-
-    return () => clearTimeout(handler)
+    return () => clearTimeout(timer)
   }, [searchInput, filters.q, setFilter])
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setFilter("q", searchInput)
-  }
-
-  const handleClearSearch = () => {
-    setSearchInput("")
-    setFilter("q", "")
-  }
-
-  const currentSort = SORT_OPTIONS.find((s) => s.key === filters.sort) ?? SORT_OPTIONS[0]!
-
   return (
     <div
       className={cn(
-        "sticky top-16 z-30 bg-white/85 backdrop-blur-md border-b border-[rgba(15,15,30,0.08)] py-3 transition-all",
+        "sticky top-16 z-30 border-b border-[var(--border)] bg-[var(--surface)] py-4",
         className
       )}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center justify-between gap-3">
-        {/* Left Side: Search Bar & Mobile Filter Trigger */}
-        <div className="flex items-center gap-2.5 flex-1 max-w-xl">
-          {/* Mobile Filter Button (< lg) */}
+      <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 sm:px-6 md:flex-row md:items-center lg:px-8">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
           <button
             type="button"
             onClick={onOpenMobileFilters}
-            className="lg:hidden relative inline-flex items-center gap-2 h-10 px-3.5 rounded-xl border border-[rgba(15,15,30,0.14)] bg-white text-xs font-medium text-[#0A0A23] hover:bg-[#FAFAFC] active:scale-95 transition-all shrink-0"
-            aria-label="Open filter menu"
+            aria-haspopup="dialog"
+            className="flex h-11 shrink-0 items-center gap-2 rounded-lg border border-[var(--border)] px-3 text-sm lg:hidden"
           >
-            <SlidersHorizontal className="w-4 h-4 text-blue-600" />
-            <span>Filters</span>
+            <SlidersHorizontal aria-hidden="true" className="h-4 w-4" /> Filters{" "}
             {activeFilterCount > 0 && (
-              <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-blue-600 text-[11px] font-bold text-white">
-                {activeFilterCount}
-              </span>
+              <span className="text-[var(--primary)]">({activeFilterCount})</span>
             )}
           </button>
-
-          {/* Search Input Box */}
-          <form onSubmit={handleSearchSubmit} className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B6B7B] pointer-events-none" />
+          <form
+            role="search"
+            onSubmit={(e) => {
+              e.preventDefault()
+              setFilter("q", searchInput)
+            }}
+            className="relative min-w-0 flex-1"
+          >
+            <Search
+              aria-hidden="true"
+              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]"
+            />
             <input
-              type="text"
+              type="search"
+              aria-label="Search services, skills or keywords"
               data-testid="services-search-input"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search services, skills, or keywords..."
-              className="w-full h-10 pl-10 pr-9 rounded-xl border border-[rgba(15,15,30,0.12)] bg-[#FAFAFC] text-xs sm:text-sm text-[#0A0A23] placeholder-[#8B8B9B] focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/15 transition-all"
+              placeholder="Search services or skills"
+              className="h-11 w-full rounded-lg border border-[var(--border)] bg-[var(--subtle)] pl-10 pr-11 text-sm"
             />
             {searchInput && (
               <button
                 type="button"
                 data-testid="services-search-clear"
-                onClick={handleClearSearch}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded-full text-[#8B8B9B] hover:text-[#0A0A23] hover:bg-black/[0.06] transition-colors"
                 aria-label="Clear search query"
+                onClick={() => {
+                  setSearchInput("")
+                  setFilter("q", "")
+                }}
+                className="absolute right-0 top-0 flex h-11 w-11 items-center justify-center rounded-lg"
               >
-                <X className="w-3.5 h-3.5" />
+                <X aria-hidden="true" className="h-4 w-4" />
               </button>
             )}
           </form>
         </div>
-
-        {/* Right Side: Sort dropdown & Grid/List view toggle */}
-        <div className="flex items-center justify-between md:justify-end gap-3 shrink-0">
-          {/* Result Count Indicator (Tablet/Desktop) */}
-          <div
+        <div className="flex flex-wrap items-center justify-between gap-3 md:justify-end">
+          <span
             data-testid="services-result-count"
-            className="hidden sm:block text-xs text-[#6B6B7B] font-medium"
+            className="hidden text-sm text-[var(--text-muted)] xl:block"
             aria-live="polite"
           >
-            <span className="font-semibold text-[#0A0A23]">{totalResults}</span> results
-          </div>
-
-          {/* Custom Sort Dropdown */}
-          <div ref={sortRef} className="relative">
-            <button
-              type="button"
+            {totalResults} results
+          </span>
+          <label className="flex min-w-0 items-center gap-2 text-sm text-[var(--text-muted)]">
+            <span>Sort</span>
+            <select
               data-testid="services-sort-trigger"
-              onClick={() => setIsSortOpen(!isSortOpen)}
-              className="inline-flex items-center gap-2 h-10 px-3.5 rounded-xl border border-[rgba(15,15,30,0.12)] bg-white text-xs font-medium text-[#0A0A23] hover:border-[rgba(15,15,30,0.22)] hover:bg-[#FAFAFC] transition-colors"
-              aria-haspopup="listbox"
-              aria-expanded={isSortOpen}
+              aria-label="Sort services"
+              value={filters.sort}
+              onChange={(e) => setFilter("sort", e.target.value as ServiceFilterState["sort"])}
+              className="h-11 min-w-0 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 text-sm text-[var(--foreground)]"
             >
-              <ArrowUpDown className="w-3.5 h-3.5 text-[#6B6B7B]" />
-              <span className="text-[#6B6B7B] hidden sm:inline">Sort:</span>
-              <span className="font-semibold">{currentSort.label}</span>
-              <ChevronDown
-                className={cn(
-                  "w-3.5 h-3.5 text-[#6B6B7B] transition-transform duration-200",
-                  isSortOpen && "rotate-180"
-                )}
-              />
-            </button>
-
-            {isSortOpen && (
-              <div
-                role="listbox"
-                className="absolute right-0 mt-1.5 w-52 rounded-xl bg-white border border-[rgba(15,15,30,0.12)] p-1.5 shadow-[0_10px_25px_rgba(0,0,0,0.1)] z-50 animate-in fade-in zoom-in-95 duration-100"
-              >
-                {SORT_OPTIONS.map((opt) => {
-                  const isSelected = filters.sort === opt.key
-                  return (
-                    <button
-                      key={opt.id}
-                      role="option"
-                      aria-selected={isSelected}
-                      type="button"
-                      onClick={() => {
-                        setFilter("sort", opt.key)
-                        setIsSortOpen(false)
-                      }}
-                      className={cn(
-                        "flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-medium text-left transition-colors",
-                        isSelected
-                          ? "bg-blue-50 text-blue-700 font-semibold"
-                          : "text-[#4B4B5C] hover:bg-[#F4F4F8] hover:text-[#0A0A23]"
-                      )}
-                    >
-                      <span>{opt.label}</span>
-                      {isSelected && <Check className="w-3.5 h-3.5 text-blue-600 stroke-[2.5]" />}
-                    </button>
-                  )
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* Grid / List View Toggle */}
-          <div
-            className="flex items-center p-1 rounded-xl bg-[#F4F4F8] border border-[rgba(15,15,30,0.08)]"
-            role="group"
-            aria-label="View mode toggle"
-          >
+              {SORT_OPTIONS.map((option) => (
+                <option key={option.id} value={option.key}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div role="group" aria-label="View mode toggle" className="flex gap-1">
             <button
               type="button"
-              onClick={() => setFilter("view", "grid")}
-              className={cn(
-                "p-1.5 rounded-lg transition-all",
-                filters.view === "grid"
-                  ? "bg-white text-blue-700 shadow-sm"
-                  : "text-[#6B6B7B] hover:text-[#0A0A23]"
-              )}
               aria-label="Grid view"
               aria-pressed={filters.view === "grid"}
+              onClick={() => setFilter("view", "grid")}
+              className={cn(
+                "flex h-11 w-11 items-center justify-center rounded-lg border border-[var(--border)]",
+                filters.view === "grid" && "bg-[var(--primary-subtle)] text-[var(--primary)]"
+              )}
             >
-              <LayoutGrid className="w-4 h-4" />
+              <LayoutGrid aria-hidden="true" className="h-4 w-4" />
             </button>
             <button
               type="button"
-              onClick={() => setFilter("view", "list")}
-              className={cn(
-                "p-1.5 rounded-lg transition-all",
-                filters.view === "list"
-                  ? "bg-white text-blue-700 shadow-sm"
-                  : "text-[#6B6B7B] hover:text-[#0A0A23]"
-              )}
               aria-label="List view"
               aria-pressed={filters.view === "list"}
+              onClick={() => setFilter("view", "list")}
+              className={cn(
+                "flex h-11 w-11 items-center justify-center rounded-lg border border-[var(--border)]",
+                filters.view === "list" && "bg-[var(--primary-subtle)] text-[var(--primary)]"
+              )}
             >
-              <List className="w-4 h-4" />
+              <List aria-hidden="true" className="h-4 w-4" />
             </button>
           </div>
         </div>

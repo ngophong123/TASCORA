@@ -1,0 +1,109 @@
+# Premium performance audit — 2026-10-09
+
+Continued on `feat/premium-ui-redesign`, preserving the uncommitted Premium work and checkpoint `06fb357`. Read PREMIUM_UI_RESUME.md, PREMIUM_UI_HANDOFF.md and apps/web/AGENTS.md. No redesign, backend/database/payment changes, secrets, migrations, hosted requests, commit, push or deployment.
+
+## Method and reproducibility
+
+- Isolated original production source: `node scripts/premium-preview.mjs --build --production-check`, then `--start --production-check`; localhost:3210, webpack, Next 16.3.5, 42 pages. No .env files copied/read.
+- Lighthouse 12.6.1; Chromium 153.0.8010.12; mobile simulated default 412×823, CPU multiplier 4, RTT 150 ms, throughput 1638.4 Kbps. Actual settings retained in every JSON report.
+- `node scripts/run-premium-performance.mjs before` / `after`: three navigations per /, /services, /explore, each in a fresh browser context. Existing QA store of 73 services; read-only API interception with 100 ms response delay. Non-loopback browser requests aborted except explicit API fixture responses. No LHCI upload/autorun.
+- Google-font offline hook initially mislabelled every cached subset as latin. Corrected labels using existing Unicode ranges **before both measurement builds**. Real cached WOFF2 files retained. This is a QA fidelity correction, not an application optimization or measured gain.
+- Initial tsx execution failed with OS-user lookup ENOMEM. Harness now bundles local TypeScript using already-installed esbuild. Restricted Puppeteer launches timed out; local browser launch worked with approved escalation. These failures yielded no scores.
+- Smoke report is preliminary and excluded from medians. Before home run 1 overlapped the end of smoke; lint remained running during baseline and interaction recording started near the last Explore run. Server image optimizer cache was not cleared between runs. Host load and cache warm-up were not controlled; comparison is descriptive, **not a controlled causal A/B benchmark**.
+- JSON/HTML navigation reports and summary files: `performance/before` (baseline), `performance/after` (intermediate native fade only), `performance/final` (final source including CLS/semantic fixes). Do not treat localhost timings as Vercel/backend/real-user timings.
+
+## Verified optimization
+
+The global PageTransition imported Framer Motion for a single opacity fade. Homepage's navigation audit showed chunk 886 transferred 41,994 bytes with 30,949 bytes unused on first load. Replaced only this wrapper with browser Web Animations API, 160 ms same easing, route-keyed content, initial SSR/hydration content fully visible, reduced-motion and preference-change cancellation. Routes now enter immediately rather than waiting for the old exit fade. No routing/API/form/auth handlers changed. Other existing uses of Framer Motion retain the dependency.
+
+First after navigation has 14 JavaScript requests and 217,285 bytes vs baseline 15 and 259,577 bytes: 42,292 fewer bytes (~16.3%). Removed chunk no longer appears in unused-JavaScript audit. This transfer reduction is independently verified; improved score or LCP is not presumed.
+
+## Interaction lab and remaining findings
+
+`PREMIUM_PERFORMANCE_PHASE=before|after pnpm.cmd exec playwright test --config=playwright.premium.config.ts tests/premium/performance.spec.ts` records supported PerformanceObserver types, LCP before first input, maximum CLS session (1 s gap/5 s window), Event Timing interaction groups, long tasks, resources and idle RAF callbacks. Mobile 390×844, no throttling, ordinary motion, open menu then keyboard Escape. Reports cover only this bounded interaction sample, not an entire visit or field p75.
+
+Baseline captured 2 interaction groups per route; maximum recorded durations: home72 ms, services48 ms, explore48 ms. Event Timing threshold16 ms omits shorter events. These are **sample interaction durations**, not a field INP certification. TBT is reported separately and is not INP. No CrUX/RUM/production-user measurements collected. See [INP definition and measurement limits](https://web.dev/articles/inp).
+
+Baseline unthrottled LCP/CLS: home432 ms/0.0957; services1316 ms/0; explore1716 ms/0.6540. Different from simulated navigation metrics. Explore CLS0.6540 repeated after the native fade change. A dedicated attribution run (`performance/cls-attribution/explore-interactions.json`) identified footer movement contributing0.65006 and grid movement0.00396. Short Suspense fallback exposed the footer before hydration. Changed only fallback to reserve min-h-screen with a status role, matching the real page's minimum height; added JavaScript-disabled regression ensuring footer begins below844px on390px mobile. Final post-fix measurement is required; low Lighthouse navigation CLS alone would have missed this issue.
+
+Idle callbacks over2 seconds:126/122/125 respectively, consistent with the existing Lenis continuous RAF loop. No claim that these callbacks themselves constitute long tasks or bad INP; Lenis unchanged.
+
+Services baseline run2 LCP element is first service image, `loading=lazy`; simulated load-delay phase5638 ms (87% of6495 ms LCP). Client hydration and whole-catalog API loading delay its discovery. Image aspect ratios/sizes and local optimization remain; no blanket eager-loading or optimizer workaround added without a separate verified experiment.
+
+Fonts remain next/font self-hosted Geist/Geist Mono, swap, latin/vietnamese. Homepage audited font transfer52,996 bytes across2 requests; did not assume an unused-font preload win. Public root still serializes next-intl messages and includes scrolling/client navigation; native fade eliminates the measured global Motion chunk but does not make the marketplace fully server rendered. Catalog-wide fetching/client filters, repeated categories, static sections within client boundaries remain future measured optimization candidates. Content/image provenance remains the existing image audit's responsibility.
+
+Lighthouse also exposed heading-order and label-content-name-mismatch findings on catalog pages (accessibility98). Cards now accept a headingLevel presentation prop (default H3 for sections, H2 on the two H1 catalog routes); visible EN/VI is included in language-switcher accessible name. Styles/request behavior unchanged. Added catalog assertions; final Lighthouse and browser validation verify them.
+
+Lighthouse local SEO canonical warning is caused by synthetic `tascora.example` public URL versus localhost origin; do not replace valid public canonicals with localhost to inflate scores. No hosted SEO conclusion. Long-running image-optimizer recovery/stress and all-user field CWV remain unverified.
+
+## Validation and final results
+
+Three runs per route; per-metric median (metrics need not come from the same individual run):
+
+| Route    | Performance before → final | LCP before → final | CLS navigation before → final | TBT before → final |
+| -------- | -------------------------- | ------------------ | ----------------------------- | ------------------ |
+| Home     | 78 → 76                    | 2410 → 2113 ms     | 0 → 0                         | 874 → 986 ms       |
+| Services | 58 → 59                    | 6495 → 6282 ms     | 0 → 0                         | 788 → 736 ms       |
+| Explore  | 51 → 52                    | 6186 → 6046 ms     | 0 → 0                         | 1681 → 1504 ms     |
+
+Final accessibility100 and best-practices100 across the three routes; SEO92 home/100 catalog (local canonical caveat above). Raw runs and min/max/median retained in performance/comparison.json. Home Performance range before71–81, final71–83: score differences are small compared with variation. No claim of a proven overall score improvement, field CWV pass or general release readiness.
+
+Final homepage JavaScript217,312 bytes/14 requests vs259,577 bytes/15 baseline (~42.3 KB/16.3% reduction). Final unthrottled interaction lab home LCP484 ms/CLS0.0957/max recorded interaction56 ms; services1444 ms/0/32 ms; explore1180 ms/0.003959/40 ms. Each has2 recorded groups. Final lab overlapped browser regression execution, so timing differences are not controlled causal INP comparisons. Footer shift0.65006 disappeared from Explore attribution; structural no-JS footer regression and final fixture CLS<0.1 assertion passed. Home still has0.0957 shift in hero/body elements; exact cause requires its own investigation.
+
+Final frontend strict lint, typecheck and isolated production build PASS42 pages. Affected unit10/10; final navigation/catalog/metadata/hydration/native motion/interaction23/23; original Favorites2/2; scoped axe12/12 and screenshot/overflow/image-loaded checks12/12 PASS. The latter cover6 routes at390/1280 and capture screenshots rather than automatically approving pixel differences. No claim of rerunning all previous132 cases or all77 unit tests in this performance phase.
+
+Intentional application edits in this phase: PageTransition.tsx, LanguageSwitcher.tsx, GigCard.tsx, services/page.tsx, explore/page.tsx. QA edits: premium-preview.mjs (font subset fidelity), new premium-performance.ts/run-premium-performance.mjs, fixture createStore export only, catalog.spec.ts/hydration.spec.ts, new performance.spec.ts/route-motion.spec.ts, ignored workspace profile in .gitignore, these reports and handoff/resume. Existing unrelated uncommitted changes and unknown debug.log output preserved.
+
+## Phase 2 — catalog rendering, font CLS and idle motion (2026-10-09)
+
+This is the latest continuation; earlier tables remain historical. Read this audit/handoff, inspected current Git state, installed Next16 Server/Client Components, fetching/streaming, connection, font and native-history guidance. No backend/database/payment/auth-contract changes, hosted requests, secrets, migration, reset, commit, push, merge or deployment.
+
+### Root causes and boundaries
+
+- Actual Services LCP is the first card image. Prior run3: TTFB461ms, resource discovery delay5422ms (86%), image load73ms, element render326ms. A public list only appeared after hydration → effect → first service page → categories → remaining pages → card insertion; image was lazy and opacity0 until client onLoad. Explore also fetched the whole catalog after hydration and fetched it again on query changes. Plain React effects/apiFetch are used, not React Query. These are verified frontend gates, not proof that the real API takes6seconds.
+- API latency in this lab is explicitly100ms per response with73 QA services, not a measurement of Render/Neon. Two pages are needed at limit50. Real API region/cold-start/latency/compression, Vercel SSR egress and field behavior remain untested. Baseline intercepted browser API JSON is uncompressed; SSR uses Next's document compression, so transfer reductions cannot be extrapolated as a measured real-backend compression improvement.
+- Homepage CLS attribution isolated fonts: H1 height87.34→131.02px near font loading completion; normal CLS0.095705, no-font diagnostic no shift, delayed-categories diagnostic same shift. Search/category control stayed44px high. No fixed-height whitespace workaround added.
+- Installed Lenis1.3.26 on idle had~120 callbacks/2s; the provider always scheduled another frame. This was verified scheduling overhead, not a claim every callback was a long task.
+
+### Implementation and preserved behavior
+
+1. Services/Explore page entrypoints are small Server Components with Suspense. Existing UI moved to ServicesClient.tsx/ExploreClient.tsx; no layout/content redesign. Public bootstrap waits for connection() to exclude build-time backend requests, GETs only the same public services/categories endpoints, credentials omitted, no-store, total5s deadline. Backend route/controller read-only inspection confirms public list is anonymous and uses req.query, not req.user. Errors return a truthful sanitized catalog error with the existing browser Retry path, not an empty-success catalog. No private API/session/cookie/token is forwarded or serialized.
+2. Shared loadCatalog preserves all pages and exact local filtering semantics; taxonomy and first page start together. Services maps parent/child taxonomy as before; Explore does not gain a taxonomy dependency. Snapshot seeds filters/sidebar/mobile categories and avoids duplicate initial browser reads. Native history (documented Next integration with useSearchParams) updates query/view/page without a new RSC/API waterfall; browser back/forward and actual /vi prefix retained. Normal navigation/reload still fetches fresh public data; no persistent catalog cache. Explore now filters the current snapshot until navigation/retry, matching Services' existing snapshot behavior rather than refetching on each query. Checkout/detail freshness rules unchanged.
+3. Only first displayed card preloads; other images retain lazy loading, sizes and aspect ratios. Images paint at opacity1 from SSR; loading skeleton stays behind them and error fallback/hover/reduced-motion stay intact. Bundle-blocked browser tests see12 Services/73 Explore cards and loaded visible image with0 browser list GETs.
+4. Geist Sans display optional with existing preload/subsets; a quickly available Geist paints normally, a late font does not replace fallback mid-visit. This explicitly trades a late font swap for stable readable text, not hidden text, fake loading or fixed whitespace. Cached offline font hook now respects requested display value using identical real WOFF2 files; production next/font configuration drives the same behavior. Geist Mono unchanged. Normal/no-font/delayed-category diagnostics and final CLS assertions verify the cause/fix. Fallback typography on slow visits is an intentional review consideration.
+5. Lenis wakes for virtual-scroll/programmatic scrollTo and continues only while smooth scrolling, cancels pending frame on visibility change, completes at current position, removes listeners/frames on cleanup. Reduced-motion toggling destroys/recreates the instance correctly; dashboard stays native. Route hash timer cleaned up. Scrolling/settling/visibility/reduced-motion/keyboard/dashboard tests verify behavior; idle callback count is0 in all three final observer cases.
+6. WorkingSteps and MarketplaceInvitation moved unchanged to server-only StaticMarketplace with explicit locale; no client hooks or static-section/icon JS needed. Homepage remains prerendered EN/VI. Missing file paths excluded by locale proxy initially produced static-to-dynamic500 after this split; early locale validation/setRequestLocale corrected them to404. Added robots.txt/missing-asset.txt status regression; did not invent robots content or change production canonicals to inflate SEO.
+
+### Equivalent local benchmark and actual results
+
+Fresh baseline from phase1 compiled bundle before rebuilding; same Lighthouse12.6.1, Chromium153.0.8010.12, localhost production, default mobile simulate412×823/4×CPU/150msRTT/1638.4Kbps,73 services/100ms fixture, fresh contexts, serialized3 runs per route. No test/build jobs during scored runs; uncontrolled other host activity and warm image optimizer cache remain limitations. No cache delete performed. Raw JSON/HTML/settings saved:
+
+- performance/phase2-before: baseline9 runs.
+- performance/phase2-after: initial SSR/font/motion implementation9 runs.
+- performance/phase2-final: static-home split before404 correction,9 runs; robots500 warning is retained as failure history.
+- performance/phase2-verified: final corrected source,9 runs; **this is the final comparison**.
+- performance/phase2-comparison.json: per-metric median/min/max of baseline vs verified. Repeated runs are small-sample lab evidence, not field p75 or a release certificate.
+
+| Route    | Performance median (range), before → verified | LCP median (range), before → verified      | TBT median, before → verified | Navigation CLS median |
+| -------- | --------------------------------------------- | ------------------------------------------ | ----------------------------- | --------------------- |
+| Home     | 76 (76–78) →80 (79–80)                        | 2.292s (2.125–3.488) →2.744s (2.127–3.466) | 1029→635ms                    | 0→0                   |
+| Services | 59 (57–61) →80 (76–80)                        | 6.241s (6.217–6.389) →3.650s (3.645–3.693) | 782→411ms                     | 0→0                   |
+| Explore  | 52 (51–54) →71 (69–72)                        | 6.028s (5.890–6.149) →3.570s (3.512–3.874) | 1571→821ms                    | 0→0                   |
+
+Catalog LCP ranges do not overlap and repeat across intermediate runs (~3.3–3.7s), supporting a material **local** improvement. Homepage LCP did not improve; ranges overlap and intermediate Home scores69–91 show host/model variation, so small score differences are not presented as proof of Home LCP success. Target2.5s remains unmet. Final Accessibility100/BestPractices100 on3 routes; SEO92 home (fixture-domain canonical caveat)/100 catalog. Corrected robots404 yields not-applicable audit rather than500; canonical HTML regression passes.
+
+Final Services run2: TTFB459ms, load delay1897ms, load duration77ms, render delay1212ms. Discovery gate shortened, but streamed HTML/RSC/client hydration and rendering remain costs. No claim to have eliminated all catalog JS or whole-catalog scaling cost. Home compressed JavaScript217,312bytes/14 requests→203,393bytes/12 (~13.9KB/6.4% lower); this is additional to phase1's42.3KB reduction. API payload is now in server HTML/RSC; don't label it a free zero-byte data fetch. Catalog still ships a full snapshot for existing filters; large datasets require a separately validated query/pagination strategy.
+
+Verified observer390×844/no throttle: home LCP232ms/CLS0/max recorded interaction32ms; Services512ms/0/32ms; Explore668ms/0/40ms. Each captures2 menu/keyboard groups at16ms threshold, idleRAF0/2s. These are bounded samples, not field INP; TBT remains separate. Final observer assertions CLS<0.01 and idle callbacks<4 pass. Reports retained with font/no-font/category-delay diagnostic experiments; deliberate blocking/delay experiments are excluded from scored Lighthouse.
+
+### QA transport, failures and review status
+
+New QA-only loopback fixture server3211 handles public records, latency, outage and per-test catalog synchronization. Preview flag --with-catalog-fixture injects a Node fetch preload only in the ignored isolated checkout, rewriting synthetic api.tascora.test public calls to loopback and blocking non-loopback server fetch. Browser existing API fixtures remain. No application file imports fixture data, no production mock/env branch, no hosted API or database connection. Suites using this mutable fixture run serially; one partial axe run started beside outage tests was stopped and is excluded from final evidence. Initial fixture server's list was aligned to browser API's PUBLISHED-only policy; default scored73 records are unchanged.
+
+Initial17 regression run16pass/1fail: new Explore test mistakenly located the empty-state CTA instead of active-filter clear control; selector fixed, full related10/10 rerun pass. Compile/lint caught a retained ArrowRight import during static-section extraction; corrected and final checks pass. Broader54 run53pass/1fail: original outage test intercepted only browser after fetching moved to SSR. It now induces SSR+browser503 and keeps error/zero-card/missing-detail assertions; no skip/deletion. Missing-file500 corrected and focused2/2 pass. Final functional55/55 and unit81/81 pass; full axe/responsive outcomes are recorded in latest handoff after their serial run. Financial enabled-provider lifecycle was not rerun; disabled-provider regressions pass and no financial implementation changed.
+
+Phase2 application files: app/[locale]/services/page.tsx + ServicesClient.tsx, explore/page.tsx + ExploreClient.tsx; locale page/layout; catalog-data.ts/catalog-server.ts/catalog-url.ts; useServiceFilters/useApiResource; ServiceFilterSidebar/MobileFilterDrawer; ServiceCardImage; SmoothScrollProvider; PremiumMarketplace/StaticMarketplace. QA: premium-preview.mjs; new premium-catalog-fixture.ts/run-premium-catalog-fixture.mjs; live-fixtures/live-marketplace; new catalog-data unit, catalog-ssr/home-cls-diagnostic/scroll-lifecycle tests; metadata/performance/catalog regressions; reports/audit/handoff/resume. Prior unrelated changes/debug.log preserved.
+
+Review assessment: suitable for a draft performance PR after final local checks, with the measured limits and snapshot/timeout/font fallback decisions explicit. Not a merge/deploy/release approval. Hosted SSR API reachability/cold-start, large-catalog scale, real compression/cache, long-running optimizer behavior and field CWV/INP need separate authorized validation. No new environment variable needed in application; existing NEXT_PUBLIC_API_URL must be reachable from Next server as well as browser. QA-only flags/fixture controls must never be deployed.
+
+Final post-run update: related functional55/55 PASS, additional SSR6/6 PASS including unpublished draft excluded from serialized public payload (56 unique related scenarios across scoped runs); unit81/81 PASS; full serial172/172 PASS =40 axe scans +132 screenshot/overflow/image-loaded cases on22 routes at360/390/768/1280/1440/1920. This is not an invented single56 functional run or automated pixel-baseline approval. Screenshots refreshed and Home390 visually inspected. Strict frontend lint/typecheck/webpack build42 pages/diff PASS. Default/scored73 records all PUBLISHED, so the final QA published-only correction does not change scored inputs. No optimizer stall reproduced in this long run, without claiming universal recovery proof. Owned3210/3211 servers stopped. Final local checks are complete; ready for draft PR review with the remaining limits above, not release approval. No PR/commit/push/merge/deploy performed.

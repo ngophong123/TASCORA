@@ -12,13 +12,12 @@ import {
   Clock,
   RotateCcw,
   CheckCircle2,
-  ShieldCheck,
   Heart,
   Share2,
   MessageSquare,
   ChevronRight,
+  ChevronLeft,
   ArrowRight,
-  Lock,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -26,7 +25,9 @@ import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 import type { GigAddon } from "@/data/gigs"
 import { AvatarImage } from "@/components/ui/AvatarImage"
+import { useDialogFocus } from "@/hooks/useDialogFocus"
 import { ServiceCardImage } from "@/components/ui/ServiceCardImage"
+import { ServiceDescription } from "@/components/services/ServiceDescription"
 
 export default function ServiceDetailPage() {
   const params = useParams()
@@ -92,6 +93,10 @@ function ServiceDetailContent({ record }: { record: Service }) {
     amount: string
     status: string
   } | null>(null)
+  const orderDialogRef = React.useRef<HTMLDivElement>(null)
+  useDialogFocus(orderModalOpen, orderDialogRef, () => {
+    if (!isCheckingOut) setOrderModalOpen(false)
+  })
   const checkout = React.useRef<{ packageId: string; key: string } | null>(null)
   const currentPackage =
     service.packages.find((p) => p.type === selectedPackageTier) || service.packages[0]!
@@ -154,10 +159,13 @@ function ServiceDetailContent({ record }: { record: Service }) {
     }
   }
   return (
-    <div className="container mx-auto px-4 md:px-8 py-10 pb-28 lg:pb-10 min-h-screen">
+    <div className="premium-container py-10 pb-32 lg:pb-10 min-h-screen">
       <ApiState error={actionError} />
       {/* Breadcrumb Navigation */}
-      <nav className="flex items-center gap-2 text-xs text-text-muted mb-6 overflow-x-auto scrollbar-none py-1">
+      <nav
+        aria-label="Breadcrumb"
+        className="flex items-center gap-2 text-sm text-text-muted mb-6 overflow-x-auto scrollbar-none py-1"
+      >
         <Link href="/" className="hover:text-text-primary transition-colors shrink-0">
           {t("breadcrumbHome")}
         </Link>
@@ -182,22 +190,17 @@ function ServiceDetailContent({ record }: { record: Service }) {
         <div className="lg:col-span-2 space-y-10">
           {/* Header */}
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <Badge variant="luxury">{service.category?.name}</Badge>
-              <Badge variant="outline" className="border-border text-text-muted">
-                {service.seller.level === "TOP_RATED" ? t("topRatedTalent") : "Approved seller"}
-              </Badge>
-            </div>
+            <p className="premium-eyebrow mb-3">{service.category?.name}</p>
 
             <h1
               data-testid="service-title"
-              className="stripe-section-heading text-slate-900 dark:text-white"
+              className="text-3xl font-medium leading-tight tracking-[-0.035em] text-[var(--foreground)] sm:text-4xl"
             >
               {service.title}
             </h1>
 
             {/* Seller meta line */}
-            <div className="flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-border/40 text-xs text-text-secondary">
+            <div className="flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-border/40 text-sm text-text-secondary">
               <div className="flex items-center gap-2.5">
                 <AvatarImage
                   src={service.seller.user.profile.avatar}
@@ -211,42 +214,40 @@ function ServiceDetailContent({ record }: { record: Service }) {
                   <span data-testid="seller-name" className="font-medium text-text-primary block">
                     {service.seller.user.profile.firstName} {service.seller.user.profile.lastName}
                   </span>
-                  <span className="text-[11px] text-text-muted">{service.seller.title}</span>
+                  <span className="text-xs text-text-muted">{service.seller.title}</span>
                 </div>
               </div>
 
               <span className="text-border">•</span>
 
-              <div className="flex items-center gap-1 text-amber-500 font-semibold">
-                <Star className="h-4 w-4 fill-current" />
-                <span>{service.ratingAverage}</span>
-                <span className="text-text-muted font-normal">
-                  {t("reviewsCount", { count: service.ratingCount })}
-                </span>
-              </div>
-
-              <span className="text-border">•</span>
-
-              <div className="flex items-center gap-1 text-text-muted">
-                <Clock className="h-3.5 w-3.5 text-blue-600" />
-                <span>Response time unavailable</span>
-              </div>
+              {service.ratingCount > 0 ? (
+                <div className="flex items-center gap-1.5 text-[var(--foreground)]">
+                  <Star aria-hidden="true" className="h-4 w-4 fill-current" />
+                  <span className="font-medium">{service.ratingAverage}</span>
+                  <span className="text-text-muted">
+                    {t("reviewsCount", { count: service.ratingCount })}
+                  </span>
+                </div>
+              ) : (
+                <span className="text-text-muted">No reviews yet</span>
+              )}
 
               <div className="ml-auto flex items-center gap-2">
                 <button
                   onClick={() => void toggleFavorite()}
-                  className={`p-2 rounded-lg border transition-colors ${
+                  className={`flex h-11 w-11 items-center justify-center rounded-lg border transition-colors ${
                     isFavorite
                       ? "border-rose-500/40 bg-rose-500/10 text-rose-500"
                       : "border-border bg-surface text-text-muted hover:text-text-primary"
                   }`}
-                  aria-label="Save service"
+                  aria-label={isFavorite ? "Remove from saved" : "Save service"}
+                  aria-pressed={isFavorite}
                 >
                   <Heart className={`h-4 w-4 ${isFavorite ? "fill-current" : ""}`} />
                 </button>
                 <button
                   onClick={() => navigator.clipboard?.writeText(window.location.href)}
-                  className="p-2 rounded-lg border border-border bg-surface text-text-muted hover:text-text-primary transition-colors"
+                  className="flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-surface text-text-muted hover:text-text-primary transition-colors"
                   aria-label="Share service"
                 >
                   <Share2 className="h-4 w-4" />
@@ -257,25 +258,64 @@ function ServiceDetailContent({ record }: { record: Service }) {
 
           {/* Media Gallery */}
           <div className="space-y-3">
-            <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden border border-border bg-slate-100">
+            <div
+              role="region"
+              aria-label="Service image gallery"
+              className="relative aspect-[16/9] w-full rounded-xl overflow-hidden border border-border bg-slate-100"
+            >
               <ServiceCardImage
                 src={service.images[selectedImageIndex]?.url || service.images[0]?.url}
                 alt={`${service.title} - Main service preview shot ${selectedImageIndex + 1}`}
                 priority
-                sizes="(max-width: 1024px) 100vw, 66vw"
+                sizes="(max-width: 1023px) calc(100vw - 32px), (max-width: 1440px) 62vw, 820px"
               />
+              {service.images.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    aria-label="Previous image"
+                    onClick={() =>
+                      setSelectedImageIndex(
+                        (index) => (index - 1 + service.images.length) % service.images.length
+                      )
+                    }
+                    className="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)]"
+                  >
+                    <ChevronLeft aria-hidden="true" className="h-5 w-5" />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Next image"
+                    onClick={() =>
+                      setSelectedImageIndex((index) => (index + 1) % service.images.length)
+                    }
+                    className="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)]"
+                  >
+                    <ChevronRight aria-hidden="true" className="h-5 w-5" />
+                  </button>
+                  <span
+                    role="status"
+                    className="absolute bottom-3 right-3 rounded-md bg-[var(--surface)] px-2 py-1 text-sm"
+                  >
+                    {selectedImageIndex + 1} / {service.images.length}
+                  </span>
+                </>
+              )}
             </div>
 
             {/* Thumbnail Strip */}
             {service.images.length > 1 && (
-              <div className="flex gap-3">
+              <div className="flex gap-3 overflow-x-auto py-1">
                 {service.images.map((img, index) => (
                   <button
                     key={index}
+                    type="button"
+                    aria-label={`View image ${index + 1}`}
+                    aria-pressed={selectedImageIndex === index}
                     onClick={() => setSelectedImageIndex(index)}
-                    className={`relative aspect-[16/10] w-24 rounded-lg overflow-hidden border transition-all ${
+                    className={`relative aspect-[16/10] w-24 shrink-0 rounded-lg overflow-hidden border transition-all ${
                       selectedImageIndex === index
-                        ? "border-blue-600 ring-2 ring-blue-600/30 scale-105"
+                        ? "border-[var(--primary)] ring-2 ring-[var(--focus-ring)]"
                         : "border-border opacity-60 hover:opacity-100"
                     }`}
                   >
@@ -291,17 +331,15 @@ function ServiceDetailContent({ record }: { record: Service }) {
           </div>
 
           {/* Service Description */}
-          <div className="rounded-2xl border border-border bg-surface p-7 space-y-6">
+          <div className="rounded-xl border border-border bg-surface p-5 sm:p-7 space-y-6">
             <h2 className="font-display text-xl text-text-primary font-medium">
               {t("aboutService")}
             </h2>
-            <div className="prose max-w-none text-sm leading-relaxed text-text-secondary whitespace-pre-line">
-              {service.description}
-            </div>
+            <ServiceDescription text={service.description} />
           </div>
 
           {/* About The Seller */}
-          <div className="rounded-2xl border border-border bg-surface p-7 space-y-6">
+          <div className="rounded-xl border border-border bg-surface p-5 sm:p-7 space-y-6">
             <h2 className="font-display text-xl text-text-primary font-medium">
               {t("aboutSpecialist")}
             </h2>
@@ -317,74 +355,75 @@ function ServiceDetailContent({ record }: { record: Service }) {
                 imageClassName="border-2 border-blue-600/30"
               />
               <div className="space-y-2 flex-1">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <h3 className="font-semibold text-lg text-text-primary">
                     {service.seller.user.profile.firstName} {service.seller.user.profile.lastName}
                   </h3>
-                  <Badge variant="luxury">{service.seller.level}</Badge>
                 </div>
-                <p className="text-xs text-blue-600 font-medium">{service.seller.title}</p>
-                <p className="text-xs text-text-muted leading-relaxed">
+                <p className="text-sm text-[var(--primary)] font-medium">{service.seller.title}</p>
+                <p className="text-sm text-text-muted leading-relaxed">
                   {service.seller.user.profile.bio}
                 </p>
               </div>
             </div>
 
             {/* Seller stats grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-border/50 text-xs">
-              <div className="p-3 rounded-xl bg-slate-50 border border-border">
-                <span className="text-text-muted block text-[10px] uppercase">{t("location")}</span>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4 border-t border-border/50 text-sm">
+              <div className="p-3 rounded-xl bg-[var(--subtle)] border border-border">
+                <span className="text-text-muted block text-xs uppercase">{t("location")}</span>
                 <span className="font-medium text-text-primary">
-                  {service.seller.user.profile.country || "Global"}
+                  {service.seller.user.profile.country || "Not provided"}
                 </span>
               </div>
-              <div className="p-3 rounded-xl bg-slate-50 border border-border">
-                <span className="text-text-muted block text-[10px] uppercase">
-                  {t("memberSince")}
-                </span>
+              <div className="p-3 rounded-xl bg-[var(--subtle)] border border-border">
+                <span className="text-text-muted block text-xs uppercase">{t("memberSince")}</span>
                 <span className="font-medium text-text-primary">{service.seller.memberSince}</span>
               </div>
-              <div className="p-3 rounded-xl bg-slate-50 border border-border">
-                <span className="text-text-muted block text-[10px] uppercase">
-                  {t("ordersDelivered")}
-                </span>
-                <span className="font-medium text-text-primary">Unavailable</span>
-              </div>
-              <div className="p-3 rounded-xl bg-slate-50 border border-border">
-                <span className="text-text-muted block text-[10px] uppercase">{t("rating")}</span>
-                <span className="font-medium text-amber-500 flex items-center gap-1">
-                  <Star className="h-3 w-3 fill-current" />
-                  {service.seller.ratingAverage}
+              <div className="p-3 rounded-xl bg-[var(--subtle)] border border-border">
+                <span className="text-text-muted block text-xs uppercase">{t("rating")}</span>
+                <span className="font-medium text-[var(--foreground)] flex items-center gap-1">
+                  {(service.seller.ratingCount || 0) > 0 ? (
+                    <>
+                      <Star aria-hidden="true" className="h-3 w-3 fill-current" />
+                      {service.seller.ratingAverage}
+                    </>
+                  ) : (
+                    "No reviews yet"
+                  )}
                 </span>
               </div>
             </div>
           </div>
 
           {/* Client Reviews Section */}
-          <div className="rounded-2xl border border-border bg-surface p-7 space-y-6">
-            <div className="flex items-center justify-between pb-4 border-b border-border/50">
+          <div className="rounded-xl border border-border bg-surface p-5 sm:p-7 space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-border/50">
               <div>
                 <h2 className="font-display text-xl text-text-primary font-medium">
                   {t("clientReviews")}
                 </h2>
-                <p className="text-xs text-text-muted mt-0.5">{t("clientReviewsSubtext")}</p>
               </div>
-              <div className="flex items-center gap-1.5 text-amber-500 font-semibold text-lg">
-                <Star className="h-5 w-5 fill-current" />
-                <span>{service.ratingAverage}</span>
-                <span className="text-xs text-text-muted font-normal">
-                  {t("reviewsCount", { count: service.ratingCount })}
-                </span>
-              </div>
+              {service.ratingCount > 0 && (
+                <div className="flex items-center gap-1.5 text-[var(--foreground)] font-semibold text-lg">
+                  <Star aria-hidden="true" className="h-5 w-5 fill-current" />
+                  <span>{service.ratingAverage}</span>
+                  <span className="text-sm text-text-muted font-normal">
+                    {t("reviewsCount", { count: service.ratingCount })}
+                  </span>
+                </div>
+              )}
             </div>
 
             <div className="space-y-5">
+              {service.reviews.length === 0 && (
+                <p className="text-text-muted">No reviews have been submitted yet.</p>
+              )}
               {(showAllReviews ? service.reviews : service.reviews.slice(0, 4)).map((rev) => (
                 <div
                   key={rev.id}
-                  className="p-4 rounded-xl bg-slate-50 border border-border space-y-2"
+                  className="p-4 rounded-xl bg-[var(--subtle)] border border-border space-y-2"
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
                       <AvatarImage
                         src={rev.buyer.avatar}
@@ -392,29 +431,29 @@ function ServiceDetailContent({ record }: { record: Service }) {
                         id={rev.id}
                         size={32}
                         rounded="full"
-                        alt={`${rev.buyer.name} - Verified buyer avatar`}
+                        alt={`${rev.buyer.name} - Buyer avatar`}
                       />
                       <div>
-                        <span className="font-medium text-xs text-text-primary block">
+                        <span className="font-medium text-sm text-text-primary block">
                           {rev.buyer.name}
                         </span>
-                        <span className="text-[10px] text-text-muted">{rev.buyer.country}</span>
+                        <span className="text-xs text-text-muted">{rev.buyer.country}</span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1 text-amber-500 text-xs">
+                    <div className="flex items-center gap-1 text-[var(--foreground)] text-sm">
                       {Array.from({ length: rev.rating }).map((_, i) => (
                         <Star key={i} className="h-3 w-3 fill-current" />
                       ))}
-                      <span className="text-text-muted text-[11px] ml-1.5">{rev.date}</span>
+                      <span className="text-text-muted text-xs ml-1.5">{rev.date}</span>
                     </div>
                   </div>
-                  <p className="text-xs text-text-secondary leading-relaxed pt-1">{rev.comment}</p>
+                  <p className="text-sm text-text-secondary leading-relaxed pt-1">{rev.comment}</p>
                   {Boolean("sellerResponse" in rev && rev.sellerResponse) ? (
-                    <div className="mt-2.5 p-3 rounded-lg bg-blue-50/60 border border-blue-100/80 text-xs space-y-1">
-                      <div className="flex items-center gap-1.5 text-blue-900 font-semibold text-[11px]">
+                    <div className="mt-2.5 p-3 rounded-lg bg-[var(--primary-subtle)] border border-blue-100/80 text-sm space-y-1">
+                      <div className="flex items-center gap-1.5 text-[var(--primary)] font-semibold text-xs">
                         <span>Response from seller</span>
                       </div>
-                      <p className="text-text-secondary text-[11px] leading-relaxed">
+                      <p className="text-text-secondary text-xs leading-relaxed">
                         {(rev as { sellerResponse?: { comment: string } }).sellerResponse?.comment}
                       </p>
                     </div>
@@ -427,7 +466,7 @@ function ServiceDetailContent({ record }: { record: Service }) {
                   type="button"
                   data-testid="show-more-reviews-btn"
                   onClick={() => setShowAllReviews(!showAllReviews)}
-                  className="w-full py-2.5 rounded-xl border border-border text-xs font-semibold text-text-secondary hover:bg-slate-50 transition-colors cursor-pointer"
+                  className="w-full py-2.5 rounded-xl border border-border text-sm font-semibold text-text-secondary hover:bg-[var(--subtle)] transition-colors cursor-pointer"
                 >
                   {showAllReviews
                     ? "Show fewer reviews"
@@ -439,15 +478,15 @@ function ServiceDetailContent({ record }: { record: Service }) {
 
           {/* FAQ Accordion */}
           {service.faqs && service.faqs.length > 0 && (
-            <div className="rounded-2xl border border-border bg-surface p-7 space-y-4">
+            <div className="rounded-xl border border-border bg-surface p-5 sm:p-7 space-y-4">
               <h2 className="font-display text-xl text-text-primary font-medium mb-4">
                 {t("faq")}
               </h2>
               <div className="space-y-3">
                 {service.faqs.map((faq, idx) => (
-                  <div key={idx} className="p-4 rounded-xl bg-slate-50 border border-border">
-                    <h4 className="font-medium text-xs text-text-primary">{faq.q}</h4>
-                    <p className="text-xs text-text-muted mt-1 leading-relaxed">{faq.a}</p>
+                  <div key={idx} className="p-4 rounded-xl bg-[var(--subtle)] border border-border">
+                    <h4 className="font-medium text-sm text-text-primary">{faq.q}</h4>
+                    <p className="text-sm text-text-muted mt-1 leading-relaxed">{faq.a}</p>
                   </div>
                 ))}
               </div>
@@ -457,7 +496,7 @@ function ServiceDetailContent({ record }: { record: Service }) {
 
         {/* Right Column: Sticky Pricing Packages (1/3) */}
         <div className="lg:col-span-1">
-          <div className="sticky top-24 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-6 shadow-xl space-y-6">
+          <div className="sticky top-24 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6 shadow-[var(--shadow-sm)] space-y-6">
             {/* Package Tabs */}
             <div
               className={cn(
@@ -470,12 +509,14 @@ function ServiceDetailContent({ record }: { record: Service }) {
               {availableTiers.map((tier) => (
                 <button
                   key={tier}
+                  type="button"
+                  aria-pressed={selectedPackageTier === tier}
                   data-testid={`package-tab-${tier.toLowerCase()}`}
                   onClick={() => setSelectedPackageTier(tier)}
                   className={cn(
-                    "py-2.5 rounded-lg text-xs font-semibold transition-all cursor-pointer",
+                    "py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer",
                     selectedPackageTier === tier
-                      ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm ring-1 ring-black/5 dark:ring-white/10"
+                      ? "bg-[var(--surface)] dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm ring-1 ring-black/5 dark:ring-white/10"
                       : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                   )}
                 >
@@ -485,38 +526,38 @@ function ServiceDetailContent({ record }: { record: Service }) {
             </div>
 
             {/* Tier Overview */}
-            <div className="flex items-baseline justify-between">
+            <div className="flex flex-wrap items-baseline justify-between gap-3">
               <h3 className="font-display text-lg text-text-primary font-medium">
                 {currentPackage.name}
               </h3>
               <span
                 data-testid="package-price"
-                className="font-sans text-3xl font-bold text-text-primary tracking-tight"
+                className="font-sans text-3xl font-semibold text-text-primary tracking-tight"
               >
                 ${currentPackage.price}
               </span>
             </div>
 
-            <p className="text-xs text-text-muted leading-relaxed">{currentPackage.description}</p>
+            <p className="text-sm text-text-muted leading-relaxed">{currentPackage.description}</p>
 
             {/* Delivery & Revisions Badge */}
-            <div className="grid grid-cols-2 gap-3 py-3 border-y border-border/50 text-xs">
+            <div className="grid grid-cols-2 gap-3 py-3 border-y border-border/50 text-sm">
               <div className="flex items-center gap-2 text-text-secondary">
-                <Clock className="h-4 w-4 text-blue-600" />
+                <Clock className="h-4 w-4 text-[var(--primary)]" />
                 <span>{t("daysDelivery", { days: currentPackage.deliveryDays })}</span>
               </div>
               <div className="flex items-center gap-2 text-text-secondary">
-                <RotateCcw className="h-4 w-4 text-blue-600" />
+                <RotateCcw className="h-4 w-4 text-[var(--primary)]" />
                 <span>{t("revisionsCount", { count: currentPackage.revisions })}</span>
               </div>
             </div>
 
             {/* Included Features Checklist */}
             <div className="space-y-2.5">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-text-muted block">
+              <span className="text-xs font-semibold uppercase tracking-wider text-text-muted block">
                 {t("deliverablesIncluded")}
               </span>
-              <ul data-testid="package-features" className="space-y-2 text-xs text-text-secondary">
+              <ul data-testid="package-features" className="space-y-2 text-sm text-text-secondary">
                 {currentPackage.features.map((feat, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
@@ -529,7 +570,7 @@ function ServiceDetailContent({ record }: { record: Service }) {
             {/* Add-ons */}
             {availableAddons.length > 0 && (
               <div className="space-y-2.5 pt-2 border-t border-border/50">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-text-muted block">
+                <span className="text-xs font-semibold uppercase tracking-wider text-text-muted block">
                   Upgrade Deliverables
                 </span>
                 <div className="space-y-2">
@@ -540,10 +581,10 @@ function ServiceDetailContent({ record }: { record: Service }) {
                         key={addon.id}
                         data-testid={`addon-item-${addon.id}`}
                         className={cn(
-                          "flex items-start justify-between p-2.5 rounded-xl border text-xs cursor-pointer select-none transition-all",
+                          "flex items-start justify-between p-2.5 rounded-xl border text-sm cursor-pointer select-none transition-all",
                           isChecked
-                            ? "border-blue-600 bg-blue-50/60 ring-1 ring-blue-600"
-                            : "border-border hover:bg-slate-50"
+                            ? "border-blue-600 bg-[var(--primary-subtle)] ring-1 ring-blue-600"
+                            : "border-border hover:bg-[var(--subtle)]"
                         )}
                       >
                         <div className="flex items-start gap-2.5">
@@ -552,16 +593,16 @@ function ServiceDetailContent({ record }: { record: Service }) {
                             data-testid={`addon-checkbox-${addon.id}`}
                             checked={isChecked}
                             onChange={() => toggleAddon(addon.id)}
-                            className="mt-0.5 rounded border-border text-blue-600 focus:ring-blue-500"
+                            className="mt-0.5 rounded border-border text-[var(--primary)] focus:ring-blue-500"
                           />
                           <div>
                             <span className="font-semibold text-text-primary block">
                               {addon.name}
                             </span>
-                            <span className="text-[11px] text-text-muted">{addon.description}</span>
+                            <span className="text-xs text-text-muted">{addon.description}</span>
                           </div>
                         </div>
-                        <span className="font-semibold text-text-primary shrink-0 ml-2 font-mono">
+                        <span className="font-semibold text-text-primary shrink-0 ml-2 tabular-nums">
                           +${addon.price}
                         </span>
                       </label>
@@ -573,10 +614,10 @@ function ServiceDetailContent({ record }: { record: Service }) {
 
             {/* Total Computed Price */}
             <div className="flex items-center justify-between pt-2 border-t border-border">
-              <span className="text-xs font-semibold text-text-primary">Computed Total:</span>
+              <span className="text-sm font-semibold text-text-primary">Computed Total:</span>
               <span
                 data-testid="order-total-price"
-                className="text-2xl font-bold font-mono text-blue-700"
+                className="text-2xl font-bold tabular-nums text-[var(--primary)]"
               >
                 ${computedTotal}
               </span>
@@ -589,7 +630,7 @@ function ServiceDetailContent({ record }: { record: Service }) {
                 data-testid="continue-order-btn"
                 disabled={!payments.available}
                 onClick={handleStartOrder}
-                className="w-full rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600 hover:from-indigo-500 hover:via-violet-500 hover:to-blue-500 text-white py-3.5 font-semibold shadow-lg shadow-indigo-500/25 gap-2 transition-all cursor-pointer active:scale-[0.98]"
+                className="w-full rounded-xl bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white py-3.5 font-semibold  gap-2 transition-all cursor-pointer "
               >
                 <span>{t("continueOrder", { price: computedTotal })}</span>
                 <ArrowRight className="h-4 w-4" />
@@ -598,42 +639,31 @@ function ServiceDetailContent({ record }: { record: Service }) {
               <Link href={`/dashboard/messages?seller=${service.seller.id}`} className="block">
                 <Button
                   variant="outline"
-                  className="w-full rounded-xl border-border bg-white hover:bg-slate-50 text-text-primary text-xs gap-2"
+                  className="w-full rounded-xl border-border bg-[var(--surface)] hover:bg-[var(--subtle)] text-text-primary text-sm gap-2"
                 >
-                  <MessageSquare className="h-3.5 w-3.5 text-blue-600" />
+                  <MessageSquare className="h-3.5 w-3.5 text-[var(--primary)]" />
                   <span>{t("contactSpecialist")}</span>
                 </Button>
               </Link>
-            </div>
-
-            {/* Escrow Guarantee Statement */}
-            <div className="pt-2 text-center">
-              <div className="inline-flex items-center gap-1.5 text-[11px] text-blue-700 font-medium">
-                <ShieldCheck className="h-4 w-4 text-emerald-500" />
-                <span>Payment pending</span>
-              </div>
-              <p className="text-[10px] text-text-muted mt-0.5">
-                Settlement and payouts are not available.
-              </p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Mobile Sticky Action Bar */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 px-4 py-3 safe-area-bottom shadow-2xl flex items-center justify-between gap-3">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[var(--surface)] border-t border-slate-200/80 dark:border-slate-800 px-4 py-3 safe-area-bottom shadow-[var(--shadow-lg)] flex items-center justify-between gap-3">
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               {selectedPackageTier}
             </span>
             <span className="text-slate-300 dark:text-slate-600">•</span>
-            <span className="text-[11px] text-slate-500 flex items-center gap-0.5">
-              <Clock className="h-3 w-3 text-blue-600" />
+            <span className="text-xs text-slate-500 flex items-center gap-0.5">
+              <Clock className="h-3 w-3 text-[var(--primary)]" />
               {currentPackage.deliveryDays}d
             </span>
           </div>
-          <span className="text-xl font-bold font-mono text-slate-900 dark:text-white leading-tight">
+          <span className="text-xl font-bold tabular-nums text-slate-900 dark:text-white leading-tight">
             ${computedTotal}
           </span>
         </div>
@@ -652,7 +682,7 @@ function ServiceDetailContent({ record }: { record: Service }) {
           <Button
             onClick={handleStartOrder}
             disabled={!payments.available}
-            className="h-11 px-5 rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600 hover:from-indigo-500 hover:via-violet-500 hover:to-blue-500 text-white font-semibold shadow-lg shadow-indigo-500/20 text-xs sm:text-sm gap-2 active:scale-[0.98]"
+            className="h-11 px-5 rounded-xl bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white font-semibold  text-sm sm:text-sm gap-2 "
           >
             <span>{t("continueOrder", { price: computedTotal })}</span>
             <ArrowRight className="h-4 w-4" />
@@ -664,14 +694,22 @@ function ServiceDetailContent({ record }: { record: Service }) {
       {orderModalOpen && (
         <div
           data-testid="checkout-drawer-backdrop"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50  p-4"
         >
           <div
+            ref={orderDialogRef}
+            tabIndex={-1}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="order-confirmation-title"
             data-testid="checkout-drawer"
-            className="max-w-md w-full rounded-2xl border border-border bg-white p-6 space-y-6 shadow-2xl animate-in zoom-in-95 safe-area-bottom"
+            className="max-h-[90dvh] overflow-y-auto max-w-md w-full rounded-xl border border-border bg-[var(--surface)] p-6 space-y-6 shadow-[var(--shadow-lg)]  safe-area-bottom"
           >
             <div className="flex items-center justify-between pb-3 border-b border-border">
-              <h3 className="font-display text-lg text-text-primary font-medium">
+              <h3
+                id="order-confirmation-title"
+                className="font-display text-lg text-text-primary font-medium"
+              >
                 {t("orderConfirmation")}
               </h3>
               <Badge variant="luxury">{selectedPackageTier}</Badge>
@@ -689,7 +727,7 @@ function ServiceDetailContent({ record }: { record: Service }) {
                 <h4 className="font-bold text-emerald-900 text-base">
                   Order Confirmed Successfully!
                 </h4>
-                <p className="text-xs text-emerald-700">
+                <p className="text-sm text-emerald-700">
                   Your order for {service.title} was created with payment pending. No charge, escrow
                   activation or transfer has occurred.
                   {createdOrder && (
@@ -706,7 +744,7 @@ function ServiceDetailContent({ record }: { record: Service }) {
                       setOrderModalOpen(false)
                       router.push("/dashboard/orders")
                     }}
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs cursor-pointer"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm cursor-pointer"
                   >
                     View in Dashboard
                   </Button>
@@ -714,43 +752,36 @@ function ServiceDetailContent({ record }: { record: Service }) {
               </div>
             ) : (
               <>
-                <div className="space-y-3 text-xs text-text-secondary">
+                <div className="space-y-3 text-sm text-text-secondary">
                   <p className="text-text-primary font-medium text-sm">{service.title}</p>
-                  <div className="p-3 rounded-xl bg-slate-50 border border-border flex justify-between items-center">
+                  <div className="p-3 rounded-xl bg-[var(--subtle)] border border-border flex justify-between items-center">
                     <span>Package: {currentPackage.name}</span>
                     <span className="font-bold text-text-primary text-base">
                       ${currentPackage.price}
                     </span>
                   </div>
                   {selectedAddons.length > 0 && (
-                    <div className="p-3 rounded-xl bg-slate-50 border border-border space-y-1">
+                    <div className="p-3 rounded-xl bg-[var(--subtle)] border border-border space-y-1">
                       <span className="font-medium text-text-primary block">Add-ons Selected:</span>
                       {selectedAddons.map((id) => {
                         const addon = SERVICE_ADDONS.find((a) => a.id === id)
                         return (
-                          <div
-                            key={id}
-                            className="flex justify-between text-[11px] text-text-muted"
-                          >
+                          <div key={id} className="flex justify-between text-xs text-text-muted">
                             <span>+ {addon?.name}</span>
-                            <span className="font-mono">+${addon?.price}</span>
+                            <span className="tabular-nums">+${addon?.price}</span>
                           </div>
                         )
                       })}
                     </div>
                   )}
-                  <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 flex justify-between items-center">
-                    <span className="font-bold text-blue-900">Total Billed:</span>
+                  <div className="p-3 rounded-xl bg-[var(--primary-subtle)] border border-blue-200 flex justify-between items-center">
+                    <span className="font-bold text-[var(--primary)]">Total Billed:</span>
                     <span
                       data-testid="drawer-total-price"
-                      className="font-bold text-blue-700 text-lg font-mono"
+                      className="font-bold text-[var(--primary)] text-lg tabular-nums"
                     >
                       ${computedTotal}
                     </span>
-                  </div>
-                  <div className="flex items-center gap-2 text-emerald-600 text-[11px] pt-1">
-                    <Lock className="h-3.5 w-3.5" />
-                    <span>{t("protectedEscrow")}</span>
                   </div>
                 </div>
 
@@ -760,7 +791,7 @@ function ServiceDetailContent({ record }: { record: Service }) {
                     size="sm"
                     disabled={isCheckingOut || !payments.available}
                     onClick={() => setOrderModalOpen(false)}
-                    className="flex-1 text-xs cursor-pointer"
+                    className="flex-1 text-sm cursor-pointer"
                   >
                     Cancel
                   </Button>
@@ -770,7 +801,7 @@ function ServiceDetailContent({ record }: { record: Service }) {
                     isLoading={isCheckingOut}
                     loadingText="Đang xử lý..."
                     onClick={() => void createOrder()}
-                    className="flex-1 bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600 hover:from-indigo-500 hover:via-violet-500 hover:to-blue-500 text-white text-xs font-semibold cursor-pointer shadow-md shadow-indigo-500/20 active:scale-[0.98] py-2.5 rounded-xl"
+                    className="flex-1 bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white text-sm font-semibold cursor-pointer   py-2.5 rounded-xl"
                   >
                     Create order
                   </Button>

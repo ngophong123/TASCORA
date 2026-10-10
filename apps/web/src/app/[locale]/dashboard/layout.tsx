@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+﻿import type { Metadata } from "next"
 import { DashboardProvider } from "@/context/DashboardContext"
 import { DashboardSidebar } from "@/components/dashboard/shell/DashboardSidebar"
 import { DashboardTopbar } from "@/components/dashboard/shell/DashboardTopbar"
@@ -15,14 +15,10 @@ export const metadata: Metadata = {
   },
 }
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <DashboardProvider>
-      <div className="min-h-screen bg-[#FAFAFC] flex flex-row">
+      <div className="min-h-screen bg-bg-base flex flex-row">
         {/* Desktop Collapsible Sidebar */}
         <DashboardSidebar />
 
@@ -32,9 +28,7 @@ export default function DashboardLayout({
           <DashboardTopbar />
 
           {/* Page Content Viewport */}
-          <main className="flex-1 bg-[#FAFAFC] p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8">
-            {children}
-          </main>
+          <div className="flex-1 bg-bg-base p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8">{children}</div>
         </div>
 
         {/* Mobile Navigations (Off-Canvas Drawer & Bottom Tab Bar) */}

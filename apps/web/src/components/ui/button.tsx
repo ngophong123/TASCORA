@@ -38,11 +38,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const isBusy = isLoading || isSuccess || isError
 
     const baseStyles =
-      "group relative inline-flex items-center justify-center font-medium transition-all duration-[180ms] ease-[cubic-bezier(0.16,1,0.3,1)] select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#635BFF] focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900 disabled:pointer-events-none disabled:opacity-50 overflow-hidden active:scale-[0.975] will-change-transform [&>svg]:transition-transform [&>svg]:duration-200 [&>svg]:ease-out hover:[&>svg:last-child]:translate-x-1"
+      "group relative inline-flex items-center justify-center font-medium transition-colors duration-150 select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 overflow-hidden active:scale-[0.99] motion-reduce:transform-none"
 
     const sizeStyles = {
-      sm: "h-8 px-3 text-xs gap-1.5",
-      md: "h-10 px-4 text-xs sm:text-sm gap-2",
+      sm: "min-h-11 px-3 text-sm gap-1.5",
+      md: "min-h-11 px-4 text-sm gap-2",
       lg: "h-12 px-6 text-sm sm:text-base gap-2.5",
     }[size]
 
@@ -50,14 +50,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variantStyles = {
       primary:
-        "text-white bg-gradient-to-r from-[#635BFF] via-[#564EF5] to-[#7C3AED] hover:brightness-[1.05] active:brightness-[0.96] border border-[#635BFF]/80 shadow-xs hover:-translate-y-px hover:scale-[1.01] hover:shadow-[0_8px_22px_-6px_rgba(99,91,255,0.40)]",
+        "text-white bg-primary hover:bg-primary-hover active:bg-primary-active border border-transparent shadow-sm dark:text-[#202329]",
       secondary:
-        "text-slate-900 dark:text-white bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs hover:border-[#635BFF]/30 hover:bg-[#635BFF]/[0.04] dark:hover:bg-[#635BFF]/[0.12] hover:text-[#635BFF] dark:hover:text-indigo-400 hover:-translate-y-px hover:shadow-xs active:scale-[0.98]",
+        "text-text-primary bg-bg-surface border border-border-default hover:bg-bg-subtle hover:border-border-hover",
       outline:
-        "text-slate-700 dark:text-slate-300 bg-transparent border border-slate-200/90 dark:border-slate-800 hover:border-[#635BFF]/40 hover:text-[#635BFF] dark:hover:text-indigo-400 hover:bg-[#635BFF]/[0.04] dark:hover:bg-[#635BFF]/[0.10] hover:-translate-y-px active:scale-[0.98]",
-      ghost:
-        "text-slate-600 dark:text-slate-400 hover:text-[#635BFF] dark:hover:text-indigo-400 hover:bg-[#635BFF]/[0.06] dark:hover:bg-[#635BFF]/[0.12] active:scale-[0.97]",
-      link: "text-[#635BFF] hover:text-[#4F46E5] p-0 h-auto underline-offset-4 hover:underline",
+        "text-text-primary bg-transparent border border-border-default hover:bg-bg-subtle hover:border-border-hover",
+      ghost: "text-text-secondary hover:text-primary hover:bg-primary-subtle",
+      link: "text-primary hover:text-primary-hover p-0 underline-offset-4 hover:underline",
     }[variant]
 
     return (

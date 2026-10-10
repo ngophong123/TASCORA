@@ -1,0 +1,88 @@
+{
+  "probe": {
+    "visibility": "visible",
+    "sizes": "(max-width: 639px) calc(100vw - 32px), (max-width: 1023px) 46vw, (max-width: 1279px) 42vw, 400px",
+    "ancestors": [
+      {
+        "tag": "IMG",
+        "classes": "object-cover transition-[opacity,transform] duration-200 ease-out group-hover:scale-[1.02] motion-reduce:transition-none motion-reduce:transform-none opacity-0",
+        "display": "block",
+        "visibility": "visible",
+        "contentVisibility": "visible",
+        "opacity": "1"
+      },
+      {
+        "tag": "DIV",
+        "classes": "relative w-full h-full overflow-hidden bg-[var(--subtle)] select-none",
+        "display": "block",
+        "visibility": "visible",
+        "contentVisibility": "visible",
+        "opacity": "1"
+      },
+      {
+        "tag": "DIV",
+        "classes": "relative shrink-0 overflow-hidden bg-[var(--subtle)] aspect-[16/10] w-full",
+        "display": "block",
+        "visibility": "visible",
+        "contentVisibility": "visible",
+        "opacity": "1"
+      },
+      {
+        "tag": "ARTICLE",
+        "classes": "group relative flex overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] transition-[border-color,box-shadow] duration-200 hover:border-[var(--border-hover)] hover:shadow-[var(--shadow-md)] motion-reduce:transition-none h-full flex-col",
+        "display": "flex",
+        "visibility": "visible",
+        "contentVisibility": "visible",
+        "opacity": "1"
+      },
+      {
+        "tag": "DIV",
+        "classes": "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6",
+        "display": "grid",
+        "visibility": "visible",
+        "contentVisibility": "visible",
+        "opacity": "1"
+      },
+      {
+        "tag": "DIV",
+        "classes": "min-w-0 lg:col-span-3",
+        "display": "block",
+        "visibility": "visible",
+        "contentVisibility": "visible",
+        "opacity": "1"
+      },
+      {
+        "tag": "DIV",
+        "classes": "grid grid-cols-1 lg:grid-cols-4 gap-8",
+        "display": "grid",
+        "visibility": "visible",
+        "contentVisibility": "visible",
+        "opacity": "1"
+      },
+      {
+        "tag": "DIV",
+        "classes": "premium-container py-10 min-h-screen",
+        "display": "block",
+        "visibility": "visible",
+        "contentVisibility": "visible",
+        "opacity": "1"
+      }
+    ],
+    "clone": {
+      "decoded": "timeout",
+      "complete": false,
+      "naturalWidth": 0,
+      "currentSrc": ""
+    }
+  },
+  "imageNetwork": [
+    {
+      "event": "request",
+      "url": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fbusiness%2Fmarket-research-tam-sizing.jpg&w=640&q=75"
+    },
+    {
+      "event": "request",
+      "url": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Faccessible-tailwind-components.jpg&w=640&q=75"
+    }
+  ]
+}

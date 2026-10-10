@@ -1,0 +1,40 @@
+[
+  {
+    "src": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fbusiness%2Fmarket-research-tam-sizing.jpg&w=3840&q=75",
+    "currentSrc": "",
+    "complete": false,
+    "naturalWidth": 0,
+    "srcset": "/_next/image?url=%2Fimages%2Fservices%2Fbusiness%2Fmarket-research-tam-sizing.jpg&w=384&q=75 384w, /_next/image?url=%2Fimages%2Fservices%2Fbusiness%2Fmarket-research-tam-sizing.jpg&w=640&q=75 640w, /_next/image?url=%2Fimages%2Fservices%2Fbusiness%2Fmarket-research-tam-sizing.jpg&w=750&q=75 750w, /_next/image?url=%2Fimages%2Fservices%2Fbusiness%2Fmarket-research-tam-sizing.jpg&w=828&q=75 828w, /_next/image?url=%2Fimages%2Fservices%2Fbusiness%2Fmarket-research-tam-sizing.jpg&w=1080&q=75 1080w, /_next/image?url=%2Fimages%2Fservices%2Fbusiness%2Fmarket-research-tam-sizing.jpg&w=1200&q=75 1200w, /_next/image?url=%2Fimages%2Fservices%2Fbusiness%2Fmarket-research-tam-sizing.jpg&w=1920&q=75 1920w, /_next/image?url=%2Fimages%2Fservices%2Fbusiness%2Fmarket-research-tam-sizing.jpg&w=2048&q=75 2048w, /_next/image?url=%2Fimages%2Fservices%2Fbusiness%2Fmarket-research-tam-sizing.jpg&w=3840&q=75 3840w",
+    "alt": "Market Research, Competitive Intelligence & TAM Sizing Report",
+    "loading": "lazy",
+    "rect": {
+      "x": 654.328125,
+      "y": 359.8125,
+      "width": 287.328125,
+      "height": 179.578125,
+      "top": 359.8125,
+      "right": 941.65625,
+      "bottom": 539.390625,
+      "left": 654.328125
+    }
+  },
+  {
+    "src": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Faccessible-tailwind-components.jpg&w=3840&q=75",
+    "currentSrc": "",
+    "complete": false,
+    "naturalWidth": 0,
+    "srcset": "/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Faccessible-tailwind-components.jpg&w=384&q=75 384w, /_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Faccessible-tailwind-components.jpg&w=640&q=75 640w, /_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Faccessible-tailwind-components.jpg&w=750&q=75 750w, /_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Faccessible-tailwind-components.jpg&w=828&q=75 828w, /_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Faccessible-tailwind-components.jpg&w=1080&q=75 1080w, /_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Faccessible-tailwind-components.jpg&w=1200&q=75 1200w, /_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Faccessible-tailwind-components.jpg&w=1920&q=75 1920w, /_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Faccessible-tailwind-components.jpg&w=2048&q=75 2048w, /_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Faccessible-tailwind-components.jpg&w=3840&q=75 3840w",
+    "alt": "Accessible Tailwind CSS & React 19 UI Component Library",
+    "loading": "lazy",
+    "rect": {
+      "x": 654.328125,
+      "y": 774.390625,
+      "width": 287.328125,
+      "height": 179.578125,
+      "top": 774.390625,
+      "right": 941.65625,
+      "bottom": 953.96875,
+      "left": 654.328125
+    }
+  }
+]
