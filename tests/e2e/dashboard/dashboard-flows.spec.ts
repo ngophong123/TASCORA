@@ -120,7 +120,10 @@ test.describe("Dashboard Flows", () => {
     await expect(sentBubble).toBeVisible()
   })
 
-  test("gig wizard navigates step progression and validates form interaction", async ({ page }) => {
+  test("gig wizard navigates step progression and validates form interaction", async ({
+    page,
+    marketplace,
+  }) => {
     await page.goto("/login")
     await page.locator('input[placeholder="name@company.com"]').fill("seller@example.test")
     await page.locator('input[type="password"]').first().fill("E2E-password-123!")
@@ -129,11 +132,14 @@ test.describe("Dashboard Flows", () => {
     await page.goto("/dashboard/gigs/new")
 
     // A new service must start blank, then persist deliberate seller input.
-    const titleInput = page.getByTestId("wizard-gig-title-input")
+    // Streamed hidden HTML may temporarily retain the same test ID. Target the
+    // accessible control and still require exactly one active title input.
+    const titleInput = page.getByRole("textbox", { name: "Service title", exact: true })
+    await expect(titleInput).toHaveCount(1)
     await expect(titleInput).toBeVisible()
     await expect(titleInput).toBeEmpty()
     await titleInput.fill("A verified seller service draft")
-    await page.locator("select").first().selectOption({ index: 1 })
+    await page.getByRole("combobox", { name: "Category", exact: true }).selectOption({ index: 1 })
 
     const nextBtn = page.getByTestId("wizard-next-btn")
     const prevBtn = page.getByTestId("wizard-prev-btn")
@@ -144,31 +150,34 @@ test.describe("Dashboard Flows", () => {
     // Advance to Step 2: Pricing
     await nextBtn.click()
     const step2Btn = page.getByTestId("wizard-step-2")
-    await expect(step2Btn).toBeVisible()
+    await expect(step2Btn).toHaveAttribute("aria-current", "step")
 
-    await page.locator('input[type="text"]').first().fill("Basic package")
-    await page.locator('input[type="number"]').first().fill("25")
+    await page
+      .getByRole("textbox", { name: "Basic package title", exact: true })
+      .fill("Basic package")
+    await page.getByRole("spinbutton", { name: "Basic price in USD", exact: true }).fill("25")
     // Advance to Step 3: Description
     await nextBtn.click()
     await page
-      .locator("textarea")
-      .first()
+      .getByRole("textbox", { name: "Detailed service description", exact: true })
       .fill("A complete and persistent service description for customers.")
     const step3Btn = page.getByTestId("wizard-step-3")
-    await expect(step3Btn).toBeVisible()
+    await expect(step3Btn).toHaveAttribute("aria-current", "step")
 
     // Advance to Step 4: Gallery
     await nextBtn.click()
     const step4Btn = page.getByTestId("wizard-step-4")
-    await expect(step4Btn).toBeVisible()
+    await expect(step4Btn).toHaveAttribute("aria-current", "step")
 
     // Advance to Step 5: Publish
     await nextBtn.click()
+    await expect(page.getByTestId("wizard-step-5")).toHaveAttribute("aria-current", "step")
     const publishBtn = page.getByTestId("wizard-publish-btn")
     await expect(publishBtn).toBeVisible()
 
     // Test going backward to Step 4
     await prevBtn.click()
+    await expect(step4Btn).toHaveAttribute("aria-current", "step")
     await expect(page.getByTestId("wizard-next-btn")).toBeVisible()
 
     // Advance back to Step 5
@@ -176,7 +185,21 @@ test.describe("Dashboard Flows", () => {
     await expect(publishBtn).toBeVisible()
 
     // Click publish button and wait for redirect to /dashboard/gigs
+    const savedResponse = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === "/api/v1/services" &&
+        response.request().method() === "POST"
+    )
     await publishBtn.click()
+    const saved = await savedResponse
+    expect(saved.status()).toBe(201)
+    const payload = await saved.json()
+    expect(payload.success).toBe(true)
     await expect(page).toHaveURL(/\/dashboard\/gigs/, { timeout: 10000 })
+    const draft = marketplace.services.find((service) => service.id === payload.data.id)
+    expect(draft?.title).toBe("A verified seller service draft")
+    expect(draft?.description).toBe("A complete and persistent service description for customers.")
+    expect(draft?.status).toBe("DRAFT")
+    expect(Number(draft?.packages.find((pack) => pack.type === "BASIC")?.price)).toBe(25)
   })
 })
