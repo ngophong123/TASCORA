@@ -161,7 +161,7 @@ function ServicesContent({ initialCatalog }: { initialCatalog: CatalogSnapshot }
       <div id="services-listing-top" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8 items-start">
           {/* Left Column: Filter Sidebar (Desktop, sticky) */}
-          <div className="hidden lg:block w-[280px] shrink-0 sticky top-36 max-h-[calc(100vh-10rem)] overflow-y-auto pr-1">
+          <div className="hidden lg:block w-[280px] shrink-0 sticky top-[calc(10.75rem+2px)] max-h-[calc(100dvh-11.75rem-2px)] overflow-y-auto pr-1">
             <ServiceFilterSidebar
               initialCategories={initialCatalog.error ? undefined : initialCatalog.categories}
               filters={filters}
@@ -249,8 +249,15 @@ function ServicesContent({ initialCatalog }: { initialCatalog: CatalogSnapshot }
   )
 }
 
-export default function ServicesClient({ initialCatalog }: { initialCatalog: CatalogSnapshot }) {
+export default function ServicesClient({
+  initialCatalog,
+  streaming = true,
+}: {
+  initialCatalog: CatalogSnapshot
+  streaming?: boolean
+}) {
   const tCommon = useTranslations("common")
+  if (!streaming) return <ServicesContent initialCatalog={initialCatalog} />
 
   return (
     <React.Suspense

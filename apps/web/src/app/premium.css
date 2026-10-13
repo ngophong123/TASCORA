@@ -141,6 +141,62 @@
 .premium-skip:focus {
   transform: translateY(0);
 }
+/* Next owns history restoration. Native anchoring must not compensate again
+   as asynchronous homepage content and scroll transforms are restored. */
+.home-cinema { overflow-anchor: none; }
+.cinema-workflow { position: relative; }
+.cinema-workflow-track {
+  height: 2px;
+  margin-bottom: 32px;
+  overflow: hidden;
+  background: var(--border);
+}
+.cinema-workflow-track span {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+  transform-origin: left;
+  transform: scaleX(var(--cinema-progress, 0));
+}
+.cinema-step { position: relative; }
+.cinema-step::before {
+  content: "";
+  position: absolute;
+  inset: -1px 0 auto;
+  height: 2px;
+  background: var(--primary);
+  transform-origin: left;
+  transform: scaleX(var(--step-progress, 0));
+}
+.cinema-service-frame { min-width: 0; }
+.cinema-service-frame > article { height: 100%; }
+.cinema-hero { overflow: clip; }
+.cinema-scroll-cue { opacity: 0.7; }
+.cinema-step { transition: border-color 180ms ease; }
+.cinema-step[data-cinema-active="true"] { border-color: var(--primary); }
+@media (min-width: 1024px) {
+  .cinema-workflow-body {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    align-items: start;
+    gap: clamp(40px, 7vw, 112px);
+  }
+  .home-cinema[data-cinema-mode="full"] .cinema-workflow-heading {
+    position: sticky;
+    top: 128px;
+  }
+  .cinema-workflow-body ol {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin-top: 0;
+    gap: 48px;
+  }
+  .cinema-step { padding-bottom: 32px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cinema-workflow-track span { transform: none; }
+  .cinema-step::before { transform: none; }
+}
 @media (max-width: 639px) {
   .premium-container {
     width: calc(100% - 32px);

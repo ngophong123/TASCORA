@@ -14,8 +14,8 @@ export function FeaturedServices() {
   const t = useTranslations("premiumHome")
   const resource = useApiResource<{ services: Service[] }>("/api/v1/services?limit=6&page=1")
   return (
-    <section className="premium-section premium-container">
-      <div className="mb-8 flex flex-wrap items-end justify-between gap-5">
+    <section data-cinema-featured className="premium-section premium-container">
+      <div data-cinema-depth className="mb-8 flex flex-wrap items-end justify-between gap-5">
         <div>
           <p className="premium-eyebrow mb-3">{t("featuredEyebrow")}</p>
           <h2 className="premium-title">{t("featuredTitle")}</h2>
@@ -45,7 +45,9 @@ export function FeaturedServices() {
           />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {resource.data?.services.map((service) => (
-              <GigCard key={service.id} gig={serviceGig(service)} />
+              <div key={service.id} className="cinema-service-frame">
+                <GigCard gig={serviceGig(service)} />
+              </div>
             ))}
           </div>
         </>
@@ -62,6 +64,7 @@ export function MarketplaceCategories() {
   return (
     <section
       id="categories"
+      data-cinema-categories
       className="premium-section border-y border-border-default bg-bg-surface"
     >
       <div className="premium-container grid gap-8 lg:grid-cols-[1fr_1.5fr] lg:gap-16">
@@ -86,6 +89,7 @@ export function MarketplaceCategories() {
               ?.filter((category) => !category.parentId)
               .map((category) => (
                 <Link
+                  data-cinema-category
                   key={category.id}
                   href={`/services?category=${category.slug}`}
                   className="group flex min-h-20 items-center gap-4 border-b border-border-default py-4 text-sm font-medium hover:text-primary"
@@ -109,11 +113,17 @@ export function MarketplaceTalent() {
   const t = useTranslations("premiumHome")
   const resource = useApiResource<Profile[]>("/api/v1/marketplace/sellers?limit=4")
   return (
-    <section id="talent" className="premium-section border-t border-border-default bg-bg-subtle">
+    <section
+      id="talent"
+      data-cinema-talent
+      className="premium-section border-t border-border-default bg-bg-subtle"
+    >
       <div className="premium-container">
         <p className="premium-eyebrow mb-3">{t("talentEyebrow")}</p>
-        <h2 className="premium-title">{t("talentTitle")}</h2>
-        <p className="premium-body mt-3">{t("talentIntro")}</p>
+        <div data-cinema-talent-title>
+          <h2 className="premium-title">{t("talentTitle")}</h2>
+          <p className="premium-body mt-3">{t("talentIntro")}</p>
+        </div>
         <div className="mt-8">
           <ApiState
             loading={resource.loading}
@@ -128,7 +138,11 @@ export function MarketplaceTalent() {
         </div>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {resource.data?.slice(0, 4).map((profile) => (
-            <article key={profile.id} className="premium-panel flex flex-col p-6">
+            <article
+              data-cinema-profile
+              key={profile.id}
+              className="premium-panel flex flex-col p-6"
+            >
               <AvatarImage
                 src={imageUrl(profile.avatar)}
                 name={profileName(profile)}

@@ -1,7 +1,7 @@
 ﻿"use client"
 
 import { useTranslations } from "next-intl"
-import { ArrowUpRight, ArrowRight } from "lucide-react"
+import { ArrowUpRight, ArrowRight, ArrowDown } from "lucide-react"
 import { Link } from "@/i18n/routing"
 import { SearchBar } from "@/components/ui/SearchBar"
 import { ServiceCardImage } from "@/components/ui/ServiceCardImage"
@@ -14,7 +14,7 @@ export function Hero() {
   const resource = useApiResource<{ services: Service[] }>("/api/v1/services?limit=3&page=1")
   const services = resource.data?.services || []
   return (
-    <section className="border-b border-border-default">
+    <section data-cinema-hero className="cinema-hero border-b border-border-default">
       <div className="premium-container grid gap-10 py-12 sm:py-16 lg:grid-cols-12 lg:gap-14 lg:py-20">
         <div className="flex flex-col justify-center lg:col-span-7">
           <p className="premium-eyebrow mb-6">{t("eyebrow")}</p>
@@ -35,8 +35,15 @@ export function Hero() {
               <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
             </Link>
           </div>
+          <div
+            aria-hidden="true"
+            className="cinema-scroll-cue mt-8 flex items-center gap-3 text-text-muted"
+          >
+            <span className="h-px w-10 bg-border-default" />
+            <ArrowDown className="h-4 w-4" />
+          </div>
         </div>
-        <div className="lg:col-span-5">
+        <div className="lg:col-span-5" data-cinema-depth>
           <div className="mb-4 flex items-center justify-between border-b border-border-default pb-3">
             <p className="premium-eyebrow">{t("current")}</p>
             <ArrowUpRight aria-hidden="true" className="h-4 w-4 text-text-muted" />
@@ -82,12 +89,14 @@ export function Hero() {
               >
                 {index === 0 ? (
                   <div className="relative aspect-[4/3] overflow-hidden bg-bg-subtle">
-                    <ServiceCardImage
-                      src={imageUrl(service.images[0]?.url)}
-                      alt={service.title}
-                      sizes="(max-width: 1024px) 100vw, 480px"
-                      priority
-                    />
+                    <div data-cinema-hero-image className="absolute inset-0">
+                      <ServiceCardImage
+                        src={imageUrl(service.images[0]?.url)}
+                        alt={service.title}
+                        sizes="(max-width: 1024px) 100vw, 480px"
+                        priority
+                      />
+                    </div>
                   </div>
                 ) : null}
                 <div

@@ -24,8 +24,14 @@ export function ServiceToolbar({
   className,
 }: ServiceToolbarProps) {
   const [searchInput, setSearchInput] = React.useState(filters.q)
+  const searchRef = React.useRef<HTMLInputElement>(null)
+  const previousQuery = React.useRef(filters.q)
+  React.useLayoutEffect(() => setSearchInput(searchRef.current?.value || ""), [])
   React.useEffect(() => {
-    setSearchInput(filters.q)
+    if (previousQuery.current !== filters.q) {
+      previousQuery.current = filters.q
+      setSearchInput(filters.q)
+    }
   }, [filters.q])
   React.useEffect(() => {
     const timer = setTimeout(() => {
@@ -36,7 +42,7 @@ export function ServiceToolbar({
   return (
     <div
       className={cn(
-        "sticky top-16 z-30 border-b border-[var(--border)] bg-[var(--surface)] py-4",
+        "sticky top-[calc(5rem+1px)] z-30 border-b border-[var(--border)] bg-[var(--surface)] py-4",
         className
       )}
     >
@@ -44,7 +50,11 @@ export function ServiceToolbar({
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <button
             type="button"
-            onClick={onOpenMobileFilters}
+            onClick={(event) => {
+              // WebKit does not focus buttons on pointer activation by default.
+              event.currentTarget.focus()
+              onOpenMobileFilters?.()
+            }}
             aria-haspopup="dialog"
             className="flex h-11 shrink-0 items-center gap-2 rounded-lg border border-[var(--border)] px-3 text-sm lg:hidden"
           >
@@ -66,6 +76,7 @@ export function ServiceToolbar({
               className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]"
             />
             <input
+              ref={searchRef}
               type="search"
               aria-label="Search services, skills or keywords"
               data-testid="services-search-input"

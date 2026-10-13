@@ -240,7 +240,10 @@ export function Navbar() {
           <button
             type="button"
             data-testid="mobile-menu-toggle"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={(event) => {
+              event.currentTarget.focus()
+              setMobileMenuOpen(!mobileMenuOpen)
+            }}
             className={`${control} xl:hidden min-w-11 px-2`}
             aria-label={t("toggleMenu")}
             aria-expanded={mobileMenuOpen}

@@ -1,8 +1,8 @@
 ﻿"use client"
 
-import { useState, useTransition } from "react"
-import { useRouter, Link } from "@/i18n/routing"
-import { useTranslations } from "next-intl"
+import { useLayoutEffect, useRef, useState, useTransition } from "react"
+import { useRouter, Link, routing } from "@/i18n/routing"
+import { useLocale, useTranslations } from "next-intl"
 import { Search, ArrowRight, X } from "lucide-react"
 import { Button } from "./button"
 import { useApiResource } from "@/hooks/useApiResource"
@@ -12,9 +12,14 @@ const SEARCH_IDEAS = ["Web Development", "UI/UX Design", "Brand Identity"]
 export function SearchBar() {
   const router = useRouter()
   const t = useTranslations("search")
+  const locale = useLocale()
+  const inputRef = useRef<HTMLInputElement>(null)
   const [query, setQuery] = useState("")
   const [category, setCategory] = useState("all")
   const [pending, startTransition] = useTransition()
+  // Hydration must adopt text entered into the server-rendered field rather
+  // than replacing it with the initial empty React state.
+  useLayoutEffect(() => setQuery(inputRef.current?.value || ""), [])
   const categories = useApiResource<{ name: string; slug: string; parentId: string | null }[]>(
     "/api/v1/marketplace/categories"
   )
@@ -22,6 +27,8 @@ export function SearchBar() {
   return (
     <div className="w-full">
       <form
+        action={locale === routing.defaultLocale ? "/services" : `/${locale}/services`}
+        method="get"
         role="search"
         aria-label={t("searchButton")}
         onSubmit={(event) => {
@@ -33,7 +40,9 @@ export function SearchBar() {
         }}
         className="premium-panel flex flex-col gap-2 p-2 shadow-sm focus-within:border-primary sm:flex-row sm:items-center"
       >
+        <input type="hidden" name="_native" value="1" />
         <select
+          name="category"
           data-testid="hero-category-select"
           aria-label={t("filterCategoryAria")}
           value={category}
@@ -52,6 +61,8 @@ export function SearchBar() {
         <div className="flex min-w-0 flex-1 items-center gap-2 px-3">
           <Search aria-hidden="true" className="h-4 w-4 shrink-0 text-text-muted" />
           <input
+            ref={inputRef}
+            name="q"
             data-testid="hero-search-input"
             type="search"
             aria-label={t("placeholder")}

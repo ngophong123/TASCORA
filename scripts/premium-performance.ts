@@ -9,10 +9,17 @@ import { createStore } from '../tests/e2e/support/live-fixtures';
 const phase = process.argv[2] || 'before';
 if (!/^[a-z0-9-]+$/i.test(phase)) throw new Error('Invalid phase');
 const smoke = process.argv.includes('--smoke');
+const motion = process.argv.includes('--motion');
+const homeOnly = process.argv.includes('--home-only');
+const desktop = process.argv.includes('--desktop');
+const profile = process.argv.includes('--profile');
 const runs = smoke ? 1 : 3;
 const requireCli = createRequire(fs.realpathSync('node_modules/@lhci/cli/package.json'));
 const lighthousePath = requireCli.resolve('lighthouse');
 const lighthouseModule = await import(pathToFileURL(lighthousePath).href);
+const desktopConfig = desktop
+  ? (await import(pathToFileURL(path.join(path.dirname(lighthousePath), 'config/desktop-config.js')).href)).default
+  : undefined;
 const requireLighthouse = createRequire(lighthousePath);
 const puppeteer = requireLighthouse('puppeteer-core');
 const directory = path.resolve('docs/performance', phase);
@@ -51,24 +58,36 @@ async function fixturePage(page: any) {
 
 try {
   console.log(JSON.stringify({ phase, lighthouse: '12.6.1', browser: await browser.version(), runs, fixtureServices: createStore().services.length, apiDelayMs: 100, productionUrl: 'http://localhost:3210' }));
-  const cases = smoke ? [['home', '/']] : [['home', '/'], ['services', '/services'], ['explore', '/explore']];
+  const cases = smoke || homeOnly ? [['home', '/']] : [['home', '/'], ['services', '/services'], ['explore', '/explore']];
   for (const [name, route] of cases) {
     for (let run = 1; run <= runs; run++) {
       const context = await browser.createBrowserContext();
       const page = await context.newPage();
+      if (motion) await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);
       const blocked = await fixturePage(page);
       const result = await lighthouseModule.default(`http://localhost:3210${route}`, {
         logLevel: 'error', output: 'json', onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
         disableStorageReset: true, maxWaitForLoad: 45000,
-      }, undefined, page);
+      }, desktopConfig, page);
       if (!result) throw new Error('Lighthouse returned no result');
       const lhr = result.lhr;
-      const stem = `${name}-mobile-${run}`;
+      if (profile) {
+        const profiles = path.resolve('.premium-performance/profiles', phase);
+        fs.mkdirSync(profiles, { recursive: true });
+        fs.writeFileSync(path.join(profiles, `${name}-${run}-artifacts.json`), JSON.stringify(result.artifacts));
+      }
+      const motionState = await page.evaluate(() => ({
+        url: location.href,
+        reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
+        mode: document.querySelector('.home-cinema')?.getAttribute('data-cinema-mode') || null,
+        pending: document.querySelector('.home-cinema')?.getAttribute('data-cinema-pending') === 'true',
+      }));
+      const stem = `${name}-${lhr.configSettings.formFactor}-${run}`;
       fs.writeFileSync(path.join(directory, `${stem}.json`), JSON.stringify(lhr, null, 2));
       fs.writeFileSync(path.join(directory, `${stem}.html`), lighthouseModule.generateReport(lhr, 'html'));
       if (lhr.runtimeError || lhr.categories.performance.score === null) throw new Error(`Lighthouse failed: ${lhr.runtimeError?.code || 'no score'}`);
       const summary = {
-        name, run, mode: 'mobile-simulated', performance: lhr.categories.performance.score * 100,
+        name, run, mode: lhr.configSettings.formFactor === 'desktop' ? 'desktop-simulated' : 'mobile-simulated', motionState, cpuBenchmarkIndex: lhr.environment.benchmarkIndex, performance: lhr.categories.performance.score * 100,
         accessibility: lhr.categories.accessibility.score * 100, bestPractices: lhr.categories['best-practices'].score * 100, seo: lhr.categories.seo.score * 100,
         fcpMs: lhr.audits['first-contentful-paint'].numericValue, lcpMs: lhr.audits['largest-contentful-paint'].numericValue,
         cls: lhr.audits['cumulative-layout-shift'].numericValue, tbtMs: lhr.audits['total-blocking-time'].numericValue,

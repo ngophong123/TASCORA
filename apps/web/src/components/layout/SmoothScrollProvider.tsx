@@ -52,13 +52,18 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
       lenisRef.current = lenis
       setLenisInstance(lenis)
       let rafId: number | null = null
+      let advancing = false
       const wake = () => {
         if (rafId === null && !document.hidden) rafId = requestAnimationFrame(frame)
       }
       const frame = (time: number) => {
         rafId = null
+        // A restarted on-demand clock must not advance a new animation by the
+        // entire idle gap since the previous RAF (which causes a visible jump).
+        if (!advancing) lenis.time = time
         lenis.raf(time)
-        if (lenis.isScrolling === "smooth") wake()
+        advancing = lenis.isScrolling === "smooth"
+        if (advancing) wake()
       }
       // virtual-scroll is emitted before Lenis initializes its animation.
       const offWheel = lenis.on("virtual-scroll", wake)
@@ -74,6 +79,7 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
         if (document.hidden) {
           if (rafId !== null) cancelAnimationFrame(rafId)
           rafId = null
+          advancing = false
           // Finish at the currently visible position, not a stale offscreen target.
           scrollTo(lenis.scroll, { immediate: true })
         }

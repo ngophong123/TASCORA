@@ -6,23 +6,38 @@ import { Link } from "@/i18n/routing"
 export async function WorkingSteps({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: "premiumHome" })
   return (
-    <section id="how-it-works" className="premium-section premium-container">
-      <p className="premium-eyebrow mb-3">{t("howEyebrow")}</p>
-      <h2 className="premium-title">{t("howTitle")}</h2>
-      <ol className="mt-10 grid gap-8 md:grid-cols-3">
-        {[Compass, MessageSquare, PackageCheck].map((Icon, index) => (
-          <li key={index} className="border-t border-border-default pt-6">
-            <div className="mb-6 flex items-center justify-between">
-              <Icon aria-hidden="true" className="h-6 w-6 text-primary" />
-              <span className="font-mono text-xs text-text-muted">0{index + 1}</span>
-            </div>
-            <h3 className="text-xl font-medium tracking-tight">{t(`step${index + 1}Title`)}</h3>
-            <p className="mt-3 text-sm leading-7 text-text-secondary">
-              {t(`step${index + 1}Text`)}
-            </p>
-          </li>
-        ))}
-      </ol>
+    <section
+      id="how-it-works"
+      data-cinema-workflow
+      className="premium-section premium-container cinema-workflow"
+    >
+      <div className="cinema-workflow-track" aria-hidden="true">
+        <span />
+      </div>
+      <div className="cinema-workflow-body">
+        <div className="cinema-workflow-heading">
+          <p className="premium-eyebrow mb-3">{t("howEyebrow")}</p>
+          <h2 className="premium-title">{t("howTitle")}</h2>
+        </div>
+        <ol className="mt-10 grid gap-8 md:grid-cols-3">
+          {[Compass, MessageSquare, PackageCheck].map((Icon, index) => (
+            <li
+              key={index}
+              data-cinema-step={index}
+              className="cinema-step border-t border-border-default pt-6"
+            >
+              <div className="mb-6 flex items-center justify-between">
+                <Icon aria-hidden="true" className="h-6 w-6 text-primary" />
+                <span className="font-mono text-xs text-text-muted">0{index + 1}</span>
+              </div>
+              <h3 className="text-xl font-medium tracking-tight">{t(`step${index + 1}Title`)}</h3>
+              <p className="mt-3 text-sm leading-7 text-text-secondary">
+                {t(`step${index + 1}Text`)}
+              </p>
+            </li>
+          ))}
+        </ol>
+      </div>
     </section>
   )
 }
@@ -30,9 +45,13 @@ export async function WorkingSteps({ locale }: { locale: string }) {
 export async function MarketplaceInvitation({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: "premiumHome" })
   return (
-    <section className="premium-section premium-container">
+    <section data-cinema-finale className="premium-section premium-container">
       <div className="grid gap-6 lg:grid-cols-2">
-        <div id="for-freelancers" className="rounded-xl bg-[#e9e5f5] p-7 sm:p-10">
+        <div
+          id="for-freelancers"
+          data-cinema-finale-title
+          className="rounded-xl bg-[#e9e5f5] p-7 sm:p-10"
+        >
           <p className="premium-eyebrow mb-4">{t("sellerEyebrow")}</p>
           <h2 className="premium-title max-w-lg">{t("sellerTitle")}</h2>
           <p className="premium-body mt-5">{t("sellerText")}</p>

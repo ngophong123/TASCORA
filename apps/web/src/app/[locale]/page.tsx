@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { setRequestLocale } from "next-intl/server"
 import { routing } from "@/i18n/routing"
 import { Hero } from "@/components/sections/Hero"
+import { HomeCinema } from "@/components/motion/HomeCinema"
 import {
   FeaturedServices,
   MarketplaceCategories,
@@ -19,13 +20,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   }
   setRequestLocale(locale)
   return (
-    <>
+    <HomeCinema>
       <Hero />
-      <FeaturedServices />
-      <MarketplaceCategories />
-      <WorkingSteps locale={locale} />
       <MarketplaceTalent />
+      <MarketplaceCategories />
+      <FeaturedServices />
+      <WorkingSteps locale={locale} />
       <MarketplaceInvitation locale={locale} />
-    </>
+    </HomeCinema>
   )
 }

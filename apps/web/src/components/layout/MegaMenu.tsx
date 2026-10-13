@@ -70,6 +70,7 @@ export function MegaMenu({ columns, footerLink, onClose }: MegaMenuProps) {
 
                   return (
                     <Link
+                      tabIndex={0}
                       key={itemIdx}
                       href={item.href}
                       onClick={onClose}
@@ -97,6 +98,7 @@ export function MegaMenu({ columns, footerLink, onClose }: MegaMenuProps) {
       {footerLink && (
         <div className="mt-5 pt-4 border-t border-border-default flex items-center justify-between px-2">
           <Link
+            tabIndex={0}
             href={footerLink.href}
             onClick={onClose}
             className="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-primary hover:text-primary transition-colors"
