@@ -121,14 +121,24 @@ describe('Real auth service with isolated in-memory persistence (no database)', 
   });
 
   it('does not issue tokens to pending-verification or suspended users', async () => {
-    store.users.get('user')!.status = 'PENDING_VERIFICATION';
-    await expect(AuthService.login({ email: 'user@example.com', password: 'test-only-password' }, '', 'test')).rejects.toThrow();
+    const session = await AuthService.login({ email: 'user@example.com', password: 'test-only-password' }, '', 'test');
+    for (const status of ['PENDING_VERIFICATION', 'SUSPENDED']) {
+      store.users.get('user')!.status = status;
+      await expect(AuthService.login({ email: 'user@example.com', password: 'test-only-password' }, '', 'test')).rejects.toThrow();
+      await expect(authenticateAccess(session.accessToken)).rejects.toThrow();
+    }
   });
 });
 
 it('requires one-time email verification after registration before login', async () => {
   const registered = await AuthService.register({ email: 'new@example.com', password: 'test-only-password', role: 'seller' });
   expect(registered.status).toBe('PENDING_VERIFICATION');
+  const deniedLogin = await action('login').send({ email: 'new@example.com', password: 'test-only-password' });
+  expect(deniedLogin.status).toBe(401);
+  expect(deniedLogin.headers['set-cookie']).toBeUndefined();
+  expect(deniedLogin.body.data?.accessToken).toBeUndefined();
+  expect(store.sessions.size).toBe(0);
+  expect(store.tokens.size).toBe(0);
   await expect(AuthService.login({ email: 'new@example.com', password: 'test-only-password' }, '', 'test')).rejects.toThrow();
   const raw = vi.mocked(EmailService.sendVerificationEmail).mock.calls[0]![1];
   expect([...store.verifications.values()][0]!.token).not.toBe(raw);

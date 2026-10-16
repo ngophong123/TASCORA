@@ -1,5 +1,5 @@
 {
-  "note": "Inventory only. No files deleted, moved, staged or committed. HTML is regenerable from raw Lighthouse JSON. Archive excluded raw historical evidence before considering deletion.",
+  "note": "Historical cinematic inventory retained intact. On 2026-10-16 the user approved untracking 345 generated artifacts/logs; files remain on disk. Consult the cleanup manifest and QA evidence guide for current Git retention; original groups below describe the earlier proposal, not current tracked status.",
   "essentialEvidence": [
     {
       "file": "docs/performance/cinematic-mobile-startup-after/home-mobile-1.json",
@@ -527,5 +527,15 @@
       "file": ".premium-performance/profiles/cinematic-mobile-startup-after/home-3-artifacts.json",
       "bytes": 7131749
     }
-  ]
+  ],
+  "retentionStatus": {
+    "date": "2026-10-16",
+    "cleanupHead": "dc6fbcfc595377ceaf5578949ed7522c7179892d",
+    "untrackedGeneratedFiles": 345,
+    "trackedCompactPerformanceJson": 53,
+    "trackedCuratedScreenshots": 8,
+    "manifest": "docs/GIT_CLEANUP_MANIFEST.csv",
+    "guide": "docs/QA_EVIDENCE.md",
+    "physicalDeletion": false
+  }
 }

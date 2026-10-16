@@ -1,5 +1,7 @@
 # TASCORA Premium UI — progress / evidence
 
+> Evidence retention (2026-10-16): generated HTML/raw Lighthouse JSON and non-curated screenshots referenced below are retained **locally**, outside Git. Historical counts describe the original capture phase. See [QA evidence guide](QA_EVIDENCE.md) for the 53 versioned compact JSON files, eight curated screenshots and local-only evidence policy. No source evidence was deleted.
+
 2026-10-09: existing frontend groups implemented and local QA completed. This does not certify hosted integration or overall marketplace/financial release readiness. Earlier group snapshots below are retained as history; final evidence here supersedes their pending gates.
 
 ## Final local evidence — 2026-10-09

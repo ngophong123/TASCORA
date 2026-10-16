@@ -1,5 +1,7 @@
 # Premium UI resume — 2026-10-09
 
+> Evidence retention (2026-10-16): generated HTML/raw Lighthouse JSON and non-curated screenshots referenced below are retained **locally**, outside Git. Historical counts describe the original capture phase. See [QA evidence guide](QA_EVIDENCE.md) for the 53 versioned compact JSON files, eight curated screenshots and local-only evidence policy. No source evidence was deleted.
+
 Resumed from user checkpoint `06fb357`; no reset, commit, push, merge or deployment.
 
 ## Favorites root cause

@@ -6,8 +6,10 @@ import { Link } from "@/i18n/routing"
 import { getApiUrl } from "@/lib/api-url"
 import { AuthPanel, authInput, authLabel } from "@/components/auth/AuthPanel"
 import { Button } from "@/components/ui/button"
+import { useTranslations } from "next-intl"
 
 function VerificationForm() {
+  const t = useTranslations("auth")
   const params = useSearchParams()
   const [message, setMessage] = React.useState("")
   const [busy, setBusy] = React.useState(false)
@@ -21,11 +23,11 @@ function VerificationForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: params.get("token") || "" }),
       })
-      if (!response.ok) throw new Error("This verification link is invalid or expired.")
+      if (!response.ok) throw new Error(t("verifyInvalid"))
       setVerified(true)
-      setMessage("Email verified. You can now sign in.")
+      setMessage(t("verifySuccess"))
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Verification failed.")
+      setMessage(error instanceof Error ? error.message : t("verifyFailed"))
     } finally {
       setBusy(false)
     }
@@ -39,30 +41,27 @@ function VerificationForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       })
-      if (!response.ok) throw new Error("Unable to send verification. Please retry later.")
-      setMessage("If your account needs verification, an email will be sent.")
+      if (!response.ok) throw new Error(t("verifyResendFailed"))
+      setMessage(t("verifyResent"))
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Please retry later.")
+      setMessage(error instanceof Error ? error.message : t("verifyResendFailed"))
     } finally {
       setBusy(false)
     }
   }
   return (
-    <AuthPanel
-      title="Verify your email"
-      description="Confirm your email address before signing in."
-    >
+    <AuthPanel title={t("verifyTitle")} description={t("verifyDescription")}>
       {params.get("token") && !verified && (
         <Button
           type="button"
           onClick={() => void verify()}
           disabled={busy}
           isLoading={busy}
-          loadingText="Please wait…"
+          loadingText={t("verifyLoading")}
           className="mb-5 w-full"
           size="lg"
         >
-          Verify email
+          {t("verifyAction")}
         </Button>
       )}
       <p
@@ -76,7 +75,7 @@ function VerificationForm() {
         <form method="post" onSubmit={resend} className="space-y-5" aria-busy={busy}>
           <div>
             <label htmlFor="verification-email" className={authLabel}>
-              Email address
+              {t("verifyEmailLabel")}
             </label>
             <input
               id="verification-email"
@@ -94,12 +93,12 @@ function VerificationForm() {
             type="submit"
             disabled={busy}
             isLoading={busy}
-            loadingText="Please wait…"
+            loadingText={t("verifyLoading")}
             variant={params.get("token") ? "outline" : "primary"}
             className="w-full"
             size="lg"
           >
-            Resend verification email
+            {t("verifyResendAction")}
           </Button>
         </form>
       )}
@@ -108,18 +107,19 @@ function VerificationForm() {
           href="/login"
           className="inline-flex min-h-11 items-center text-sm font-semibold text-primary hover:underline underline-offset-4"
         >
-          Sign in
+          {t("signIn")}
         </Link>
       </div>
     </AuthPanel>
   )
 }
 export default function VerifyEmailPage() {
+  const t = useTranslations("auth")
   return (
     <React.Suspense
       fallback={
         <p role="status" className="px-4 py-12 text-center text-text-muted">
-          Loading…
+          {t("verifyPageLoading")}
         </p>
       }
     >

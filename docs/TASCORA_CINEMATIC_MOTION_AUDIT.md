@@ -1,5 +1,7 @@
 # TASCORA cinematic homepage motion audit
 
+> Evidence retention (2026-10-16): generated HTML/raw Lighthouse JSON and non-curated screenshots referenced below are retained **locally**, outside Git. Historical counts describe the original capture phase. See [QA evidence guide](QA_EVIDENCE.md) for the 53 versioned compact JSON files, eight curated screenshots and local-only evidence policy. No source evidence was deleted.
+
 Date: 2026-10-13. Branch: `feat/premium-ui-redesign`, existing Draft PR #4.
 
 ## Starting point

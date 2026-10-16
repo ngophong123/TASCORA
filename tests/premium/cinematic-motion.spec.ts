@@ -71,7 +71,15 @@ test('hero image scrubs with actual scrolling and reverses; routes and preferenc
   await expect(page).toHaveURL(/\/services/);
   await expect(root).toHaveCount(0);
   await page.goBack();
+  // A fresh mobile Home at scrollY=0 intentionally waits for scroll intent.
+  // History restoration may instead initialize immediately; exercise the same
+  // real input in both cases before checking that triggers were not duplicated.
+  await expect(image).toBeVisible();
+  await page.mouse.wheel(0, 120);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(40);
+  await expect(root).toHaveAttribute('data-cinema-mode', 'light');
   await expect(root).toHaveAttribute('data-cinema-triggers', count!);
+  await expect.poll(scale).toBeGreaterThan(1);
 });
 
 test('low-resource devices use light motion even at desktop width', async ({ page }) => {

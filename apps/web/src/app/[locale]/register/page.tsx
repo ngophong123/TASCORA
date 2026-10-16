@@ -115,9 +115,9 @@ function RegisterForm() {
         >
           <CheckCircle2 aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0" />
           <span>
-            Check your email to verify your account before signing in.{" "}
+            {t("regVerifyInstructions")}{" "}
             <Link href="/verify-email" className="inline-flex min-h-11 items-center underline">
-              Resend verification
+              {t("regResendVerification")}
             </Link>
           </span>
         </div>

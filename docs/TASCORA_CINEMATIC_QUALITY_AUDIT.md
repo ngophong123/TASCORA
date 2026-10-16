@@ -1,5 +1,7 @@
 # Cinematic quality audit — 2026-10-13
 
+> Evidence retention (2026-10-16): generated HTML/raw Lighthouse JSON and non-curated screenshots referenced below are retained **locally**, outside Git. Historical counts describe the original capture phase. See [QA evidence guide](QA_EVIDENCE.md) for the 53 versioned compact JSON files, eight curated screenshots and local-only evidence policy. No source evidence was deleted.
+
 Branch `feat/premium-ui-redesign`; existing uncommitted work and Draft PR #4 preserved. This extends `TASCORA_CINEMATIC_MOTION_AUDIT.md`; no new animation sequence, backend/schema/payment/authentication/security/deployment change or dependency installation.
 
 ## Confirmed issues and corrections
@@ -134,11 +136,11 @@ Ignored final browser evidence includes160 PNGs,16 WebM videos and25 JSON files 
 
 Selected actual screenshots (local ignored artifacts):
 
-- [Desktop hero](../test-results-premium/cinematic-quality-verified/cinematic-quality-editoria-3989d-and-sticky-geometry-at-1440-chromium/hero.png)
-- [Desktop talent entrance](../test-results-premium/cinematic-quality-verified/cinematic-quality-editoria-3989d-and-sticky-geometry-at-1440-chromium/talent-0.78.png)
-- [Desktop workflow](../test-results-premium/cinematic-quality-verified/cinematic-quality-editoria-3989d-and-sticky-geometry-at-1440-chromium/workflow-0.12.png)
-- [Mobile WebKit finale](../test-results-premium/cinematic-quality-verified/cinematic-quality-editoria-8087e--and-sticky-geometry-at-390-webkit/finale-0.45.png)
-- [WebKit catalog sticky geometry](../test-results-premium/cinematic-quality-verified/cinematic-catalog-quality--44f6e-llide-with-fixed-navigation-webkit/catalog-sticky.png)
+- [Desktop hero — local evidence](QA_EVIDENCE.md#local-only-evidence) (local path: `../test-results-premium/cinematic-quality-verified/cinematic-quality-editoria-3989d-and-sticky-geometry-at-1440-chromium/hero.png`)
+- [Desktop talent entrance — local evidence](QA_EVIDENCE.md#local-only-evidence) (local path: `../test-results-premium/cinematic-quality-verified/cinematic-quality-editoria-3989d-and-sticky-geometry-at-1440-chromium/talent-0.78.png`)
+- [Desktop workflow — local evidence](QA_EVIDENCE.md#local-only-evidence) (local path: `../test-results-premium/cinematic-quality-verified/cinematic-quality-editoria-3989d-and-sticky-geometry-at-1440-chromium/workflow-0.12.png`)
+- [Mobile WebKit finale — local evidence](QA_EVIDENCE.md#local-only-evidence) (local path: `../test-results-premium/cinematic-quality-verified/cinematic-quality-editoria-8087e--and-sticky-geometry-at-390-webkit/finale-0.45.png`)
+- [WebKit catalog sticky geometry — local evidence](QA_EVIDENCE.md#local-only-evidence) (local path: `../test-results-premium/cinematic-quality-verified/cinematic-catalog-quality--44f6e-llide-with-fixed-navigation-webkit/catalog-sticky.png`)
 
 Review finds consistent image proportions/copy spacing and no horizontal overflow at tested sizes. Ordinary content passes beneath the fixed header while scrolling; essential controls remain reachable. Vietnamese native routing/results were verified, but pre-existing mixed English catalog labels remain a localization limitation, and this is not a full Vietnamese cinematic review.
 
@@ -245,7 +247,7 @@ git diff --check
 # PASS; index empty. No staging/commit/push/merge/deploy.
 ```
 
-Marketplace/auth/navigation/SSR/Favorites/orders/messages/API-error cases remain intact. Real-scroll/reversal, pending cleanup, route/back, responsive360–1920, reduced-motion and idle/lifecycle checks passed. Actual desktop/mobile scene screenshots/videos are in ignored `test-results-premium/cinematic-mobile-verified`; reviewed the [mobile featured entrance](../test-results-premium/cinematic-mobile-verified/cinematic-quality-editoria-8087e--and-sticky-geometry-at-390-chromium/featured-0.45.png), retaining spacing, proportions and direct navigation. No new visual feature or styling was introduced.
+Marketplace/auth/navigation/SSR/Favorites/orders/messages/API-error cases remain intact. Real-scroll/reversal, pending cleanup, route/back, responsive360–1920, reduced-motion and idle/lifecycle checks passed. Actual desktop/mobile scene screenshots/videos are in ignored `test-results-premium/cinematic-mobile-verified`; reviewed the [mobile featured entrance — local evidence](QA_EVIDENCE.md#local-only-evidence) (local path: `../test-results-premium/cinematic-mobile-verified/cinematic-quality-editoria-8087e--and-sticky-geometry-at-390-chromium/featured-0.45.png`), retaining spacing, proportions and direct navigation. No new visual feature or styling was introduced.
 
 Local optimization and Git preparation are complete; no failing required check remains. First-scroll long tasks, shared React/Next hydration, unchanged≈3.11s mobile LCP, CPU variance, hosted/field CWV and physical low-power/Safari/iOS remain explicit limits. Next steps: review the44-file allowlist, approve a precise HTML cleanup/archive policy if desired, evaluate first-gesture performance on devices/stable CI, and separately authorize any future staging/commit/push. Task-owned servers stopped after final verification; user work and all artifacts are preserved.
 

@@ -1,5 +1,7 @@
 # Cinematic implementation commit allowlist
 
+> Evidence retention (2026-10-16): generated HTML/raw Lighthouse JSON and non-curated screenshots referenced below are retained **locally**, outside Git. Historical counts describe the original capture phase. See [QA evidence guide](QA_EVIDENCE.md) for the 53 versioned compact JSON files, eight curated screenshots and local-only evidence policy. No source evidence was deleted.
+
 Branch: feat/premium-ui-redesign. This is the exact cumulative frontend/motion/quality file allowlist; nothing has been staged. Earlier user changes are included because they implement the existing cinematic feature and verified fixes. No backend, schema, API contract, workflow/deployment, payment or secret changes.
 
 Final user-authorized selection:35 files. This supersedes the original44-file proposal: six raw Lighthouse run JSONs and three interaction-observer JSONs remain unchanged locally and are excluded from the commit. Summaries and compact attribution preserve the reported measurements. Application/configuration/tests do not read the excluded files; audit references to them describe local evidence, not required repository inputs.

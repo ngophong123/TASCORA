@@ -1,5 +1,7 @@
 # Homepage cinematic motion implementation
 
+> Evidence retention (2026-10-16): generated HTML/raw Lighthouse JSON and non-curated screenshots referenced below are retained **locally**, outside Git. Historical counts describe the original capture phase. See [QA evidence guide](QA_EVIDENCE.md) for the 53 versioned compact JSON files, eight curated screenshots and local-only evidence policy. No source evidence was deleted.
+
 Historical first pass. The subsequent ScrollTrigger implementation and final
 verification are documented in `docs/TASCORA_CINEMATIC_MOTION_AUDIT.md`.
 

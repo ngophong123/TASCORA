@@ -1,5 +1,7 @@
 # Premium performance audit — 2026-10-09
 
+> Evidence retention (2026-10-16): generated HTML/raw Lighthouse JSON and non-curated screenshots referenced below are retained **locally**, outside Git. Historical counts describe the original capture phase. See [QA evidence guide](QA_EVIDENCE.md) for the 53 versioned compact JSON files, eight curated screenshots and local-only evidence policy. No source evidence was deleted.
+
 Continued on `feat/premium-ui-redesign`, preserving the uncommitted Premium work and checkpoint `06fb357`. Read PREMIUM_UI_RESUME.md, PREMIUM_UI_HANDOFF.md and apps/web/AGENTS.md. No redesign, backend/database/payment changes, secrets, migrations, hosted requests, commit, push or deployment.
 
 ## Method and reproducibility

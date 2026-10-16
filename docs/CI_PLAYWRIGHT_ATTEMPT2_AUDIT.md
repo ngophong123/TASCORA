@@ -1,5 +1,7 @@
 # Playwright rerun/HEAD audit — 2026-10-10
 
+> Evidence retention (2026-10-16): generated HTML/raw Lighthouse JSON and non-curated screenshots referenced below are retained **locally**, outside Git. Historical counts describe the original capture phase. See [QA evidence guide](QA_EVIDENCE.md) for the 53 versioned compact JSON files, eight curated screenshots and local-only evidence policy. No source evidence was deleted.
+
 No commit, push, merge, deployment, reset/revert, secrets, database/backend/payment changes or hosted backend connections. Starting Git checkout clean on feat/premium-ui-redesign at9193adc518bbdc952e89f404559d8948e53f9ace; public GitHub branch API confirms remote SHA identical.
 
 ## Fresh GitHub evidence, not reused attempt1 conclusions
