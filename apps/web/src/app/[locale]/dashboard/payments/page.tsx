@@ -5,14 +5,19 @@ export default function PaymentsPage() {
   const { rawOrders, ordersLoading, ordersError, reloadOrders } = useDashboard()
   return (
     <div className="space-y-5">
-      <h1 className="text-2xl font-semibold">Payments & Billing</h1>
+      <h1 className="text-3xl font-semibold tracking-tight text-[var(--foreground)]">
+        Payments & Billing
+      </h1>
       <ApiState loading={ordersLoading} error={ordersError} retry={reloadOrders} />
       <p>
         Payment and refund states are server confirmed. Stored payment methods and invoices are
         unavailable.
       </p>
       {rawOrders.map((order) => (
-        <article key={order.id} className="rounded-xl border p-4 bg-white break-all">
+        <article
+          key={order.id}
+          className="rounded-xl border border-[var(--border)] p-5 bg-[var(--surface)] break-words"
+        >
           <h2>{order.purchaseSnapshot?.serviceTitle || order.service.title}</h2>
           <p>
             {order.id} · USD {order.amount} · {order.status}
@@ -24,7 +29,7 @@ export default function PaymentsPage() {
           ))}
         </article>
       ))}
-      {!ordersLoading && !rawOrders.length && <p>No payment orders yet.</p>}
+      {!ordersLoading && !ordersError && !rawOrders.length && <p>No payment orders yet.</p>}
     </div>
   )
 }

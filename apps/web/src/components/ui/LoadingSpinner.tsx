@@ -19,8 +19,12 @@ export function LoadingSpinner({ size = "md", className, ...props }: LoadingSpin
   return (
     <svg
       role="status"
-      aria-label="Đang tải..."
-      className={cn("animate-spin text-[#635BFF] shrink-0", sizeClasses, className)}
+      aria-label="Loading"
+      className={cn(
+        "animate-spin motion-reduce:animate-none text-primary shrink-0",
+        sizeClasses,
+        className
+      )}
       viewBox="0 0 24 24"
       fill="none"
       {...props}

@@ -1,0 +1,328 @@
+{
+  "route": "/",
+  "viewport": "390x844",
+  "throttling": "none",
+  "fixture": true,
+  "idleRafCallbacksIn2Seconds": 0,
+  "lcpMs": 232,
+  "cls": 0,
+  "layoutShifts": [],
+  "recordedInteractionCount": 2,
+  "recordedInteractionMaxMs": 32,
+  "eventThresholdMs": 16,
+  "longTasks": [139, 64],
+  "supported": [
+    "element",
+    "event",
+    "first-input",
+    "interaction-contentful-paint",
+    "largest-contentful-paint",
+    "layout-shift",
+    "long-animation-frame",
+    "longtask",
+    "mark",
+    "measure",
+    "navigation",
+    "paint",
+    "resource",
+    "soft-navigation",
+    "visibility-state"
+  ],
+  "resources": [
+    {
+      "name": "http://localhost:3210/_next/static/css/f7e295e0ba5e51d0.css",
+      "bytes": 25309,
+      "duration": 22.59999999962747
+    },
+    {
+      "name": "http://localhost:3210/_next/static/css/5bb3195e3bfcec4c.css",
+      "bytes": 2197,
+      "duration": 18.09999999962747
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/webpack-444e3df811aba661.js",
+      "bytes": 2054,
+      "duration": 39.799999999813735
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/ef9b57b1-9c5f512204fd769e.js",
+      "bytes": 63601,
+      "duration": 60.89999999944121
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/main-app-eb129468a2f02cc1.js",
+      "bytes": 817,
+      "duration": 51.5
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+      "bytes": 66048,
+      "duration": 70.5
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/5039-76745e3c17401e1c.js",
+      "bytes": 17181,
+      "duration": 59.90000000037253
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/9454-15ea3f9fcc33aff3.js",
+      "bytes": 12967,
+      "duration": 65
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/9982-77b271744c492a59.js",
+      "bytes": 6085,
+      "duration": 58
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/1922-15e1e53388d181e7.js",
+      "bytes": 5304,
+      "duration": 62
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/page-0ad6d5fa715e7638.js",
+      "bytes": 5541,
+      "duration": 68
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/3035-ce2377d9a50d80b5.js",
+      "bytes": 7954,
+      "duration": 70.1000000005588
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/layout-2c667b1c821e02df.js",
+      "bytes": 9297,
+      "duration": 69.5
+    },
+    {
+      "name": "http://localhost:3210/_next/static/media/22a5144ee8d83bca-s.p.woff2",
+      "bytes": 29588,
+      "duration": 140.3999999994412
+    },
+    {
+      "name": "http://localhost:3210/_next/static/media/7d4881bb7e1bf84d-s.p.woff2",
+      "bytes": 23408,
+      "duration": 112.90000000037253
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/marketplace/categories",
+      "bytes": 0,
+      "duration": 12.300000000745058
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/services?limit=3&page=1",
+      "bytes": 0,
+      "duration": 21.90000000037253
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/services?limit=6&page=1",
+      "bytes": 0,
+      "duration": 22.300000000745058
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/marketplace/categories",
+      "bytes": 0,
+      "duration": 21.90000000037253
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/marketplace/sellers?limit=4",
+      "bytes": 0,
+      "duration": 21.5
+    },
+    {
+      "name": "http://localhost:3210/?_rsc=ry-B8umWgNEV4JR9",
+      "bytes": 589,
+      "duration": 41.200000000186265
+    },
+    {
+      "name": "http://localhost:3210/services?q=Web%20Development&_rsc=ry-B8umWgNEV4JR9",
+      "bytes": 539,
+      "duration": 41.299999999813735
+    },
+    {
+      "name": "http://localhost:3210/services?q=UI%2FUX%20Design&_rsc=ry-B8umWgNEV4JR9",
+      "bytes": 541,
+      "duration": 41.299999999813735
+    },
+    {
+      "name": "http://localhost:3210/services?q=Brand%20Identity&_rsc=ry-B8umWgNEV4JR9",
+      "bytes": 539,
+      "duration": 41.5
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Ffull-stack-nextjs-node.jpg&w=640&q=75",
+      "bytes": 21636,
+      "duration": 35.89999999944121
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Ffull-stack-nextjs-node.jpg&w=384&q=75",
+      "bytes": 10202,
+      "duration": 32.700000000186265
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Ffavicon.svg&w=64&q=75",
+      "bytes": 1132,
+      "duration": 35
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fsaas-landing-page-frontend.jpg&w=384&q=75",
+      "bytes": 9760,
+      "duration": 36.700000000186265
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fapi-microservices-backend.jpg&w=384&q=75",
+      "bytes": 15046,
+      "duration": 33.5
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fgolang-microservices-terminal.jpg&w=384&q=75",
+      "bytes": 5586,
+      "duration": 36.59999999962747
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Faws-terraform-cloud-console.jpg&w=384&q=75",
+      "bytes": 4656,
+      "duration": 37.60000000055879
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/favorites",
+      "bytes": 0,
+      "duration": 50.59999999962747
+    },
+    {
+      "name": "http://localhost:3210/services/c000000000000000000000001?_rsc=ry-B8umWgNEV4JR9",
+      "bytes": 533,
+      "duration": 43.89999999944121
+    },
+    {
+      "name": "http://localhost:3210/services?_rsc=ry-B8umWgNEV4JR9",
+      "bytes": 521,
+      "duration": 42.39999999944121
+    },
+    {
+      "name": "http://localhost:3210/register?role=seller&_rsc=ry-B8umWgNEV4JR9",
+      "bytes": 601,
+      "duration": 63.09999999962747
+    },
+    {
+      "name": "http://localhost:3210/?_rsc=FUh3Gxqryw1dTRX2",
+      "bytes": 11170,
+      "duration": 71.20000000018626
+    },
+    {
+      "name": "http://localhost:3210/services/c000000000000000000000001?_rsc=1vwYfVB7_E9t4fEj",
+      "bytes": 1450,
+      "duration": 58.90000000037253
+    },
+    {
+      "name": "http://localhost:3210/?_rsc=PcxwSUR8uWMyjqUR",
+      "bytes": 3120,
+      "duration": 35.59999999962747
+    },
+    {
+      "name": "http://localhost:3210/services?q=Web%20Development&_rsc=1vwYfVB7_E9t4fEj",
+      "bytes": 1653,
+      "duration": 43.59999999962747
+    },
+    {
+      "name": "http://localhost:3210/services?q=UI%2FUX%20Design&_rsc=1vwYfVB7_E9t4fEj",
+      "bytes": 1655,
+      "duration": 31.09999999962747
+    },
+    {
+      "name": "http://localhost:3210/services?q=Brand%20Identity&_rsc=1vwYfVB7_E9t4fEj",
+      "bytes": 1651,
+      "duration": 24.299999999813735
+    },
+    {
+      "name": "http://localhost:3210/services?_rsc=1vwYfVB7_E9t4fEj",
+      "bytes": 1616,
+      "duration": 21
+    },
+    {
+      "name": "http://localhost:3210/register?role=seller&_rsc=JJ1znMiLNp3rQ4V2",
+      "bytes": 1816,
+      "duration": 16.300000000745058
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/register/page-091c99c1628d6ba9.js",
+      "bytes": 5339,
+      "duration": 20.199999999254942
+    },
+    {
+      "name": "http://localhost:3210/register?_rsc=ry-B8umWgNEV4JR9",
+      "bytes": 601,
+      "duration": 17.5
+    },
+    {
+      "name": "http://localhost:3210/_next/static/media/b66cf8e69499582a-s.p.woff2",
+      "bytes": 8268,
+      "duration": 13.799999999813735
+    },
+    {
+      "name": "http://localhost:3210/explore?_rsc=ry-B8umWgNEV4JR9",
+      "bytes": 521,
+      "duration": 28.100000000558794
+    },
+    {
+      "name": "http://localhost:3210/categories?_rsc=ry-B8umWgNEV4JR9",
+      "bytes": 602,
+      "duration": 29.09999999962747
+    },
+    {
+      "name": "http://localhost:3210/dashboard?_rsc=ry-B8umWgNEV4JR9",
+      "bytes": 602,
+      "duration": 29.100000000558794
+    },
+    {
+      "name": "http://localhost:3210/explore?_rsc=1vwYfVB7_E9t4fEj",
+      "bytes": 1548,
+      "duration": 38
+    },
+    {
+      "name": "http://localhost:3210/categories?_rsc=UCr3Ml84Oa52RWj4",
+      "bytes": 1712,
+      "duration": 33
+    },
+    {
+      "name": "http://localhost:3210/dashboard?_rsc=yg62NHOx6pkEpDD6",
+      "bytes": 2227,
+      "duration": 31.5
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/categories/page-7b1d371bb6f93459.js",
+      "bytes": 7343,
+      "duration": 11.299999999813735
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/3129-68c25c6815597fb7.js",
+      "bytes": 4816,
+      "duration": 25.09999999962747
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/dashboard/page-f6599854c62dc8fb.js",
+      "bytes": 6298,
+      "duration": 29.700000000186265
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/4625-dd379e831f00ceeb.js",
+      "bytes": 42809,
+      "duration": 37.40000000037253
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/8796-fda240250f1c9cc6.js",
+      "bytes": 2334,
+      "duration": 27.5
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/7394-115bfb5cd66774e6.js",
+      "bytes": 11329,
+      "duration": 27.800000000745058
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/dashboard/layout-5dfe8dffa0218eba.js",
+      "bytes": 459,
+      "duration": 23.40000000037253
+    }
+  ]
+}

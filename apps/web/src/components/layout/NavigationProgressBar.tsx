@@ -144,14 +144,15 @@ function NavigationProgressBarInner() {
       aria-hidden="true"
     >
       <div
-        className="h-full bg-[#635BFF] shadow-[0_0_8px_rgba(99,91,255,0.4)]"
+        className="h-full bg-primary"
         style={{
-          width: `${progress}%`,
+          transform: `scaleX(${progress / 100})`,
+          transformOrigin: "left",
           opacity: visible ? 1 : 0,
           transition:
             status === "finishing"
-              ? "width 200ms ease-out, opacity 250ms ease-out 100ms"
-              : "width 350ms cubic-bezier(0.16, 1, 0.3, 1), opacity 150ms ease-in",
+              ? "transform 200ms ease-out, opacity 150ms ease-out 100ms"
+              : "transform 220ms ease-out, opacity 150ms ease-in",
         }}
       />
     </div>

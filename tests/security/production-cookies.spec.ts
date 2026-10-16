@@ -1,7 +1,7 @@
 import { expect, it, vi } from 'vitest';
 import express from 'express';
 import request from 'supertest';
-vi.mock('../../apps/api/src/lib/config', () => ({ isProduction: true, cookieSameSite: 'none', allowedOrigins: ['https://web.example.com'] }));
+vi.mock('../../apps/api/src/lib/config', () => ({ isProduction: true, cookieSameSite: 'none', isAllowedOrigin: async (origin: string) => origin === 'https://web.example.com' }));
 vi.mock('../../apps/api/src/modules/auth/auth.service', () => ({ AuthService: {
   login: async () => ({ refreshToken: 'test-only-cookie', expiresAt: new Date(Date.now() + 10000), accessToken: 'test-only-access', user: { id: 'user' } }),
   logout: async () => null,

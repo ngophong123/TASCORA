@@ -404,7 +404,7 @@ function MessagesContent() {
       </div>
 
       {/* 3-Pane Inbox Card Container */}
-      <div className="bg-white rounded-2xl border border-[rgba(15,15,30,0.08)] shadow-[0_1px_3px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col md:flex-row h-[calc(100vh-210px)] min-h-[640px] relative">
+      <div className="bg-white rounded-2xl border border-[rgba(15,15,30,0.08)] shadow-[0_1px_3px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col md:flex-row h-[calc(100dvh-210px)] min-h-[420px] md:min-h-[560px] relative">
         {/* PANE 1: Conversation List */}
         <div
           className={`w-full md:w-[320px] lg:w-[340px] shrink-0 border-r border-[rgba(15,15,30,0.08)] flex flex-col bg-white ${
@@ -419,16 +419,18 @@ function MessagesContent() {
                 type="text"
                 value={searchFilter}
                 onChange={(e) => setSearchFilter(e.target.value)}
+                aria-label="Search conversations or order ID"
                 placeholder="Search dialogue or order ID..."
-                className="w-full rounded-xl border border-[rgba(15,15,30,0.12)] bg-white pl-9 pr-3 py-1.5 text-xs text-[#0A0A23] placeholder:text-[#6B6B7B] outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                className="w-full min-h-11 rounded-xl border border-[rgba(15,15,30,0.12)] bg-white pl-9 pr-3 py-1.5 text-xs text-[#0A0A23] placeholder:text-[#6B6B7B] outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
               />
             </div>
 
             {/* Filter Tabs */}
             <div className="flex items-center gap-1 bg-[#F4F4F8] p-1 rounded-lg">
               <button
+                aria-pressed={tabFilter === "all"}
                 onClick={() => setTabFilter("all")}
-                className={`flex-1 text-xs font-medium py-1 px-2 rounded-md transition-all ${
+                className={`flex-1 min-h-11 text-xs font-medium py-1 px-2 rounded-md transition-all ${
                   tabFilter === "all"
                     ? "bg-white text-[#0A0A23] shadow-sm"
                     : "text-[#6B6B7B] hover:text-[#0A0A23]"
@@ -437,8 +439,9 @@ function MessagesContent() {
                 All Chats ({conversations.length})
               </button>
               <button
+                aria-pressed={tabFilter === "unread"}
                 onClick={() => setTabFilter("unread")}
-                className={`flex-1 text-xs font-medium py-1 px-2 rounded-md transition-all ${
+                className={`flex-1 min-h-11 text-xs font-medium py-1 px-2 rounded-md transition-all ${
                   tabFilter === "unread"
                     ? "bg-white text-[#0A0A23] shadow-sm"
                     : "text-[#6B6B7B] hover:text-[#0A0A23]"
@@ -533,8 +536,9 @@ function MessagesContent() {
             <div className="flex items-center gap-3 min-w-0">
               {/* Back button on mobile */}
               <button
+                aria-label="Back to conversations"
                 onClick={() => setMobileActivePane("list")}
-                className="md:hidden p-1.5 -ml-1 text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-[#F4F4F8] rounded-lg transition-colors"
+                className="md:hidden flex h-11 w-11 shrink-0 items-center justify-center -ml-1 text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-[#F4F4F8] rounded-lg transition-colors"
               >
                 <ArrowLeft className="h-4 w-4" />
               </button>
@@ -556,7 +560,7 @@ function MessagesContent() {
                   <h2 className="text-sm font-semibold text-[#0A0A23] truncate">
                     {activeConv.partner.name}
                   </h2>
-                  <span className="hidden sm:inline-flex items-center gap-0.5 text-[11px] font-medium text-amber-600 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">
+                  <span className="hidden sm:inline-flex items-center gap-0.5 text-[11px] font-medium text-[var(--status-warning)] bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">
                     <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
                     {activeConv.partner.rating}
                   </span>
@@ -607,13 +611,6 @@ function MessagesContent() {
               <p className="text-[11px] text-[#6B6B7B] mt-0.5">
                 Payment settlement, escrow release, refunds and payouts are unavailable.
               </p>
-            </div>
-
-            {/* Date Pill */}
-            <div className="flex items-center justify-center my-2">
-              <span className="text-[11px] font-medium text-[#6B6B7B] bg-[#EFEFF4] px-3 py-0.5 rounded-full">
-                Today
-              </span>
             </div>
 
             {/* Messages Loop */}
@@ -718,6 +715,7 @@ function MessagesContent() {
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   onKeyDown={handleKeyDown}
+                  aria-label="Message"
                   data-testid="message-input"
                   rows={2}
                   placeholder={`Write a message to ${activeConv.partner.name}... (Enter to send, Shift+Enter for newline)`}
@@ -737,8 +735,9 @@ function MessagesContent() {
                           type: "info",
                         })
                       }
+                      aria-label="Attach file or code"
                       title="Attach file or code"
-                      className="p-1.5 text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-[#EFEFF4] rounded-lg transition-colors"
+                      className="flex h-11 w-11 items-center justify-center text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-[#EFEFF4] rounded-lg transition-colors"
                     >
                       <Paperclip className="h-4 w-4" />
                     </button>
@@ -748,12 +747,13 @@ function MessagesContent() {
                       onClick={() =>
                         showToast({
                           title: "Quick Template",
-                          message: "Standard milestone signoff template inserted.",
+                          message: "Quick response templates are not available yet.",
                           type: "info",
                         })
                       }
+                      aria-label="Insert quick response"
                       title="Insert quick response"
-                      className="p-1.5 text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-[#EFEFF4] rounded-lg transition-colors"
+                      className="flex h-11 w-11 items-center justify-center text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-[#EFEFF4] rounded-lg transition-colors"
                     >
                       <Sparkles className="h-4 w-4 text-blue-600" />
                     </button>
@@ -763,12 +763,13 @@ function MessagesContent() {
                       onClick={() =>
                         showToast({
                           title: "Emoji Reaction",
-                          message: "Quick emoji toolbar ready.",
+                          message: "Emoji tools are not available yet.",
                           type: "info",
                         })
                       }
+                      aria-label="Add emoji"
                       title="Add emoji"
-                      className="p-1.5 text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-[#EFEFF4] rounded-lg transition-colors"
+                      className="flex h-11 w-11 items-center justify-center text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-[#EFEFF4] rounded-lg transition-colors"
                     >
                       <Smile className="h-4 w-4" />
                     </button>
@@ -810,8 +811,9 @@ function MessagesContent() {
                 </h3>
               </div>
               <button
+                aria-label="Close order context"
                 onClick={() => setShowOrderContext(false)}
-                className="p-1 text-[#6B6B7B] hover:text-[#0A0A23] rounded-lg hover:bg-[#F4F4F8] transition-colors lg:hidden"
+                className="flex h-11 w-11 items-center justify-center text-[#6B6B7B] hover:text-[#0A0A23] rounded-lg hover:bg-[#F4F4F8] transition-colors lg:hidden"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -834,7 +836,7 @@ function MessagesContent() {
                       {activeConv.partner.title}
                     </p>
                     <div className="flex items-center gap-1.5 mt-1">
-                      <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-amber-600">
+                      <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-[var(--status-warning)]">
                         <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
                         {activeConv.partner.rating}
                       </span>
@@ -957,7 +959,7 @@ function MessagesContent() {
                       <button
                         onClick={() => handleDownloadFile(file.name, file.size)}
                         title="Download file"
-                        className="p-1 text-[#6B6B7B] hover:text-blue-600 rounded transition-colors shrink-0"
+                        className="flex h-11 w-11 items-center justify-center text-[#6B6B7B] hover:text-blue-600 rounded transition-colors shrink-0"
                       >
                         <Download className="h-3.5 w-3.5" />
                       </button>

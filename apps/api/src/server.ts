@@ -1,4 +1,5 @@
-import { allowedOrigins, isProduction, trustProxy } from './lib/config';
+import { isAllowedOrigin, isProduction, trustProxy } from './lib/config';
+import { corsOriginCallback } from './lib/origin-policy';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -47,17 +48,17 @@ app.use(helmet());
 // Must be mounted before express.json()
 app.post('/api/v1/payments/webhook', express.raw({ type: 'application/json', limit: '256kb' }), handleWebhook);
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.set('trust proxy', trustProxy);
 
 app.use(
+  (_req, res, next) => { res.vary('Origin'); next(); },
   cors({
-    origin: allowedOrigins,
+    origin: corsOriginCallback(isAllowedOrigin),
     credentials: true,
   })
 );
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Platform probes must not consume the public API rate limit.
 app.use(healthRouter({ database: () => prisma.$queryRaw`SELECT 1`, redis: () => redis.ping() }));

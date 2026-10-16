@@ -1,0 +1,232 @@
+{
+  "route": "/explore",
+  "viewport": "390x844",
+  "throttling": "none",
+  "fixture": true,
+  "idleRafCallbacksIn2Seconds": 121,
+  "lcpMs": 1244,
+  "cls": 0.6540204969446138,
+  "recordedInteractionCount": 2,
+  "recordedInteractionMaxMs": 48,
+  "eventThresholdMs": 16,
+  "longTasks": [109, 107, 115],
+  "supported": [
+    "element",
+    "event",
+    "first-input",
+    "interaction-contentful-paint",
+    "largest-contentful-paint",
+    "layout-shift",
+    "long-animation-frame",
+    "longtask",
+    "mark",
+    "measure",
+    "navigation",
+    "paint",
+    "resource",
+    "soft-navigation",
+    "visibility-state"
+  ],
+  "resources": [
+    {
+      "name": "http://localhost:3210/_next/static/css/f7e295e0ba5e51d0.css",
+      "bytes": 25309,
+      "duration": 98.70000000018626
+    },
+    {
+      "name": "http://localhost:3210/_next/static/css/26f66b44f8c162f7.css",
+      "bytes": 2178,
+      "duration": 89.29999999981374
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/webpack-a85e9c539f4a85d5.js",
+      "bytes": 2054,
+      "duration": 102
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/ef9b57b1-9c5f512204fd769e.js",
+      "bytes": 63601,
+      "duration": 126.70000000018626
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+      "bytes": 66048,
+      "duration": 127.5
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/main-app-eb129468a2f02cc1.js",
+      "bytes": 817,
+      "duration": 98
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/5039-76745e3c17401e1c.js",
+      "bytes": 17181,
+      "duration": 106.39999999990687
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/699-8795353c8a0f7a8a.js",
+      "bytes": 12936,
+      "duration": 110.29999999981374
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/9982-9e43c86c3823c2ce.js",
+      "bytes": 6085,
+      "duration": 109.60000000009313
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/1922-8182a5e0a0b768c9.js",
+      "bytes": 5300,
+      "duration": 112.79999999981374
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/explore/page-a667d3b8cdf40316.js",
+      "bytes": 8250,
+      "duration": 117.8000000002794
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/1004-4382eeee8be78389.js",
+      "bytes": 7946,
+      "duration": 126.20000000018626
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/layout-b8327daced028c1a.js",
+      "bytes": 9132,
+      "duration": 130.10000000009313
+    },
+    {
+      "name": "http://localhost:3210/_next/static/media/22a5144ee8d83bca-s.p.woff2",
+      "bytes": 29588,
+      "duration": 108.5
+    },
+    {
+      "name": "http://localhost:3210/?_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 590,
+      "duration": 49.5
+    },
+    {
+      "name": "http://localhost:3210/explore?category=programming&_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 603,
+      "duration": 50
+    },
+    {
+      "name": "http://localhost:3210/explore?category=design&_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 603,
+      "duration": 50.299999999813735
+    },
+    {
+      "name": "http://localhost:3210/explore?category=ai&_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 603,
+      "duration": 50.3000000002794
+    },
+    {
+      "name": "http://localhost:3210/explore?category=marketing&_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 603,
+      "duration": 22.699999999720603
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/services?limit=50",
+      "bytes": 0,
+      "duration": 46.8000000002794
+    },
+    {
+      "name": "http://localhost:3210/?_rsc=OGEB1sNMwJGaS1Mp",
+      "bytes": 11172,
+      "duration": 24.899999999906868
+    },
+    {
+      "name": "http://localhost:3210/?_rsc=b-rwNT6R0kJkd_Ip",
+      "bytes": 1766,
+      "duration": 32.799999999813735
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/services?limit=50&page=2",
+      "bytes": 0,
+      "duration": 36
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/page-346f9fda91ce257c.js",
+      "bytes": 6174,
+      "duration": 19.399999999906868
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Ffull-stack-nextjs-node.jpg&w=384&q=75",
+      "bytes": 10202,
+      "duration": 66.20000000018626
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Ffavicon.svg&w=64&q=75",
+      "bytes": 1132,
+      "duration": 86.6999999997206
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fsaas-landing-page-frontend.jpg&w=384&q=75",
+      "bytes": 9760,
+      "duration": 84.6999999997206
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fapi-microservices-backend.jpg&w=384&q=75",
+      "bytes": 15046,
+      "duration": 87.20000000018626
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fgolang-microservices-terminal.jpg&w=384&q=75",
+      "bytes": 5586,
+      "duration": 81.39999999990687
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Faws-terraform-cloud-console.jpg&w=384&q=75",
+      "bytes": 4656,
+      "duration": 99.20000000018626
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fkubernetes-devops-workstation.jpg&w=384&q=75",
+      "bytes": 13914,
+      "duration": 93.39999999990687
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fsolidity-smart-contracts-code.jpg&w=384&q=75",
+      "bytes": 10064,
+      "duration": 102
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fdefi-web3-staking-protocol.jpg&w=384&q=75",
+      "bytes": 4236,
+      "duration": 104.8000000002794
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/favorites",
+      "bytes": 0,
+      "duration": 68.70000000018626
+    },
+    {
+      "name": "http://localhost:3210/services/c000000000000000000000001?_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 534,
+      "duration": 97.60000000009313
+    },
+    {
+      "name": "http://localhost:3210/services/c000000000000000000000001?_rsc=kRF1fExD8BlRIOzd",
+      "bytes": 1451,
+      "duration": 41.299999999813735
+    },
+    {
+      "name": "http://localhost:3210/_next/static/media/b66cf8e69499582a-s.p.woff2",
+      "bytes": 8268,
+      "duration": 14.200000000186265
+    },
+    {
+      "name": "http://localhost:3210/explore?_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 603,
+      "duration": 32.60000000009313
+    },
+    {
+      "name": "http://localhost:3210/categories?_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 604,
+      "duration": 33.39999999990687
+    },
+    {
+      "name": "http://localhost:3210/dashboard?_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 604,
+      "duration": 33.89999999990687
+    }
+  ]
+}

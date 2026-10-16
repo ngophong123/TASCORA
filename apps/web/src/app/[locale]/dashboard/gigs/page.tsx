@@ -32,6 +32,7 @@ export default function MyGigsPage() {
       category: service.category.name,
       subcategory: "",
       coverImage: service.images[0]?.url || "/favicon.svg",
+      serverStatus: service.status,
       status:
         service.status === "PUBLISHED"
           ? "active"
@@ -65,23 +66,22 @@ export default function MyGigsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight text-[#0A0A23]">
-              My Gigs & Service Catalog
+            <h1 className="text-2xl font-semibold tracking-tight text-[var(--foreground)]">
+              My services
             </h1>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-sm font-medium bg-[var(--primary-subtle)] text-[var(--primary)] border border-[var(--border)]">
               <Briefcase className="h-3.5 w-3.5" />
               Freelancer Services
             </span>
           </div>
-          <p className="text-sm text-[#4B4B5C] mt-1">
-            Manage your service offerings, tiered pricing structures, marketplace impressions, and
-            client conversion rates.
+          <p className="text-sm text-[var(--text-secondary)] mt-1">
+            Manage your service details, packages and publication status.
           </p>
         </div>
 
         <div className="flex items-center gap-2.5">
           <Link href="/dashboard/gigs/new">
-            <Button className="bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white font-medium text-xs shadow-sm h-9 px-4 rounded-xl flex items-center gap-1.5">
+            <Button className="bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white font-medium text-sm shadow-sm h-11 px-4 rounded-xl flex items-center gap-1.5">
               <Plus className="h-4 w-4" />
               <span>Create New Gig</span>
             </Button>

@@ -1,13 +1,11 @@
-"use client"
+﻿"use client"
 
 import { apiFetch } from "@/lib/auth-client"
 import { AccountOnboardingPanel } from "@/components/dashboard/AccountOnboardingPanel"
 import { SellerFinancialOverview } from "@/components/dashboard/payments/SellerFinancialOverview"
 import * as React from "react"
 import { Link } from "@/i18n/routing"
-import { DollarSign, ShoppingBag, Star, Plus, CheckCircle2, Award } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { ShoppingBag, Star, Plus, CheckCircle2, ArrowRight } from "lucide-react"
 
 export default function SellerDashboard() {
   const [metrics, setMetrics] = React.useState<{
@@ -42,119 +40,107 @@ export default function SellerDashboard() {
   }, [])
 
   return (
-    <div className="container mx-auto px-4 md:px-8 py-10 min-h-screen">
-      <AccountOnboardingPanel />
-      <SellerFinancialOverview />
-      {loading && <p role="status">Loading account metrics?</p>}
-      {error && <p role="alert">{error}</p>}
-      {/* Top Header & Quick Actions */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-8 border-b border-border/50">
+    <div className="mx-auto max-w-7xl space-y-8">
+      <div className="flex flex-col justify-between gap-5 border-b border-border-default pb-6 sm:flex-row sm:items-end">
         <div>
-          <div className="flex items-center gap-2 text-xs text-text-muted mb-1">
-            <Link href="/" className="hover:text-text-primary transition-colors">
-              Home
-            </Link>
-            <span>/</span>
-            <span className="text-text-primary font-medium">Seller Studio</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <h1 className="font-display text-3xl sm:text-4xl text-text-primary font-medium">
-              Freelancer Operations Hub
-            </h1>
-            <Badge variant="luxury" className="hidden sm:inline-flex gap-1">
-              <Award className="h-3 w-3 text-accent" />
-              Seller Studio
-            </Badge>
-          </div>
-          <p className="text-xs text-text-muted mt-1">
-            Manage your service packages, delivery pipelines, earnings, and client ratings.
+          <p className="premium-eyebrow mb-3">Seller Studio</p>
+          <h1 className="text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
+            Your work, in focus.
+          </h1>
+          <p className="mt-3 max-w-xl text-sm leading-6 text-text-secondary">
+            Manage your services, review orders, and keep client conversations moving.
           </p>
         </div>
-
-        <div className="flex items-center gap-3">
-          <Link href="/dashboard/gigs/new">
-            <Button
-              size="sm"
-              className="rounded-full bg-accent hover:bg-accent-hover text-white gap-1.5 shadow-md"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              <span>Create New Service</span>
-            </Button>
-          </Link>
-          <Link href="/dashboard">
-            <Button
-              size="sm"
-              variant="outline"
-              className="rounded-full border-border bg-surface text-xs text-text-secondary hover:text-text-primary"
-            >
-              Switch to Client Mode
-            </Button>
-          </Link>
-        </div>
+        <Link
+          href="/dashboard/gigs/new"
+          className="inline-flex min-h-11 w-fit shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-white hover:bg-primary-hover"
+        >
+          <Plus aria-hidden="true" className="h-4 w-4" />
+          <span>Create New Service</span>
+        </Link>
       </div>
-
-      {/* Metric Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 my-8">
+      {loading && (
+        <p role="status" className="text-sm text-text-secondary">
+          Loading account metrics…
+        </p>
+      )}
+      {error && (
+        <p
+          role="alert"
+          className="rounded-lg border border-status-danger/30 bg-status-danger/5 p-4 text-sm text-status-danger"
+        >
+          {error}
+        </p>
+      )}
+      {metrics && (
+        <section aria-label="Seller metrics" className="grid gap-4 sm:grid-cols-3">
+          {[
+            { label: "Active orders", value: String(metrics.activeOrdersCount), icon: ShoppingBag },
+            {
+              label: "Completed orders",
+              value: String(metrics.completedOrdersCount),
+              icon: CheckCircle2,
+            },
+            {
+              label: "Average rating",
+              value:
+                metrics.averageRating > 0 ? metrics.averageRating.toFixed(2) : "No ratings yet",
+              icon: Star,
+            },
+          ].map((stat) => {
+            const Icon = stat.icon
+            return (
+              <div
+                key={stat.label}
+                className="rounded-xl border border-border-default bg-bg-surface p-5"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <h2 className="text-sm font-normal text-text-secondary">{stat.label}</h2>
+                  <Icon aria-hidden="true" className="h-4 w-4 text-primary" />
+                </div>
+                <p
+                  className={`mt-4 font-medium tracking-tight ${stat.value === "No ratings yet" ? "text-base text-text-muted" : "text-3xl tabular-nums"}`}
+                >
+                  {stat.value}
+                </p>
+              </div>
+            )
+          })}
+        </section>
+      )}
+      <nav aria-label="Seller workspace" className="grid gap-4 sm:grid-cols-3">
         {[
           {
-            label: "Available earnings",
-            value: "Unavailable",
-            sub: "Financial settlement is unavailable",
-            icon: DollarSign,
-            color: "text-emerald-500",
+            href: "/dashboard/gigs",
+            title: "Your services",
+            detail: "Review your listings and service packages.",
           },
           {
-            label: "Active In Pipeline",
-            value: metrics ? `${metrics.activeOrdersCount} orders` : "?",
-            sub: "Active order count",
-            icon: ShoppingBag,
-            color: "text-accent",
+            href: "/dashboard/orders",
+            title: "View your live sales and order management",
+            detail: "Check orders and delivery updates.",
           },
           {
-            label: "Orders Delivered",
-            value: metrics ? `${metrics.completedOrdersCount}` : "?",
-            sub: "Completed order count",
-            icon: CheckCircle2,
-            color: "text-blue-500",
+            href: "/dashboard/messages",
+            title: "Messages",
+            detail: "Continue conversations with your clients.",
           },
-          {
-            label: "Client Rating Score",
-            value: metrics ? metrics.averageRating.toFixed(2) : "?",
-            sub: "Recorded seller rating",
-            icon: Star,
-            color: "text-amber-500",
-          },
-        ].map((stat, i) => {
-          const Icon = stat.icon
-          return (
-            <div
-              key={i}
-              className="rounded-2xl border border-border bg-surface p-5 flex flex-col justify-between shadow-sm"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">
-                  {stat.label}
-                </span>
-                <div className="h-8 w-8 rounded-lg bg-surface-elevated flex items-center justify-center">
-                  <Icon className={`h-4 w-4 ${stat.color}`} />
-                </div>
-              </div>
-              <div className="mt-4">
-                <span className="font-sans text-3xl font-bold text-text-primary tracking-tight">
-                  {stat.value}
-                </span>
-                <p className="text-[11px] text-text-secondary mt-1">{stat.sub}</p>
-              </div>
+        ].map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className="group rounded-xl border border-border-default bg-bg-surface p-5 hover:border-border-hover"
+          >
+            <div className="flex min-h-11 items-center justify-between gap-3">
+              <h2 className="text-sm font-semibold">{link.title}</h2>
+              <ArrowRight aria-hidden="true" className="h-4 w-4 shrink-0 text-primary" />
             </div>
-          )
-        })}
-      </div>
-
-      <section className="rounded-xl border p-5">
-        <Link href="/dashboard/orders" className="underline">
-          View your live sales and order management
-        </Link>
-      </section>
+            <p className="mt-2 text-sm leading-6 text-text-secondary">{link.detail}</p>
+          </Link>
+        ))}
+      </nav>
+      <SellerFinancialOverview />
+      <AccountOnboardingPanel />
     </div>
   )
 }

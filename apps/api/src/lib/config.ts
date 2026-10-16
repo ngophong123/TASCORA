@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { paymentProvider } from './payment-provider';
 import { parseTrustProxy } from './trust-proxy';
+import { createOriginPolicy, previewOriginConfig } from './origin-policy';
 
 // Staging uses production runtime security and never loads the developer's .env.
 if (process.env.APP_ENV && !['development', 'test', 'staging', 'production'].includes(process.env.APP_ENV)) throw new Error('Invalid APP_ENV');
@@ -47,8 +48,14 @@ if (isProduction) {
   if (process.env.STORAGE_ENDPOINT && new URL(process.env.STORAGE_ENDPOINT).protocol !== 'https:') throw new Error('Production STORAGE_ENDPOINT must use HTTPS');
   for (const origin of allowedOrigins) {
     const url = new URL(origin);
-    if (url.protocol !== 'https:' || url.origin !== origin || ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)) {
+    if (url.protocol !== 'https:' || url.origin !== origin || url.hostname.includes('*') || ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)) {
       throw new Error('Production WEB_URL and CORS_ORIGINS must contain exact HTTPS origins');
     }
   }
 }
+
+export const isAllowedOrigin = createOriginPolicy(allowedOrigins, {
+  preview: previewOriginConfig(process.env),
+  // Fixed codes only: never print origins, API responses, tokens or raw fetch errors.
+  diagnostic: code => console.warn('Preview origin verification unavailable', { code }),
+});

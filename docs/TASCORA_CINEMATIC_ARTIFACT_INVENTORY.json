@@ -1,0 +1,541 @@
+{
+  "note": "Historical cinematic inventory retained intact. On 2026-10-16 the user approved untracking 345 generated artifacts/logs; files remain on disk. Consult the cleanup manifest and QA evidence guide for current Git retention; original groups below describe the earlier proposal, not current tracked status.",
+  "essentialEvidence": [
+    {
+      "file": "docs/performance/cinematic-mobile-startup-after/home-mobile-1.json",
+      "bytes": 735309
+    },
+    {
+      "file": "docs/performance/cinematic-mobile-startup-after/home-mobile-2.json",
+      "bytes": 752195
+    },
+    {
+      "file": "docs/performance/cinematic-mobile-startup-after/home-mobile-3.json",
+      "bytes": 755176
+    },
+    {
+      "file": "docs/performance/cinematic-mobile-startup-after/summary.json",
+      "bytes": 10388
+    },
+    {
+      "file": "docs/performance/cinematic-mobile-startup-before/home-mobile-1.json",
+      "bytes": 747393
+    },
+    {
+      "file": "docs/performance/cinematic-mobile-startup-before/home-mobile-2.json",
+      "bytes": 767737
+    },
+    {
+      "file": "docs/performance/cinematic-mobile-startup-before/home-mobile-3.json",
+      "bytes": 767892
+    },
+    {
+      "file": "docs/performance/cinematic-mobile-startup-before/summary.json",
+      "bytes": 10338
+    },
+    {
+      "file": "docs/performance/cinematic-quality-after/summary.json",
+      "bytes": 29552
+    },
+    {
+      "file": "docs/performance/cinematic-quality-before/summary.json",
+      "bytes": 29514
+    },
+    {
+      "file": "docs/performance/cinematic-quality-confirm/summary.json",
+      "bytes": 29533
+    },
+    {
+      "file": "docs/performance/cinematic-quality-desktop/summary.json",
+      "bytes": 10273
+    },
+    {
+      "file": "docs/performance/cinematic-quality-final/summary.json",
+      "bytes": 30914
+    },
+    {
+      "file": "docs/performance/cinematic-quality-motion/summary.json",
+      "bytes": 10766
+    },
+    {
+      "file": "docs/performance/cinematic-quality-observer/explore-interactions.json",
+      "bytes": 7600
+    },
+    {
+      "file": "docs/performance/cinematic-quality-observer/home-interactions.json",
+      "bytes": 8269
+    },
+    {
+      "file": "docs/performance/cinematic-quality-observer/services-interactions.json",
+      "bytes": 8009
+    },
+    {
+      "file": "docs/performance/cinematic-mobile-startup-profile.json",
+      "bytes": 39904
+    }
+  ],
+  "disposableGeneratedHtml": [
+    {
+      "file": "docs/performance/cinematic-mobile-startup-after/home-mobile-1.html",
+      "bytes": 811286
+    },
+    {
+      "file": "docs/performance/cinematic-mobile-startup-after/home-mobile-2.html",
+      "bytes": 830496
+    },
+    {
+      "file": "docs/performance/cinematic-mobile-startup-after/home-mobile-3.html",
+      "bytes": 832177
+    },
+    {
+      "file": "docs/performance/cinematic-mobile-startup-before/home-mobile-1.html",
+      "bytes": 819085
+    },
+    {
+      "file": "docs/performance/cinematic-mobile-startup-before/home-mobile-2.html",
+      "bytes": 840164
+    },
+    {
+      "file": "docs/performance/cinematic-mobile-startup-before/home-mobile-3.html",
+      "bytes": 840232
+    },
+    {
+      "file": "docs/performance/cinematic-quality-after/explore-mobile-1.html",
+      "bytes": 1099411
+    },
+    {
+      "file": "docs/performance/cinematic-quality-after/explore-mobile-2.html",
+      "bytes": 1073816
+    },
+    {
+      "file": "docs/performance/cinematic-quality-after/explore-mobile-3.html",
+      "bytes": 1100522
+    },
+    {
+      "file": "docs/performance/cinematic-quality-after/home-mobile-1.html",
+      "bytes": 809713
+    },
+    {
+      "file": "docs/performance/cinematic-quality-after/home-mobile-2.html",
+      "bytes": 811753
+    },
+    {
+      "file": "docs/performance/cinematic-quality-after/home-mobile-3.html",
+      "bytes": 811580
+    },
+    {
+      "file": "docs/performance/cinematic-quality-after/services-mobile-1.html",
+      "bytes": 836469
+    },
+    {
+      "file": "docs/performance/cinematic-quality-after/services-mobile-2.html",
+      "bytes": 836622
+    },
+    {
+      "file": "docs/performance/cinematic-quality-after/services-mobile-3.html",
+      "bytes": 862600
+    },
+    {
+      "file": "docs/performance/cinematic-quality-before/explore-mobile-1.html",
+      "bytes": 1124625
+    },
+    {
+      "file": "docs/performance/cinematic-quality-before/explore-mobile-2.html",
+      "bytes": 1124535
+    },
+    {
+      "file": "docs/performance/cinematic-quality-before/explore-mobile-3.html",
+      "bytes": 1124881
+    },
+    {
+      "file": "docs/performance/cinematic-quality-before/home-mobile-1.html",
+      "bytes": 809863
+    },
+    {
+      "file": "docs/performance/cinematic-quality-before/home-mobile-2.html",
+      "bytes": 832627
+    },
+    {
+      "file": "docs/performance/cinematic-quality-before/home-mobile-3.html",
+      "bytes": 832063
+    },
+    {
+      "file": "docs/performance/cinematic-quality-before/services-mobile-1.html",
+      "bytes": 833490
+    },
+    {
+      "file": "docs/performance/cinematic-quality-before/services-mobile-2.html",
+      "bytes": 862535
+    },
+    {
+      "file": "docs/performance/cinematic-quality-before/services-mobile-3.html",
+      "bytes": 861966
+    },
+    {
+      "file": "docs/performance/cinematic-quality-confirm/explore-mobile-1.html",
+      "bytes": 1072628
+    },
+    {
+      "file": "docs/performance/cinematic-quality-confirm/explore-mobile-2.html",
+      "bytes": 1104693
+    },
+    {
+      "file": "docs/performance/cinematic-quality-confirm/explore-mobile-3.html",
+      "bytes": 1124746
+    },
+    {
+      "file": "docs/performance/cinematic-quality-confirm/home-mobile-1.html",
+      "bytes": 810664
+    },
+    {
+      "file": "docs/performance/cinematic-quality-confirm/home-mobile-2.html",
+      "bytes": 834056
+    },
+    {
+      "file": "docs/performance/cinematic-quality-confirm/home-mobile-3.html",
+      "bytes": 811018
+    },
+    {
+      "file": "docs/performance/cinematic-quality-confirm/services-mobile-1.html",
+      "bytes": 853595
+    },
+    {
+      "file": "docs/performance/cinematic-quality-confirm/services-mobile-2.html",
+      "bytes": 838272
+    },
+    {
+      "file": "docs/performance/cinematic-quality-confirm/services-mobile-3.html",
+      "bytes": 853342
+    },
+    {
+      "file": "docs/performance/cinematic-quality-desktop/home-mobile-1.html",
+      "bytes": 922121
+    },
+    {
+      "file": "docs/performance/cinematic-quality-desktop/home-mobile-2.html",
+      "bytes": 950957
+    },
+    {
+      "file": "docs/performance/cinematic-quality-desktop/home-mobile-3.html",
+      "bytes": 920820
+    },
+    {
+      "file": "docs/performance/cinematic-quality-final/explore-mobile-1.html",
+      "bytes": 1099193
+    },
+    {
+      "file": "docs/performance/cinematic-quality-final/explore-mobile-2.html",
+      "bytes": 1125022
+    },
+    {
+      "file": "docs/performance/cinematic-quality-final/explore-mobile-3.html",
+      "bytes": 1124681
+    },
+    {
+      "file": "docs/performance/cinematic-quality-final/home-mobile-1.html",
+      "bytes": 810294
+    },
+    {
+      "file": "docs/performance/cinematic-quality-final/home-mobile-2.html",
+      "bytes": 833601
+    },
+    {
+      "file": "docs/performance/cinematic-quality-final/home-mobile-3.html",
+      "bytes": 832974
+    },
+    {
+      "file": "docs/performance/cinematic-quality-final/services-mobile-1.html",
+      "bytes": 861862
+    },
+    {
+      "file": "docs/performance/cinematic-quality-final/services-mobile-2.html",
+      "bytes": 861785
+    },
+    {
+      "file": "docs/performance/cinematic-quality-final/services-mobile-3.html",
+      "bytes": 861524
+    },
+    {
+      "file": "docs/performance/cinematic-quality-motion/home-mobile-1.html",
+      "bytes": 817722
+    },
+    {
+      "file": "docs/performance/cinematic-quality-motion/home-mobile-2.html",
+      "bytes": 841238
+    },
+    {
+      "file": "docs/performance/cinematic-quality-motion/home-mobile-3.html",
+      "bytes": 817925
+    }
+  ],
+  "preserveHistoricalRawOutsideCommit": [
+    {
+      "file": "docs/performance/cinematic-motion/explore-interactions.json",
+      "bytes": 7540
+    },
+    {
+      "file": "docs/performance/cinematic-motion/home-interactions.json",
+      "bytes": 8370
+    },
+    {
+      "file": "docs/performance/cinematic-motion/services-interactions.json",
+      "bytes": 6464
+    },
+    {
+      "file": "docs/performance/cinematic-motion-final/explore-interactions.json",
+      "bytes": 6520
+    },
+    {
+      "file": "docs/performance/cinematic-motion-final/home-interactions.json",
+      "bytes": 9870
+    },
+    {
+      "file": "docs/performance/cinematic-motion-final/services-interactions.json",
+      "bytes": 6435
+    },
+    {
+      "file": "docs/performance/cinematic-quality-after/explore-mobile-1.json",
+      "bytes": 1037605
+    },
+    {
+      "file": "docs/performance/cinematic-quality-after/explore-mobile-2.json",
+      "bytes": 1012538
+    },
+    {
+      "file": "docs/performance/cinematic-quality-after/explore-mobile-3.json",
+      "bytes": 1039588
+    },
+    {
+      "file": "docs/performance/cinematic-quality-after/home-mobile-1.json",
+      "bytes": 732258
+    },
+    {
+      "file": "docs/performance/cinematic-quality-after/home-mobile-2.json",
+      "bytes": 734924
+    },
+    {
+      "file": "docs/performance/cinematic-quality-after/home-mobile-3.json",
+      "bytes": 733394
+    },
+    {
+      "file": "docs/performance/cinematic-quality-after/services-mobile-1.json",
+      "bytes": 762343
+    },
+    {
+      "file": "docs/performance/cinematic-quality-after/services-mobile-2.json",
+      "bytes": 762627
+    },
+    {
+      "file": "docs/performance/cinematic-quality-after/services-mobile-3.json",
+      "bytes": 786822
+    },
+    {
+      "file": "docs/performance/cinematic-quality-before/explore-mobile-1.json",
+      "bytes": 1062061
+    },
+    {
+      "file": "docs/performance/cinematic-quality-before/explore-mobile-2.json",
+      "bytes": 1061625
+    },
+    {
+      "file": "docs/performance/cinematic-quality-before/explore-mobile-3.json",
+      "bytes": 1062175
+    },
+    {
+      "file": "docs/performance/cinematic-quality-before/home-mobile-1.json",
+      "bytes": 731926
+    },
+    {
+      "file": "docs/performance/cinematic-quality-before/home-mobile-2.json",
+      "bytes": 753888
+    },
+    {
+      "file": "docs/performance/cinematic-quality-before/home-mobile-3.json",
+      "bytes": 752865
+    },
+    {
+      "file": "docs/performance/cinematic-quality-before/services-mobile-1.json",
+      "bytes": 757156
+    },
+    {
+      "file": "docs/performance/cinematic-quality-before/services-mobile-2.json",
+      "bytes": 786522
+    },
+    {
+      "file": "docs/performance/cinematic-quality-before/services-mobile-3.json",
+      "bytes": 785751
+    },
+    {
+      "file": "docs/performance/cinematic-quality-confirm/explore-mobile-1.json",
+      "bytes": 1012091
+    },
+    {
+      "file": "docs/performance/cinematic-quality-confirm/explore-mobile-2.json",
+      "bytes": 1048056
+    },
+    {
+      "file": "docs/performance/cinematic-quality-confirm/explore-mobile-3.json",
+      "bytes": 1062543
+    },
+    {
+      "file": "docs/performance/cinematic-quality-confirm/home-mobile-1.json",
+      "bytes": 733331
+    },
+    {
+      "file": "docs/performance/cinematic-quality-confirm/home-mobile-2.json",
+      "bytes": 756471
+    },
+    {
+      "file": "docs/performance/cinematic-quality-confirm/home-mobile-3.json",
+      "bytes": 733841
+    },
+    {
+      "file": "docs/performance/cinematic-quality-confirm/services-mobile-1.json",
+      "bytes": 778702
+    },
+    {
+      "file": "docs/performance/cinematic-quality-confirm/services-mobile-2.json",
+      "bytes": 764007
+    },
+    {
+      "file": "docs/performance/cinematic-quality-confirm/services-mobile-3.json",
+      "bytes": 778123
+    },
+    {
+      "file": "docs/performance/cinematic-quality-desktop/home-mobile-1.json",
+      "bytes": 854791
+    },
+    {
+      "file": "docs/performance/cinematic-quality-desktop/home-mobile-2.json",
+      "bytes": 884401
+    },
+    {
+      "file": "docs/performance/cinematic-quality-desktop/home-mobile-3.json",
+      "bytes": 854755
+    },
+    {
+      "file": "docs/performance/cinematic-quality-final/explore-mobile-1.json",
+      "bytes": 1036666
+    },
+    {
+      "file": "docs/performance/cinematic-quality-final/explore-mobile-2.json",
+      "bytes": 1062380
+    },
+    {
+      "file": "docs/performance/cinematic-quality-final/explore-mobile-3.json",
+      "bytes": 1062004
+    },
+    {
+      "file": "docs/performance/cinematic-quality-final/home-mobile-1.json",
+      "bytes": 732287
+    },
+    {
+      "file": "docs/performance/cinematic-quality-final/home-mobile-2.json",
+      "bytes": 755308
+    },
+    {
+      "file": "docs/performance/cinematic-quality-final/home-mobile-3.json",
+      "bytes": 754600
+    },
+    {
+      "file": "docs/performance/cinematic-quality-final/services-mobile-1.json",
+      "bytes": 785543
+    },
+    {
+      "file": "docs/performance/cinematic-quality-final/services-mobile-2.json",
+      "bytes": 785592
+    },
+    {
+      "file": "docs/performance/cinematic-quality-final/services-mobile-3.json",
+      "bytes": 784889
+    },
+    {
+      "file": "docs/performance/cinematic-quality-motion/home-mobile-1.json",
+      "bytes": 745926
+    },
+    {
+      "file": "docs/performance/cinematic-quality-motion/home-mobile-2.json",
+      "bytes": 769327
+    },
+    {
+      "file": "docs/performance/cinematic-quality-motion/home-mobile-3.json",
+      "bytes": 746391
+    },
+    {
+      "file": "docs/performance/cinematic-scrolltrigger-before/explore-interactions.json",
+      "bytes": 7598
+    },
+    {
+      "file": "docs/performance/cinematic-scrolltrigger-before/home-interactions.json",
+      "bytes": 8448
+    },
+    {
+      "file": "docs/performance/cinematic-scrolltrigger-before/services-interactions.json",
+      "bytes": 6423
+    },
+    {
+      "file": "docs/performance/cinematic-scrolltrigger-final/cpu-scroll.json",
+      "bytes": 326
+    },
+    {
+      "file": "docs/performance/cinematic-scrolltrigger-final/explore-interactions.json",
+      "bytes": 6545
+    },
+    {
+      "file": "docs/performance/cinematic-scrolltrigger-final/home-interactions.json",
+      "bytes": 8719
+    },
+    {
+      "file": "docs/performance/cinematic-scrolltrigger-final/services-interactions.json",
+      "bytes": 6412
+    },
+    {
+      "file": "docs/performance/cinematic-scrolltrigger-verified/explore-interactions.json",
+      "bytes": 6177
+    },
+    {
+      "file": "docs/performance/cinematic-scrolltrigger-verified/home-interactions.json",
+      "bytes": 8250
+    },
+    {
+      "file": "docs/performance/cinematic-scrolltrigger-verified/services-interactions.json",
+      "bytes": 8069
+    }
+  ],
+  "ignoredProfiles": [
+    {
+      "file": ".premium-performance/profiles/cinematic-mobile-startup-before/home-1-artifacts.json",
+      "bytes": 9167124
+    },
+    {
+      "file": ".premium-performance/profiles/cinematic-mobile-startup-before/home-2-artifacts.json",
+      "bytes": 9052483
+    },
+    {
+      "file": ".premium-performance/profiles/cinematic-mobile-startup-before/home-3-artifacts.json",
+      "bytes": 8750083
+    },
+    {
+      "file": ".premium-performance/profiles/cinematic-mobile-startup-after/home-1-artifacts.json",
+      "bytes": 6589122
+    },
+    {
+      "file": ".premium-performance/profiles/cinematic-mobile-startup-after/home-2-artifacts.json",
+      "bytes": 7295090
+    },
+    {
+      "file": ".premium-performance/profiles/cinematic-mobile-startup-after/home-3-artifacts.json",
+      "bytes": 7131749
+    }
+  ],
+  "retentionStatus": {
+    "date": "2026-10-16",
+    "cleanupHead": "dc6fbcfc595377ceaf5578949ed7522c7179892d",
+    "untrackedGeneratedFiles": 345,
+    "trackedCompactPerformanceJson": 53,
+    "trackedCuratedScreenshots": 8,
+    "manifest": "docs/GIT_CLEANUP_MANIFEST.csv",
+    "guide": "docs/QA_EVIDENCE.md",
+    "physicalDeletion": false
+  }
+}

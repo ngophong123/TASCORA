@@ -1,0 +1,242 @@
+﻿[
+  {
+    "phase": "phase2-before",
+    "route": "home",
+    "runs": 3,
+    "performance": {
+      "median": 76,
+      "min": 76,
+      "max": 78
+    },
+    "lcpMs": {
+      "median": 2292.327875845146,
+      "min": 2124.6604463503186,
+      "max": 3488.291267415835
+    },
+    "cls": {
+      "median": 0,
+      "min": 0,
+      "max": 0
+    },
+    "tbtMs": {
+      "median": 1028.7777216989277,
+      "min": 488.1166915730205,
+      "max": 1048.6302144658364
+    },
+    "accessibility": {
+      "median": 100,
+      "min": 100,
+      "max": 100
+    },
+    "bestPractices": {
+      "median": 100,
+      "min": 100,
+      "max": 100
+    },
+    "seo": {
+      "median": 92,
+      "min": 92,
+      "max": 92
+    }
+  },
+  {
+    "phase": "phase2-before",
+    "route": "services",
+    "runs": 3,
+    "performance": {
+      "median": 59,
+      "min": 56.99999999999999,
+      "max": 61
+    },
+    "lcpMs": {
+      "median": 6241.015193814278,
+      "min": 6217.453943815042,
+      "max": 6388.712216003452
+    },
+    "cls": {
+      "median": 0,
+      "min": 0,
+      "max": 0
+    },
+    "tbtMs": {
+      "median": 782.0000000000014,
+      "min": 655.9999999999995,
+      "max": 895
+    },
+    "accessibility": {
+      "median": 100,
+      "min": 100,
+      "max": 100
+    },
+    "bestPractices": {
+      "median": 100,
+      "min": 100,
+      "max": 100
+    },
+    "seo": {
+      "median": 100,
+      "min": 100,
+      "max": 100
+    }
+  },
+  {
+    "phase": "phase2-before",
+    "route": "explore",
+    "runs": 3,
+    "performance": {
+      "median": 52,
+      "min": 51,
+      "max": 54
+    },
+    "lcpMs": {
+      "median": 6028.354818813446,
+      "min": 5890.47571254228,
+      "max": 6149.187221340093
+    },
+    "cls": {
+      "median": 0,
+      "min": 0,
+      "max": 0.03262400468017672
+    },
+    "tbtMs": {
+      "median": 1570.7846612373164,
+      "min": 1204.22903623731,
+      "max": 1730.1283112371302
+    },
+    "accessibility": {
+      "median": 100,
+      "min": 100,
+      "max": 100
+    },
+    "bestPractices": {
+      "median": 100,
+      "min": 100,
+      "max": 100
+    },
+    "seo": {
+      "median": 100,
+      "min": 100,
+      "max": 100
+    }
+  },
+  {
+    "phase": "phase2-verified",
+    "route": "home",
+    "runs": 3,
+    "performance": {
+      "median": 80,
+      "min": 79,
+      "max": 80
+    },
+    "lcpMs": {
+      "median": 2744.115507167983,
+      "min": 2126.5621445228116,
+      "max": 3465.983304084571
+    },
+    "cls": {
+      "median": 0,
+      "min": 0,
+      "max": 0
+    },
+    "tbtMs": {
+      "median": 635.0756247175436,
+      "min": 481.3847644656132,
+      "max": 788.911390379106
+    },
+    "accessibility": {
+      "median": 100,
+      "min": 100,
+      "max": 100
+    },
+    "bestPractices": {
+      "median": 100,
+      "min": 100,
+      "max": 100
+    },
+    "seo": {
+      "median": 92,
+      "min": 92,
+      "max": 92
+    }
+  },
+  {
+    "phase": "phase2-verified",
+    "route": "services",
+    "runs": 3,
+    "performance": {
+      "median": 80,
+      "min": 76,
+      "max": 80
+    },
+    "lcpMs": {
+      "median": 3650.108,
+      "min": 3644.6605,
+      "max": 3693.124
+    },
+    "cls": {
+      "median": 0,
+      "min": 0,
+      "max": 0
+    },
+    "tbtMs": {
+      "median": 411,
+      "min": 385.96400000000017,
+      "max": 535.7920000000001
+    },
+    "accessibility": {
+      "median": 100,
+      "min": 100,
+      "max": 100
+    },
+    "bestPractices": {
+      "median": 100,
+      "min": 100,
+      "max": 100
+    },
+    "seo": {
+      "median": 100,
+      "min": 100,
+      "max": 100
+    }
+  },
+  {
+    "phase": "phase2-verified",
+    "route": "explore",
+    "runs": 3,
+    "performance": {
+      "median": 71,
+      "min": 69,
+      "max": 72
+    },
+    "lcpMs": {
+      "median": 3570.4370000000004,
+      "min": 3512.3999999999996,
+      "max": 3874.184
+    },
+    "cls": {
+      "median": 0,
+      "min": 0,
+      "max": 0
+    },
+    "tbtMs": {
+      "median": 820.6580000000004,
+      "min": 764.0210000000004,
+      "max": 851.8999999999996
+    },
+    "accessibility": {
+      "median": 100,
+      "min": 100,
+      "max": 100
+    },
+    "bestPractices": {
+      "median": 100,
+      "min": 100,
+      "max": 100
+    },
+    "seo": {
+      "median": 100,
+      "min": 100,
+      "max": 100
+    }
+  }
+]

@@ -249,7 +249,7 @@ Tests cover refresh/access expiry, invalid/expired refresh, logout/rejection/cle
 
 ## CORS
 
-WEB_URL/comma-separated CORS_ORIGINS; NEXT_PUBLIC_WEB_URL compatibility alias. Implicit localhost frontend ports only outside production. HTTP/Socket.IO share exact origins and credentials; browser WebSocket origin also checked. Login/refresh/logout require trusted Origin and CSRF header. Preview origins explicit; CORS does not replace auth. Validate real cookie/proxy behavior before launch.
+WEB_URL/comma-separated CORS_ORIGINS; NEXT_PUBLIC_WEB_URL compatibility alias. Implicit localhost frontend ports only outside production. HTTP/Socket.IO and cookie CSRF share one origin policy; credentials, JWT/session checks and the CSRF header remain required. Optional staging-only Vercel API verification admits exact READY Preview deployment URLs only when team, project, GitHub repository ID and trusted Git ref match private configuration; production retains exact origins only. See [CORS permanent fix audit](docs/CORS_PERMANENT_FIX_AUDIT.md) for configuration, failure limits and hosted acceptance. CORS does not replace auth. Validate real cookie/proxy behavior before launch.
 
 ## File Storage
 

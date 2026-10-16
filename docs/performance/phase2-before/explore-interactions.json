@@ -1,0 +1,269 @@
+{
+  "route": "/explore",
+  "viewport": "390x844",
+  "throttling": "none",
+  "fixture": true,
+  "idleRafCallbacksIn2Seconds": 121,
+  "lcpMs": 1076,
+  "cls": 0.0039587195670841594,
+  "layoutShifts": [
+    {
+      "time": 486.59999999962747,
+      "value": 0.0039587195670841594,
+      "sources": ["DIV.grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"]
+    }
+  ],
+  "recordedInteractionCount": 2,
+  "recordedInteractionMaxMs": 40,
+  "eventThresholdMs": 16,
+  "longTasks": [67, 77, 93],
+  "supported": [
+    "element",
+    "event",
+    "first-input",
+    "interaction-contentful-paint",
+    "largest-contentful-paint",
+    "layout-shift",
+    "long-animation-frame",
+    "longtask",
+    "mark",
+    "measure",
+    "navigation",
+    "paint",
+    "resource",
+    "soft-navigation",
+    "visibility-state"
+  ],
+  "resources": [
+    {
+      "name": "http://localhost:3210/_next/static/css/f7e295e0ba5e51d0.css",
+      "bytes": 25309,
+      "duration": 34.39999999944121
+    },
+    {
+      "name": "http://localhost:3210/_next/static/css/26f66b44f8c162f7.css",
+      "bytes": 2178,
+      "duration": 28.90000000037253
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/webpack-a85e9c539f4a85d5.js",
+      "bytes": 2054,
+      "duration": 73.29999999981374
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/ef9b57b1-9c5f512204fd769e.js",
+      "bytes": 63601,
+      "duration": 119.29999999981374
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/main-app-eb129468a2f02cc1.js",
+      "bytes": 817,
+      "duration": 74.59999999962747
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+      "bytes": 66048,
+      "duration": 127
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/5039-76745e3c17401e1c.js",
+      "bytes": 17181,
+      "duration": 82.30000000074506
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/699-8795353c8a0f7a8a.js",
+      "bytes": 12936,
+      "duration": 78.59999999962747
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/9982-9e43c86c3823c2ce.js",
+      "bytes": 6085,
+      "duration": 82.20000000018626
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/1922-efe0229370adff13.js",
+      "bytes": 5309,
+      "duration": 83.5
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/explore/page-a10b23c1bf1662a9.js",
+      "bytes": 8268,
+      "duration": 120.40000000037253
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/1004-4382eeee8be78389.js",
+      "bytes": 7946,
+      "duration": 121
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/layout-94e43ccd727b0abf.js",
+      "bytes": 9141,
+      "duration": 121
+    },
+    {
+      "name": "http://localhost:3210/_next/static/media/22a5144ee8d83bca-s.p.woff2",
+      "bytes": 29588,
+      "duration": 132.29999999981374
+    },
+    {
+      "name": "http://localhost:3210/?_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 589,
+      "duration": 16.300000000745058
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/services?limit=50",
+      "bytes": 0,
+      "duration": 22.5
+    },
+    {
+      "name": "http://localhost:3210/?_rsc=OGEB1sNMwJGaS1Mp",
+      "bytes": 11171,
+      "duration": 36.5
+    },
+    {
+      "name": "http://localhost:3210/?_rsc=b-rwNT6R0kJkd_Ip",
+      "bytes": 1765,
+      "duration": 35.200000000186265
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/services?limit=50&page=2",
+      "bytes": 0,
+      "duration": 17
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Ffull-stack-nextjs-node.jpg&w=384&q=75",
+      "bytes": 10202,
+      "duration": 93.79999999981374
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Ffavicon.svg&w=64&q=75",
+      "bytes": 1132,
+      "duration": 104.79999999981374
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fapi-microservices-backend.jpg&w=384&q=75",
+      "bytes": 15046,
+      "duration": 94.59999999962747
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fsaas-landing-page-frontend.jpg&w=384&q=75",
+      "bytes": 9760,
+      "duration": 95.5
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fgolang-microservices-terminal.jpg&w=384&q=75",
+      "bytes": 5586,
+      "duration": 109.90000000037253
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Faws-terraform-cloud-console.jpg&w=384&q=75",
+      "bytes": 4656,
+      "duration": 129.70000000018626
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fkubernetes-devops-workstation.jpg&w=384&q=75",
+      "bytes": 13914,
+      "duration": 133.70000000018626
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fsolidity-smart-contracts-code.jpg&w=384&q=75",
+      "bytes": 10064,
+      "duration": 132.40000000037253
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fdefi-web3-staking-protocol.jpg&w=384&q=75",
+      "bytes": 4236,
+      "duration": 120.30000000074506
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/favorites",
+      "bytes": 0,
+      "duration": 80.40000000037253
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/page-346f9fda91ce257c.js",
+      "bytes": 6174,
+      "duration": 113.70000000018626
+    },
+    {
+      "name": "http://localhost:3210/services/c000000000000000000000001?_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 535,
+      "duration": 116.70000000018626
+    },
+    {
+      "name": "http://localhost:3210/services/c000000000000000000000001?_rsc=kRF1fExD8BlRIOzd",
+      "bytes": 1449,
+      "duration": 65.70000000018626
+    },
+    {
+      "name": "http://localhost:3210/_next/static/media/b66cf8e69499582a-s.p.woff2",
+      "bytes": 8268,
+      "duration": 53.60000000055879
+    },
+    {
+      "name": "http://localhost:3210/explore?_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 601,
+      "duration": 39.40000000037253
+    },
+    {
+      "name": "http://localhost:3210/categories?_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 603,
+      "duration": 39.40000000037253
+    },
+    {
+      "name": "http://localhost:3210/dashboard?_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 602,
+      "duration": 39.40000000037253
+    },
+    {
+      "name": "http://localhost:3210/explore?_rsc=--bL0kHDCIk4V099",
+      "bytes": 1769,
+      "duration": 57.799999999813735
+    },
+    {
+      "name": "http://localhost:3210/categories?_rsc=RcjK84o8j9F72hTz",
+      "bytes": 1710,
+      "duration": 57.30000000074506
+    },
+    {
+      "name": "http://localhost:3210/dashboard?_rsc=uR7XW0jBfGO3WC29",
+      "bytes": 2228,
+      "duration": 55
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/categories/page-eb691ed98c5e38fb.js",
+      "bytes": 7281,
+      "duration": 60.30000000074506
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/3129-f7ff05eda5867110.js",
+      "bytes": 4777,
+      "duration": 70.6000000005588
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/dashboard/page-7860ca5a9e1641d1.js",
+      "bytes": 6298,
+      "duration": 71
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/4625-3d0fd79d2461ac6e.js",
+      "bytes": 42803,
+      "duration": 78.19999999925494
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/8796-ef145fd654f94111.js",
+      "bytes": 2331,
+      "duration": 68.70000000018626
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/7394-115bfb5cd66774e6.js",
+      "bytes": 11329,
+      "duration": 70.09999999962747
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/dashboard/layout-dc9695b7a08a8199.js",
+      "bytes": 458,
+      "duration": 66.29999999981374
+    }
+  ]
+}

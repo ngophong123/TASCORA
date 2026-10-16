@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import * as React from "react"
 import { Link } from "@/i18n/routing"
@@ -48,16 +48,21 @@ export default function DashboardOrdersPage() {
         <div>
           {/* Breadcrumbs */}
           <nav aria-label="Breadcrumb" className="mb-2">
-            <ol className="flex items-center gap-1.5 text-xs text-[#8B8B9B]">
+            <ol className="flex items-center gap-1.5 text-sm text-text-secondary">
               <li>
-                <Link href="/dashboard" className="hover:text-blue-600 transition-colors">
+                <Link
+                  href="/dashboard"
+                  className="inline-flex min-h-11 items-center text-text-secondary hover:text-primary transition-colors"
+                >
                   Dashboard
                 </Link>
               </li>
               <li>
                 <ChevronRight className="w-3.5 h-3.5" />
               </li>
-              <li className="text-blue-700 font-semibold">Orders</li>
+              <li aria-current="page" className="text-foreground font-semibold">
+                Orders
+              </li>
             </ol>
           </nav>
 
@@ -72,8 +77,8 @@ export default function DashboardOrdersPage() {
 
           <p className="text-xs sm:text-sm text-[#6B6B7B] mt-1 leading-relaxed">
             {isClient
-              ? "Track milestone progress, inspect delivered assets, and manage order status."
-              : "Manage active client orders, submit completed milestone packages, and review feedback."}
+              ? "Track your orders, inspect deliveries, and manage order status."
+              : "Manage client orders, submit deliveries, and review feedback."}
           </p>
         </div>
 

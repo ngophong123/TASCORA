@@ -1,11 +1,15 @@
-"use client"
+﻿"use client"
 
 import * as React from "react"
 import { useSearchParams } from "next/navigation"
 import { Link } from "@/i18n/routing"
 import { getApiUrl } from "@/lib/api-url"
+import { AuthPanel, authInput, authLabel } from "@/components/auth/AuthPanel"
+import { Button } from "@/components/ui/button"
+import { useTranslations } from "next-intl"
 
 function VerificationForm() {
+  const t = useTranslations("auth")
   const params = useSearchParams()
   const [message, setMessage] = React.useState("")
   const [busy, setBusy] = React.useState(false)
@@ -19,11 +23,11 @@ function VerificationForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: params.get("token") || "" }),
       })
-      if (!response.ok) throw new Error("This verification link is invalid or expired.")
+      if (!response.ok) throw new Error(t("verifyInvalid"))
       setVerified(true)
-      setMessage("Email verified. You can now sign in.")
+      setMessage(t("verifySuccess"))
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Verification failed.")
+      setMessage(error instanceof Error ? error.message : t("verifyFailed"))
     } finally {
       setBusy(false)
     }
@@ -37,54 +41,88 @@ function VerificationForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       })
-      if (!response.ok) throw new Error("Unable to send verification. Please retry later.")
-      setMessage("If your account needs verification, an email will be sent.")
+      if (!response.ok) throw new Error(t("verifyResendFailed"))
+      setMessage(t("verifyResent"))
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Please retry later.")
+      setMessage(error instanceof Error ? error.message : t("verifyResendFailed"))
     } finally {
       setBusy(false)
     }
   }
   return (
-    <main className="mx-auto w-full max-w-lg p-8 space-y-5">
-      <h1 className="text-2xl font-bold">Verify your email</h1>
-      <p>Confirm your email address before signing in.</p>
+    <AuthPanel title={t("verifyTitle")} description={t("verifyDescription")}>
       {params.get("token") && !verified && (
-        <button
+        <Button
+          type="button"
           onClick={() => void verify()}
           disabled={busy}
-          className="rounded-lg bg-indigo-600 text-white px-4 py-2"
+          isLoading={busy}
+          loadingText={t("verifyLoading")}
+          className="mb-5 w-full"
+          size="lg"
         >
-          Verify email
-        </button>
+          {t("verifyAction")}
+        </Button>
       )}
-      <p role="status">{message}</p>
+      <p
+        role="status"
+        aria-live="polite"
+        className={`text-sm leading-6 ${message ? "mb-5 rounded-lg border border-border-default bg-bg-subtle p-4" : ""}`}
+      >
+        {message}
+      </p>
       {!verified && (
-        <form onSubmit={resend} className="space-y-3">
-          <label className="block">
-            Email address
+        <form method="post" onSubmit={resend} className="space-y-5" aria-busy={busy}>
+          <div>
+            <label htmlFor="verification-email" className={authLabel}>
+              {t("verifyEmailLabel")}
+            </label>
             <input
+              id="verification-email"
+              name="email"
               type="email"
+              autoComplete="email"
               required
+              disabled={busy}
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              className="block w-full rounded border p-2"
+              className={authInput}
             />
-          </label>
-          <button disabled={busy} className="rounded border px-4 py-2">
-            Resend verification email
-          </button>
+          </div>
+          <Button
+            type="submit"
+            disabled={busy}
+            isLoading={busy}
+            loadingText={t("verifyLoading")}
+            variant={params.get("token") ? "outline" : "primary"}
+            className="w-full"
+            size="lg"
+          >
+            {t("verifyResendAction")}
+          </Button>
         </form>
       )}
-      <Link href="/login" className="text-indigo-600 underline">
-        Sign in
-      </Link>
-    </main>
+      <div className="mt-6 border-t border-border-default pt-4">
+        <Link
+          href="/login"
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary hover:underline underline-offset-4"
+        >
+          {t("signIn")}
+        </Link>
+      </div>
+    </AuthPanel>
   )
 }
 export default function VerifyEmailPage() {
+  const t = useTranslations("auth")
   return (
-    <React.Suspense fallback={<p>Loading?</p>}>
+    <React.Suspense
+      fallback={
+        <p role="status" className="px-4 py-12 text-center text-text-muted">
+          {t("verifyPageLoading")}
+        </p>
+      }
+    >
       <VerificationForm />
     </React.Suspense>
   )

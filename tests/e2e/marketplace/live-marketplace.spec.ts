@@ -39,19 +39,47 @@ test('buyer purchase is pending and the same order appears in seller sales', asy
   await expect(page).toHaveURL(/seller\/dashboard/); await page.goto('/dashboard/orders');
   await expect(orderItem(page, order.id)).toBeVisible();
 });
-test('failed catalog and missing detail show errors without substituted sample records', async ({ page }) => {
+test('failed catalog and missing detail show errors without substituted sample records', async ({ page, request }) => {
   await page.route('**/api/v1/services?**', route => route.fulfill({ status: 503, json: { success: false, error: 'Catalog temporarily unavailable' } }));
-  await page.goto('/services'); await expect(page.getByRole('alert').filter({ hasText: 'Catalog temporarily unavailable' })).toContainText('Catalog temporarily unavailable'); await expect(page.getByTestId('gig-card')).toHaveCount(0);
+  const serverFixture = process.env.PREMIUM_CATALOG_FIXTURE === '1';
+  if (serverFixture) await request.post('http://localhost:3211/__lab/outage?enabled=true');
+  try {
+  await page.goto('/services');
+  await expect(page.getByRole('alert').filter({ hasText: /Catalog (temporarily unavailable|unavailable)/ })).toContainText(/Catalog (temporarily unavailable|unavailable)/);
+  await expect(page.getByTestId('gig-card')).toHaveCount(0);
   await page.route('**/api/v1/services/missing', route => route.fulfill({ status: 404, json: { success: false, error: 'Service not found' } }));
   await page.goto('/services/missing'); await expect(page.getByRole('alert').filter({ hasText: 'Service not found' })).toContainText('Service not found'); await expect(page.getByTestId('service-title')).toHaveCount(0);
+  } finally { if (serverFixture) await request.post('http://localhost:3211/__lab/outage?enabled=false'); }
 });
 test('favorites survive reload and removal persists through the API', async ({ page, marketplace }) => {
   const id = marketplace.services[0]!.id;
   marketplace.favorites.add(id);
   await page.goto('/dashboard/saved'); await expect(page.getByText(marketplace.services[0]!.title, { exact: true })).toBeVisible();
   await page.reload(); await expect(page.getByText(marketplace.services[0]!.title, { exact: true })).toBeVisible();
+  const removal = page.waitForResponse(response => new URL(response.url()).pathname.endsWith(`/favorites/${id}`) && response.request().method() === 'DELETE');
   await page.getByRole('button', { name: /^Remove saved service/ }).first().click();
-  await expect(page.getByText('You have no saved gigs.')).toBeVisible(); expect(marketplace.favorites.size).toBe(0);
+  expect((await removal).ok()).toBe(true);
+  await expect(page.getByTestId('saved-services-empty')).toBeVisible();
+  await expect(page.getByText(marketplace.services[0]!.title, { exact: true })).toHaveCount(0);
+  expect(marketplace.favorites.size).toBe(0);
+  await page.reload();
+  await expect(page.getByTestId('saved-services-empty')).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Remove saved service/ })).toHaveCount(0);
+});
+
+test('failed favorite removal retains the saved service and never reports success', async ({ page, marketplace }) => {
+  const service = marketplace.services[0]!;
+  marketplace.favorites.add(service.id);
+  await page.route(`**/api/v1/favorites/${service.id}`, route => route.request().method() === 'DELETE'
+    ? route.fulfill({ status: 503, json: { success: false, error: 'Unable to remove favorite right now' } })
+    : route.fallback());
+  await page.goto('/dashboard/saved');
+  await page.getByRole('button', { name: /^Remove saved service/ }).first().click();
+  await expect(page.getByRole('status').filter({ hasText: 'Unable to remove favorite right now' })).toBeVisible();
+  await expect(page.getByText(service.title, { exact: true })).toBeVisible();
+  await expect(page.getByTestId('saved-services-empty')).toHaveCount(0);
+  await expect(page.getByText('Service removed from saved', { exact: true })).toHaveCount(0);
+  expect(marketplace.favorites.has(service.id)).toBe(true);
 });
 test('completed order review persists and is displayed after reload', async ({ page, marketplace }) => {
   const order = marketplace.orders.find(o => o.status === 'COMPLETED')!;

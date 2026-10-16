@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 
 afterEach(() => {
   vi.unstubAllEnvs()
+  vi.unstubAllGlobals()
   vi.resetModules()
 })
 
@@ -22,6 +23,44 @@ function productionEnv() {
 }
 
 describe("Production configuration safety", () => {
+  it("wires verified Preview policy from real staging configuration without changing canonical trust", async () => {
+    productionEnv()
+    vi.stubEnv("APP_ENV", "staging")
+    vi.stubEnv("VERCEL_PREVIEW_CORS_ENABLED", "true")
+    for (const [name, value] of Object.entries({ VERCEL_PREVIEW_TEAM_ID: "team_fixture", VERCEL_PREVIEW_PROJECT_ID: "prj_fixture",
+      VERCEL_PREVIEW_GITHUB_REPO_ID: "123", VERCEL_PREVIEW_GIT_REFS: "staging", VERCEL_PREVIEW_API_TOKEN: "test-only-preview-token" })) vi.stubEnv(name, value)
+    const fetcher = vi.fn().mockImplementation(async () => Response.json({ ownerId: "team_fixture", projectId: "prj_fixture", url: "verified.vercel.app",
+      target: null, readyState: "READY", gitSource: { type: "github", repoId: "123", ref: "staging" } }))
+    vi.stubGlobal("fetch", fetcher)
+    const config = await import("../../apps/api/src/lib/config")
+    expect(await config.isAllowedOrigin("https://verified.vercel.app")).toBe(true)
+    expect(await config.isAllowedOrigin("https://web.example.com")).toBe(true)
+    expect(await config.isAllowedOrigin("https://impostor.vercel.app")).toBe(false)
+    expect(config.allowedOrigins).toEqual(["https://web.example.com"])
+    expect(fetcher).toHaveBeenCalledTimes(2)
+  })
+  it("refuses Preview verification in real production configuration", async () => {
+    productionEnv()
+    vi.stubEnv("APP_ENV", "production")
+    vi.stubEnv("VERCEL_PREVIEW_CORS_ENABLED", "true")
+    await expect(import("../../apps/api/src/lib/config")).rejects.toThrow("Preview CORS requires explicit production-runtime staging")
+  })
+  it("keeps real production configuration exact-only with Preview disabled", async () => {
+    productionEnv()
+    vi.stubEnv("APP_ENV", "production")
+    vi.stubEnv("VERCEL_PREVIEW_CORS_ENABLED", "false")
+    const fetcher = vi.fn()
+    vi.stubGlobal("fetch", fetcher)
+    const config = await import("../../apps/api/src/lib/config")
+    expect(await config.isAllowedOrigin("https://web.example.com")).toBe(true)
+    expect(await config.isAllowedOrigin("https://verified.vercel.app")).toBe(false)
+    expect(fetcher).not.toHaveBeenCalled()
+  })
+  it("rejects wildcard CORS origins even with HTTPS", async () => {
+    productionEnv()
+    vi.stubEnv("CORS_ORIGINS", "https://*.vercel.app")
+    await expect(import("../../apps/api/src/lib/config")).rejects.toThrow("exact HTTPS origins")
+  })
   it("rejects invalid TRUST_PROXY during configuration validation", async () => {
     productionEnv()
     vi.stubEnv("TRUST_PROXY", "1.0")

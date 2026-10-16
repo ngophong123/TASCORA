@@ -26,6 +26,16 @@ describe("Application Security & Hardening Tests (Security Audit)", () => {
   })
 
   describe("CORS (Cross-Origin Resource Sharing) Policies", () => {
+    it("preserves trusted-origin CORS headers on malformed JSON errors", async () => {
+      const response = await request(app).post("/api/v1/auth/login")
+        .set("Origin", "http://localhost:3000")
+        .set("Content-Type", "application/json")
+        .send('{"invalid":')
+      expect(response.status).toBe(400)
+      expect(response.headers["access-control-allow-origin"]).toBe("http://localhost:3000")
+      expect(response.headers["access-control-allow-credentials"]).toBe("true")
+      expect(response.headers.vary).toContain("Origin")
+    })
     it("permits requests from authorized frontend origin (localhost:3000)", async () => {
       const response = await request(app)
         .options("/api/v1/auth/login")

@@ -1,0 +1,1257 @@
+{
+  "methodology": "Lighthouse 12.6.1, Chrome 153, mobile simulated Slow4G/4x CPU, 100ms loopback API fixture; trace durations are observed, not multiplied simulated TBT",
+  "runs": [
+    {
+      "phase": "cinematic-mobile-startup-before",
+      "run": 1,
+      "cpuBenchmarkIndex": 1532.5,
+      "score": 72,
+      "lcpMs": 3098.587963204493,
+      "tbtMs": 945.0860789318356,
+      "cls": 0,
+      "motionState": {
+        "url": "http://localhost:3210/",
+        "reducedMotion": false,
+        "mode": "light"
+      },
+      "scripts": {
+        "resourceType": "script",
+        "label": "Script",
+        "requestCount": 15,
+        "transferSize": 252425
+      },
+      "mainThread": [
+        {
+          "group": "scriptEvaluation",
+          "groupLabel": "Script Evaluation",
+          "duration": 1961.7839999999883
+        },
+        {
+          "group": "other",
+          "groupLabel": "Other",
+          "duration": 1449.303999999983
+        },
+        {
+          "group": "styleLayout",
+          "groupLabel": "Style & Layout",
+          "duration": 995.1039999999999
+        },
+        {
+          "group": "scriptParseCompile",
+          "groupLabel": "Script Parsing & Compilation",
+          "duration": 178.5120000000001
+        },
+        {
+          "group": "paintCompositeRender",
+          "groupLabel": "Rendering",
+          "duration": 151.66000000000008
+        },
+        {
+          "group": "parseHTML",
+          "groupLabel": "Parse HTML & CSS",
+          "duration": 39.768
+        },
+        {
+          "group": "garbageCollection",
+          "groupLabel": "Garbage Collection",
+          "duration": 33.82799999999999
+        }
+      ],
+      "bootup": [
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "total": 1539.5679999999913,
+          "scripting": 1354.3039999999914,
+          "scriptParseCompile": 67.072
+        },
+        {
+          "url": "Unattributable",
+          "total": 1063.3439999999978,
+          "scripting": 24.21999999999998,
+          "scriptParseCompile": 0
+        },
+        {
+          "url": "http://localhost:3210/",
+          "total": 851.5000000000006,
+          "scripting": 7.519999999999999,
+          "scriptParseCompile": 17.444000000000003
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/page-6c25ffc87ba2f6d8.js",
+          "total": 654.3720000000003,
+          "scripting": 285.5520000000001,
+          "scriptParseCompile": 7.9879999999999995
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/1d560da6.3528711d48bb638c.js",
+          "total": 310.2119999999999,
+          "scripting": 90.64399999999988,
+          "scriptParseCompile": 7.791999999999999
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/ef9b57b1-9c5f512204fd769e.js",
+          "total": 150.05199999999996,
+          "scripting": 55.719999999999935,
+          "scriptParseCompile": 32.316
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/9162.ea4af1a628cd310e.js",
+          "total": 60.22000000000001,
+          "scripting": 46.32400000000001,
+          "scriptParseCompile": 6.859999999999999
+        }
+      ],
+      "longTasks": [
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 424,
+          "startTime": 3219.7670758453914
+        },
+        {
+          "url": "Unattributable",
+          "duration": 414,
+          "startTime": 1306.2656626408987
+        },
+        {
+          "url": "http://localhost:3210/",
+          "duration": 307,
+          "startTime": 999.2656626408987
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 208,
+          "startTime": 3711.7670758453914
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/1d560da6.3528711d48bb638c.js",
+          "duration": 206,
+          "startTime": 5185.50235534082
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 189,
+          "startTime": 4067.7670758453914
+        },
+        {
+          "url": "Unattributable",
+          "duration": 125,
+          "startTime": 771.2656626408987
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/page-6c25ffc87ba2f6d8.js",
+          "duration": 100,
+          "startTime": 3077.767075845391
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/1d560da6.3528711d48bb638c.js",
+          "duration": 97,
+          "startTime": 5088.50235534082
+        },
+        {
+          "url": "Unattributable",
+          "duration": 83,
+          "startTime": 896.2656626408987
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/1d560da6.3528711d48bb638c.js",
+          "duration": 70,
+          "startTime": 4989.50235534082
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 50,
+          "startTime": 3968.7670758453914
+        }
+      ],
+      "observedFunctionCalls": [
+        {
+          "ms": 91.007,
+          "columnNumber": 20667,
+          "frame": "AF4EB78F38365ECC0FBC36975B31A0B5",
+          "functionName": "E",
+          "isolate": "12962418975690854619",
+          "lineNumber": 1,
+          "sampleTraceId": 3541161675845194,
+          "scriptId": "19",
+          "url": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/page-6c25ffc87ba2f6d8.js"
+        },
+        {
+          "ms": 46.168,
+          "columnNumber": 17733,
+          "frame": "AF4EB78F38365ECC0FBC36975B31A0B5",
+          "functionName": "w",
+          "isolate": "12962418975690854619",
+          "lineNumber": 22,
+          "sampleTraceId": 3541161675842311,
+          "scriptId": "13",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        },
+        {
+          "ms": 45.435,
+          "columnNumber": 17733,
+          "frame": "AF4EB78F38365ECC0FBC36975B31A0B5",
+          "functionName": "w",
+          "isolate": "12962418975690854619",
+          "lineNumber": 22,
+          "sampleTraceId": 3541161675841923,
+          "scriptId": "13",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        },
+        {
+          "ms": 25.466,
+          "columnNumber": 20667,
+          "frame": "AF4EB78F38365ECC0FBC36975B31A0B5",
+          "functionName": "E",
+          "isolate": "12962418975690854619",
+          "lineNumber": 1,
+          "sampleTraceId": 3541161675841697,
+          "scriptId": "19",
+          "url": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/page-6c25ffc87ba2f6d8.js"
+        },
+        {
+          "ms": 12.132,
+          "columnNumber": 17733,
+          "frame": "AF4EB78F38365ECC0FBC36975B31A0B5",
+          "functionName": "w",
+          "isolate": "12962418975690854619",
+          "lineNumber": 22,
+          "sampleTraceId": 3541161675842432,
+          "scriptId": "13",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        },
+        {
+          "ms": 11.435,
+          "columnNumber": 17733,
+          "frame": "AF4EB78F38365ECC0FBC36975B31A0B5",
+          "functionName": "w",
+          "isolate": "12962418975690854619",
+          "lineNumber": 22,
+          "sampleTraceId": 3541161675842324,
+          "scriptId": "13",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        },
+        {
+          "ms": 11.029,
+          "columnNumber": 17733,
+          "frame": "AF4EB78F38365ECC0FBC36975B31A0B5",
+          "functionName": "w",
+          "isolate": "12962418975690854619",
+          "lineNumber": 22,
+          "sampleTraceId": 3541161675842478,
+          "scriptId": "13",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        }
+      ]
+    },
+    {
+      "phase": "cinematic-mobile-startup-before",
+      "run": 2,
+      "cpuBenchmarkIndex": 1638,
+      "score": 73,
+      "lcpMs": 2953.8017589925776,
+      "tbtMs": 999.9999999999995,
+      "cls": 0,
+      "motionState": {
+        "url": "http://localhost:3210/",
+        "reducedMotion": false,
+        "mode": "light"
+      },
+      "scripts": {
+        "resourceType": "script",
+        "label": "Script",
+        "requestCount": 15,
+        "transferSize": 252425
+      },
+      "mainThread": [
+        {
+          "group": "scriptEvaluation",
+          "groupLabel": "Script Evaluation",
+          "duration": 1740.515999999984
+        },
+        {
+          "group": "styleLayout",
+          "groupLabel": "Style & Layout",
+          "duration": 1008.5439999999996
+        },
+        {
+          "group": "other",
+          "groupLabel": "Other",
+          "duration": 1000.4359999999876
+        },
+        {
+          "group": "scriptParseCompile",
+          "groupLabel": "Script Parsing & Compilation",
+          "duration": 149.94799999999998
+        },
+        {
+          "group": "paintCompositeRender",
+          "groupLabel": "Rendering",
+          "duration": 133.45999999999995
+        },
+        {
+          "group": "parseHTML",
+          "groupLabel": "Parse HTML & CSS",
+          "duration": 40.668
+        },
+        {
+          "group": "garbageCollection",
+          "groupLabel": "Garbage Collection",
+          "duration": 27.50399999999997
+        }
+      ],
+      "bootup": [
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "total": 1447.2039999999927,
+          "scripting": 1300.2079999999928,
+          "scriptParseCompile": 45.056
+        },
+        {
+          "url": "http://localhost:3210/",
+          "total": 838.4400000000004,
+          "scripting": 4.640000000000001,
+          "scriptParseCompile": 11.552
+        },
+        {
+          "url": "Unattributable",
+          "total": 674.6839999999971,
+          "scripting": 26.244,
+          "scriptParseCompile": 0
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/page-6c25ffc87ba2f6d8.js",
+          "total": 539.9240000000002,
+          "scripting": 194.31200000000013,
+          "scriptParseCompile": 4.6000000000000005
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/1d560da6.3528711d48bb638c.js",
+          "total": 330.3999999999999,
+          "scripting": 112.21199999999988,
+          "scriptParseCompile": 8.292
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/ef9b57b1-9c5f512204fd769e.js",
+          "total": 135.59199999999998,
+          "scripting": 50.76399999999995,
+          "scriptParseCompile": 35.89999999999999
+        }
+      ],
+      "longTasks": [
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 447.99999999999955,
+          "startTime": 3186.812130061355
+        },
+        {
+          "url": "http://localhost:3210/",
+          "duration": 317,
+          "startTime": 1076.6198626412665
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 190,
+          "startTime": 3992.8121300613548
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/1d560da6.3528711d48bb638c.js",
+          "duration": 177,
+          "startTime": 5100.213009557643
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 164,
+          "startTime": 3743.8121300613548
+        },
+        {
+          "url": "Unattributable",
+          "duration": 162,
+          "startTime": 815.6198626412666
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/1d560da6.3528711d48bb638c.js",
+          "duration": 85,
+          "startTime": 5015.213009557643
+        },
+        {
+          "url": "Unattributable",
+          "duration": 78.99999999999989,
+          "startTime": 977.6198626412666
+        },
+        {
+          "url": "Unattributable",
+          "duration": 52,
+          "startTime": 763.6198626412666
+        }
+      ],
+      "observedFunctionCalls": [
+        {
+          "ms": 78.22,
+          "columnNumber": 20667,
+          "frame": "203FC817480492B2D6D2AB4EB8415009",
+          "functionName": "E",
+          "isolate": "11910596430050430985",
+          "lineNumber": 1,
+          "sampleTraceId": 7811847194175015,
+          "scriptId": "18",
+          "url": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/page-6c25ffc87ba2f6d8.js"
+        },
+        {
+          "ms": 45.75,
+          "columnNumber": 17733,
+          "frame": "203FC817480492B2D6D2AB4EB8415009",
+          "functionName": "w",
+          "isolate": "11910596430050430985",
+          "lineNumber": 22,
+          "sampleTraceId": 7811847194175003,
+          "scriptId": "12",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        },
+        {
+          "ms": 36.034,
+          "columnNumber": 17733,
+          "frame": "203FC817480492B2D6D2AB4EB8415009",
+          "functionName": "w",
+          "isolate": "11910596430050430985",
+          "lineNumber": 22,
+          "sampleTraceId": 7811847194174696,
+          "scriptId": "12",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        },
+        {
+          "ms": 22.26,
+          "columnNumber": 20667,
+          "frame": "203FC817480492B2D6D2AB4EB8415009",
+          "functionName": "E",
+          "isolate": "11910596430050430985",
+          "lineNumber": 1,
+          "sampleTraceId": 7811847194175486,
+          "scriptId": "18",
+          "url": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/page-6c25ffc87ba2f6d8.js"
+        },
+        {
+          "ms": 11.299,
+          "columnNumber": 17733,
+          "frame": "203FC817480492B2D6D2AB4EB8415009",
+          "functionName": "w",
+          "isolate": "11910596430050430985",
+          "lineNumber": 22,
+          "sampleTraceId": 7811847194174662,
+          "scriptId": "12",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        }
+      ]
+    },
+    {
+      "phase": "cinematic-mobile-startup-before",
+      "run": 3,
+      "cpuBenchmarkIndex": 1330,
+      "score": 77,
+      "lcpMs": 3199.1291674154318,
+      "tbtMs": 625.5000000000005,
+      "cls": 0,
+      "motionState": {
+        "url": "http://localhost:3210/",
+        "reducedMotion": false,
+        "mode": "light"
+      },
+      "scripts": {
+        "resourceType": "script",
+        "label": "Script",
+        "requestCount": 15,
+        "transferSize": 252425
+      },
+      "mainThread": [
+        {
+          "group": "scriptEvaluation",
+          "groupLabel": "Script Evaluation",
+          "duration": 1631.1959999999842
+        },
+        {
+          "group": "other",
+          "groupLabel": "Other",
+          "duration": 1014.215999999991
+        },
+        {
+          "group": "styleLayout",
+          "groupLabel": "Style & Layout",
+          "duration": 897.2640000000006
+        },
+        {
+          "group": "scriptParseCompile",
+          "groupLabel": "Script Parsing & Compilation",
+          "duration": 144.5
+        },
+        {
+          "group": "paintCompositeRender",
+          "groupLabel": "Rendering",
+          "duration": 128.09199999999996
+        },
+        {
+          "group": "parseHTML",
+          "groupLabel": "Parse HTML & CSS",
+          "duration": 41.472
+        },
+        {
+          "group": "garbageCollection",
+          "groupLabel": "Garbage Collection",
+          "duration": 23.731999999999985
+        }
+      ],
+      "bootup": [
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "total": 1034.591999999995,
+          "scripting": 890.4239999999951,
+          "scriptParseCompile": 42.992
+        },
+        {
+          "url": "http://localhost:3210/",
+          "total": 813.0520000000002,
+          "scripting": 5.4959999999999996,
+          "scriptParseCompile": 11.84
+        },
+        {
+          "url": "Unattributable",
+          "total": 678.6399999999954,
+          "scripting": 25.803999999999995,
+          "scriptParseCompile": 0
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/ef9b57b1-9c5f512204fd769e.js",
+          "total": 455.66400000000027,
+          "scripting": 343.2240000000002,
+          "scriptParseCompile": 34.98
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/page-6c25ffc87ba2f6d8.js",
+          "total": 432.60400000000016,
+          "scripting": 173.36800000000014,
+          "scriptParseCompile": 4.096
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/1d560da6.3528711d48bb638c.js",
+          "total": 316.1839999999998,
+          "scripting": 124.5359999999999,
+          "scriptParseCompile": 8.244
+        }
+      ],
+      "longTasks": [
+        {
+          "url": "http://localhost:3210/_next/static/chunks/ef9b57b1-9c5f512204fd769e.js",
+          "duration": 349,
+          "startTime": 3237.7932300558246
+        },
+        {
+          "url": "http://localhost:3210/",
+          "duration": 315,
+          "startTime": 1038.6640626403932
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 186.00000000000045,
+          "startTime": 3962.7932300558246
+        },
+        {
+          "url": "Unattributable",
+          "duration": 178,
+          "startTime": 764.6640626403934
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 172,
+          "startTime": 3633.7932300558246
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/1d560da6.3528711d48bb638c.js",
+          "duration": 123,
+          "startTime": 5001.1777095500765
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/1d560da6.3528711d48bb638c.js",
+          "duration": 76,
+          "startTime": 4925.1777095500765
+        },
+        {
+          "url": "Unattributable",
+          "duration": 73,
+          "startTime": 942.6640626403934
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 65,
+          "startTime": 3805.7932300558246
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/1d560da6.3528711d48bb638c.js",
+          "duration": 56,
+          "startTime": 4869.1777095500765
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 51,
+          "startTime": 3870.7932300558246
+        }
+      ],
+      "observedFunctionCalls": [
+        {
+          "ms": 52.232,
+          "columnNumber": 20667,
+          "frame": "2DBA9B034DE8BC743D3459E4125C5E71",
+          "functionName": "E",
+          "isolate": "12168031563021358012",
+          "lineNumber": 1,
+          "sampleTraceId": 8661346460807025,
+          "scriptId": "21",
+          "url": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/page-6c25ffc87ba2f6d8.js"
+        },
+        {
+          "ms": 44.415,
+          "columnNumber": 17733,
+          "frame": "2DBA9B034DE8BC743D3459E4125C5E71",
+          "functionName": "w",
+          "isolate": "12168031563021358012",
+          "lineNumber": 22,
+          "sampleTraceId": 8661346460807089,
+          "scriptId": "14",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        },
+        {
+          "ms": 36.287,
+          "columnNumber": 17733,
+          "frame": "2DBA9B034DE8BC743D3459E4125C5E71",
+          "functionName": "w",
+          "isolate": "12168031563021358012",
+          "lineNumber": 22,
+          "sampleTraceId": 8661346460806610,
+          "scriptId": "14",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        },
+        {
+          "ms": 20.369,
+          "columnNumber": 20667,
+          "frame": "2DBA9B034DE8BC743D3459E4125C5E71",
+          "functionName": "E",
+          "isolate": "12168031563021358012",
+          "lineNumber": 1,
+          "sampleTraceId": 8661346460806871,
+          "scriptId": "21",
+          "url": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/page-6c25ffc87ba2f6d8.js"
+        },
+        {
+          "ms": 14.161,
+          "columnNumber": 17733,
+          "frame": "2DBA9B034DE8BC743D3459E4125C5E71",
+          "functionName": "w",
+          "isolate": "12168031563021358012",
+          "lineNumber": 22,
+          "sampleTraceId": 8661346460806511,
+          "scriptId": "14",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        },
+        {
+          "ms": 11.416,
+          "columnNumber": 17733,
+          "frame": "2DBA9B034DE8BC743D3459E4125C5E71",
+          "functionName": "w",
+          "isolate": "12168031563021358012",
+          "lineNumber": 22,
+          "sampleTraceId": 8661346460806655,
+          "scriptId": "14",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        },
+        {
+          "ms": 10.215,
+          "columnNumber": 17733,
+          "frame": "2DBA9B034DE8BC743D3459E4125C5E71",
+          "functionName": "w",
+          "isolate": "12168031563021358012",
+          "lineNumber": 22,
+          "sampleTraceId": 8661346460806488,
+          "scriptId": "14",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        }
+      ]
+    },
+    {
+      "phase": "cinematic-mobile-startup-after",
+      "run": 1,
+      "cpuBenchmarkIndex": 1479,
+      "score": 76,
+      "lcpMs": 3331.5020216296734,
+      "tbtMs": 639.7413247189395,
+      "cls": 0,
+      "motionState": {
+        "url": "http://localhost:3210/",
+        "reducedMotion": false,
+        "mode": null,
+        "pending": true
+      },
+      "scripts": {
+        "resourceType": "script",
+        "label": "Script",
+        "requestCount": 12,
+        "transferSize": 205931
+      },
+      "mainThread": [
+        {
+          "group": "scriptEvaluation",
+          "groupLabel": "Script Evaluation",
+          "duration": 1486.3639999999912
+        },
+        {
+          "group": "other",
+          "groupLabel": "Other",
+          "duration": 1181.1679999999947
+        },
+        {
+          "group": "styleLayout",
+          "groupLabel": "Style & Layout",
+          "duration": 921.4120000000003
+        },
+        {
+          "group": "paintCompositeRender",
+          "groupLabel": "Rendering",
+          "duration": 131.092
+        },
+        {
+          "group": "scriptParseCompile",
+          "groupLabel": "Script Parsing & Compilation",
+          "duration": 114.716
+        },
+        {
+          "group": "parseHTML",
+          "groupLabel": "Parse HTML & CSS",
+          "duration": 36.459999999999994
+        },
+        {
+          "group": "garbageCollection",
+          "groupLabel": "Garbage Collection",
+          "duration": 20.463999999999984
+        }
+      ],
+      "bootup": [
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "total": 1565.7519999999931,
+          "scripting": 1342.7759999999932,
+          "scriptParseCompile": 36.18
+        },
+        {
+          "url": "http://localhost:3210/",
+          "total": 1123.7280000000003,
+          "scripting": 8.591999999999999,
+          "scriptParseCompile": 11.424
+        },
+        {
+          "url": "Unattributable",
+          "total": 905.5119999999954,
+          "scripting": 31.48399999999999,
+          "scriptParseCompile": 0
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/ef9b57b1-9c5f512204fd769e.js",
+          "total": 115.36799999999997,
+          "scripting": 45.69599999999996,
+          "scriptParseCompile": 30.208
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3035-ce2377d9a50d80b5.js",
+          "total": 66.22,
+          "scripting": 5.8039999999999985,
+          "scriptParseCompile": 3.708
+        }
+      ],
+      "longTasks": [
+        {
+          "url": "Unattributable",
+          "duration": 391,
+          "startTime": 1239.1671626405305
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 362.00000000000045,
+          "startTime": 3190.5630300566936
+        },
+        {
+          "url": "http://localhost:3210/",
+          "duration": 361,
+          "startTime": 878.1671626405305
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 163,
+          "startTime": 3552.563030056694
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 141,
+          "startTime": 4100.563030056694
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 133,
+          "startTime": 3773.563030056694
+        },
+        {
+          "url": "Unattributable",
+          "duration": 89,
+          "startTime": 766.1671626405305
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 85,
+          "startTime": 3906.563030056694
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3035-ce2377d9a50d80b5.js",
+          "duration": 82,
+          "startTime": 2807.093267416163
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 73.99999999999955,
+          "startTime": 4026.563030056694
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 58,
+          "startTime": 3715.563030056694
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3035-ce2377d9a50d80b5.js",
+          "duration": 54,
+          "startTime": 2753.093267416163
+        }
+      ],
+      "observedFunctionCalls": [
+        {
+          "ms": 40.451,
+          "columnNumber": 17733,
+          "frame": "924704B7EB12E2A13DF0972FC2385E7B",
+          "functionName": "w",
+          "isolate": "3843473136711004488",
+          "lineNumber": 22,
+          "sampleTraceId": 6130008893990370,
+          "scriptId": "12",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        },
+        {
+          "ms": 33.643,
+          "columnNumber": 17733,
+          "frame": "924704B7EB12E2A13DF0972FC2385E7B",
+          "functionName": "w",
+          "isolate": "3843473136711004488",
+          "lineNumber": 22,
+          "sampleTraceId": 6130008893990796,
+          "scriptId": "12",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        },
+        {
+          "ms": 28.941,
+          "columnNumber": 17733,
+          "frame": "924704B7EB12E2A13DF0972FC2385E7B",
+          "functionName": "w",
+          "isolate": "3843473136711004488",
+          "lineNumber": 22,
+          "sampleTraceId": 6130008893990276,
+          "scriptId": "12",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        },
+        {
+          "ms": 19.766,
+          "columnNumber": 17733,
+          "frame": "924704B7EB12E2A13DF0972FC2385E7B",
+          "functionName": "w",
+          "isolate": "3843473136711004488",
+          "lineNumber": 22,
+          "sampleTraceId": 6130008893990271,
+          "scriptId": "12",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        },
+        {
+          "ms": 17.944,
+          "columnNumber": 17733,
+          "frame": "924704B7EB12E2A13DF0972FC2385E7B",
+          "functionName": "w",
+          "isolate": "3843473136711004488",
+          "lineNumber": 22,
+          "sampleTraceId": 6130008893990513,
+          "scriptId": "12",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        },
+        {
+          "ms": 14.212,
+          "columnNumber": 17733,
+          "frame": "924704B7EB12E2A13DF0972FC2385E7B",
+          "functionName": "w",
+          "isolate": "3843473136711004488",
+          "lineNumber": 22,
+          "sampleTraceId": 6130008893990335,
+          "scriptId": "12",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        }
+      ]
+    },
+    {
+      "phase": "cinematic-mobile-startup-after",
+      "run": 2,
+      "cpuBenchmarkIndex": 1824,
+      "score": 88,
+      "lcpMs": 2499.115940092209,
+      "tbtMs": 367.92252157380835,
+      "cls": 0,
+      "motionState": {
+        "url": "http://localhost:3210/",
+        "reducedMotion": false,
+        "mode": null,
+        "pending": true
+      },
+      "scripts": {
+        "resourceType": "script",
+        "label": "Script",
+        "requestCount": 12,
+        "transferSize": 205931
+      },
+      "mainThread": [
+        {
+          "group": "scriptEvaluation",
+          "groupLabel": "Script Evaluation",
+          "duration": 1165.063999999991
+        },
+        {
+          "group": "styleLayout",
+          "groupLabel": "Style & Layout",
+          "duration": 819.9719999999998
+        },
+        {
+          "group": "other",
+          "groupLabel": "Other",
+          "duration": 683.471999999997
+        },
+        {
+          "group": "paintCompositeRender",
+          "groupLabel": "Rendering",
+          "duration": 118.28800000000007
+        },
+        {
+          "group": "scriptParseCompile",
+          "groupLabel": "Script Parsing & Compilation",
+          "duration": 112.43200000000002
+        },
+        {
+          "group": "parseHTML",
+          "groupLabel": "Parse HTML & CSS",
+          "duration": 41.38799999999999
+        },
+        {
+          "group": "garbageCollection",
+          "groupLabel": "Garbage Collection",
+          "duration": 20.787999999999997
+        }
+      ],
+      "bootup": [
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "total": 1100.7719999999936,
+          "scripting": 975.4439999999938,
+          "scriptParseCompile": 37.071999999999996
+        },
+        {
+          "url": "http://localhost:3210/",
+          "total": 1071.2199999999998,
+          "scripting": 7.108,
+          "scriptParseCompile": 10.4
+        },
+        {
+          "url": "Unattributable",
+          "total": 481.98399999999987,
+          "scripting": 28.74399999999999,
+          "scriptParseCompile": 0
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/ef9b57b1-9c5f512204fd769e.js",
+          "total": 105.01999999999995,
+          "scripting": 41.763999999999946,
+          "scriptParseCompile": 30.496
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/9454-15ea3f9fcc33aff3.js",
+          "total": 63.100000000000016,
+          "scripting": 58.66800000000001,
+          "scriptParseCompile": 3.56
+        }
+      ],
+      "longTasks": [
+        {
+          "url": "http://localhost:3210/",
+          "duration": 317.9999999999999,
+          "startTime": 855.5355594911281
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 256,
+          "startTime": 3194.4127048608243
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 198.99999999999955,
+          "startTime": 3582.4127048608243
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 107,
+          "startTime": 3450.4127048608243
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3035-ce2377d9a50d80b5.js",
+          "duration": 90,
+          "startTime": 2755.6646485194883
+        },
+        {
+          "url": "Unattributable",
+          "duration": 67,
+          "startTime": 765.5355594911281
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/9454-15ea3f9fcc33aff3.js",
+          "duration": 64,
+          "startTime": 3056.4258537969763
+        }
+      ],
+      "observedFunctionCalls": [
+        {
+          "ms": 47.88,
+          "columnNumber": 17733,
+          "frame": "DC0FB956A4C19EDEB859224351EF59F3",
+          "functionName": "w",
+          "isolate": "65582424053136830",
+          "lineNumber": 22,
+          "sampleTraceId": 560803455652009,
+          "scriptId": "13",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        },
+        {
+          "ms": 24.085,
+          "columnNumber": 17733,
+          "frame": "DC0FB956A4C19EDEB859224351EF59F3",
+          "functionName": "w",
+          "isolate": "65582424053136830",
+          "lineNumber": 22,
+          "sampleTraceId": 560803455652356,
+          "scriptId": "13",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        }
+      ]
+    },
+    {
+      "phase": "cinematic-mobile-startup-after",
+      "run": 3,
+      "cpuBenchmarkIndex": 1726.5,
+      "score": 82,
+      "lcpMs": 3110.667967420204,
+      "tbtMs": 440.5,
+      "cls": 0,
+      "motionState": {
+        "url": "http://localhost:3210/",
+        "reducedMotion": false,
+        "mode": null,
+        "pending": true
+      },
+      "scripts": {
+        "resourceType": "script",
+        "label": "Script",
+        "requestCount": 12,
+        "transferSize": 205931
+      },
+      "mainThread": [
+        {
+          "group": "scriptEvaluation",
+          "groupLabel": "Script Evaluation",
+          "duration": 1331.4079999999933
+        },
+        {
+          "group": "styleLayout",
+          "groupLabel": "Style & Layout",
+          "duration": 802.7120000000001
+        },
+        {
+          "group": "other",
+          "groupLabel": "Other",
+          "duration": 679.1959999999943
+        },
+        {
+          "group": "paintCompositeRender",
+          "groupLabel": "Rendering",
+          "duration": 143.86000000000004
+        },
+        {
+          "group": "scriptParseCompile",
+          "groupLabel": "Script Parsing & Compilation",
+          "duration": 129.25999999999996
+        },
+        {
+          "group": "parseHTML",
+          "groupLabel": "Parse HTML & CSS",
+          "duration": 44.432
+        },
+        {
+          "group": "garbageCollection",
+          "groupLabel": "Garbage Collection",
+          "duration": 15.119999999999994
+        }
+      ],
+      "bootup": [
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "total": 1273.6239999999948,
+          "scripting": 1120.6559999999947,
+          "scriptParseCompile": 39.20799999999999
+        },
+        {
+          "url": "http://localhost:3210/",
+          "total": 1062.1720000000003,
+          "scripting": 5.3999999999999995,
+          "scriptParseCompile": 12.203999999999997
+        },
+        {
+          "url": "Unattributable",
+          "total": 462.7640000000008,
+          "scripting": 33.535999999999994,
+          "scriptParseCompile": 0
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/ef9b57b1-9c5f512204fd769e.js",
+          "total": 115.55199999999999,
+          "scripting": 43.315999999999974,
+          "scriptParseCompile": 38.248
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/page-22d57da848375268.js",
+          "total": 72.412,
+          "scripting": 66.684,
+          "scriptParseCompile": 2.7840000000000003
+        }
+      ],
+      "longTasks": [
+        {
+          "url": "http://localhost:3210/",
+          "duration": 329.0000000000001,
+          "startTime": 866.7324626412884
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 306,
+          "startTime": 3193.4004300614934
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 208,
+          "startTime": 3791.4004300614934
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+          "duration": 125,
+          "startTime": 3581.4004300614934
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/3035-ce2377d9a50d80b5.js",
+          "duration": 95,
+          "startTime": 2755.811067420205
+        },
+        {
+          "url": "Unattributable",
+          "duration": 73,
+          "startTime": 765.7324626412884
+        },
+        {
+          "url": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/page-22d57da848375268.js",
+          "duration": 73,
+          "startTime": 3097.2516758477304
+        }
+      ],
+      "observedFunctionCalls": [
+        {
+          "ms": 49.814,
+          "columnNumber": 17733,
+          "frame": "EEE7BD3261E1E3F5D13974F5A468B689",
+          "functionName": "w",
+          "isolate": "13367522860800050548",
+          "lineNumber": 22,
+          "sampleTraceId": 3183703362008970,
+          "scriptId": "12",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        },
+        {
+          "ms": 27.481,
+          "columnNumber": 17733,
+          "frame": "EEE7BD3261E1E3F5D13974F5A468B689",
+          "functionName": "w",
+          "isolate": "13367522860800050548",
+          "lineNumber": 22,
+          "sampleTraceId": 3183703362008332,
+          "scriptId": "12",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        },
+        {
+          "ms": 11.423,
+          "columnNumber": 17733,
+          "frame": "EEE7BD3261E1E3F5D13974F5A468B689",
+          "functionName": "w",
+          "isolate": "13367522860800050548",
+          "lineNumber": 22,
+          "sampleTraceId": 3183703362008727,
+          "scriptId": "12",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        },
+        {
+          "ms": 10.131,
+          "columnNumber": 17733,
+          "frame": "EEE7BD3261E1E3F5D13974F5A468B689",
+          "functionName": "w",
+          "isolate": "13367522860800050548",
+          "lineNumber": 22,
+          "sampleTraceId": 3183703362008349,
+          "scriptId": "12",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        },
+        {
+          "ms": 10.027,
+          "columnNumber": 17733,
+          "frame": "EEE7BD3261E1E3F5D13974F5A468B689",
+          "functionName": "w",
+          "isolate": "13367522860800050548",
+          "lineNumber": 22,
+          "sampleTraceId": 3183703362008347,
+          "scriptId": "12",
+          "url": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js"
+        }
+      ]
+    }
+  ],
+  "activationSamples": [
+    {
+      "browserName": "chromium",
+      "cpuMultiplier": 4,
+      "activationWindowMs": 1563.199999999255,
+      "supportsLongTasks": true,
+      "tasks": [
+        {
+          "start": 2660.399999999441,
+          "duration": 53
+        },
+        {
+          "start": 2713.7999999998137,
+          "duration": 140
+        }
+      ]
+    },
+    {
+      "browserName": "webkit",
+      "cpuMultiplier": null,
+      "activationWindowMs": 1240,
+      "supportsLongTasks": false,
+      "tasks": []
+    }
+  ]
+}

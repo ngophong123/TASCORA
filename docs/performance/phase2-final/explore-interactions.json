@@ -1,0 +1,248 @@
+{
+  "route": "/explore",
+  "viewport": "390x844",
+  "throttling": "none",
+  "fixture": true,
+  "idleRafCallbacksIn2Seconds": 0,
+  "lcpMs": 676,
+  "cls": 0,
+  "layoutShifts": [],
+  "recordedInteractionCount": 2,
+  "recordedInteractionMaxMs": 56,
+  "eventThresholdMs": 16,
+  "longTasks": [110, 55, 82, 109],
+  "supported": [
+    "element",
+    "event",
+    "first-input",
+    "interaction-contentful-paint",
+    "largest-contentful-paint",
+    "layout-shift",
+    "long-animation-frame",
+    "longtask",
+    "mark",
+    "measure",
+    "navigation",
+    "paint",
+    "resource",
+    "soft-navigation",
+    "visibility-state"
+  ],
+  "resources": [
+    {
+      "name": "http://localhost:3210/_next/static/css/f7e295e0ba5e51d0.css",
+      "bytes": 25309,
+      "duration": 26
+    },
+    {
+      "name": "http://localhost:3210/_next/static/css/5bb3195e3bfcec4c.css",
+      "bytes": 2197,
+      "duration": 19.90000000037253
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/webpack-444e3df811aba661.js",
+      "bytes": 2054,
+      "duration": 44.59999999962747
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/ef9b57b1-9c5f512204fd769e.js",
+      "bytes": 63601,
+      "duration": 60.200000000186265
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/3158-6ddc10f179cd65f2.js",
+      "bytes": 66048,
+      "duration": 76.79999999981374
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/main-app-eb129468a2f02cc1.js",
+      "bytes": 817,
+      "duration": 42.700000000186265
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/5039-76745e3c17401e1c.js",
+      "bytes": 17181,
+      "duration": 47.799999999813735
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/9454-15ea3f9fcc33aff3.js",
+      "bytes": 12967,
+      "duration": 53.200000000186265
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/3035-ce2377d9a50d80b5.js",
+      "bytes": 7954,
+      "duration": 53.5
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/layout-2c667b1c821e02df.js",
+      "bytes": 9297,
+      "duration": 58.40000000037253
+    },
+    {
+      "name": "http://localhost:3210/_next/static/media/22a5144ee8d83bca-s.p.woff2",
+      "bytes": 29588,
+      "duration": 97.90000000037253
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/9982-77b271744c492a59.js",
+      "bytes": 6085,
+      "duration": 17.5
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/1922-15e1e53388d181e7.js",
+      "bytes": 5304,
+      "duration": 19.300000000745058
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/explore/page-f8131926d18f3c44.js",
+      "bytes": 8525,
+      "duration": 20.700000000186265
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Ffull-stack-nextjs-node.jpg&w=384&q=75",
+      "bytes": 10202,
+      "duration": 20.200000000186265
+    },
+    {
+      "name": "http://localhost:3210/?_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 587,
+      "duration": 9.799999999813735
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Ffavicon.svg&w=64&q=75",
+      "bytes": 1132,
+      "duration": 17.40000000037253
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fsaas-landing-page-frontend.jpg&w=384&q=75",
+      "bytes": 9760,
+      "duration": 49.799999999813735
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fapi-microservices-backend.jpg&w=384&q=75",
+      "bytes": 15046,
+      "duration": 50.60000000055879
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fgolang-microservices-terminal.jpg&w=384&q=75",
+      "bytes": 5586,
+      "duration": 54
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Faws-terraform-cloud-console.jpg&w=384&q=75",
+      "bytes": 4656,
+      "duration": 51.59999999962747
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fkubernetes-devops-workstation.jpg&w=384&q=75",
+      "bytes": 13914,
+      "duration": 53.59999999962747
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fsolidity-smart-contracts-code.jpg&w=384&q=75",
+      "bytes": 10064,
+      "duration": 54.10000000055879
+    },
+    {
+      "name": "http://localhost:3210/_next/image?url=%2Fimages%2Fservices%2Fprogramming%2Fdefi-web3-staking-protocol.jpg&w=384&q=75",
+      "bytes": 4236,
+      "duration": 59
+    },
+    {
+      "name": "http://localhost:3210/?_rsc=OGEB1sNMwJGaS1Mp",
+      "bytes": 11171,
+      "duration": 24.600000000558794
+    },
+    {
+      "name": "http://localhost:3210/?_rsc=b-rwNT6R0kJkd_Ip",
+      "bytes": 3119,
+      "duration": 24.5
+    },
+    {
+      "name": "http://localhost:3210/services/c000000000000000000000001?_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 534,
+      "duration": 22.799999999813735
+    },
+    {
+      "name": "https://api.tascora.test/api/v1/favorites",
+      "bytes": 0,
+      "duration": 25
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/page-0ad6d5fa715e7638.js",
+      "bytes": 5541,
+      "duration": 6.6000000005587935
+    },
+    {
+      "name": "http://localhost:3210/services/c000000000000000000000001?_rsc=kRF1fExD8BlRIOzd",
+      "bytes": 1442,
+      "duration": 13.300000000745058
+    },
+    {
+      "name": "http://localhost:3210/_next/static/media/b66cf8e69499582a-s.p.woff2",
+      "bytes": 8268,
+      "duration": 10.900000000372529
+    },
+    {
+      "name": "http://localhost:3210/categories?_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 601,
+      "duration": 34.40000000037253
+    },
+    {
+      "name": "http://localhost:3210/dashboard?_rsc=cBmZd_nybNmA_lrs",
+      "bytes": 601,
+      "duration": 35.09999999962747
+    },
+    {
+      "name": "http://localhost:3210/explore?_rsc=kRF1fExD8BlRIOzd",
+      "bytes": 1544,
+      "duration": 36.19999999925494
+    },
+    {
+      "name": "http://localhost:3210/categories?_rsc=RcjK84o8j9F72hTz",
+      "bytes": 1711,
+      "duration": 29.299999999813735
+    },
+    {
+      "name": "http://localhost:3210/dashboard?_rsc=uR7XW0jBfGO3WC29",
+      "bytes": 2225,
+      "duration": 28.799999999813735
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/categories/page-7b1d371bb6f93459.js",
+      "bytes": 7343,
+      "duration": 9.899999999441206
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/3129-68c25c6815597fb7.js",
+      "bytes": 4816,
+      "duration": 24.299999999813735
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/dashboard/page-f6599854c62dc8fb.js",
+      "bytes": 6298,
+      "duration": 29.700000000186265
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/4625-dd379e831f00ceeb.js",
+      "bytes": 42809,
+      "duration": 36.799999999813735
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/8796-fda240250f1c9cc6.js",
+      "bytes": 2334,
+      "duration": 28.700000000186265
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/7394-115bfb5cd66774e6.js",
+      "bytes": 11329,
+      "duration": 31.299999999813735
+    },
+    {
+      "name": "http://localhost:3210/_next/static/chunks/app/%5Blocale%5D/dashboard/layout-5dfe8dffa0218eba.js",
+      "bytes": 459,
+      "duration": 27
+    }
+  ]
+}

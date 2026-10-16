@@ -5,7 +5,7 @@ import { FILTER_CATEGORIES } from '../../../apps/web/src/data/serviceFilterOptio
 import type { Service, Order, Profile } from '../../../apps/web/src/lib/marketplace';
 import { Prisma } from '@prisma/client';
 const cuid = (n: number) => `c${String(n).padStart(24, '0')}`;
-function createStore() {
+export function createStore() {
   const categories = FILTER_CATEGORIES.map((c,n) => ({ id: cuid(100+n), name: c.name, slug: c.slug, parentId: null, _count: { services: 0 } }));
   const buyerProfile: Profile = { id: cuid(200), firstName: 'Test', lastName: 'Customer', avatar: '/favicon.svg', bio: 'Test customer profile' };
   const sellerProfile: Profile = { id: cuid(201), firstName: 'Alexandre', lastName: 'Moreau', avatar: '/favicon.svg', bio: 'A professional seller profile', professionalTitle: 'Software engineer', status: 'APPROVED', level: 'TOP_RATED', ratingAverage: 4.99, ratingCount: 42, languages: ['English'], skills: ['TypeScript'], createdAt: '2026-01-10' };
@@ -23,7 +23,7 @@ function createStore() {
 }
 export const test = base.extend<{ marketplace: ReturnType<typeof createStore> }>({
   marketplace: async ({}, use) => { await use(createStore()); },
-  page: async ({ page, marketplace: state }, use) => {
+  page: async ({ page, marketplace: state }, use, testInfo) => {
     await page.addInitScript(() => { if (!localStorage.getItem('user')) { localStorage.setItem('user', JSON.stringify({ id: 'buyer', email: 'buyer@example.test', role: 'BUYER' })); localStorage.setItem('token', 'e2e-buyer') } });
     await page.addInitScript(() => {
       let clientSecret = '';
@@ -102,6 +102,22 @@ export const test = base.extend<{ marketplace: ReturnType<typeof createStore> }>
       if (path === '/auth/register' || path === '/auth/verify-email' || path === '/auth/resend-verification') { await send({ status: 'PENDING_VERIFICATION' },201); return; }
       await send(null,404);
     });
+    if (process.env.PREMIUM_CATALOG_FIXTURE === '1') {
+      const frontend = new URL(String(testInfo.project.use.baseURL || 'http://localhost:3000'));
+      // SSR and browser read the same per-test public records, including taxonomy
+      // mutations. This loopback QA control never exists in production code.
+      // Run fixture-server suites serially because its store is intentionally local.
+      await page.route('**/*', async route => {
+        const url = new URL(route.request().url());
+        if (route.request().isNavigationRequest() && url.origin === frontend.origin) {
+          const result = await page.request.post('http://localhost:3211/__lab/catalog', {
+            data: { services: state.services, categories: state.categories },
+          });
+          if (!result.ok()) throw new Error('Unable to synchronize local SSR fixture');
+        }
+        await route.fallback();
+      });
+    }
     await use(page);
   },
 });

@@ -21,12 +21,15 @@ export function ServicePagination({
 
   const handlePageClick = (page: number) => {
     onPageChange(page)
+    const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? "auto"
+      : "smooth"
     // Scroll smoothly back to top of the services container
     const headerElement = document.getElementById("services-listing-top")
     if (headerElement) {
-      headerElement.scrollIntoView({ behavior: "smooth", block: "start" })
+      headerElement.scrollIntoView({ behavior, block: "start" })
     } else {
-      window.scrollTo({ top: 250, behavior: "smooth" })
+      window.scrollTo({ top: 250, behavior })
     }
   }
 
@@ -54,7 +57,7 @@ export function ServicePagination({
       role="navigation"
       aria-label="Pagination Navigation"
       className={cn(
-        "flex items-center justify-center gap-1 sm:gap-1.5 mt-10 pt-6 border-t border-[rgba(15,15,30,0.08)]",
+        "flex flex-wrap items-center justify-center gap-1 sm:gap-1.5 mt-10 pt-6 border-t border-[var(--border)]",
         className
       )}
     >
@@ -64,7 +67,7 @@ export function ServicePagination({
         data-testid="pagination-prev"
         onClick={() => handlePageClick(currentPage - 1)}
         disabled={currentPage === 1}
-        className="inline-flex items-center justify-center h-9 sm:h-10 px-3 sm:px-3.5 rounded-xl border border-[rgba(15,15,30,0.12)] bg-white text-xs sm:text-sm font-medium text-[#0A0A23] hover:bg-[#FAFAFC] disabled:opacity-40 disabled:pointer-events-none transition-colors"
+        className="inline-flex items-center justify-center h-11 px-3 sm:px-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-sm sm:text-sm font-medium text-[var(--foreground)] hover:bg-[var(--subtle)] disabled:opacity-40 disabled:pointer-events-none transition-colors"
         aria-label="Go to previous page"
       >
         <ChevronLeft className="w-4 h-4 mr-1" />
@@ -78,7 +81,7 @@ export function ServicePagination({
             return (
               <span
                 key={`ellipsis-${idx}`}
-                className="w-8 sm:w-10 text-center text-[#9CA3AF] text-sm font-mono select-none"
+                className="w-8 sm:w-10 text-center text-[var(--text-muted)] text-sm font-mono select-none"
               >
                 ...
               </span>
@@ -97,10 +100,10 @@ export function ServicePagination({
               aria-current={isActive ? "page" : undefined}
               aria-label={`Go to page ${pageNum}`}
               className={cn(
-                "h-9 sm:h-10 min-w-9 sm:min-w-10 px-2 rounded-xl text-xs sm:text-sm font-medium transition-all",
+                "h-11 min-w-9 sm:min-w-11 px-2 rounded-xl text-sm sm:text-sm font-medium transition-all",
                 isActive
-                  ? "bg-gradient-to-r from-blue-600 to-sky-500 text-white font-semibold shadow-[0_3px_10px_rgba(37,99,235,0.3)]"
-                  : "bg-white text-[#4B4B5C] border border-[rgba(15,15,30,0.08)] hover:border-blue-300 hover:text-blue-700 hover:bg-blue-50/50"
+                  ? "bg-[var(--primary)] text-white font-semibold "
+                  : "bg-[var(--surface)] text-[var(--text-secondary)] border border-[var(--border)] hover:border-[var(--border-hover)] hover:text-[var(--primary)] hover:bg-[var(--primary-subtle)]"
               )}
             >
               {pageNum}
@@ -115,7 +118,7 @@ export function ServicePagination({
         data-testid="pagination-next"
         onClick={() => handlePageClick(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="inline-flex items-center justify-center h-9 sm:h-10 px-3 sm:px-3.5 rounded-xl border border-[rgba(15,15,30,0.12)] bg-white text-xs sm:text-sm font-medium text-[#0A0A23] hover:bg-[#FAFAFC] disabled:opacity-40 disabled:pointer-events-none transition-colors"
+        className="inline-flex items-center justify-center h-11 px-3 sm:px-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-sm sm:text-sm font-medium text-[var(--foreground)] hover:bg-[var(--subtle)] disabled:opacity-40 disabled:pointer-events-none transition-colors"
         aria-label="Go to next page"
       >
         <span className="hidden sm:inline">Next</span>

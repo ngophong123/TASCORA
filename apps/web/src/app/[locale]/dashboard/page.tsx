@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import * as React from "react"
 import { AccountOnboardingPanel } from "@/components/dashboard/AccountOnboardingPanel"
@@ -50,7 +50,6 @@ export default function DashboardOverviewPage() {
           : "Unavailable"
         : String(rawOrders.length)
     ),
-    stat("earnings", "Available earnings", "Unavailable"),
   ]
   const orders: ActiveOrderRow[] = rawOrders.map((o) => ({
     id: o.id,
@@ -88,7 +87,6 @@ export default function DashboardOverviewPage() {
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
-      <AccountOnboardingPanel mode={role} />
       {account?.role === "ADMIN" && (
         <Link href="/dashboard/admin" className="underline">
           Marketplace review
@@ -96,18 +94,18 @@ export default function DashboardOverviewPage() {
       )}
       <ApiState loading={ordersLoading} error={ordersError} retry={reloadOrders} />
       {/* 1. Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200/80 dark:border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-border-default">
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-semibold mb-3">
             <span>{isFreelancer ? "Creator Studio" : "Client Workspace"}</span>
           </div>
-          <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+          <h1 className="font-display text-2xl sm:text-3xl font-medium text-foreground tracking-tight">
             Welcome back, {profileName(account?.sellerProfile || account?.buyerProfile)}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1.5 leading-relaxed max-w-2xl">
+          <p className="text-xs sm:text-sm text-text-secondary mt-1.5 leading-relaxed max-w-2xl">
             {isFreelancer
               ? "Manage your services and fulfill orders on schedule, and monitor your delivery metrics."
-              : "Review incoming milestone deliverables, manage order progress, and manage your hired specialists."}
+              : "Review deliveries, track your orders, and work with your specialists."}
           </p>
         </div>
 
@@ -115,15 +113,15 @@ export default function DashboardOverviewPage() {
           {isFreelancer ? (
             <Link
               href="/dashboard/gigs"
-              className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600 hover:from-indigo-500 hover:via-violet-500 hover:to-blue-500 text-white text-xs font-semibold shadow-md shadow-indigo-500/25 transition-all hover:scale-[1.01] active:scale-[0.98]"
+              className="inline-flex items-center gap-2 min-h-11 px-4 rounded-lg bg-primary hover:bg-primary-hover text-white text-xs font-semibold transition-colors motion-reduce:transition-none"
             >
               <PlusCircle className="w-4 h-4" />
-              <span>Create New Gig</span>
+              <span>Manage Services</span>
             </Link>
           ) : (
             <Link
               href="/services"
-              className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600 hover:from-indigo-500 hover:via-violet-500 hover:to-blue-500 text-white text-xs font-semibold shadow-md shadow-indigo-500/25 transition-all hover:scale-[1.01] active:scale-[0.98]"
+              className="inline-flex items-center gap-2 min-h-11 px-4 rounded-lg bg-primary hover:bg-primary-hover text-white text-xs font-semibold transition-colors motion-reduce:transition-none"
             >
               <Compass className="w-4 h-4" />
               <span>Hire Specialists</span>
@@ -133,22 +131,22 @@ export default function DashboardOverviewPage() {
       </div>
 
       {/* 2. Stat Cards Grid (4 Cards with Sparklines & Delta Badges) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {!ordersLoading &&
           !ordersError &&
           stats.map((item) => <StatCard key={item.id} data={item} />)}
       </div>
 
       {/* 3. Main Revenue / Spending Area Chart (Recharts) */}
-      <section className="rounded-xl border border-slate-200 bg-white p-5 text-sm">
+      <section className="rounded-lg border border-border-default bg-bg-subtle p-4 text-sm leading-6 text-text-secondary">
         Earnings and settlement analytics are unavailable until financial release and payout
         workflows are implemented.
       </section>
 
       {/* 4. Two-Column Row: Active Orders Table & Sidebar (Activity / Checklist) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
         {/* Active Orders Table (2/3 width) */}
-        <div className="lg:col-span-2">
+        <div className="xl:col-span-2">
           <ActiveOrdersTable orders={orders} role={role} />
         </div>
 
@@ -158,7 +156,7 @@ export default function DashboardOverviewPage() {
         </div>
       </div>
 
-      {/* 5. Client Mode Only: Recommended Specialists Showcase */}
+      <AccountOnboardingPanel mode={role} />
     </div>
   )
 }

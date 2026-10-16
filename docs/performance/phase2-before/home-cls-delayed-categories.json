@@ -1,0 +1,569 @@
+{
+  "samples": [
+    {
+      "time": 506.09999999962747,
+      "fonts": "loading",
+      "elements": [
+        {
+          "selector": "h1",
+          "rect": {
+            "x": 16,
+            "y": 172.1875,
+            "width": 358,
+            "height": 87.34375,
+            "top": 172.1875,
+            "right": 374,
+            "bottom": 259.53125,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "h1 + p",
+          "rect": {
+            "x": 16,
+            "y": 283.53125,
+            "width": 358,
+            "height": 105.5625,
+            "top": 283.53125,
+            "right": 374,
+            "bottom": 389.09375,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "[data-testid=\"hero-category-select\"]",
+          "rect": {
+            "x": 25,
+            "y": 430.09375,
+            "width": 340,
+            "height": 44,
+            "top": 430.09375,
+            "right": 365,
+            "bottom": 474.09375,
+            "left": 25
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "h1 + p + div",
+          "rect": {
+            "x": 16,
+            "y": 421.09375,
+            "width": 358,
+            "height": 214,
+            "top": 421.09375,
+            "right": 374,
+            "bottom": 635.09375,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        }
+      ]
+    },
+    {
+      "time": 513.3999999994412,
+      "fonts": "loading",
+      "elements": [
+        {
+          "selector": "h1",
+          "rect": {
+            "x": 16,
+            "y": 172.1875,
+            "width": 358,
+            "height": 87.34375,
+            "top": 172.1875,
+            "right": 374,
+            "bottom": 259.53125,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "h1 + p",
+          "rect": {
+            "x": 16,
+            "y": 283.53125,
+            "width": 358,
+            "height": 105.5625,
+            "top": 283.53125,
+            "right": 374,
+            "bottom": 389.09375,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "[data-testid=\"hero-category-select\"]",
+          "rect": {
+            "x": 25,
+            "y": 430.09375,
+            "width": 340,
+            "height": 44,
+            "top": 430.09375,
+            "right": 365,
+            "bottom": 474.09375,
+            "left": 25
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "h1 + p + div",
+          "rect": {
+            "x": 16,
+            "y": 421.09375,
+            "width": 358,
+            "height": 214,
+            "top": 421.09375,
+            "right": 374,
+            "bottom": 635.09375,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        }
+      ]
+    },
+    {
+      "time": 513.7000000001863,
+      "fonts": "loading",
+      "elements": [
+        {
+          "selector": "h1",
+          "rect": {
+            "x": 16,
+            "y": 172.1875,
+            "width": 358,
+            "height": 87.34375,
+            "top": 172.1875,
+            "right": 374,
+            "bottom": 259.53125,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "h1 + p",
+          "rect": {
+            "x": 16,
+            "y": 283.53125,
+            "width": 358,
+            "height": 105.5625,
+            "top": 283.53125,
+            "right": 374,
+            "bottom": 389.09375,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "[data-testid=\"hero-category-select\"]",
+          "rect": {
+            "x": 25,
+            "y": 430.09375,
+            "width": 340,
+            "height": 44,
+            "top": 430.09375,
+            "right": 365,
+            "bottom": 474.09375,
+            "left": 25
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "h1 + p + div",
+          "rect": {
+            "x": 16,
+            "y": 421.09375,
+            "width": 358,
+            "height": 214,
+            "top": 421.09375,
+            "right": 374,
+            "bottom": 635.09375,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        }
+      ]
+    },
+    {
+      "time": 576,
+      "fonts": "loading",
+      "elements": [
+        {
+          "selector": "h1",
+          "rect": {
+            "x": 16,
+            "y": 172.1875,
+            "width": 358,
+            "height": 131.015625,
+            "top": 172.1875,
+            "right": 374,
+            "bottom": 303.203125,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "h1 + p",
+          "rect": {
+            "x": 16,
+            "y": 327.203125,
+            "width": 358,
+            "height": 105.5625,
+            "top": 327.203125,
+            "right": 374,
+            "bottom": 432.765625,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "[data-testid=\"hero-category-select\"]",
+          "rect": {
+            "x": 25,
+            "y": 473.765625,
+            "width": 340,
+            "height": 44,
+            "top": 473.765625,
+            "right": 365,
+            "bottom": 517.765625,
+            "left": 25
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "h1 + p + div",
+          "rect": {
+            "x": 16,
+            "y": 464.765625,
+            "width": 358,
+            "height": 214,
+            "top": 464.765625,
+            "right": 374,
+            "bottom": 678.765625,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        }
+      ]
+    },
+    {
+      "time": 583.5,
+      "fonts": "loaded",
+      "elements": [
+        {
+          "selector": "h1",
+          "rect": {
+            "x": 16,
+            "y": 172.1875,
+            "width": 358,
+            "height": 131.015625,
+            "top": 172.1875,
+            "right": 374,
+            "bottom": 303.203125,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "h1 + p",
+          "rect": {
+            "x": 16,
+            "y": 327.203125,
+            "width": 358,
+            "height": 105.5625,
+            "top": 327.203125,
+            "right": 374,
+            "bottom": 432.765625,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "[data-testid=\"hero-category-select\"]",
+          "rect": {
+            "x": 25,
+            "y": 473.765625,
+            "width": 340,
+            "height": 44,
+            "top": 473.765625,
+            "right": 365,
+            "bottom": 517.765625,
+            "left": 25
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "h1 + p + div",
+          "rect": {
+            "x": 16,
+            "y": 464.765625,
+            "width": 358,
+            "height": 214,
+            "top": 464.765625,
+            "right": 374,
+            "bottom": 678.765625,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        }
+      ]
+    },
+    {
+      "time": 876.5999999996275,
+      "fonts": "loaded",
+      "elements": [
+        {
+          "selector": "h1",
+          "rect": {
+            "x": 16,
+            "y": 172.1875,
+            "width": 358,
+            "height": 131.015625,
+            "top": 172.1875,
+            "right": 374,
+            "bottom": 303.203125,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "h1 + p",
+          "rect": {
+            "x": 16,
+            "y": 327.203125,
+            "width": 358,
+            "height": 105.5625,
+            "top": 327.203125,
+            "right": 374,
+            "bottom": 432.765625,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "[data-testid=\"hero-category-select\"]",
+          "rect": {
+            "x": 25,
+            "y": 473.765625,
+            "width": 340,
+            "height": 44,
+            "top": 473.765625,
+            "right": 365,
+            "bottom": 517.765625,
+            "left": 25
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "h1 + p + div",
+          "rect": {
+            "x": 16,
+            "y": 464.765625,
+            "width": 358,
+            "height": 214,
+            "top": 464.765625,
+            "right": 374,
+            "bottom": 678.765625,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        }
+      ]
+    },
+    {
+      "time": 1355.3999999994412,
+      "fonts": "loaded",
+      "elements": [
+        {
+          "selector": "h1",
+          "rect": {
+            "x": 16,
+            "y": 172.1875,
+            "width": 358,
+            "height": 131.015625,
+            "top": 172.1875,
+            "right": 374,
+            "bottom": 303.203125,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "h1 + p",
+          "rect": {
+            "x": 16,
+            "y": 327.203125,
+            "width": 358,
+            "height": 105.5625,
+            "top": 327.203125,
+            "right": 374,
+            "bottom": 432.765625,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "[data-testid=\"hero-category-select\"]",
+          "rect": {
+            "x": 25,
+            "y": 473.765625,
+            "width": 340,
+            "height": 44,
+            "top": 473.765625,
+            "right": 365,
+            "bottom": 517.765625,
+            "left": 25
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "h1 + p + div",
+          "rect": {
+            "x": 16,
+            "y": 464.765625,
+            "width": 358,
+            "height": 214,
+            "top": 464.765625,
+            "right": 374,
+            "bottom": 678.765625,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        }
+      ]
+    },
+    {
+      "time": 2354.2999999998137,
+      "fonts": "loaded",
+      "elements": [
+        {
+          "selector": "h1",
+          "rect": {
+            "x": 16,
+            "y": 172.1875,
+            "width": 358,
+            "height": 131.015625,
+            "top": 172.1875,
+            "right": 374,
+            "bottom": 303.203125,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "h1 + p",
+          "rect": {
+            "x": 16,
+            "y": 327.203125,
+            "width": 358,
+            "height": 105.5625,
+            "top": 327.203125,
+            "right": 374,
+            "bottom": 432.765625,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "[data-testid=\"hero-category-select\"]",
+          "rect": {
+            "x": 25,
+            "y": 473.765625,
+            "width": 340,
+            "height": 44,
+            "top": 473.765625,
+            "right": 365,
+            "bottom": 517.765625,
+            "left": 25
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "h1 + p + div",
+          "rect": {
+            "x": 16,
+            "y": 464.765625,
+            "width": 358,
+            "height": 214,
+            "top": 464.765625,
+            "right": 374,
+            "bottom": 678.765625,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        }
+      ]
+    },
+    {
+      "time": 3860.7999999998137,
+      "fonts": "loaded",
+      "elements": [
+        {
+          "selector": "h1",
+          "rect": {
+            "x": 16,
+            "y": 172.1875,
+            "width": 358,
+            "height": 131.015625,
+            "top": 172.1875,
+            "right": 374,
+            "bottom": 303.203125,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "h1 + p",
+          "rect": {
+            "x": 16,
+            "y": 327.203125,
+            "width": 358,
+            "height": 105.5625,
+            "top": 327.203125,
+            "right": 374,
+            "bottom": 432.765625,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "[data-testid=\"hero-category-select\"]",
+          "rect": {
+            "x": 25,
+            "y": 473.765625,
+            "width": 340,
+            "height": 44,
+            "top": 473.765625,
+            "right": 365,
+            "bottom": 517.765625,
+            "left": 25
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "selector": "h1 + p + div",
+          "rect": {
+            "x": 16,
+            "y": 464.765625,
+            "width": 358,
+            "height": 214,
+            "top": 464.765625,
+            "right": 374,
+            "bottom": 678.765625,
+            "left": 16
+          },
+          "font": "Geist, \"Geist Fallback\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        }
+      ]
+    }
+  ],
+  "shifts": [
+    {
+      "time": 565.5999999996275,
+      "value": 0.09570505526886189,
+      "sources": ["DIV.mt-8", "P.premium-body mt-6 max-w-xl", "DIV.lg:col-span-5", "#text", "#text"]
+    }
+  ]
+}
