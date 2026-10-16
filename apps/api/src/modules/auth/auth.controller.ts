@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction, CookieOptions } from 'express';
 import { AuthService } from './auth.service';
-import { allowedOrigins, cookieSameSite, isProduction } from '../../lib/config';
+import { isAllowedOrigin, cookieSameSite, isProduction } from '../../lib/config';
 import { HttpError } from '../../lib/errors';
 import { getIO } from '../../lib/socket';
 
@@ -17,10 +17,12 @@ function replySession(res: Response, result: Awaited<ReturnType<typeof AuthServi
 }
 export function protectCookieAction(req: Request, res: Response, next: NextFunction) {
   // Custom header requires CORS preflight; explicit origin prevents cross-site cookie abuse.
-  if (req.headers['x-csrf-protection'] !== '1' || !req.headers.origin || !allowedOrigins.includes(req.headers.origin)) {
+  if (req.headers['x-csrf-protection'] !== '1' || !req.headers.origin) {
     return next(new HttpError(403, 'Untrusted cookie action'));
   }
-  return next();
+  void isAllowedOrigin(req.headers.origin).then(allowed => {
+    next(allowed ? undefined : new HttpError(403, 'Untrusted cookie action'));
+  }, () => next(new HttpError(403, 'Untrusted cookie action')));
 }
 export const register = async (req: Request, res: Response, next: NextFunction) => {
   try { const user = await AuthService.register(req.body); res.status(201).json({ success: true, data: { id: user.id, email: user.email, verificationRequired: true } }); } catch (error) { next(error); }

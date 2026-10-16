@@ -1,4 +1,5 @@
-import { allowedOrigins } from './config';
+import { isAllowedOrigin } from './config';
+import { corsOriginCallback } from './origin-policy';
 import { Server } from 'socket.io';
 import { Server as HttpServer } from 'http';
 import { authenticateAccess } from '../modules/auth/token';
@@ -37,10 +38,10 @@ export const initSocket = (httpServer: HttpServer) => {
   io = new Server(httpServer, {
     allowRequest: (req, callback) => {
       const origin = req.headers.origin;
-      callback(null, !origin || allowedOrigins.includes(origin));
+      void isAllowedOrigin(origin).then(allowed => callback(null, allowed), () => callback(null, false));
     },
     cors: {
-      origin: allowedOrigins,
+      origin: corsOriginCallback(isAllowedOrigin),
       methods: ['GET', 'POST'],
       credentials: true,
     },
