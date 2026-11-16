@@ -31,16 +31,216 @@ beforeAll(async () => {
 });
 afterAll(async () => { vi.restoreAllMocks(); await prisma.$disconnect(); });
 beforeEach(() => { vi.spyOn(stripe.paymentIntents, 'create').mockRejectedValue(new Error('Explicit provider mock required')); vi.spyOn(stripe.paymentIntents, 'retrieve').mockRejectedValue(new Error('Explicit provider mock required')); vi.spyOn(stripe.refunds, 'create').mockRejectedValue(new Error('Explicit provider mock required')); vi.spyOn(stripe.refunds, 'retrieve').mockRejectedValue(new Error('Explicit provider mock required')); });
+const TEST_STRIPE_TIMESTAMP = 1_700_000_000;
+
+function toStripeResponse<T>(payload: T): Stripe.Response<T> {
+  return {
+    ...payload,
+    lastResponse: {
+      headers: {},
+      requestId: 'req_test_financial',
+      statusCode: 200,
+    },
+  };
+}
+
+type PaymentIntentFixtureOverrides = Partial<
+  Omit<Stripe.PaymentIntent, 'id' | 'object' | 'amount' | 'currency' | 'status' | 'metadata'>
+> & {
+  id: string;
+  amount: number;
+  status: Stripe.PaymentIntent.Status;
+  metadata: Stripe.Metadata;
+  currency?: string;
+};
+
+function buildPaymentIntent(overrides: PaymentIntentFixtureOverrides): Stripe.PaymentIntent {
+  const {
+    id,
+    amount,
+    status,
+    metadata,
+    currency = 'usd',
+    amount_received = status === 'succeeded' ? amount : 0,
+    ...rest
+  } = overrides;
+
+  return {
+    id,
+    object: 'payment_intent',
+    allowed_payment_method_types: null,
+    amount,
+    amount_capturable: 0,
+    amount_received,
+    application: null,
+    application_fee_amount: null,
+    automatic_payment_methods: null,
+    canceled_at: null,
+    cancellation_reason: null,
+    capture_method: 'automatic',
+    client_secret: null,
+    confirmation_method: 'automatic',
+    created: TEST_STRIPE_TIMESTAMP,
+    currency,
+    customer: null,
+    customer_account: null,
+    description: null,
+    excluded_payment_method_types: null,
+    last_payment_error: null,
+    latest_charge: null,
+    livemode: false,
+    managed_payments: null,
+    metadata,
+    next_action: null,
+    on_behalf_of: null,
+    payment_method: null,
+    payment_method_configuration_details: null,
+    payment_method_options: null,
+    payment_method_types: ['card'],
+    processing: null,
+    receipt_email: null,
+    review: null,
+    setup_future_usage: null,
+    shipping: null,
+    source: null,
+    statement_descriptor: null,
+    statement_descriptor_suffix: null,
+    status,
+    transfer_group: null,
+    ...rest,
+  };
+}
+
+function buildPaymentIntentResponse(
+  overrides: PaymentIntentFixtureOverrides
+): Stripe.Response<Stripe.PaymentIntent> {
+  return toStripeResponse(buildPaymentIntent(overrides));
+}
+
+type RefundFixtureInput = {
+  id: string;
+  orderId: string;
+  amount: Prisma.Decimal;
+};
+
+function buildRefund(
+  refund: RefundFixtureInput,
+  status: 'pending' | 'requires_action' | 'succeeded' | 'failed' | 'canceled' = 'succeeded',
+  reason: Stripe.Refund.Reason | null = null
+): Stripe.Refund {
+  return {
+    id: `re_${refund.id}`,
+    object: 'refund',
+    amount: refund.amount.mul(100).toNumber(),
+    balance_transaction: null,
+    charge: null,
+    created: TEST_STRIPE_TIMESTAMP,
+    currency: 'usd',
+    customer: null,
+    customer_account: null,
+    metadata: { refundId: refund.id, orderId: refund.orderId },
+    payment_intent: `pi_${refund.orderId}`,
+    payment_method: null,
+    reason,
+    receipt_number: null,
+    source_transfer_reversal: null,
+    status,
+    transfer_reversal: null,
+  };
+}
+
+function buildRefundResponse(
+  refund: RefundFixtureInput,
+  status: 'pending' | 'requires_action' | 'succeeded' | 'failed' | 'canceled' = 'succeeded',
+  reason: Stripe.Refund.Reason | null = null
+): Stripe.Response<Stripe.Refund> {
+  return toStripeResponse(buildRefund(refund, status, reason));
+}
+
+type BuildStripeEventBase<TType extends Stripe.Event.Type, TDataObject> = {
+  id: string;
+  type: TType;
+  dataObject: TDataObject;
+  created?: number;
+  livemode?: boolean;
+};
+
+function buildStripeEvent(
+  params: BuildStripeEventBase<'payment_intent.succeeded', Stripe.PaymentIntent>
+): Stripe.PaymentIntentSucceededEvent;
+function buildStripeEvent(
+  params: BuildStripeEventBase<'payment_intent.payment_failed', Stripe.PaymentIntent>
+): Stripe.PaymentIntentPaymentFailedEvent;
+function buildStripeEvent(
+  params: BuildStripeEventBase<'payment_intent.canceled', Stripe.PaymentIntent>
+): Stripe.PaymentIntentCanceledEvent;
+function buildStripeEvent(
+  params: BuildStripeEventBase<'payment_intent.processing', Stripe.PaymentIntent>
+): Stripe.PaymentIntentProcessingEvent;
+function buildStripeEvent(
+  params: BuildStripeEventBase<'refund.created', Stripe.Refund>
+): Stripe.RefundCreatedEvent;
+function buildStripeEvent(
+  params: BuildStripeEventBase<'refund.updated', Stripe.Refund>
+): Stripe.RefundUpdatedEvent;
+function buildStripeEvent(
+  params: BuildStripeEventBase<'refund.failed', Stripe.Refund>
+): Stripe.RefundFailedEvent;
+function buildStripeEvent(
+  params:
+    | BuildStripeEventBase<
+        | 'payment_intent.succeeded'
+        | 'payment_intent.payment_failed'
+        | 'payment_intent.canceled'
+        | 'payment_intent.processing',
+        Stripe.PaymentIntent
+      >
+    | BuildStripeEventBase<'refund.created' | 'refund.updated' | 'refund.failed', Stripe.Refund>
+): Stripe.Event {
+  const base = {
+    id: params.id,
+    object: 'event' as const,
+    api_version: null,
+    created: params.created ?? TEST_STRIPE_TIMESTAMP,
+    livemode: params.livemode ?? false,
+    pending_webhooks: 0,
+    request: { id: null, idempotency_key: null },
+  };
+
+  switch (params.type) {
+    case 'payment_intent.succeeded':
+    case 'payment_intent.payment_failed':
+    case 'payment_intent.canceled':
+    case 'payment_intent.processing':
+      return { ...base, type: params.type, data: { object: params.dataObject } };
+    case 'refund.created':
+    case 'refund.updated':
+    case 'refund.failed':
+      return { ...base, type: params.type, data: { object: params.dataObject } };
+  }
+}
+
 const order = (key?: string) => OrderService.createOrder(buyer, serviceId, packageId, key);
 async function fund(id: string) {
   const saved = await prisma.order.findUniqueOrThrow({ where: { id } });
   const transaction = await prisma.transaction.create({ data: { orderId: id, stripePaymentId: `pi_${id}`, amount: saved.amount } });
-  const event = { id: `evt_${id}`, type: 'payment_intent.succeeded', data: { object: { id: `pi_${id}`, object: 'payment_intent', amount: saved.amount.mul(100).toNumber(), amount_received: saved.amount.mul(100).toNumber(), currency: 'usd', status: 'succeeded', metadata: { orderId: id, buyerId: buyer, transactionId: transaction.id } } } } as Stripe.Event;
+  const amount = saved.amount.mul(100).toNumber();
+  const event = buildStripeEvent({
+    id: `evt_${id}`,
+    type: 'payment_intent.succeeded',
+    dataObject: buildPaymentIntent({
+      id: `pi_${id}`,
+      amount,
+      amount_received: amount,
+      status: 'succeeded',
+      metadata: { orderId: id, buyerId: buyer, transactionId: transaction.id },
+    }),
+  });
   await PaymentService.handleWebhookEvent(event); return event;
 }
 async function delivered() { const created = await order(); await fund(created.id); await OrderService.operate(seller, created.id, 'start'); await OrderService.deliver(seller, created.id, 'Complete financial test delivery', [], `delivery_${created.id}`); return created; }
 const balance = (id: string) => prisma.$transaction(tx => balances(tx, id));
-const mockRefund = (refund: { id: string; orderId: string; amount: Prisma.Decimal }, status = 'succeeded') => ({ id: `re_${refund.id}`, object: 'refund', amount: refund.amount.mul(100).toNumber(), currency: 'usd', status, payment_intent: `pi_${refund.orderId}`, metadata: { refundId: refund.id, orderId: refund.orderId } }) as Stripe.Response<Stripe.Refund>;
+const mockRefund = buildRefundResponse;
 const provider = (status: 'PAID' | 'FAILED' | 'PROCESSING'): PayoutProvider => ({ available: true, submit: async input => ({ ...input, providerId: `po_${input.reference}`, status }) });
 const app = express(); app.post('/payments/webhook', express.raw({ type: 'application/json' }), handleWebhook); app.use(express.json()); app.use('/orders', orderRoutes); app.use('/payments', paymentRoutes); app.use('/financial', financialRoutes);
 app.use((error: Error & { status?: number }, _req: express.Request, res: express.Response, _next: express.NextFunction) => res.status(error.status || 500).json({ success: false, error: error.message }));
@@ -96,7 +296,19 @@ it('duplicate success events with same or different IDs cannot credit twice; fai
   expect(await balance(created.id)).toEqual({ pending: 9000, available: 0, reserved: 0, paid: 0 });
   expect(await prisma.financialEntry.count({ where: { orderId: created.id, type: 'PAYMENT_RECEIVED' } })).toBe(1);
   const failed = await order(); await prisma.transaction.create({ data: { orderId: failed.id, stripePaymentId: `pi_${failed.id}`, amount: 100 } });
-  await PaymentService.handleWebhookEvent({ id: `evt_failed_${failed.id}`, type: 'payment_intent.payment_failed', data: { object: { id: `pi_${failed.id}`, object: 'payment_intent', amount: 10000, amount_received: 0, currency: 'usd', status: 'requires_payment_method', metadata: { orderId: failed.id, buyerId: buyer } } } } as Stripe.Event);
+  await PaymentService.handleWebhookEvent(
+    buildStripeEvent({
+      id: `evt_failed_${failed.id}`,
+      type: 'payment_intent.payment_failed',
+      dataObject: buildPaymentIntent({
+        id: `pi_${failed.id}`,
+        amount: 10000,
+        amount_received: 0,
+        status: 'requires_payment_method',
+        metadata: { orderId: failed.id, buyerId: buyer },
+      }),
+    })
+  );
   expect((await prisma.order.findUniqueOrThrow({ where: { id: failed.id } })).status).toBe('PENDING'); expect((await balance(failed.id)).pending).toBe(0);
 });
 it('recovers provider intent creation timeout and webhook-before-binding using durable attempt identity', async () => {
@@ -105,8 +317,20 @@ it('recovers provider intent creation timeout and webhook-before-binding using d
   await expect(PaymentService.createPaymentIntent(buyer, created.id)).rejects.toThrow('Timeout');
   const attempt = await prisma.transaction.findFirstOrThrow({ where: { orderId: created.id } });
   expect(attempt.stripePaymentId).toBeNull();
-  const remote = { id: `pi_recovery_${created.id}`, object: 'payment_intent', amount: 10000, amount_received: 10000, currency: 'usd', status: 'succeeded', metadata: { orderId: created.id, buyerId: buyer, transactionId: attempt.id } };
-  await PaymentService.handleWebhookEvent({ id: `evt_recovery_${created.id}`, type: 'payment_intent.succeeded', data: { object: remote } } as Stripe.Event);
+  const remote = buildPaymentIntent({
+    id: `pi_recovery_${created.id}`,
+    amount: 10000,
+    amount_received: 10000,
+    status: 'succeeded',
+    metadata: { orderId: created.id, buyerId: buyer, transactionId: attempt.id },
+  });
+  await PaymentService.handleWebhookEvent(
+    buildStripeEvent({
+      id: `evt_recovery_${created.id}`,
+      type: 'payment_intent.succeeded',
+      dataObject: remote,
+    })
+  );
   expect((await prisma.transaction.findUniqueOrThrow({ where: { id: attempt.id } })).stripePaymentId).toBe(remote.id);
   expect((await balance(created.id)).pending).toBe(9000);
   await expect(PaymentService.createPaymentIntent(buyer, created.id)).rejects.toThrow('not awaiting');
@@ -218,8 +442,22 @@ it('partial refunds from available earnings retain exact net balance and duplica
   const refund = await RefundService.request(admin, created.id, '25.01', 'Controlled partial resolution', 'available_refund_financial');
   vi.spyOn(stripe.refunds, 'create').mockResolvedValue(mockRefund(refund)); await RefundService.process(admin, refund.id);
   expect((await balance(created.id)).available).toBe(6749); // retained 74.99, fee 7.50
-  const duplicateSuccess = { id: `evt_late_${created.id}`, type: 'payment_intent.succeeded', data: { object: { id: `pi_${created.id}`, object: 'payment_intent', amount: 10000, amount_received: 10000, currency: 'usd', status: 'succeeded', metadata: { orderId: created.id, buyerId: buyer } } } } as Stripe.Event;
-  const refundEvent = { id: `evt_refund_${created.id}`, type: 'refund.updated', data: { object: mockRefund(refund) } } as Stripe.Event;
+  const duplicateSuccess = buildStripeEvent({
+    id: `evt_late_${created.id}`,
+    type: 'payment_intent.succeeded',
+    dataObject: buildPaymentIntent({
+      id: `pi_${created.id}`,
+      amount: 10000,
+      amount_received: 10000,
+      status: 'succeeded',
+      metadata: { orderId: created.id, buyerId: buyer },
+    }),
+  });
+  const refundEvent = buildStripeEvent({
+    id: `evt_refund_${created.id}`,
+    type: 'refund.updated',
+    dataObject: buildRefund(refund),
+  });
   await Promise.all([PaymentService.handleWebhookEvent(duplicateSuccess), PaymentService.handleWebhookEvent(refundEvent), PaymentService.handleWebhookEvent(refundEvent)]);
   expect((await balance(created.id)).available).toBe(6749);
   expect((await prisma.transaction.findFirstOrThrow({ where: { orderId: created.id } })).refundedAmount.toFixed(2)).toBe('25.01');
@@ -237,7 +475,12 @@ it('ambiguous payout timeouts retain reservations for reconciliation and never m
 it('cancellation retries and concurrent requests commit once and return only public order fields', async () => {
   const created = await order();
   await prisma.transaction.create({ data: { orderId: created.id, stripePaymentId: `pi_${created.id}`, amount: created.amount } });
-  const remote = { id: `pi_${created.id}`, status: 'canceled', amount: 10000, currency: 'usd', metadata: { orderId: created.id, buyerId: buyer } } as Stripe.Response<Stripe.PaymentIntent>;
+  const remote = buildPaymentIntentResponse({
+    id: `pi_${created.id}`,
+    status: 'canceled',
+    amount: 10000,
+    metadata: { orderId: created.id, buyerId: buyer },
+  });
   vi.spyOn(stripe.paymentIntents, 'retrieve').mockResolvedValue(remote);
   const cancel = vi.spyOn(stripe.paymentIntents, 'cancel').mockRejectedValue(new Error('Already canceled provider must not be canceled again'));
   const auth = await token(buyer);
@@ -257,7 +500,12 @@ it('an older provider cancellation cannot cancel a newer live payment attempt', 
   vi.spyOn(stripe.paymentIntents, 'retrieve').mockImplementation(async () => {
     await prisma.transaction.update({ where: { id: first.id }, data: { status: 'CANCELLED' } });
     await prisma.transaction.create({ data: { orderId: created.id, stripePaymentId: `pi_new_${created.id}`, amount: created.amount, createdAt: first.createdAt } });
-    return { id: `pi_${created.id}`, status: 'canceled', amount: 10000, currency: 'usd', metadata: { orderId: created.id, buyerId: buyer } } as Stripe.Response<Stripe.PaymentIntent>;
+    return buildPaymentIntentResponse({
+      id: `pi_${created.id}`,
+      status: 'canceled',
+      amount: 10000,
+      metadata: { orderId: created.id, buyerId: buyer },
+    });
   });
   await expect(PaymentService.cancelPayment(buyer, created.id)).rejects.toThrow('New payment attempt');
   expect((await prisma.order.findUniqueOrThrow({ where: { id: created.id } })).status).toBe('PENDING');
@@ -287,14 +535,27 @@ it('buyer dispute resolution reuses outstanding refunds and late terminal events
   await DisputeService.resolve(admin, created.id, 'BUYER', 'Buyer receives full remaining payment');
   expect(await prisma.refund.count({ where: { orderId: created.id } })).toBe(1);
   vi.spyOn(stripe.refunds, 'create').mockResolvedValue(mockRefund(refund)); await RefundService.process(admin, refund.id);
-  await RefundService.handleEvent({ id: `late_${refund.id}`, type: 'refund.updated', data: { object: mockRefund(refund, 'pending') } } as Stripe.Event);
+  await RefundService.handleEvent(
+    buildStripeEvent({
+      id: `late_${refund.id}`,
+      type: 'refund.updated',
+      dataObject: buildRefund(refund, 'pending'),
+    })
+  );
   expect((await prisma.refund.findUniqueOrThrow({ where: { id: refund.id } })).status).toBe('SUCCEEDED');
   expect((await prisma.marketplaceDispute.findUniqueOrThrow({ where: { orderId: created.id } })).status).toBe('RESOLVED_BUYER');
 });
 
 it('reconciliation reports truncated provider refund scans without correcting balances and restricts access', async () => {
   const created = await order(); await fund(created.id);
-  vi.spyOn(stripe.paymentIntents, 'retrieve').mockResolvedValue({ id: `pi_${created.id}`, status: 'succeeded', amount: 10000, currency: 'usd', metadata: { orderId: created.id, buyerId: buyer } } as Stripe.Response<Stripe.PaymentIntent>);
+  vi.spyOn(stripe.paymentIntents, 'retrieve').mockResolvedValue(
+    buildPaymentIntentResponse({
+      id: `pi_${created.id}`,
+      status: 'succeeded',
+      amount: 10000,
+      metadata: { orderId: created.id, buyerId: buyer },
+    })
+  );
   vi.spyOn(stripe.refunds, 'list').mockResolvedValue({ data: [], has_more: true } as unknown as Stripe.Response<Stripe.ApiList<Stripe.Refund>>);
   expect((await request(app).get(`/financial/admin/orders/${created.id}/reconciliation`).set('Authorization', `Bearer ${await token(buyer)}`)).status).toBe(403);
   const response = await request(app).get(`/financial/admin/orders/${created.id}/reconciliation`).set('Authorization', `Bearer ${await token(admin)}`);
@@ -330,7 +591,18 @@ it('reuses the only live intent across tied or backwards timestamps instead of c
     await prisma.transaction.create({ data: { orderId: created.id, amount: created.amount, stripePaymentId: `pi_old_${created.id}`, status: 'CANCELLED', createdAt: timestamp } });
     const active = await prisma.transaction.create({ data: { orderId: created.id, amount: created.amount, stripePaymentId: `pi_active_${created.id}`, createdAt: new Date(timestamp.getTime() + offset) } });
     const create = vi.spyOn(stripe.paymentIntents, 'create').mockClear();
-    vi.spyOn(stripe.paymentIntents, 'retrieve').mockResolvedValue({ id: active.stripePaymentId, amount: 10000, currency: 'usd', status: 'requires_payment_method', client_secret: 'same-live-intent-secret', metadata: { orderId: created.id, buyerId: buyer, transactionId: active.id } } as Stripe.Response<Stripe.PaymentIntent>);
+    if (!active.stripePaymentId) {
+      throw new Error('Expected active transaction to persist stripePaymentId before retrieval');
+    }
+    vi.spyOn(stripe.paymentIntents, 'retrieve').mockResolvedValue(
+      buildPaymentIntentResponse({
+        id: active.stripePaymentId,
+        amount: 10000,
+        status: 'requires_payment_method',
+        client_secret: 'same-live-intent-secret',
+        metadata: { orderId: created.id, buyerId: buyer, transactionId: active.id },
+      })
+    );
     const results = await Promise.all(Array.from({ length: 8 }, () => PaymentService.createPaymentIntent(buyer, created.id)));
     expect(results.every(result => result.clientSecret === 'same-live-intent-secret')).toBe(true);
     expect(create).not.toHaveBeenCalled();
