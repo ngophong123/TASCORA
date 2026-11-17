@@ -1,10 +1,16 @@
-import { afterEach, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, expect, it, vi } from 'vitest';
 import request from 'supertest';
 
 // No dependency connection or provider call: only inspect the actual Express app.
 vi.mock('../../apps/api/src/lib/prisma', () => ({ prisma: {} }));
 vi.mock('../../apps/api/src/lib/redis', () => ({ redis: {} }));
 vi.mock('../../apps/api/src/lib/socket', () => ({ initSocket: vi.fn(), getIO: vi.fn() }));
+beforeAll(async () => {
+  // Warm Vite's first-time SSR module transform graph outside the first test's execution clock,
+  // then reset the module registry so every test still imports a clean server instance with fresh env.
+  await import('../../apps/api/src/server');
+  vi.resetModules();
+});
 afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); });
 
 it('supplies numeric 1 to the actual Express app and recognizes forwarded HTTPS', async () => {

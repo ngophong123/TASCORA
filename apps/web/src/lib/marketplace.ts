@@ -201,10 +201,17 @@ export function isMediatedImage(value: string): boolean {
     return false
   }
 }
-export async function uploadFile(file: File): Promise<string> {
-  const uploaded = await requestData<{ reference: string }>("/api/v1/uploads", {
+export async function uploadFile(
+  file: File,
+  purpose: "general" | "kyc" = "general"
+): Promise<string> {
+  const path = purpose === "kyc" ? "/api/v1/uploads?purpose=kyc" : "/api/v1/uploads"
+  const uploaded = await requestData<{ reference: string }>(path, {
     method: "POST",
-    headers: { "Content-Type": file.type },
+    headers: {
+      "Content-Type": file.type,
+      ...(purpose === "kyc" ? { "X-Upload-Purpose": "kyc" } : {}),
+    },
     body: file,
   })
   return uploaded.reference

@@ -4,7 +4,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import pino from 'pino';
+import { logger } from './lib/logger';
 import { redis } from './lib/redis';
 import { prisma } from './lib/prisma';
 import authRoutes from './modules/auth/auth.route';
@@ -32,7 +32,6 @@ import { initSocket } from './lib/socket';
 import { healthRouter } from './lib/health';
 
 
-const logger = pino();
 const app = express();
 const server = http.createServer(app);
 
@@ -55,6 +54,7 @@ app.use(
   cors({
     origin: corsOriginCallback(isAllowedOrigin),
     credentials: true,
+    exposedHeaders: ['X-TASCORA-Scan-Status', 'Content-Disposition'],
   })
 );
 app.use(express.json());

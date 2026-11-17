@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs/promises';
-import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { HttpError } from '../../lib/errors';
 
@@ -8,7 +8,13 @@ export const uploadLimit = 5 * 1024 * 1024;
 export const uploadTypes = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp', 'application/pdf': 'pdf' } as const;
 export type UploadType = keyof typeof uploadTypes;
 export type StorageRead = { kind: 'buffer'; body: Buffer } | { kind: 'redirect'; url: string };
-export interface Storage { put(key: string, body: Buffer, contentType: UploadType): Promise<void>; read(key: string): Promise<StorageRead> }
+export interface Storage {
+  put(key: string, body: Buffer, contentType: UploadType): Promise<void>;
+  read(key: string): Promise<StorageRead>;
+  readBuffer?(key: string): Promise<Buffer>;
+  delete?(key: string): Promise<void>;
+  exists?(key: string): Promise<boolean>;
+}
 
 export function ownedKey(owner: string, file: string): string {
   if (!/^[a-zA-Z0-9_-]{1,128}$/.test(owner) || !/^[0-9a-f-]{36}\.(png|jpg|webp|pdf)$/.test(file)) throw new HttpError(400, 'Invalid file identifier');
@@ -46,6 +52,32 @@ export class LocalStorage implements Storage {
     try { return { kind: 'buffer', body: await fs.readFile(this.resolve(key)) }; }
     catch (error) { if (error instanceof Error && 'code' in error && error.code === 'ENOENT') throw new HttpError(404, 'File not found'); throw error; }
   }
+  async readBuffer(key: string): Promise<Buffer> {
+    const result = await this.read(key);
+    if (result.kind !== 'buffer') throw new HttpError(500, 'Expected local buffer');
+    return result.body;
+  }
+  async delete(key: string): Promise<void> {
+    try { await fs.unlink(this.resolve(key)); }
+    catch (error) { if (error instanceof Error && 'code' in error && error.code === 'ENOENT') return; throw error; }
+  }
+  async exists(key: string): Promise<boolean> {
+    try { await fs.access(this.resolve(key)); return true; }
+    catch { return false; }
+  }
+}
+
+function isS3MissingObjectError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+  const err = error as {
+    name?: string;
+    Code?: string;
+    code?: string;
+    $metadata?: { httpStatusCode?: number };
+  };
+  const errName = err.Code || err.code || err.name;
+  if (errName === 'NoSuchKey' || errName === 'NotFound') return true;
+  return err.$metadata?.httpStatusCode === 404 && errName !== 'NoSuchBucket';
 }
 
 export class S3Storage implements Storage {
@@ -55,6 +87,38 @@ export class S3Storage implements Storage {
   }
   async read(key: string): Promise<StorageRead> {
     return { kind: 'redirect', url: await getSignedUrl(this.client, new GetObjectCommand({ Bucket: this.bucket, Key: key, ResponseContentDisposition: 'attachment', ResponseCacheControl: 'private, no-store' }), { expiresIn: 60 }) };
+  }
+  async readBuffer(key: string): Promise<Buffer> {
+    const response = await this.client.send(new GetObjectCommand({ Bucket: this.bucket, Key: key }));
+    if (!response.Body) throw new HttpError(404, 'File not found');
+    const chunks: Buffer[] = [];
+    let total = 0;
+    for await (const chunk of response.Body as AsyncIterable<Uint8Array>) {
+      const buf = Buffer.from(chunk);
+      total += buf.length;
+      if (total > uploadLimit) throw new HttpError(413, 'Stored object exceeds maximum upload size');
+      chunks.push(buf);
+    }
+    return Buffer.concat(chunks);
+  }
+  async delete(key: string): Promise<void> {
+    if (!key || !key.trim() || key !== key.trim() || key.includes('..') || key.includes('\\')) {
+      throw new HttpError(400, 'Invalid file key');
+    }
+    try {
+      await this.client.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: key }));
+    } catch (error) {
+      if (isS3MissingObjectError(error)) return;
+      throw error;
+    }
+  }
+  async exists(key: string): Promise<boolean> {
+    try {
+      await this.client.send(new HeadObjectCommand({ Bucket: this.bucket, Key: key }));
+      return true;
+    } catch {
+      return false;
+    }
   }
 }
 

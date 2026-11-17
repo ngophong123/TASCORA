@@ -1,6 +1,6 @@
 import { isProduction, webUrl } from '../../lib/config';
 import nodemailer, { Transporter, TestAccount } from 'nodemailer';
-import { logger } from '../../server';
+import { logger } from '../../lib/logger';
 
 export class EmailService {
   private static transporter: Transporter;
@@ -59,7 +59,14 @@ export class EmailService {
 
       return info;
     } catch (error) {
-      logger.error('Error sending email:', error);
+      logger.error(
+        {
+          err: error instanceof Error
+            ? { name: error.name, code: (error as { code?: string }).code, message: error.message }
+            : { message: 'Unknown email transport error' },
+        },
+        'Error sending email'
+      );
       throw error;
     }
   }
@@ -69,6 +76,18 @@ export class EmailService {
   static async sendVerificationEmail(to: string, token: string) {
     const url = `${webUrl}/verify-email?token=${encodeURIComponent(token)}`;
     return this.sendMail(to, 'Verify your TASCORA account', `<p>Confirm your email address using this link within one hour:</p><a href="${url}">Verify email</a>`);
+  }
+
+  static async sendPasswordResetEmail(to: string, token: string) {
+    const url = `${webUrl}/reset-password?token=${encodeURIComponent(token)}`;
+    const html = `
+      <h2>Reset your TASCORA password</h2>
+      <p>We received a request to reset your TASCORA account password.</p>
+      <p>This link is single-use and expires in 30 minutes:</p>
+      <p><a href="${url}">Reset password</a></p>
+      <p>If you did not request a password reset, you can safely ignore this email.</p>
+    `;
+    return this.sendMail(to, 'Reset your TASCORA password', html);
   }
 
   static async sendTestEmail(to: string) {

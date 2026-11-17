@@ -14,6 +14,8 @@ function productionEnv() {
     vi.stubEnv(name, "test-only-placeholder")
   }
   vi.stubEnv("JWT_ACCESS_SECRET", "test-only-placeholder-with-at-least-32-characters")
+  vi.stubEnv("KYC_ENCRYPTION_KEY", "a1b2c3d4e5f60718293a4b5c6d7e8f90102132435465768798a9bacbdcedfe0f")
+  vi.stubEnv("KYC_DOCUMENT_HMAC_KEY", "1f2e3d4c5b6a798897a6b5c4d3e2f10099887766554433221100aabbccddeeff")
   vi.stubEnv("WEB_URL", "https://web.example.com")
   vi.stubEnv("CORS_ORIGINS", "")
   vi.stubEnv("COOKIE_SAME_SITE", "none")
@@ -146,5 +148,70 @@ describe("Production configuration safety", () => {
     expect(config.allowedOrigins).toEqual(["https://web.example.com"])
     expect(config.cookieSameSite).toBe("none")
     expect(config.isProduction).toBe(true)
+    expect(config.kycEncryptionKeyId).toBe("k1")
+  })
+
+  it("fails closed in production when KYC_ENCRYPTION_KEY is missing or weak", async () => {
+    productionEnv()
+    vi.stubEnv("KYC_ENCRYPTION_KEY", "")
+    await expect(import("../../apps/api/src/lib/config")).rejects.toThrow("KYC_ENCRYPTION_KEY")
+
+    for (const weakKey of [
+      "too-short",
+      "0000000000000000000000000000000000000000000000000000000000000000",
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "password-placeholder-with-at-least-32-characters",
+    ]) {
+      vi.resetModules()
+      productionEnv()
+      vi.stubEnv("KYC_ENCRYPTION_KEY", weakKey)
+      await expect(import("../../apps/api/src/lib/config")).rejects.toThrow("KYC_ENCRYPTION_KEY")
+    }
+  })
+
+  it("validates KYC key rotation metadata and rejects colliding or orphan previous keys", async () => {
+    productionEnv()
+    vi.stubEnv("KYC_ENCRYPTION_KEY_ID", "k2")
+    vi.stubEnv(
+      "KYC_ENCRYPTION_PREVIOUS_KEYS",
+      "k1=9f8e7d6c5b4a39281706f5e4d3c2b1a00f1e2d3c4b5a69788796a5b4c3d2e1f0"
+    )
+    const config = await import("../../apps/api/src/lib/config")
+    expect(config.kycEncryptionKeyId).toBe("k2")
+
+    vi.resetModules()
+    productionEnv()
+    vi.stubEnv("KYC_ENCRYPTION_KEY_ID", "k1")
+    vi.stubEnv(
+      "KYC_ENCRYPTION_PREVIOUS_KEYS",
+      "k1=9f8e7d6c5b4a39281706f5e4d3c2b1a00f1e2d3c4b5a69788796a5b4c3d2e1f0"
+    )
+    await expect(import("../../apps/api/src/lib/config")).rejects.toThrow("conflicts with active")
+  })
+
+  it("fails closed when KYC_DOCUMENT_HMAC_KEY is missing, weak, or reuses KYC_ENCRYPTION_KEY", async () => {
+    productionEnv()
+    vi.stubEnv("KYC_DOCUMENT_HMAC_KEY", "")
+    await expect(import("../../apps/api/src/lib/config")).rejects.toThrow("KYC_DOCUMENT_HMAC_KEY")
+
+    vi.resetModules()
+    productionEnv()
+    vi.stubEnv("KYC_DOCUMENT_HMAC_KEY", "too-weak")
+    await expect(import("../../apps/api/src/lib/config")).rejects.toThrow("KYC_DOCUMENT_HMAC_KEY")
+
+    vi.resetModules()
+    productionEnv()
+    vi.stubEnv("KYC_DOCUMENT_HMAC_KEY", "a1b2c3d4e5f60718293a4b5c6d7e8f90102132435465768798a9bacbdcedfe0f")
+    await expect(import("../../apps/api/src/lib/config")).rejects.toThrow("cryptographically separate")
+
+    vi.resetModules()
+    productionEnv()
+    vi.stubEnv("KYC_DOCUMENT_HMAC_KEY_ID", "h2")
+    vi.stubEnv(
+      "KYC_DOCUMENT_HMAC_PREVIOUS_KEYS",
+      "h1=0f1e2d3c4b5a69788796a5b4c3d2e1f09f8e7d6c5b4a39281706f5e4d3c2b1a0"
+    )
+    const config = await import("../../apps/api/src/lib/config")
+    expect(config.kycDocumentHmacKeyId).toBe("h2")
   })
 })

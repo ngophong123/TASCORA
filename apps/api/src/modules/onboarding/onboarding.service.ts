@@ -2,15 +2,16 @@ import { z } from 'zod';
 import { updateOnboardingStepSchema } from './onboarding.schema';
 import { prisma } from '../../lib/prisma';
 import { HttpError } from '../../lib/errors';
-import { assertOwnedUpload } from '../upload/references';
+import { assertUsableNonKycUpload } from '../upload/references';
 
 export class OnboardingService {
   static async updateStep(userId: string, step: number, data: z.infer<typeof updateOnboardingStepSchema>['body']) {
-    assertOwnedUpload(data.avatar, userId, true);
+    const canonicalAvatar = await assertUsableNonKycUpload(data.avatar, userId, true);
+    const normalizedData = data.avatar !== undefined ? { ...data, avatar: canonicalAvatar } : data;
     const existing = await prisma.sellerProfile.findUnique({ where: { userId } });
     if (existing && !['DRAFT', 'REJECTED'].includes(existing.status)) throw new HttpError(409, 'Seller profile is already submitted or approved');
     if (existing) {
-      const changed = await prisma.sellerProfile.updateMany({ where: { id: existing.id, status: { in: ['DRAFT', 'REJECTED'] } }, data: { ...data, onboardingStep: step + 1 } });
+      const changed = await prisma.sellerProfile.updateMany({ where: { id: existing.id, status: { in: ['DRAFT', 'REJECTED'] } }, data: { ...normalizedData, onboardingStep: step + 1 } });
       if (changed.count !== 1) throw new HttpError(409, 'Seller profile changed during save');
       return prisma.sellerProfile.findUnique({ where: { id: existing.id } });
     }
@@ -19,7 +20,7 @@ export class OnboardingService {
         userId,
         skills: [],
         languages: [],
-        ...data,
+        ...normalizedData,
         onboardingStep: step + 1,
       },
     });
@@ -43,7 +44,7 @@ export class OnboardingService {
       where: { userId, status: { in: ['DRAFT', 'REJECTED'] }, updatedAt: profile.updatedAt },
       data: {
         status: 'PENDING_REVIEW',
-        verificationStatus: 'PENDING',
+        // Identity verification transitions strictly via seller KYC endpoints.
       },
     });
 
