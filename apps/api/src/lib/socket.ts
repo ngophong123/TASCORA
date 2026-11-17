@@ -6,12 +6,14 @@ import { authenticateAccess } from '../modules/auth/token';
 import { z } from 'zod';
 import type { Message, Notification } from '@prisma/client';
 import { prisma } from './prisma';
-import { assertOwnedUpload } from '../modules/upload/references';
+import { assertUsableNonKycUpload } from '../modules/upload/references';
+import { HttpError } from './errors';
 
 export interface ServerToClientEvents {
   new_message: (message: Message) => void;
   message_read: (data: { messageId: string; conversationId: string }) => void;
   new_notification: (notification: Notification) => void;
+  message_error: (error: { code: string; message: string }) => void;
 }
 
 export interface ClientToServerEvents {
@@ -30,6 +32,15 @@ export interface SocketData {
   expiresAt: number;
 }
 
+/**
+ * Deployment topology constraint (SINGLE-INSTANCE SESSION REVOCATION ONLY):
+ * Socket.IO uses the default in-memory adapter (`@socket.io/redis-adapter` is not installed).
+ * Therefore `getIO().in('session_<id>').disconnectSockets(true)` (on logout, token reuse, or password reset)
+ * immediately terminates WebSockets connected to the handling API instance only.
+ * Sockets on other replicas would reject subsequent packets via `socket.use -> authenticateAccess`
+ * rather than disconnecting while idle. Do NOT scale API replicas > 1 until Redis pub/sub adapter
+ * and shared Redis rate-limiter stores are provisioned and tested against live Redis.
+ */
 let io: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
 
 export const initSocket = (httpServer: HttpServer) => {
@@ -102,7 +113,7 @@ export const initSocket = (httpServer: HttpServer) => {
         if (conversation.participant1Id !== senderId && conversation.participant2Id !== senderId) return;
 
         const isParticipant1 = conversation.participant1Id === senderId;
-        assertOwnedUpload(attachmentUrl, senderId);
+        const canonicalAttachmentUrl = await assertUsableNonKycUpload(attachmentUrl, senderId);
         const message = await prisma.$transaction(async tx => {
           await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtext(${`chat:${conversationId}`}))`;
           const created = await tx.message.create({
@@ -110,7 +121,7 @@ export const initSocket = (httpServer: HttpServer) => {
               conversationId,
               senderId,
               content,
-              attachmentUrl,
+              attachmentUrl: canonicalAttachmentUrl,
             },
           });
 
@@ -132,6 +143,9 @@ export const initSocket = (httpServer: HttpServer) => {
         const receiverId = isParticipant1 ? conversation.participant2Id : conversation.participant1Id;
         io.to(`user_${receiverId}`).emit('new_message', message);
       } catch (error) {
+        if (error instanceof HttpError) {
+          socket.emit('message_error', { code: error.code, message: error.message });
+        }
         console.error('Socket send_message error:', error);
       }
     });

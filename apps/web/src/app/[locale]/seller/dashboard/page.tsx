@@ -1,7 +1,8 @@
-﻿"use client"
+"use client"
 
 import { apiFetch } from "@/lib/auth-client"
 import { AccountOnboardingPanel } from "@/components/dashboard/AccountOnboardingPanel"
+import { SellerKycPanel } from "@/components/dashboard/kyc/SellerKycPanel"
 import { SellerFinancialOverview } from "@/components/dashboard/payments/SellerFinancialOverview"
 import * as React from "react"
 import { Link } from "@/i18n/routing"
@@ -141,6 +142,7 @@ export default function SellerDashboard() {
       </nav>
       <SellerFinancialOverview />
       <AccountOnboardingPanel />
+      <SellerKycPanel />
     </div>
   )
 }
