@@ -1,7 +1,21 @@
 name: Infrastructure Acceptance (PostgreSQL & ClamAV)
 
 on:
+  push:
+    branches:
+      - chore/phase4a6-infra-acceptance-triggers
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
