@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { getApiUrl } from "@/lib/api-url"
 import * as React from "react"
@@ -137,12 +137,20 @@ function LoginForm() {
           {t("signInButton")}
         </Button>
       </form>
-      <Link
-        href="/verify-email"
-        className="mt-3 inline-flex min-h-11 items-center text-sm text-primary hover:underline underline-offset-4"
-      >
-        Verify your email
-      </Link>
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+        <Link
+          href="/forgot-password"
+          className="inline-flex min-h-11 items-center text-sm text-primary hover:underline underline-offset-4"
+        >
+          {t("forgotPassword")}
+        </Link>
+        <Link
+          href="/verify-email"
+          className="inline-flex min-h-11 items-center text-sm text-text-secondary hover:text-primary hover:underline underline-offset-4"
+        >
+          {t("verifyTitle")}
+        </Link>
+      </div>
       <div className="mt-6 border-t border-border-default pt-5 text-sm text-text-secondary">
         <span>{t("noAccount")} </span>
         <Link

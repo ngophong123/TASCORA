@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 import { useState } from "react"
 import { useApiResource } from "@/hooks/useApiResource"
 import { ApiState } from "@/components/feedback/ApiState"
@@ -11,6 +11,7 @@ import {
 } from "@/lib/marketplace"
 import { useDashboard } from "@/context/DashboardContext"
 import { FinancialAdminPanel } from "@/components/dashboard/payments/FinancialAdminPanel"
+import { AdminKycPanel } from "@/components/dashboard/admin/AdminKycPanel"
 export default function AdminPage() {
   const { account, ordersError } = useDashboard()
   const queue = useApiResource<{ sellers: Profile[]; services: Service[] }>(
@@ -195,6 +196,7 @@ export default function AdminPage() {
         )}
       </section>
       {account?.role === "ADMIN" && <FinancialAdminPanel />}
+      <AdminKycPanel accountRole={account?.role} />
     </div>
   )
 }

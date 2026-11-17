@@ -19,7 +19,50 @@ export function createStore() {
   ];
   const messages = [{ id: cuid(30001), senderId: 'seller', content: 'Hello from the seller', createdAt: '2026-10-01T10:00:00Z', isRead: false, attachmentUrl: null as string | null }];
   const conversation = { id: cuid(30000), participant1Id: 'buyer', participant2Id: 'seller', participant1: { id: 'buyer', buyerProfile, sellerProfile: null }, participant2: { id: 'seller', buyerProfile: null, sellerProfile }, order: orders[0], unreadCount1: 1, unreadCount2: 0, messages };
-  return { categories, services, orders, users, messages, conversation, funded: new Set<string>(), checkouts: new Map<string, Order>(), payouts: [] as { id: string; amount: string; status: string; failureReason: null; escrow: { orderId: string } }[], refundRequests: [] as { id: string; orderId: string; amount: string; status: string; reason: string }[], favorites: new Set<string>(), uploads: new Map<string, Buffer>(), notifications: [] as { id: string; title: string; message: string; isRead: boolean; createdAt: string; type: string }[] };
+  const uploads = new Map<string, Buffer>();
+  const auditLogs: Array<{
+    id: string;
+    action: string;
+    targetEntity: string;
+    targetId: string;
+    correlationId: string;
+    previousState: string | null;
+    newState: string | null;
+    reason: string | null;
+    createdAt: string;
+    admin: { id: string; email: string; role: string };
+  }> = [];
+  let sellerKyc: {
+    id: string;
+    sellerProfileId: string;
+    status: 'NOT_SUBMITTED' | 'PENDING' | 'UNDER_REVIEW' | 'NEEDS_RESUBMISSION' | 'APPROVED' | 'REJECTED';
+    documentType: string;
+    legalName: string | null;
+    documentNumber: string | null;
+    dateOfBirth: string | null;
+    country: string | null;
+    documentFrontUrl: string | null;
+    documentBackUrl: string | null;
+    selfieUrl: string | null;
+    scanStatus: string;
+    submittedAt: string;
+    reviewedAt: string | null;
+    resubmissionRequestedAt: string | null;
+    decisionReason: string | null;
+    comments: string | null;
+    version: number;
+    reviewHistory: Array<{
+      id: string;
+      decision: string;
+      previousState: string;
+      newState: string;
+      reason: string | null;
+      comments: string | null;
+      createdAt: string;
+      actor?: { id: string; email: string; role: string } | null;
+    }>;
+  } | null = null;
+  return { categories, services, orders, users, messages, conversation, funded: new Set<string>(), checkouts: new Map<string, Order>(), payouts: [] as { id: string; amount: string; status: string; failureReason: null; escrow: { orderId: string } }[], refundRequests: [] as { id: string; orderId: string; amount: string; status: string; reason: string }[], favorites: new Set<string>(), uploads, auditLogs, getSellerKyc: () => sellerKyc, setSellerKyc: (next: typeof sellerKyc) => { sellerKyc = next; }, notifications: [] as { id: string; title: string; message: string; isRead: boolean; createdAt: string; type: string }[] };
 }
 export const test = base.extend<{ marketplace: ReturnType<typeof createStore> }>({
   marketplace: async ({}, use) => { await use(createStore()); },
@@ -34,7 +77,7 @@ export const test = base.extend<{ marketplace: ReturnType<typeof createStore> }>
     await page.route('**/socket.io/**', route => route.abort())
     await page.route('**/api/v1/**', async route => {
       const req = route.request(), url = new URL(req.url()), path = url.pathname.replace('/api/v1', ''), method = req.method();
-      const headers = { 'Access-Control-Allow-Origin': req.headers().origin || 'http://localhost:3000', 'Access-Control-Allow-Credentials': 'true', 'Access-Control-Allow-Headers': 'Authorization,Content-Type,X-CSRF-Protection', 'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS' };
+      const headers = { 'Access-Control-Allow-Origin': req.headers().origin || 'http://localhost:3000', 'Access-Control-Allow-Credentials': 'true', 'Access-Control-Allow-Headers': 'Authorization,Content-Type,X-CSRF-Protection,X-Upload-Purpose', 'Access-Control-Expose-Headers': 'X-TASCORA-Scan-Status,Content-Disposition', 'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS' };
       const send = (data: unknown, status = 200) => route.fulfill({ status, headers, json: { success: status < 400, data, ...(status >= 400 ? { error: 'Fixture request rejected' } : {}) } });
       if (method === 'OPTIONS') { await route.fulfill({ status: 204, headers }); return; }
       if (path === '/payments/capabilities') { await send({ provider: 'stripe', status: 'configured', available: true, providerValidated: false, externalPayoutsAvailable: false }); return; }
@@ -100,6 +143,239 @@ export const test = base.extend<{ marketplace: ReturnType<typeof createStore> }>
       if (path === '/auth/login') { const user = state.users.find(u => u.email === body.email); if (!user) { await send(null,401); return; } await send({ user, accessToken: `e2e-${user.id}` }); return; }
       if (path === '/auth/logout') { await send({}); return; }
       if (path === '/auth/register' || path === '/auth/verify-email' || path === '/auth/resend-verification') { await send({ status: 'PENDING_VERIFICATION' },201); return; }
+      if (path === '/auth/forgot-password' && method === 'POST') {
+        if (String(body.email || '').includes('ratelimit')) { await send(null, 429); return; }
+        await send({ message: 'If an account matching that email exists, a password reset link has been sent.' });
+        return;
+      }
+      if (path === '/auth/reset-password' && method === 'POST') {
+        if (String(body.token || '') === '0'.repeat(64)) {
+          await route.fulfill({ status: 400, headers, json: { success: false, error: { message: 'Invalid or expired password reset token' } } });
+          return;
+        }
+        await send({ reset: true });
+        return;
+      }
+      if (path === '/onboarding/seller/kyc') {
+        if (!me.sellerProfile) { await send(null, 403); return; }
+        const currentKyc = state.getSellerKyc();
+        if (method === 'GET') {
+          const status = currentKyc?.status || 'NOT_SUBMITTED';
+          await send({
+            status,
+            sellerProfileStatus: me.sellerProfile.status,
+            submission: currentKyc ? {
+              id: currentKyc.id,
+              status: currentKyc.status,
+              documentType: currentKyc.documentType,
+              legalName: currentKyc.legalName,
+              documentNumberMasked: currentKyc.documentNumber ? `••••${currentKyc.documentNumber.slice(-4)}` : null,
+              dateOfBirthMasked: currentKyc.dateOfBirth ? `${currentKyc.dateOfBirth.slice(0, 4)}-**-**` : null,
+              country: currentKyc.country,
+              scanStatus: currentKyc.scanStatus,
+              documents: {
+                front: currentKyc.documentFrontUrl ? { slot: 'front', uploaded: true, downloadable: currentKyc.scanStatus === 'VERIFIED_SAFE', filename: currentKyc.documentFrontUrl.split('/').pop()!, downloadPath: currentKyc.scanStatus === 'VERIFIED_SAFE' ? `/api/v1/uploads/kyc/${me.id}/${currentKyc.documentFrontUrl.split('/').pop()!}` : null } : null,
+                back: currentKyc.documentBackUrl ? { slot: 'back', uploaded: true, downloadable: currentKyc.scanStatus === 'VERIFIED_SAFE', filename: currentKyc.documentBackUrl.split('/').pop()!, downloadPath: currentKyc.scanStatus === 'VERIFIED_SAFE' ? `/api/v1/uploads/kyc/${me.id}/${currentKyc.documentBackUrl.split('/').pop()!}` : null } : null,
+                selfie: currentKyc.selfieUrl ? { slot: 'selfie', uploaded: true, downloadable: currentKyc.scanStatus === 'VERIFIED_SAFE', filename: currentKyc.selfieUrl.split('/').pop()!, downloadPath: currentKyc.scanStatus === 'VERIFIED_SAFE' ? `/api/v1/uploads/kyc/${me.id}/${currentKyc.selfieUrl.split('/').pop()!}` : null } : null,
+              },
+              submittedAt: currentKyc.submittedAt,
+              reviewedAt: currentKyc.reviewedAt,
+              resubmissionRequestedAt: currentKyc.resubmissionRequestedAt,
+              decisionReason: currentKyc.decisionReason,
+              comments: currentKyc.comments,
+              version: currentKyc.version,
+              reviewHistory: currentKyc.reviewHistory,
+            } : null,
+            payoutEligibility: {
+              eligibleForLivePayouts: false,
+              kycSatisfied: status === 'APPROVED',
+              sellerProfileApproved: me.sellerProfile.status === 'APPROVED',
+              accountActive: true,
+              providerPayoutsEnabled: false,
+              blockingReasons:
+                status === 'APPROVED'
+                  ? ['PAYOUT_PROVIDER_DISABLED', 'STRIPE_CONNECT_ACCOUNT_MISSING']
+                  : ['PAYOUT_PROVIDER_DISABLED', 'KYC_NOT_APPROVED', 'STRIPE_CONNECT_ACCOUNT_MISSING'],
+              verificationStatus: status,
+              evaluatedAt: new Date().toISOString(),
+            },
+          });
+          return;
+        }
+        if (method === 'POST' || method === 'PUT') {
+          const prev = currentKyc?.status || 'NOT_SUBMITTED';
+          const now = new Date().toISOString();
+          const id = currentKyc?.id || 'ckyc_e2e_000001';
+          const next = {
+            id,
+            sellerProfileId: me.sellerProfile.id,
+            status: 'PENDING' as const,
+            documentType: String(body.documentType || currentKyc?.documentType || 'PASSPORT'),
+            legalName: String(body.legalName || currentKyc?.legalName || 'Alexandre Moreau'),
+            documentNumber: String(body.documentNumber || currentKyc?.documentNumber || 'AB123456'),
+            dateOfBirth: String(body.dateOfBirth || currentKyc?.dateOfBirth || '1992-05-14'),
+            country: String(body.country || currentKyc?.country || 'VN'),
+            documentFrontUrl: String(body.documentFrontUrl || currentKyc?.documentFrontUrl || 'upload:seller/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa.png'),
+            documentBackUrl: body.documentBackUrl ?? currentKyc?.documentBackUrl ?? null,
+            selfieUrl: body.selfieUrl ?? currentKyc?.selfieUrl ?? null,
+            scanStatus: 'QUARANTINED',
+            submittedAt: now,
+            reviewedAt: currentKyc?.reviewedAt || null,
+            resubmissionRequestedAt: currentKyc?.resubmissionRequestedAt || null,
+            decisionReason: null,
+            comments: null,
+            version: (currentKyc?.version || 0) + 1,
+            reviewHistory: [
+              { id: `kh_${Date.now()}`, decision: currentKyc ? 'RESUBMITTED' : 'SUBMITTED', previousState: prev, newState: 'PENDING', reason: null, comments: null, createdAt: now },
+              ...(currentKyc?.reviewHistory || []),
+            ],
+          };
+          state.setSellerKyc(next);
+          await send(next, method === 'POST' ? 201 : 200);
+          return;
+        }
+      }
+      if (path === '/admin/kyc' && method === 'GET') {
+        if (me.role !== 'ADMIN') { await send(null, 403); return; }
+        const kyc = state.getSellerKyc();
+        const items = kyc && (url.searchParams.get('status') === null || url.searchParams.get('status') === 'ALL' || url.searchParams.get('status') === kyc.status)
+          ? [{
+              id: kyc.id,
+              sellerProfileId: kyc.sellerProfileId,
+              status: kyc.status,
+              documentType: kyc.documentType,
+              legalName: kyc.legalName,
+              documentNumberMasked: kyc.documentNumber ? `••••${kyc.documentNumber.slice(-4)}` : null,
+              country: kyc.country,
+              scanStatus: kyc.scanStatus,
+              submittedAt: kyc.submittedAt,
+              reviewedAt: kyc.reviewedAt,
+              seller: { id: kyc.sellerProfileId, userId: 'seller', email: 'seller@example.test', accountStatus: 'ACTIVE', firstName: 'Alexandre', lastName: 'Moreau', profileStatus: 'APPROVED' },
+            }]
+          : [];
+        await send({
+          items,
+          counts: {
+            pending: kyc?.status === 'PENDING' ? 1 : 0,
+            underReview: kyc?.status === 'UNDER_REVIEW' ? 1 : 0,
+            needsResubmission: kyc?.status === 'NEEDS_RESUBMISSION' ? 1 : 0,
+            approved: kyc?.status === 'APPROVED' ? 1 : 0,
+            rejected: kyc?.status === 'REJECTED' ? 1 : 0,
+            actionable: kyc && ['PENDING', 'UNDER_REVIEW'].includes(kyc.status) ? 1 : 0,
+          },
+          meta: { total: items.length, page: 1, limit: 20, totalPages: 1 },
+        });
+        return;
+      }
+      if (path.startsWith('/admin/kyc/') && method === 'GET' && !path.includes('/documents/')) {
+        if (me.role !== 'ADMIN') { await send(null, 403); return; }
+        const kyc = state.getSellerKyc();
+        if (!kyc || path.split('/')[3] !== kyc.id) { await send(null, 404); return; }
+        state.auditLogs.unshift({
+          id: `aud_${state.auditLogs.length + 1}`,
+          action: 'KYC_RECORD_VIEWED',
+          targetEntity: 'IdentityVerification',
+          targetId: kyc.id,
+          correlationId: `corr_${Date.now()}`,
+          previousState: kyc.status,
+          newState: kyc.status,
+          reason: null,
+          createdAt: new Date().toISOString(),
+          admin: { id: me.id, email: me.email, role: 'ADMIN' },
+        });
+        await send({
+          ...kyc,
+          documentNumberMasked: kyc.documentNumber ? `••••${kyc.documentNumber.slice(-4)}` : null,
+          seller: { email: 'seller@example.test', firstName: 'Alexandre', lastName: 'Moreau', profileStatus: 'APPROVED', accountStatus: 'ACTIVE' },
+          documents: (() => {
+            const downloadable = kyc.scanStatus === 'VERIFIED_SAFE';
+            return {
+              front: kyc.documentFrontUrl ? { slot: 'front', filename: kyc.documentFrontUrl.split('/').pop()!, extension: 'png', downloadable, downloadEndpoint: downloadable ? `/api/v1/admin/kyc/${kyc.id}/documents/front` : null } : null,
+              back: kyc.documentBackUrl ? { slot: 'back', filename: kyc.documentBackUrl.split('/').pop()!, extension: 'png', downloadable, downloadEndpoint: downloadable ? `/api/v1/admin/kyc/${kyc.id}/documents/back` : null } : null,
+              selfie: kyc.selfieUrl ? { slot: 'selfie', filename: kyc.selfieUrl.split('/').pop()!, extension: 'png', downloadable, downloadEndpoint: downloadable ? `/api/v1/admin/kyc/${kyc.id}/documents/selfie` : null } : null,
+            };
+          })(),
+        });
+        return;
+      }
+      if (path.startsWith('/admin/kyc/') && path.includes('/documents/') && method === 'GET') {
+        if (me.role !== 'ADMIN') { await send(null, 403); return; }
+        const kyc = state.getSellerKyc();
+        if (!kyc) { await send(null, 404); return; }
+        if (kyc.scanStatus !== 'VERIFIED_SAFE') {
+          await route.fulfill({ status: 423, headers, json: { success: false, error: { code: 'KYC_DOCUMENT_QUARANTINED', message: 'Document is quarantined until security scanning verifies it is safe' } } });
+          return;
+        }
+        state.auditLogs.unshift({
+          id: `aud_${state.auditLogs.length + 1}`,
+          action: 'KYC_DOCUMENT_VIEWED',
+          targetEntity: 'IdentityVerification',
+          targetId: kyc.id,
+          correlationId: `corr_${Date.now()}`,
+          previousState: kyc.status,
+          newState: kyc.status,
+          reason: null,
+          createdAt: new Date().toISOString(),
+          admin: { id: me.id, email: me.email, role: 'ADMIN' },
+        });
+        const pngStub = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+        await route.fulfill({ status: 200, headers: { ...headers, 'Content-Type': 'application/octet-stream', 'Cache-Control': 'private, no-store', 'X-TASCORA-Scan-Status': 'VERIFIED_SAFE' }, body: pngStub });
+        return;
+      }
+      if (path.startsWith('/admin/kyc/') && method === 'POST') {
+        if (me.role !== 'ADMIN') { await send(null, 403); return; }
+        const kyc = state.getSellerKyc();
+        const op = path.split('/')[4];
+        if (!kyc) { await send(null, 404); return; }
+        if (typeof body.expectedVersion !== 'number' || !Number.isInteger(body.expectedVersion) || body.expectedVersion < 1) {
+          await route.fulfill({ status: 409, headers, json: { success: false, error: { code: 'KYC_VERSION_REQUIRED', message: 'expectedVersion is required' } } });
+          return;
+        }
+        if (body.expectedVersion !== kyc.version) {
+          await route.fulfill({ status: 409, headers, json: { success: false, error: { code: 'KYC_CONCURRENT_MODIFICATION', message: 'Version mismatch' } } });
+          return;
+        }
+        if (op === 'approve' && kyc.scanStatus !== 'VERIFIED_SAFE') {
+          await route.fulfill({ status: 409, headers, json: { success: false, error: { code: 'KYC_SECURITY_SCAN_REQUIRED', message: 'KYC submission cannot be approved until all required evidence passes security scanning' } } });
+          return;
+        }
+        const prev = kyc.status;
+        const map: Record<string, { status: typeof kyc.status; action: string }> = {
+          'under-review': { status: 'UNDER_REVIEW', action: 'KYC_MARKED_UNDER_REVIEW' },
+          approve: { status: 'APPROVED', action: 'KYC_APPROVED' },
+          'request-resubmission': { status: 'NEEDS_RESUBMISSION', action: 'KYC_RESUBMISSION_REQUESTED' },
+          reject: { status: 'REJECTED', action: 'KYC_REJECTED' },
+        };
+        const target = map[op!];
+        if (!target) { await send(null, 400); return; }
+        const now = new Date().toISOString();
+        kyc.status = target.status;
+        kyc.version += 1;
+        kyc.reviewedAt = now;
+        kyc.decisionReason = body.reason || null;
+        kyc.reviewHistory.unshift({ id: `kh_${Date.now()}`, decision: target.status, previousState: prev, newState: target.status, reason: body.reason || null, comments: body.comments || null, createdAt: now, actor: { id: me.id, email: me.email, role: 'ADMIN' } });
+        state.auditLogs.unshift({
+          id: `aud_${state.auditLogs.length + 1}`,
+          action: target.action,
+          targetEntity: 'IdentityVerification',
+          targetId: kyc.id,
+          correlationId: `corr_${Date.now()}`,
+          previousState: prev,
+          newState: target.status,
+          reason: body.reason || null,
+          createdAt: now,
+          admin: { id: me.id, email: me.email, role: 'ADMIN' },
+        });
+        await send(kyc);
+        return;
+      }
+      if (path === '/admin/audit-logs' && method === 'GET') {
+        if (me.role !== 'ADMIN') { await send(null, 403); return; }
+        const actionFilter = url.searchParams.get('action');
+        const logs = actionFilter ? state.auditLogs.filter(l => l.action === actionFilter) : state.auditLogs;
+        await send({ logs, meta: { total: logs.length, page: 1, limit: 10, totalPages: 1 } });
+        return;
+      }
       await send(null,404);
     });
     if (process.env.PREMIUM_CATALOG_FIXTURE === '1') {

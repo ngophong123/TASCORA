@@ -11,4 +11,8 @@ router.use(requireAuth);
 router.put('/seller/step/:step', validate(updateOnboardingStepSchema), updateStep);
 router.post('/seller/submit', submit);
 
+import { createSellerKycRouter } from '../kyc/kyc.route';
+
+router.use('/', createSellerKycRouter());
+
 export default router;

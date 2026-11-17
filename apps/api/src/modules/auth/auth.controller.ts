@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction, CookieOptions } from 'express';
 import { AuthService } from './auth.service';
+import { GENERIC_FORGOT_PASSWORD_MESSAGE, PasswordResetService } from './password-reset.service';
 import { isAllowedOrigin, cookieSameSite, isProduction } from '../../lib/config';
 import { HttpError } from '../../lib/errors';
 import { getIO } from '../../lib/socket';
@@ -43,4 +44,26 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
 };
 export const resendVerification = async (req: Request, res: Response, next: NextFunction) => {
   try { await AuthService.sendVerification(req.body.email); res.json({ success: true, message: 'If verification is needed, an email will be sent.' }); } catch (error) { next(error); }
+};
+export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    res.setHeader('Cache-Control', 'no-store');
+    await PasswordResetService.requestPasswordReset(req.body.email, {
+      ip: req.ip || '',
+      userAgent: req.headers['user-agent'] || '',
+    });
+    res.status(200).json({ success: true, message: GENERIC_FORGOT_PASSWORD_MESSAGE });
+  } catch (error) {
+    next(error);
+  }
+};
+export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    res.setHeader('Cache-Control', 'no-store');
+    await PasswordResetService.resetPassword(req.body.token, req.body.password, { ip: req.ip || '' });
+    res.clearCookie('refreshToken', cookieOptions);
+    res.status(200).json({ success: true, message: 'Password reset successfully. Please sign in with your new password.' });
+  } catch (error) {
+    next(error);
+  }
 };
