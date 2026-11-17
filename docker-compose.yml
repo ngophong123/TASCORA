@@ -32,6 +32,18 @@ services:
       timeout: 5s
       retries: 5
 
+  clamav:
+    image: clamav/clamav:stable
+    ports:
+      - "3310:3310"
+    networks:
+      - taskora-network
+    healthcheck:
+      test: ["CMD-SHELL", "/usr/local/bin/clamdcheck.sh || clamdscan --ping 2"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
   # --- Applications (Placeholders for dev) ---
   web:
     build:

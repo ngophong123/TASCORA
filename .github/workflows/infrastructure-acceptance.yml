@@ -1,0 +1,199 @@
+name: Infrastructure Acceptance (PostgreSQL & ClamAV)
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  disposable-postgres-and-clamav:
+    name: Real PostgreSQL Migrations & Live ClamAV Acceptance
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: tascora_test
+          POSTGRES_PASSWORD: disposable_ci_password
+          POSTGRES_DB: tascora_migration_test
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd="pg_isready -U tascora_test -d tascora_migration_test"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+      clamav:
+        image: clamav/clamav:stable
+        ports:
+          - 3310:3310
+        options: >-
+          --health-cmd="/usr/local/bin/clamdcheck.sh || clamdscan --ping 2"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=30
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: pnpm db:generate
+
+      - name: Wait for disposable PostgreSQL & ClamAV readiness
+        run: |
+          node -e '
+          const net = require("node:net");
+          const waitTcp = (host, port, probe, expectRe, label) => new Promise((resolve, reject) => {
+            const deadline = Date.now() + 240000;
+            const attempt = () => {
+              const s = net.createConnection({ host, port });
+              let data = "";
+              s.setTimeout(3000);
+              s.on("connect", () => { if (probe) s.write(probe); else { s.destroy(); resolve(); } });
+              s.on("data", chunk => { data += chunk.toString("utf8"); if (expectRe.test(data)) { s.destroy(); resolve(); } });
+              s.on("timeout", () => retry("timeout"));
+              s.on("error", err => retry(err.message));
+              function retry(reason) {
+                s.destroy();
+                if (Date.now() > deadline) return reject(new Error(`${label} readiness failed: ${reason}`));
+                setTimeout(attempt, 2000);
+              }
+            };
+            attempt();
+          });
+          Promise.all([
+            waitTcp("127.0.0.1", 55432, null, null, "PostgreSQL"),
+            waitTcp("127.0.0.1", 3310, Buffer.from("zPING\0"), /^PONG\0?$/i, "ClamAV clamd"),
+          ]).then(() => console.log("PostgreSQL and ClamAV ready")).catch(err => { console.error(err); process.exit(1); });
+          '
+
+      - name: Deploy Prisma migrations against disposable PostgreSQL
+        run: |
+          pnpm exec prisma migrate deploy
+          pnpm exec prisma migrate status
+        env:
+          DATABASE_URL: postgresql://tascora_test:disposable_ci_password@127.0.0.1:55432/tascora_migration_test?schema=public
+
+      - name: Run database test typecheck & disposable PostgreSQL integration suite
+        run: |
+          pnpm run typecheck:tests:database
+          pnpm exec vitest run -c vitest.database.config.mts
+        env:
+          DATABASE_URL: postgresql://tascora_test:disposable_ci_password@127.0.0.1:55432/tascora_migration_test?schema=public
+          TASCORA_DISPOSABLE_DATABASE_URL: postgresql://tascora_test:disposable_ci_password@127.0.0.1:55432/tascora_migration_test?schema=public
+          JWT_ACCESS_SECRET: ci_disposable_access_secret_minimum_32_characters
+          KYC_ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+          KYC_DOCUMENT_HMAC_KEY: fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210
+          REDIS_URL: redis://127.0.0.1:6379
+
+      - name: Verify live ClamAV daemon & fail-closed guarantees via ClamdMalwareScanner
+        run: |
+          pnpm exec tsx -e '
+          import net from "node:net";
+          import {
+            ClamdMalwareScanner,
+            createDefaultMalwareScanner,
+            scanEvidenceBuffers,
+          } from "./apps/api/src/modules/kyc/malware-scanner";
+          async function main() {
+            const scanner = new ClamdMalwareScanner("127.0.0.1", 3310, 10000);
+            const eicar = Buffer.from("X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*", "ascii");
+            const infected = await scanner.scanBuffer(eicar, "ci/eicar.bin");
+            console.log("EICAR result:", infected);
+            if (infected.scanStatus !== "INFECTED" || infected.verdict !== "INFECTED") {
+              throw new Error(`Expected INFECTED for EICAR, got ${JSON.stringify(infected)}`);
+            }
+            const cleanPng = Buffer.from([137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82]);
+            const clean = await scanner.scanBuffer(cleanPng, "ci/clean.png");
+            console.log("CLEAN result:", clean);
+            if (clean.scanStatus !== "VERIFIED_SAFE" || clean.verdict !== "CLEAN" || !clean.engineVersion) {
+              throw new Error(`Expected VERIFIED_SAFE + engineVersion, got ${JSON.stringify(clean)}`);
+            }
+
+            // Mixed batch must fail on infected object and never mark VERIFIED_SAFE.
+            const mixed = await scanEvidenceBuffers(
+              [
+                { slot: "front", key: "ci/clean.png", buffer: cleanPng },
+                { slot: "back", key: "ci/eicar.bin", buffer: eicar },
+              ],
+              scanner
+            );
+            if (mixed.scanStatus !== "INFECTED" || mixed.verdict !== "INFECTED") {
+              throw new Error(`Expected mixed scan INFECTED, got ${JSON.stringify(mixed)}`);
+            }
+
+            // Unreachable clamd port must fail closed (never VERIFIED_SAFE).
+            const unreachableProbe = net.createServer();
+            const closedPort = await new Promise<number>(resolve => {
+              unreachableProbe.listen(0, "127.0.0.1", () => {
+                const port = (unreachableProbe.address() as net.AddressInfo).port;
+                unreachableProbe.close(() => resolve(port));
+              });
+            });
+            const unreachableScanner = new ClamdMalwareScanner("127.0.0.1", closedPort, 1000, {
+              connectTimeoutMs: 500,
+              fetchVersion: false,
+            });
+            const unreachable = await unreachableScanner.scanBuffer(cleanPng, "ci/unreachable.png");
+            console.log("UNREACHABLE result:", unreachable);
+            if (unreachable.scanStatus !== "SCAN_FAILED" || unreachable.verdict !== "FAILED") {
+              throw new Error(`Expected fail-closed SCAN_FAILED for unreachable clamd, got ${JSON.stringify(unreachable)}`);
+            }
+
+            // Unresponsive/stalled scanner timeout must fail closed.
+            const blackhole = net.createServer(socket => socket.resume());
+            const blackholePort = await new Promise<number>(resolve => {
+              blackhole.listen(0, "127.0.0.1", () => resolve((blackhole.address() as net.AddressInfo).port));
+            });
+            try {
+              const timeoutScanner = new ClamdMalwareScanner("127.0.0.1", blackholePort, 150, {
+                connectTimeoutMs: 150,
+                fetchVersion: false,
+              });
+              const timedOut = await timeoutScanner.scanBuffer(cleanPng, "ci/timeout.png");
+              console.log("TIMEOUT result:", timedOut);
+              if (timedOut.scanStatus !== "SCAN_FAILED" || timedOut.verdict !== "FAILED") {
+                throw new Error(`Expected fail-closed SCAN_FAILED on timeout, got ${JSON.stringify(timedOut)}`);
+              }
+            } finally {
+              await new Promise<void>(resolve => blackhole.close(() => resolve()));
+            }
+
+            // Unconfigured scanner must keep uploads QUARANTINED (never VERIFIED_SAFE).
+            const disabledScanner = createDefaultMalwareScanner({ KYC_SCANNER_PROVIDER: "disabled" });
+            const unverified = await disabledScanner.scanBuffer(cleanPng, "ci/disabled.png");
+            console.log("DISABLED result:", unverified);
+            if (unverified.scanStatus !== "QUARANTINED" || unverified.verdict !== "UNAVAILABLE") {
+              throw new Error(`Expected QUARANTINED when scanner unconfigured, got ${JSON.stringify(unverified)}`);
+            }
+          }
+          main().catch(err => { console.error(err); process.exit(1); });
+          '
