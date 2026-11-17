@@ -6,7 +6,7 @@ import { publicSellerSelect } from '../../lib/public-profile';
 import { requireAuth, AuthRequest } from '../../middlewares/requireAuth';
 import { validate } from '../../middlewares/validate';
 import { createPackageSchema } from '../service/service.schema';
-import { assertOwnedUpload } from '../upload/references';
+import { assertUsableNonKycUpload } from '../upload/references';
 
 const router = Router();
 router.get('/categories', async (_req, res, next) => {
@@ -42,7 +42,10 @@ router.put('/services/:id/content', validate(z.object({ params: z.object({ id: z
 }) })), async (req: AuthRequest, res, next) => {
   try {
     const body = req.body as { title: string; description: string; categoryId: string; packages: z.infer<typeof createPackageSchema>['body'][]; images: string[]; faqs: { question: string; answer: string }[]; requirements: string; tags: string[] };
-    for (const image of body.images) assertOwnedUpload(image, req.user!.userId, true);
+    const canonicalImages: string[] = [];
+    for (const image of body.images) {
+      canonicalImages.push(await assertUsableNonKycUpload(image, req.user!.userId, true));
+    }
     const result = await prisma.$transaction(async tx => {
       await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtext(${`service:${req.params.id}`}))`;
       const service = await tx.service.findUnique({ where: { id: req.params.id }, include: { seller: true, packages: true } });
@@ -52,7 +55,7 @@ router.put('/services/:id/content', validate(z.object({ params: z.object({ id: z
       await tx.service.update({ where: { id: service.id }, data: { title: body.title, description: body.description, categoryId: body.categoryId, status: 'DRAFT' } });
       for (const pkg of body.packages) await tx.servicePackage.upsert({ where: { serviceId_type: { serviceId: service.id, type: pkg.type } }, update: pkg, create: { ...pkg, serviceId: service.id } });
       await tx.serviceImage.deleteMany({ where: { serviceId: service.id } });
-      if (body.images.length) await tx.serviceImage.createMany({ data: body.images.map((url, order) => ({ serviceId: service.id, url, order, isPrimary: order === 0 })) });
+      if (canonicalImages.length) await tx.serviceImage.createMany({ data: canonicalImages.map((url, order) => ({ serviceId: service.id, url, order, isPrimary: order === 0 })) });
       await tx.serviceFAQ.deleteMany({ where: { serviceId: service.id } });
       if (body.faqs.length) await tx.serviceFAQ.createMany({ data: body.faqs.map((faq, order) => ({ ...faq, serviceId: service.id, order })) });
       await tx.serviceRequirement.deleteMany({ where: { serviceId: service.id } });

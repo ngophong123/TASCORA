@@ -4,7 +4,7 @@ import { prisma } from '../../lib/prisma';
 import { OrderStatus, Prisma } from '@prisma/client';
 import { basis, balances, entry, financialTx, lockOrder, transition, requestKey, reasonSchema, type Tx } from '../financial/domain';
 import { cents, money, platformFeeBps, currency, autoCompleteHours, assertPaymentAmount } from '../financial/money';
-import { assertOwnedUpload } from '../upload/references';
+import { assertUsableNonKycUpload } from '../upload/references';
 
 export class OrderService {
   static async createOrder(buyerId: string, serviceId: string, packageId: string, checkoutKey?: string) {
@@ -134,16 +134,23 @@ export class OrderService {
   }
   static async deliver(userId: string, orderId: string, message: string, files: string[], key: string) {
     requestKey.parse(key); reasonSchema.parse(message);
-    for (const file of files) { if (!file.startsWith(`upload:${userId}/`)) throw new HttpError(403, 'Delivery files must belong to you'); assertOwnedUpload(file, userId); }
+    const canonicalFiles: string[] = [];
+    for (const file of files) {
+      const canonicalFile = await assertUsableNonKycUpload(file, userId);
+      if (!canonicalFile.startsWith(`upload:${userId}/`)) {
+        throw new HttpError(403, 'Delivery files must belong to you');
+      }
+      canonicalFiles.push(canonicalFile);
+    }
     return financialTx(async tx => {
       const order = await this.load(tx, orderId);
       if (order.seller.userId !== userId) throw new HttpError(404, 'Order not found');
       const prior = await tx.orderDelivery.findUnique({ where: { orderId_requestKey: { orderId, requestKey: key } } });
-      if (prior) { if (prior.message !== message || JSON.stringify(prior.files) !== JSON.stringify(files)) throw new HttpError(409, 'Idempotency key reused with another delivery'); return order; }
+      if (prior) { if (prior.message !== message || JSON.stringify(prior.files) !== JSON.stringify(canonicalFiles)) throw new HttpError(409, 'Idempotency key reused with another delivery'); return order; }
       basis(order);
       if (!order.escrow || order.escrow.released) throw new HttpError(409, 'Verified funding required');
       transition(order.status, 'DELIVERED');
-      const delivery = await tx.orderDelivery.create({ data: { orderId, message, files, requestKey: key } });
+      const delivery = await tx.orderDelivery.create({ data: { orderId, message, files: canonicalFiles, requestKey: key } });
       await entry(tx, orderId, 'DELIVERY_SUBMITTED', `delivery:${delivery.id}`, userId, { notifyUserId: order.buyerId });
       return tx.order.update({ where: { id: orderId }, data: { status: 'DELIVERED', lastDeliveredAt: delivery.createdAt, activities: { create: { type: 'STATUS_UPDATE', description: 'Seller submitted delivery' } } } });
     }, orderId);
