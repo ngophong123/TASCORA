@@ -39,6 +39,9 @@ enum VerificationStatus {
   PENDING
   VERIFIED
   REJECTED
+  UNDER_REVIEW
+  NEEDS_RESUBMISSION
+  APPROVED
 }
 
 enum ServiceStatus {
@@ -139,6 +142,12 @@ model User {
   // Phase 29
   wallet               Wallet?
 
+  // Milestone 4A.5: Identity, KYC & Admin Audit
+  kycReviewsAuthored   IdentityVerification[] @relation("KycAdminReviewer")
+  kycReviewHistory     KycReviewHistory[]     @relation("KycReviewActor")
+  adminAuditLogs       AdminAuditLog[]        @relation("AdminAuditActor")
+  uploadObjects        UploadObject[]         @relation("UploadObjects")
+
   @@map("users")
 }
 
@@ -188,16 +197,21 @@ model EmailVerification {
 }
 
 model PasswordResetToken {
-  id        String   @id @default(cuid())
-  token     String   @unique
-  userId    String
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  used      Boolean  @default(false)
+  id          String    @id @default(cuid())
+  token       String    @unique
+  userId      String
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+  used        Boolean   @default(false)
+  usedAt      DateTime?
+  requestedIp String?
+  consumedIp  String?
+  userAgent   String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([userId, used, expiresAt])
   @@map("password_reset_tokens")
 }
 
@@ -246,6 +260,7 @@ model SellerProfile {
   user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   portfolioItems       PortfolioItem[]
   identityVerification IdentityVerification?
+  kycReviewHistory     KycReviewHistory[]
   services             Service[]
   orders               Order[]
   payouts              Payout[]              
@@ -272,18 +287,120 @@ model PortfolioItem {
 }
 
 model IdentityVerification {
-  id              String        @id @default(cuid())
-  sellerProfileId String        @unique
-  documentType    String
-  documentUrl     String
-  selfieUrl       String?
-  submittedAt     DateTime      @default(now())
-  reviewedAt      DateTime?
-  comments        String?
+  id                        String             @id @default(cuid())
+  sellerProfileId           String             @unique
+  status                    VerificationStatus @default(PENDING)
+  documentType              String
+  legalName                 String?
+  dateOfBirthEncrypted      String?
+  documentNumberEncrypted   String?
+  documentNumberHash        String?
+  documentNumberHmacVersion String             @default("v1")
+  documentNumberLast4       String?
+  country                   String?
+  documentUrl               String
+  documentBackUrl           String?
+  selfieUrl                 String?
+  scanStatus                String             @default("QUARANTINED")
+  scanResult                String?
+  scannedAt                 DateTime?
+  scanEngineVersion         String?
+  scanAttempts              Int                @default(0)
+  lastScanAttemptAt         DateTime?
+  nextScanRetryAt           DateTime?
+  scanLeaseExpiresAt        DateTime?
+  scanClaimId               String?
+  submittedAt               DateTime           @default(now())
+  reviewedAt                DateTime?
+  reviewedById              String?
+  resubmissionRequestedAt   DateTime?
+  decisionReason            String?
+  comments                  String?
+  version                   Int                @default(1)
+  updatedAt                 DateTime           @default(now()) @updatedAt
 
-  sellerProfile SellerProfile @relation(fields: [sellerProfileId], references: [id], onDelete: Cascade)
+  sellerProfile        SellerProfile                 @relation(fields: [sellerProfileId], references: [id], onDelete: Cascade)
+  reviewedBy           User?                         @relation("KycAdminReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewHistory        KycReviewHistory[]
+  uploadObjects        UploadObject[]                @relation("KycUploadObjects")
+  documentFingerprints IdentityDocumentFingerprint[]
 
+  @@index([status, submittedAt])
+  @@index([documentNumberHash])
+  @@index([country, documentType, documentNumberHash])
+  @@index([scanStatus, nextScanRetryAt])
+  @@index([documentNumberHmacVersion])
   @@map("identity_verifications")
+}
+
+// Active non-REJECTED blind-index fingerprints across HMAC key versions for cross-key uniqueness.
+model IdentityDocumentFingerprint {
+  id                     String   @id @default(cuid())
+  identityVerificationId String
+  sellerProfileId        String
+  country                String   @default("")
+  documentType           String
+  hmacVersion            String
+  documentNumberHash     String
+  createdAt              DateTime @default(now())
+
+  identityVerification IdentityVerification @relation(fields: [identityVerificationId], references: [id], onDelete: Cascade)
+
+  @@unique([identityVerificationId, hmacVersion])
+  @@unique([country, documentType, documentNumberHash])
+  @@index([identityVerificationId])
+  @@index([hmacVersion])
+  @@map("identity_document_fingerprints")
+}
+
+// Append-only chronological record of seller KYC submissions and admin review transitions.
+model KycReviewHistory {
+  id                     String             @id @default(cuid())
+  identityVerificationId String
+  sellerProfileId        String
+  actorId                String
+  actorRole              UserRole
+  decision               String
+  previousState          VerificationStatus
+  newState               VerificationStatus
+  reason                 String?
+  comments               String?
+  correlationId          String
+  createdAt              DateTime           @default(now())
+
+  identityVerification IdentityVerification @relation(fields: [identityVerificationId], references: [id], onDelete: Restrict)
+  sellerProfile        SellerProfile        @relation(fields: [sellerProfileId], references: [id], onDelete: Restrict)
+  actor                User                 @relation("KycReviewActor", fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([identityVerificationId, createdAt])
+  @@index([sellerProfileId, createdAt])
+  @@index([actorId, createdAt])
+  @@map("kyc_review_histories")
+}
+
+// Append-only, immutable administrative audit trail for KYC, moderation, and sensitive document access.
+model AdminAuditLog {
+  id            String   @id @default(cuid())
+  adminId       String
+  action        String
+  targetEntity  String
+  targetId      String
+  correlationId String
+  previousState String?
+  newState      String?
+  reason        String?
+  metadata      Json?
+  ipAddress     String?
+  userAgent     String?
+  createdAt     DateTime @default(now())
+
+  admin User @relation("AdminAuditActor", fields: [adminId], references: [id], onDelete: Restrict)
+
+  @@index([adminId, createdAt])
+  @@index([targetEntity, targetId, createdAt])
+  @@index([action, createdAt])
+  @@index([correlationId])
+  @@map("admin_audit_logs")
 }
 
 // --- PHASE 10: SERVICE CATALOG ---
@@ -806,4 +923,36 @@ model WalletTransaction {
 
   @@index([walletId])
   @@map("wallet_transactions")
+}
+
+// --- MILESTONE 4A.5E: SERVER-SIDE UPLOAD CLASSIFICATION & QUARANTINE LIFECYCLE ---
+
+model UploadObject {
+  id                String                @id @default(cuid())
+  objectKey         String                @unique
+  reference         String                @unique
+  ownerId           String
+  mimeType          String
+  byteSize          Int
+  purpose           String                @default("GENERAL")
+  lifecycleStatus   String                @default("ACTIVE")
+  scanStatus        String                @default("NOT_REQUIRED")
+  scanResult        String?
+  scannedAt         DateTime?
+  scanEngineVersion String?
+  kycVerificationId String?
+  kycSlot           String?
+  replacedAt        DateTime?
+  retentionUntil    DateTime?
+  deletedAt         DateTime?
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @default(now()) @updatedAt
+
+  owner             User                  @relation("UploadObjects", fields: [ownerId], references: [id], onDelete: Cascade)
+  kycVerification   IdentityVerification? @relation("KycUploadObjects", fields: [kycVerificationId], references: [id], onDelete: SetNull)
+
+  @@index([ownerId, purpose, lifecycleStatus])
+  @@index([kycVerificationId, lifecycleStatus])
+  @@index([lifecycleStatus, retentionUntil])
+  @@map("upload_objects")
 }

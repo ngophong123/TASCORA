@@ -4,7 +4,7 @@ import express from 'express';
 import { Prisma } from '@prisma/client';
 const mocks = vi.hoisted(() => {
   const model = () => ({ count: vi.fn(), findUnique: vi.fn(), findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), createMany: vi.fn(), update: vi.fn(), updateMany: vi.fn(), upsert: vi.fn(), deleteMany: vi.fn(), aggregate: vi.fn() });
-  return { financialEntry: model(), service: model(), sellerProfile: model(), servicePackage: model(), serviceImage: model(), serviceFAQ: model(), serviceRequirement: model(), serviceTag: model(), searchTag: model(), category: model(), order: model(), user: model(), notification: model(), conversation: model(), message: model(), review: model(), lock: vi.fn() };
+  return { adminAuditLog: model(), financialEntry: model(), service: model(), sellerProfile: model(), servicePackage: model(), serviceImage: model(), serviceFAQ: model(), serviceRequirement: model(), serviceTag: model(), searchTag: model(), category: model(), order: model(), user: model(), notification: model(), conversation: model(), message: model(), review: model(), lock: vi.fn() };
 });
 vi.mock('../../apps/api/src/lib/prisma', () => ({ prisma: { ...mocks, $queryRaw: mocks.lock, $transaction: async (fn: (tx: typeof mocks & { $queryRaw: typeof mocks.lock }) => Promise<unknown>) => fn({ ...mocks, $queryRaw: mocks.lock }) } }));
 vi.mock('../../apps/api/src/middlewares/requireAuth', () => ({ requireAuth: (req: express.Request & { user?: { userId: string; role: string } }, res: express.Response, next: express.NextFunction) => {

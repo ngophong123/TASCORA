@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { updateBuyerProfileSchema, updateSellerProfileSchema } from './profile.schema';
 import { prisma } from '../../lib/prisma';
-import { assertOwnedUpload } from '../upload/references';
+import { assertUsableNonKycUpload } from '../upload/references';
 
 export class ProfileService {
   static async getMyProfiles(userId: string) {
@@ -20,28 +20,30 @@ export class ProfileService {
   }
 
   static async updateBuyerProfile(userId: string, data: z.infer<typeof updateBuyerProfileSchema>['body']) {
-    assertOwnedUpload(data.avatar, userId, true);
+    const canonicalAvatar = await assertUsableNonKycUpload(data.avatar, userId, true);
+    const normalizedData = data.avatar !== undefined ? { ...data, avatar: canonicalAvatar } : data;
     const profile = await prisma.buyerProfile.upsert({
       where: { userId },
-      update: data,
+      update: normalizedData,
       create: {
         userId,
-        ...data,
+        ...normalizedData,
       },
     });
     return profile;
   }
 
   static async updateSellerProfile(userId: string, data: z.infer<typeof updateSellerProfileSchema>['body']) {
-    assertOwnedUpload(data.avatar, userId, true);
+    const canonicalAvatar = await assertUsableNonKycUpload(data.avatar, userId, true);
+    const normalizedData = data.avatar !== undefined ? { ...data, avatar: canonicalAvatar } : data;
     const profile = await prisma.sellerProfile.upsert({
       where: { userId },
-      update: data,
+      update: normalizedData,
       create: {
         userId,
         skills: [],
         languages: [],
-        ...data,
+        ...normalizedData,
       },
     });
     return profile;

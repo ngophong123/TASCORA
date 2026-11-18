@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.tests.json",
+  "include": [
+    "tests/database/disposable-postgres.spec.ts",
+    "tests/database/financial-system.spec.ts"
+  ]
+}

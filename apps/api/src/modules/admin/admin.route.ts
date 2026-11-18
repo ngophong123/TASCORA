@@ -1,10 +1,11 @@
 import { Router } from 'express';
-import { requireAuth } from '../../middlewares/requireAuth';
+import { requireAuth, type AuthRequest } from '../../middlewares/requireAuth';
 import { requireAdminRole, getAllUsers, banUser, approveService } from './admin.controller';
 import { prisma } from '../../lib/prisma';
 import { HttpError } from '../../lib/errors';
 import { validate } from '../../middlewares/validate';
 import { z } from 'zod';
+import { AuditService, resolveCorrelationId } from '../audit/audit.service';
 
 const router = Router();
 
@@ -25,14 +26,35 @@ router.get('/review-queue', async (_req, res, next) => {
     ]); res.json({ success: true, data: { sellers, services } });
   } catch (error) { next(error); }
 });
-router.put('/sellers/:id/review', validate(z.object({ params: z.object({ id: z.string().cuid() }), body: z.object({ status: z.enum(['APPROVED', 'REJECTED']) }) })), async (req, res, next) => {
+router.put('/sellers/:id/review', validate(z.object({ params: z.object({ id: z.string().cuid() }), body: z.object({ status: z.enum(['APPROVED', 'REJECTED']) }) })), async (req: AuthRequest, res, next) => {
   try {
     const status = req.body.status as 'APPROVED' | 'REJECTED';
-    const changed = await prisma.sellerProfile.updateMany({ where: { id: req.params.id, status: 'PENDING_REVIEW', user: { status: 'ACTIVE' } }, data: { status } });
-    if (changed.count !== 1) throw new HttpError(409, 'Seller is not awaiting review or account is inactive');
+    const correlationId = resolveCorrelationId(req.headers['x-correlation-id'] || req.headers['x-request-id']);
+    const sellerId = req.params.id!;
+    await prisma.$transaction(async tx => {
+      const changed = await tx.sellerProfile.updateMany({ where: { id: sellerId, status: 'PENDING_REVIEW', user: { status: 'ACTIVE' } }, data: { status } });
+      if (changed.count !== 1) throw new HttpError(409, 'Seller is not awaiting review or account is inactive');
+      await AuditService.record(tx, {
+        adminId: req.user!.userId,
+        action: 'SELLER_REVIEWED',
+        targetEntity: 'SellerProfile',
+        targetId: sellerId,
+        previousState: 'PENDING_REVIEW',
+        newState: status,
+        context: {
+          correlationId,
+          ipAddress: req.ip || '',
+          userAgent: req.headers['user-agent'] || '',
+        },
+      });
+    });
     // Profile approval does not assert identity/KYC verification or payment onboarding.
     res.json({ success: true });
   } catch (error) { next(error); }
 });
+
+import { createAdminKycRouter } from '../kyc/kyc.route';
+
+router.use('/', createAdminKycRouter());
 
 export default router;

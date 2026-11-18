@@ -2,7 +2,7 @@ import { prisma } from '../../lib/prisma';
 import { getIO } from '../../lib/socket';
 import { publicSellerSelect } from '../../lib/public-profile';
 import { HttpError } from '../../lib/errors';
-import { assertOwnedUpload } from '../upload/references';
+import { assertUsableNonKycUpload } from '../upload/references';
 
 export class MessageService {
   static async getConversations(userId: string) {
@@ -45,7 +45,7 @@ export class MessageService {
   }
 
   static async sendMessage(conversationId: string, senderId: string, content: string, attachmentUrl?: string) {
-    assertOwnedUpload(attachmentUrl, senderId);
+    const canonicalAttachmentUrl = await assertUsableNonKycUpload(attachmentUrl, senderId);
     const conversation = await prisma.conversation.findUnique({
       where: { id: conversationId }
     });
@@ -63,7 +63,7 @@ export class MessageService {
           conversationId,
           senderId,
           content,
-          attachmentUrl
+          attachmentUrl: canonicalAttachmentUrl
         }
       });
 

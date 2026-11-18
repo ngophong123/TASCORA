@@ -1,9 +1,10 @@
-﻿"use client"
+"use client"
 
 import { useState } from "react"
 import { User, Shield, Bell, CreditCard } from "lucide-react"
 import { useDashboard } from "@/context/DashboardContext"
 import { AccountOnboardingPanel } from "@/components/dashboard/AccountOnboardingPanel"
+import { SellerKycPanel } from "@/components/dashboard/kyc/SellerKycPanel"
 
 type SettingsTab = "profile" | "security" | "notifications" | "billing"
 const tabs = [
@@ -31,7 +32,7 @@ const unavailable = {
 }
 
 export default function SettingsPage() {
-  const { role } = useDashboard()
+  const { role, account } = useDashboard()
   const [activeTab, setActiveTab] = useState<SettingsTab>("profile")
   return (
     <div className="mx-auto max-w-5xl space-y-7">
@@ -67,7 +68,10 @@ export default function SettingsPage() {
       {tabs.map(({ id, label }) => (
         <section key={id} id={`settings-${id}`} aria-label={label} hidden={activeTab !== id}>
           {activeTab !== id ? null : id === "profile" ? (
-            <AccountOnboardingPanel mode={role} />
+            <div className="space-y-6">
+              <AccountOnboardingPanel mode={role} />
+              {(role !== "CLIENT" || account?.role === "SELLER") && <SellerKycPanel />}
+            </div>
           ) : (
             <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 sm:p-8">
               <span className="inline-block rounded-md bg-[var(--subtle)] px-3 py-1 text-xs font-medium text-[var(--text-muted)]">
