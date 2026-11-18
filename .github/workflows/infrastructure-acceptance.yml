@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - chore/phase4a6-infra-acceptance-triggers
+      - fix/phase4a6-ci-kyc-encryption-key
   pull_request:
     branches:
       - main
@@ -81,6 +82,36 @@ jobs:
       - name: Generate Prisma Client
         run: pnpm db:generate
 
+      - name: Generate masked ephemeral KYC test keys
+        run: |
+          node -e '
+          const fs = require("node:fs");
+          const crypto = require("node:crypto");
+          const envFile = process.env.GITHUB_ENV;
+          if (!envFile) {
+            throw new Error("GITHUB_ENV is required to export ephemeral KYC test keys");
+          }
+          const generateKey = () => {
+            let buf;
+            do {
+              buf = crypto.randomBytes(32);
+            } while (new Set(buf).size < 12);
+            return buf.toString("hex");
+          };
+          const encKey = generateKey();
+          let hmacKey = generateKey();
+          while (hmacKey === encKey) {
+            hmacKey = generateKey();
+          }
+          for (const [name, value] of [
+            ["KYC_ENCRYPTION_KEY", encKey],
+            ["KYC_DOCUMENT_HMAC_KEY", hmacKey],
+          ]) {
+            process.stdout.write(`::add-mask::${value}\n`);
+            fs.appendFileSync(envFile, `${name}=${value}\n`, { encoding: "utf8" });
+          }
+          '
+
       - name: Wait for disposable PostgreSQL & ClamAV readiness
         run: |
           node -e '
@@ -124,8 +155,6 @@ jobs:
           DATABASE_URL: postgresql://tascora_test:disposable_ci_password@127.0.0.1:55432/tascora_migration_test?schema=public
           TASCORA_DISPOSABLE_DATABASE_URL: postgresql://tascora_test:disposable_ci_password@127.0.0.1:55432/tascora_migration_test?schema=public
           JWT_ACCESS_SECRET: ci_disposable_access_secret_minimum_32_characters
-          KYC_ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
-          KYC_DOCUMENT_HMAC_KEY: fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210
           REDIS_URL: redis://127.0.0.1:6379
 
       - name: Verify live ClamAV daemon & fail-closed guarantees via ClamdMalwareScanner
