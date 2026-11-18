@@ -33,17 +33,107 @@ beforeAll(async () => {
 afterAll(async () => { vi.restoreAllMocks(); await prisma.$disconnect(); });
 beforeEach(() => { vi.spyOn(stripe.paymentIntents, 'create').mockRejectedValue(new Error('Provider call must be explicitly mocked')); vi.spyOn(stripe.paymentIntents, 'retrieve').mockRejectedValue(new Error('Provider call must be explicitly mocked')); });
 
+interface ExpectedMigratedIndex {
+  sqlName: string;
+  pgName: string;
+  table: string;
+  unique: boolean;
+  columns: string;
+  sourceMigration: string;
+}
+
+const PG_MAX_IDENTIFIER_BYTES = 63;
+
+/**
+ * PostgreSQL silently truncates identifiers exceeding NAMEDATALEN - 1 (63 UTF-8 bytes)
+ * when persisting relation/index names in pg_class and pg_indexes.
+ */
+function toPgIdentifier(identifier: string): string {
+  if (Buffer.byteLength(identifier, 'utf8') <= PG_MAX_IDENTIFIER_BYTES) {
+    return identifier;
+  }
+  let bytes = 0;
+  let end = 0;
+  for (const ch of identifier) {
+    const chBytes = Buffer.byteLength(ch, 'utf8');
+    if (bytes + chBytes > PG_MAX_IDENTIFIER_BYTES) break;
+    bytes += chBytes;
+    end += ch.length;
+  }
+  return identifier.slice(0, end);
+}
+
+function resolveFinalMigratedIndexes(migrations: { name: string; sql: string }[]): Map<string, ExpectedMigratedIndex> {
+  const expected = new Map<string, ExpectedMigratedIndex>();
+  const stmtRegex =
+    /CREATE\s+(UNIQUE\s+)?INDEX\s+(?:IF\s+NOT\s+EXISTS\s+)?"([^"]+)"\s+ON\s+"([^"]+)"\s*\(([^;]+)\)\s*;|DROP\s+INDEX\s+(?:IF\s+EXISTS\s+)?"([^"]+)"(?:\s+(?:CASCADE|RESTRICT))?\s*;|ALTER\s+INDEX\s+(?:IF\s+EXISTS\s+)?"([^"]+)"\s+RENAME\s+TO\s+"([^"]+)"\s*;/g;
+  for (const mig of migrations) {
+    for (const m of mig.sql.matchAll(stmtRegex)) {
+      if (m[2] && m[3] && m[4]) {
+        const sqlName = m[2];
+        const pgName = toPgIdentifier(sqlName);
+        expected.set(pgName, {
+          sqlName,
+          pgName,
+          table: m[3],
+          unique: Boolean(m[1]),
+          columns: m[4],
+          sourceMigration: mig.name,
+        });
+      } else if (m[5]) {
+        expected.delete(toPgIdentifier(m[5]));
+      } else if (m[6] && m[7]) {
+        const oldPgName = toPgIdentifier(m[6]);
+        const newSqlName = m[7];
+        const newPgName = toPgIdentifier(newSqlName);
+        const existing = expected.get(oldPgName);
+        if (existing) {
+          expected.delete(oldPgName);
+          expected.set(newPgName, {
+            ...existing,
+            sqlName: newSqlName,
+            pgName: newPgName,
+            sourceMigration: mig.name,
+          });
+        }
+      }
+    }
+  }
+  return expected;
+}
+
 it('matches every migrated table, enum, explicit index and foreign-key definition', async () => {
-  const sql = readdirSync('prisma/migrations', { withFileTypes: true }).filter(file => file.isDirectory()).sort((a,b) => a.name.localeCompare(b.name)).map(file => readFileSync(`prisma/migrations/${file.name}/migration.sql`, 'utf8')).join('\n');
+  const migrations = readdirSync('prisma/migrations', { withFileTypes: true })
+    .filter(file => file.isDirectory())
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(file => ({
+      name: file.name,
+      sql: readFileSync(`prisma/migrations/${file.name}/migration.sql`, 'utf8'),
+    }));
+  const sql = migrations.map(m => m.sql).join('\n');
   const tables = await prisma.$queryRaw<{ tablename: string }[]>`SELECT tablename FROM pg_tables WHERE schemaname='public' AND tablename <> '_prisma_migrations'`;
   expect(tables.map(t => t.tablename).sort()).toEqual([...sql.matchAll(/CREATE TABLE "([^"]+)"/g)].map(m => m[1]).sort());
-  const indexes = await prisma.$queryRaw<{ indexname: string; indexdef: string }[]>`SELECT indexname,indexdef FROM pg_indexes WHERE schemaname='public'`;
-  for (const match of sql.matchAll(/CREATE (UNIQUE )?INDEX "([^"]+)" ON "([^"]+)"\(([^;]+)\);/g)) {
-    const actual = indexes.find(i => i.indexname === match[2]); expect(actual).toBeDefined();
-    expect(actual!.indexdef.includes('UNIQUE')).toBe(Boolean(match[1]));
-    expect(actual!.indexdef).toContain(`ON public.${match[3]} USING btree`);
-    expect(actual!.indexdef.split('(')[1]!.replaceAll(' ', '').replaceAll('"', '')).toBe(`${match[4]})`.replaceAll(' ', '').replaceAll('"', ''));
+  const indexes = await prisma.$queryRaw<{ indexname: string; tablename: string; indexdef: string }[]>`SELECT indexname,tablename,indexdef FROM pg_indexes WHERE schemaname='public'`;
+  const expectedIndexes = resolveFinalMigratedIndexes(migrations);
+  expect(expectedIndexes.size).toBeGreaterThan(0);
+  for (const expected of expectedIndexes.values()) {
+    const actual = indexes.find(i => i.indexname === expected.pgName);
+    const expectedColumns = `${expected.columns})`.replaceAll(' ', '').replaceAll('"', '');
+    const expectedSummary = `${expected.unique ? 'UNIQUE ' : ''}btree(${expectedColumns}) on ${expected.table}`;
+    const actualSummary = actual ? `${actual.tablename}: ${actual.indexdef}` : 'MISSING from pg_indexes';
+    const diagnostic =
+      `Index verification mismatch [index="${expected.sqlName}" (pg="${expected.pgName}"), ` +
+      `table="${expected.table}", sourceMigration="${expected.sourceMigration}", ` +
+      `expected="${expectedSummary}", actual="${actualSummary}"]`;
+    expect(actual, diagnostic).toBeDefined();
+    expect(actual!.tablename, diagnostic).toBe(expected.table);
+    expect(actual!.indexdef.includes('UNIQUE'), diagnostic).toBe(expected.unique);
+    expect(actual!.indexdef, diagnostic).toContain(`ON public.${expected.table} USING btree`);
+    const actualColumns = actual!.indexdef.split('(')[1]!.replaceAll(' ', '').replaceAll('"', '');
+    expect(actualColumns, diagnostic).toBe(expectedColumns);
   }
+  const nonPrimaryPgIndexes = indexes.filter(i => !i.indexname.endsWith('_pkey')).map(i => i.indexname).sort();
+  expect(nonPrimaryPgIndexes).toEqual([...expectedIndexes.keys()].sort());
   const enums = await prisma.$queryRaw<{ name: string; values: string[] }[]>`SELECT t.typname AS name, array_agg(e.enumlabel::text ORDER BY e.enumsortorder) AS values FROM pg_type t JOIN pg_enum e ON e.enumtypid=t.oid JOIN pg_namespace n ON n.oid=t.typnamespace WHERE n.nspname='public' GROUP BY t.typname`;
   expect(enums).toHaveLength(12);
   for (const match of sql.matchAll(/CREATE TYPE "([^"]+)" AS ENUM \(([^;]+)\);/g)) {
