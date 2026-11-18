@@ -5,6 +5,7 @@ on:
     branches:
       - chore/phase4a6-infra-acceptance-triggers
       - fix/phase4a6-ci-kyc-encryption-key
+      - fix/phase4a6-payment-db-ci
   pull_request:
     branches:
       - main
@@ -155,6 +156,7 @@ jobs:
           DATABASE_URL: postgresql://tascora_test:disposable_ci_password@127.0.0.1:55432/tascora_migration_test?schema=public
           TASCORA_DISPOSABLE_DATABASE_URL: postgresql://tascora_test:disposable_ci_password@127.0.0.1:55432/tascora_migration_test?schema=public
           JWT_ACCESS_SECRET: ci_disposable_access_secret_minimum_32_characters
+          STRIPE_SECRET_KEY: sk_test_ciPlaceholderNotReal
           REDIS_URL: redis://127.0.0.1:6379
 
       - name: Verify live ClamAV daemon & fail-closed guarantees via ClamdMalwareScanner
