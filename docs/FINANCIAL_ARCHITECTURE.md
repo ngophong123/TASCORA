@@ -1,6 +1,6 @@
 # TASCORA Financial & Escrow Architecture
 
-> **Boundary Notice:** TASCORA processes **no real money**. Stripe integration is restricted to **Test Mode** (`sk_test_*` / `rk_test_*`) or **Disabled Mode** (`PAYMENT_PROVIDER=disabled`). **External seller payouts are intentionally disabled** (`unavailablePayoutProvider`) and return `503 Service Unavailable`.
+> **Boundary Notice:** TASCORA processes **no real money**. Stripe integration is restricted to **Test Mode** (`sk_test_*` / `rk_test_*`) or **Disabled Mode** (`PAYMENTS_PROVIDER=disabled`). **External seller payouts are intentionally disabled** (`unavailablePayoutProvider`) and return `503 Service Unavailable`.
 
 ---
 
@@ -49,7 +49,7 @@ Any transition outside `transitions[from]` throws `409 Conflict` (`transition(fr
 ## 3. Payment & Webhook Deduplication Flow
 
 1. **Create Intent (`PaymentService.createPaymentIntent`):**
-   - Verifies `assertProviderConfigured()` (blocks live keys in `NODE_ENV=test` or `APP_ENV=staging`; blocks all calls when `PAYMENT_PROVIDER=disabled`).
+   - Verifies `assertProviderConfigured()` (blocks live keys in `NODE_ENV=test` or `APP_ENV=staging`; blocks all calls when `PAYMENTS_PROVIDER=disabled`).
    - Locks the order, validates `order.status === 'PENDING'`, validates Stripe USD bounds (`>= 50` cents, `<= 8` digits), and reuses any live non-cancelled `Transaction` attempt or creates one with a durable `attemptKey: payment:<orderId>:<uuid>`.
    - Calls `stripe.paymentIntents.create(..., { idempotencyKey: transaction.attemptKey })` and verifies returned amount, currency, and metadata before binding `stripePaymentId`.
 2. **Webhook Settlement (`PaymentService.handleWebhookEvent`):**
@@ -78,7 +78,7 @@ Any transition outside `transitions[from]` throws `409 Conflict` (`transition(fr
 
 ## 5. Seller Payout Boundary (Intentionally Disabled)
 
-- **Seller Request (`PayoutService.request`):** When `PAYMENT_PROVIDER` is enabled and an order is `COMPLETED` with released escrow, zero active refunds/disputes, and positive `available` balance, a seller can reserve available earnings into a `PENDING` `Payout` (`availableDelta: -amount`, `reservedDelta: +amount`) using a unique `requestKey`.
+- **Seller Request (`PayoutService.request`):** When `PAYMENTS_PROVIDER` is enabled and an order is `COMPLETED` with released escrow, zero active refunds/disputes, and positive `available` balance, a seller can reserve available earnings into a `PENDING` `Payout` (`availableDelta: -amount`, `reservedDelta: +amount`) using a unique `requestKey`.
 - **External Disbursement (`PayoutService.process`):** Defaults to `unavailablePayoutProvider` (`available: false`), which fails closed with `503 Payout provider validation required`. Even with an injected test double in integration tests, `PayoutService.process` enforces strict reference/amount/currency matching and leaves ambiguous timeouts in `PROCESSING` / `reserved` until reconciled.
 
 ---

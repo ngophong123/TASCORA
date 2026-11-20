@@ -38,7 +38,7 @@
 
 - **Uniform Async Feedback (`apps/web/src/components/feedback/ApiState.tsx`):** Standardizes `role="status"` loading spinners, `role="alert"` error banners with retry callbacks, and empty-state messaging across dashboard pages.
 - **Interactive Semantics:** Navigation actions use styled `<Link>` elements without nesting `<button>` inside `<a>`, interactive touch targets maintain `min-h-11` (`44px`), and modals/drawers trap focus via `useDialogFocus`.
-- **Payment & Payout Truthfulness (`usePaymentCapability`):** Frontend checkout and payout buttons query backend payment capability and disable cleanly when `PAYMENT_PROVIDER=disabled`, while earnings views explicitly note that external seller payouts remain unavailable until a validated provider adapter exists.
+- **Payment & Payout Truthfulness (`usePaymentCapability`):** Frontend checkout and payout buttons query backend payment capability and disable cleanly when `PAYMENTS_PROVIDER=disabled`, while earnings views explicitly note that external seller payouts remain unavailable until a validated provider adapter exists.
 
 ---
 

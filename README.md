@@ -7,7 +7,7 @@
 
 TASCORA implements service discovery, tiered package ordering, an append-only escrow ledger with Stripe payment-intent lifecycle hooks, real-time buyer-seller messaging, envelope-encrypted seller KYC workflows, and fail-closed malware scanning — verified across unit, API, security, Playwright E2E, disposable PostgreSQL, and live ClamAV CI suites.
 
-> **Demo & Payment Safety Disclaimer:** There is **no verified public staging or production deployment yet**. Payment integration runs strictly in **Stripe Test Mode** or **Disabled Mode** (`PAYMENT_PROVIDER=disabled`). **No real money is processed, and external seller payouts remain intentionally disabled** (`unavailablePayoutProvider`) until a dedicated payout provider adapter and compliance workflow are verified.
+> **Demo & Payment Safety Disclaimer:** There is **no verified public staging or production deployment yet**. Payment integration runs strictly in **Stripe Test Mode** or **Disabled Mode** (`PAYMENTS_PROVIDER=disabled`). **No real money is processed, and external seller payouts remain intentionally disabled** (`unavailablePayoutProvider`) until a dedicated payout provider adapter and compliance workflow are verified.
 
 ---
 
@@ -29,7 +29,7 @@ Captured from the rendered Next.js frontend with seeded non-production catalog d
 
 | Layer                     | Technologies Used in Repository                                                                                                                                                                                     |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Frontend (`apps/web`)** | Next.js 16 (App Router, Turbopack), React 19, TypeScript, Tailwind CSS v4, next-intl (`en`/`vi`), Radix UI primitives, Lucide Icons, Socket.IO Client                                                               |
+| **Frontend (`apps/web`)** | Next.js 16 (App Router, Turbopack), React 19, TypeScript, Tailwind CSS v4, next-intl (`en`/`vi`), `@base-ui/react`, Framer Motion, Lucide Icons, Socket.IO Client, `@stripe/stripe-js`                              |
 | **Backend (`apps/api`)**  | Node.js 22 (CI) / >=20, Express 4, TypeScript, Zod, Pino structured logging, Helmet, CORS, `express-rate-limit`, Socket.IO, `bcryptjs`, JWT + HTTP-only cookies                                                     |
 | **Data & Infra**          | Prisma 5 ORM, PostgreSQL 15, Redis 7 (`ioredis`), S3-compatible object storage (`@aws-sdk/client-s3`), ClamAV (`clamd` TCP `INSTREAM`), Stripe SDK (test/disabled modes)                                            |
 | **Testing & Quality**     | Vitest (unit, API contract, security audit, disposable PostgreSQL integration), Supertest, Playwright + `@axe-core/playwright`, Lighthouse CI, ESLint (strict zero-warning on web), Prettier, Husky + `lint-staged` |
