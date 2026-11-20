@@ -390,15 +390,12 @@ function MessagesContent() {
             <span>{showOrderContext ? "Hide Contract Panel" : "Show Contract Panel"}</span>
           </Button>
 
-          <Link href="/dashboard/orders">
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-1.5 text-xs text-[#4B4B5C] border-[rgba(15,15,30,0.12)] hover:bg-[#F4F4F8]"
-            >
-              <ShoppingBag className="h-3.5 w-3.5 text-blue-600" />
-              <span>All Orders</span>
-            </Button>
+          <Link
+            href="/dashboard/orders"
+            className="inline-flex items-center justify-center gap-1.5 min-h-11 px-3 rounded-lg text-xs font-medium text-[#4B4B5C] border border-[rgba(15,15,30,0.12)] hover:bg-[#F4F4F8] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2"
+          >
+            <ShoppingBag aria-hidden="true" className="h-3.5 w-3.5 text-blue-600" />
+            <span>All Orders</span>
           </Link>
         </div>
       </div>
@@ -587,15 +584,12 @@ function MessagesContent() {
                 <span className="hidden sm:inline">Order Info</span>
               </Button>
 
-              <Link href={`/dashboard/orders?orderId=${activeConv.order.id}`}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 px-2.5 text-xs text-[#4B4B5C] border-[rgba(15,15,30,0.12)] hover:bg-[#F4F4F8] hidden sm:flex items-center gap-1"
-                >
-                  <span>Order {activeConv.order.id}</span>
-                  <ArrowUpRight className="h-3.5 w-3.5 text-[#6B6B7B]" />
-                </Button>
+              <Link
+                href={`/dashboard/orders?orderId=${activeConv.order.id}`}
+                className="hidden sm:inline-flex items-center justify-center gap-1 min-h-11 px-2.5 rounded-lg text-xs font-medium text-[#4B4B5C] border border-[rgba(15,15,30,0.12)] hover:bg-[#F4F4F8] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2"
+              >
+                <span>Order {activeConv.order.id}</span>
+                <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5 text-[#6B6B7B]" />
               </Link>
             </div>
           </div>
@@ -970,15 +964,12 @@ function MessagesContent() {
 
               {/* Context Actions */}
               <div className="pt-2 space-y-2">
-                <Link href={`/dashboard/orders?orderId=${activeConv.order.id}`} className="w-full">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full text-xs font-medium text-[#0A0A23] border-[rgba(15,15,30,0.12)] hover:bg-[#F4F4F8] flex items-center justify-center gap-1.5"
-                  >
-                    <span>View Order In Workspace</span>
-                    <ChevronRight className="h-3.5 w-3.5 text-[#6B6B7B]" />
-                  </Button>
+                <Link
+                  href={`/dashboard/orders?orderId=${activeConv.order.id}`}
+                  className="w-full inline-flex items-center justify-center gap-1.5 min-h-11 px-3 rounded-lg text-xs font-medium text-[#0A0A23] border border-[rgba(15,15,30,0.12)] hover:bg-[#F4F4F8] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2"
+                >
+                  <span>View Order In Workspace</span>
+                  <ChevronRight aria-hidden="true" className="h-3.5 w-3.5 text-[#6B6B7B]" />
                 </Link>
 
                 <Button

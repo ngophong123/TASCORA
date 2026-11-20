@@ -20,13 +20,16 @@ export default function AdminPage() {
   const [categoryName, setCategoryName] = useState(""),
     [categorySlug, setCategorySlug] = useState("")
   const [busy, setBusy] = useState(false),
-    [error, setError] = useState("")
+    [error, setError] = useState(""),
+    [statusMessage, setStatusMessage] = useState("")
   async function review(path: string, body?: unknown) {
     setBusy(true)
     setError("")
+    setStatusMessage("")
     try {
       await requestData(path, jsonRequest("PUT", body))
       queue.reload()
+      setStatusMessage("Review decision saved.")
     } catch (error) {
       setError(error instanceof Error ? error.message : "Review failed.")
     } finally {
@@ -59,6 +62,11 @@ export default function AdminPage() {
           Saving your change…
         </p>
       )}
+      {!busy && statusMessage && (
+        <p role="status" className="text-sm text-status-success">
+          {statusMessage}
+        </p>
+      )}
       <div className="max-w-lg">
         <label htmlFor="review-search" className="mb-2 block text-sm font-medium">
           Search review queue
@@ -77,13 +85,17 @@ export default function AdminPage() {
         onSubmit={(event) => {
           event.preventDefault()
           setBusy(true)
+          setError("")
+          setStatusMessage("")
+          const createdName = categoryName.trim()
           void requestData(
             "/api/v1/admin/categories",
-            jsonRequest("POST", { name: categoryName, slug: categorySlug })
+            jsonRequest("POST", { name: createdName, slug: categorySlug.trim() })
           )
             .then(() => {
               setCategoryName("")
               setCategorySlug("")
+              setStatusMessage(`Category "${createdName}" created.`)
             })
             .catch((error: Error) => setError(error.message))
             .finally(() => setBusy(false))
@@ -112,6 +124,7 @@ export default function AdminPage() {
           />
         </label>
         <button
+          type="submit"
           disabled={busy}
           className="min-h-11 rounded-lg border border-border-default bg-bg-surface px-4 py-2 text-sm font-semibold hover:bg-bg-subtle disabled:opacity-50"
         >
@@ -132,24 +145,28 @@ export default function AdminPage() {
               {profileName(seller)} · {seller.professionalTitle}
             </h3>
             <p className="text-sm leading-6 text-text-secondary">{seller.bio}</p>
-            <button
-              disabled={busy}
-              onClick={() =>
-                void review(`/api/v1/admin/sellers/${seller.id}/review`, { status: "APPROVED" })
-              }
-              className="min-h-11 rounded-lg border border-border-default bg-bg-surface px-4 py-2 text-sm font-semibold hover:bg-bg-subtle disabled:opacity-50"
-            >
-              Approve seller
-            </button>
-            <button
-              disabled={busy}
-              onClick={() =>
-                void review(`/api/v1/admin/sellers/${seller.id}/review`, { status: "REJECTED" })
-              }
-              className="min-h-11 rounded-lg border border-border-default bg-bg-surface px-4 py-2 text-sm font-semibold hover:bg-bg-subtle disabled:opacity-50"
-            >
-              Reject seller
-            </button>
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() =>
+                  void review(`/api/v1/admin/sellers/${seller.id}/review`, { status: "APPROVED" })
+                }
+                className="min-h-11 rounded-lg border border-border-default bg-bg-surface px-4 py-2 text-sm font-semibold hover:bg-bg-subtle disabled:opacity-50"
+              >
+                Approve seller
+              </button>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() =>
+                  void review(`/api/v1/admin/sellers/${seller.id}/review`, { status: "REJECTED" })
+                }
+                className="min-h-11 rounded-lg border border-border-default bg-bg-surface px-4 py-2 text-sm font-semibold hover:bg-bg-subtle disabled:opacity-50"
+              >
+                Reject seller
+              </button>
+            </div>
           </article>
         ))}
         {queue.data && !sellers?.length && (
@@ -179,6 +196,7 @@ export default function AdminPage() {
               ))}
             </ul>
             <button
+              type="button"
               disabled={busy}
               onClick={() => void review(`/api/v1/admin/services/${service.id}/approve`)}
               className="min-h-11 rounded-lg border border-border-default bg-bg-surface px-4 py-2 text-sm font-semibold hover:bg-bg-subtle disabled:opacity-50"

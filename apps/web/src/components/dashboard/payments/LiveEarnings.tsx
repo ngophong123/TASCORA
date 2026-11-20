@@ -77,9 +77,10 @@ export function LiveEarnings() {
               <div key={order.id} className="p-3 border rounded break-all">
                 <span>{order.id}</span>
                 <button
+                  type="button"
                   disabled={busy || !payments.available}
                   onClick={() => void request(order.id)}
-                  className="rounded border p-2 ml-2"
+                  className="min-h-11 rounded border px-3 py-2 ml-2 disabled:opacity-50"
                 >
                   Request payout for order
                 </button>

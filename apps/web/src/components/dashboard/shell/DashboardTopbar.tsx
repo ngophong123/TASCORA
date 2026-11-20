@@ -235,13 +235,13 @@ export function DashboardTopbar() {
               </div>
 
               <Link
-                href="/dashboard/settings"
+                href="/dashboard"
                 onClick={() => setUserDropdownOpen(false)}
                 className="flex items-center gap-2.5 min-h-11 px-3 py-2 rounded-lg text-xs text-text-secondary hover:text-foreground dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors"
                 role="menuitem"
               >
                 <User className="w-4 h-4 text-slate-400" />
-                <span>My Profile</span>
+                <span>Dashboard Overview</span>
               </Link>
 
               <Link
@@ -251,7 +251,7 @@ export function DashboardTopbar() {
                 role="menuitem"
               >
                 <Settings className="w-4 h-4 text-slate-400" />
-                <span>Account Settings</span>
+                <span>Profile & Settings</span>
               </Link>
 
               <button

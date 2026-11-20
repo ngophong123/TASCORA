@@ -100,13 +100,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             {isSuccess && !isLoading && (
               <>
                 <Check className="h-4 w-4 shrink-0 text-current animate-check-pop stroke-[2.5]" />
-                <span className="font-medium">{successText || "Thành công"}</span>
+                <span className="font-medium">{successText || "Success"}</span>
               </>
             )}
             {isError && !isLoading && !isSuccess && (
               <>
                 <AlertCircle className="h-3.5 w-3.5 shrink-0 text-current" />
-                <span className="font-medium">{errorText || "Thử lại"}</span>
+                <span className="font-medium">{errorText || "Retry"}</span>
               </>
             )}
           </span>

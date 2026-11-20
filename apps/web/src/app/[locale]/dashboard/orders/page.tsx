@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Link } from "@/i18n/routing"
+import { useSearchParams } from "next/navigation"
 import { useDashboard } from "@/context/DashboardContext"
 import { type DashboardOrder } from "@/data/dashboard/orders"
 import { ApiState } from "@/components/feedback/ApiState"
@@ -9,7 +10,9 @@ import { OrdersTable } from "@/components/dashboard/orders/OrdersTable"
 import { OrderDetailDrawer } from "@/components/dashboard/orders/OrderDetailDrawer"
 import { ChevronRight, PlusCircle, Compass } from "lucide-react"
 
-export default function DashboardOrdersPage() {
+function DashboardOrdersContent() {
+  const searchParams = useSearchParams()
+  const orderIdParam = searchParams.get("orderId")
   const {
     role,
     orders,
@@ -22,6 +25,18 @@ export default function DashboardOrdersPage() {
   const isClient = role === "CLIENT"
 
   const [selectedOrder, setSelectedOrder] = React.useState<DashboardOrder | null>(null)
+  const consumedOrderParamRef = React.useRef<string | null>(null)
+
+  // Support deep links such as /dashboard/orders?orderId=<id> from Messages
+  React.useEffect(() => {
+    if (!orderIdParam || consumedOrderParamRef.current === orderIdParam) return
+    const match = orders.find((o) => o.id === orderIdParam)
+    if (match) {
+      consumedOrderParamRef.current = orderIdParam
+      setSelectedOrder(match)
+      setSelectedOrderId(match.id)
+    }
+  }, [orderIdParam, orders, setSelectedOrderId])
 
   // Keep selectedOrder in sync with context if id set or orders updated
   React.useEffect(() => {
@@ -94,7 +109,7 @@ export default function DashboardOrdersPage() {
             </Link>
           ) : (
             <Link
-              href="/dashboard/gigs"
+              href="/dashboard/gigs/new"
               className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-sky-600 text-white text-xs font-semibold shadow-md hover:from-blue-700 hover:to-sky-700 transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <PlusCircle className="w-4 h-4" />
@@ -115,5 +130,13 @@ export default function DashboardOrdersPage() {
         order={selectedOrder}
       />
     </div>
+  )
+}
+
+export default function DashboardOrdersPage() {
+  return (
+    <React.Suspense fallback={<ApiState loading />}>
+      <DashboardOrdersContent />
+    </React.Suspense>
   )
 }
