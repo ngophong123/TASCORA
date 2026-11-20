@@ -1,0 +1,10 @@
+# Architecture Decision Records (ADRs)
+
+This directory documents key engineering decisions that are **actually implemented and tested** in the TASCORA repository.
+
+| ADR                                                        | Decision                                                                           | Status                 | Primary Evidence                                                                                             |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------ |
+| [001](001-modular-monolith-pnpm-workspaces.md)             | Modular Monolith in a `pnpm` Workspace                                             | Accepted & Implemented | `pnpm-workspace.yaml`, `apps/api/src/modules/`, `apps/web/`                                                  |
+| [002](002-append-only-financial-ledger-and-idempotency.md) | Append-Only Financial Ledger, Advisory Order Locks & Webhook Deduplication         | Accepted & CI Verified | `apps/api/src/modules/financial/domain.ts`, `tests/database/financial-system.spec.ts`                        |
+| [003](003-kyc-envelope-encryption-and-hmac-blind-index.md) | AES-256-GCM Envelope Encryption & Dedicated Key-Separated HMAC Blind Index for KYC | Accepted & CI Verified | `apps/api/src/lib/kyc-crypto.ts`, `apps/api/src/lib/kyc-key.ts`, `tests/security/kyc-hmac-migration.spec.ts` |
+| [004](004-fail-closed-clamav-quarantine.md)                | Fail-Closed Upload Isolation & Live ClamAV `zINSTREAM` Malware Scanning            | Accepted & CI Verified | `apps/api/src/modules/kyc/malware-scanner.ts`, `.github/workflows/infrastructure-acceptance.yml`             |
