@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useRouter } from "next/navigation"
+import { useRouter } from "@/i18n/routing"
 import { useDashboard } from "@/context/DashboardContext"
 import { motion, AnimatePresence } from "framer-motion"
 import {
@@ -20,12 +20,31 @@ import {
   Compass,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import {
+  getCommandPaletteItems,
+  type CommandCategory,
+  type CommandIconKey,
+} from "./command-palette-items"
+
+const COMMAND_ICONS: Record<CommandIconKey, React.ElementType> = {
+  LayoutDashboard,
+  ShoppingBag,
+  MessageSquare,
+  Settings,
+  Compass,
+  Bookmark,
+  CreditCard,
+  Briefcase,
+  Wallet,
+  ArrowRightLeft,
+  PlusCircle,
+}
 
 interface CommandOption {
   id: string
   title: string
   subtitle?: string
-  category: "Navigation" | "Role Mode" | "Quick Actions"
+  category: CommandCategory
   icon: React.ElementType
   shortcut?: string
   action: () => void
@@ -49,131 +68,28 @@ export function CommandPalette() {
 
   // Build commands list
   const commands: CommandOption[] = React.useMemo(() => {
-    const list: CommandOption[] = [
-      // Navigation
-      {
-        id: "nav-overview",
-        title: "Overview",
-        subtitle: "Main dashboard analytics & activity",
-        category: "Navigation",
-        icon: LayoutDashboard,
-        action: () => router.push("/dashboard"),
-      },
-      {
-        id: "nav-orders",
-        title: "Orders",
-        subtitle: "View active and completed milestone orders",
-        category: "Navigation",
-        icon: ShoppingBag,
-        action: () => router.push("/dashboard/orders"),
-      },
-      {
-        id: "nav-messages",
-        title: "Messages",
-        subtitle: "Client and freelancer conversation threads",
-        category: "Navigation",
-        icon: MessageSquare,
-        action: () => router.push("/dashboard/messages"),
-      },
-      {
-        id: "nav-settings",
-        title: "Settings",
-        subtitle: "Profile, security, and account preferences",
-        category: "Navigation",
-        icon: Settings,
-        action: () => router.push("/dashboard/settings"),
-      },
-      {
-        id: "nav-services",
-        title: "Browse Services Catalog",
-        subtitle: "Explore 48+ verified gigs and specialists",
-        category: "Navigation",
-        icon: Compass,
-        action: () => router.push("/services"),
-      },
-    ]
-
-    if (role === "CLIENT") {
-      list.push(
-        {
-          id: "nav-saved",
-          title: "Saved Freelancers",
-          subtitle: "Bookmarked specialists and top talent",
-          category: "Navigation",
-          icon: Bookmark,
-          action: () => router.push("/dashboard/saved"),
-        },
-        {
-          id: "nav-payments",
-          title: "Payments & Invoices",
-          subtitle: "Milestone escrow deposits and receipts",
-          category: "Navigation",
-          icon: CreditCard,
-          action: () => router.push("/dashboard/payments"),
-        }
-      )
-    } else {
-      list.push(
-        {
-          id: "nav-gigs",
-          title: "My Gigs",
-          subtitle: "Manage your active service listings and metrics",
-          category: "Navigation",
-          icon: Briefcase,
-          action: () => router.push("/dashboard/gigs"),
-        },
-        {
-          id: "nav-earnings",
-          title: "Earnings",
-          subtitle: "Revenue breakdown and withdrawal management",
-          category: "Navigation",
-          icon: Wallet,
-          action: () => router.push("/dashboard/earnings"),
-        }
-      )
-    }
-
-    // Role Switch
-    list.push({
-      id: "role-switch",
-      title: role === "CLIENT" ? "Switch to Freelancer Mode" : "Switch to Client Mode",
-      subtitle: `Currently active as ${role}`,
-      category: "Role Mode",
-      icon: ArrowRightLeft,
-      shortcut: "Tab",
-      action: () => {
-        const nextRole = role === "CLIENT" ? "FREELANCER" : "CLIENT"
-        setRole(nextRole)
-        showToast({
-          title: `Switched to ${nextRole} mode`,
-          message: "Navigation and overview updated to reflect your role.",
-          type: "info",
-        })
-      },
-    })
-
-    // Quick Actions
-    if (role === "FREELANCER") {
-      list.push({
-        id: "action-new-gig",
-        title: "Create New Gig Listing",
-        subtitle: "Launch a new specialized freelance service",
-        category: "Quick Actions",
-        icon: PlusCircle,
-        action: () => router.push("/dashboard/gigs/create"),
-      })
-    } else {
-      list.push({
-        id: "action-post-job",
-        title: "Explore Talent for Hire",
-        subtitle: "Search verified freelance architects and engineers",
-        category: "Quick Actions",
-        icon: Compass,
-        action: () => router.push("/services"),
-      })
-    }
-
-    return list
+    return getCommandPaletteItems(role).map((item) => ({
+      id: item.id,
+      title: item.title,
+      subtitle: item.subtitle,
+      category: item.category,
+      icon: COMMAND_ICONS[item.iconKey],
+      shortcut: item.shortcut,
+      action:
+        item.kind === "switch-role"
+          ? () => {
+              const nextRole = role === "CLIENT" ? "FREELANCER" : "CLIENT"
+              setRole(nextRole)
+              showToast({
+                title: `Switched to ${nextRole} mode`,
+                message: "Navigation and overview updated to reflect your role.",
+                type: "info",
+              })
+            }
+          : () => {
+              if (item.href) router.push(item.href)
+            },
+    }))
   }, [role, router, setRole, showToast])
 
   // Filter commands

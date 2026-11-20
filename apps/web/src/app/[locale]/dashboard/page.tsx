@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import * as React from "react"
 import { AccountOnboardingPanel } from "@/components/dashboard/AccountOnboardingPanel"
@@ -137,10 +137,20 @@ export default function DashboardOverviewPage() {
           stats.map((item) => <StatCard key={item.id} data={item} />)}
       </div>
 
-      {/* 3. Main Revenue / Spending Area Chart (Recharts) */}
-      <section className="rounded-lg border border-border-default bg-bg-subtle p-4 text-sm leading-6 text-text-secondary">
-        Earnings and settlement analytics are unavailable until financial release and payout
-        workflows are implemented.
+      {/* 3. Analytics Availability Notice */}
+      <section
+        data-testid="dashboard-analytics-notice"
+        className="rounded-lg border border-border-default bg-bg-subtle p-4 text-sm leading-6 text-text-secondary"
+      >
+        Time-series analytics, profile views, and conversion metrics are not available yet. View
+        server-confirmed balances in{" "}
+        <Link
+          href={isFreelancer ? "/dashboard/earnings" : "/dashboard/payments"}
+          className="font-medium text-primary underline"
+        >
+          {isFreelancer ? "Earnings" : "Payments & Billing"}
+        </Link>
+        .
       </section>
 
       {/* 4. Two-Column Row: Active Orders Table & Sidebar (Activity / Checklist) */}
