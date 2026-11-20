@@ -1,5 +1,7 @@
 # TASCORA Hosted Provider Validation
 
+> **Status: Historical / Superseded (2026-10-07).** Retained for historical auditability; predates PR #4, PR #5, and PR #6. See [docs/PROJECT_CURRENT_STATE.md](./docs/PROJECT_CURRENT_STATE.md) for the current baseline.
+
 ## Current phase: explicit payments-disabled hosted staging preparation
 
 Date: 2026-10-07. This section supersedes earlier missing-resource/setup assumptions below; earlier evidence is retained as history.

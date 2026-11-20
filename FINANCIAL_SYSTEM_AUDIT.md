@@ -1,5 +1,7 @@
 # TASCORA Financial System
 
+> **Status: Historical / Superseded (2026-10-07).** Predates PR #5 (Stripe v22 fixtures) and PR #6 (PostgreSQL 15 CI acceptance). See [docs/PROJECT_CURRENT_STATE.md](./docs/PROJECT_CURRENT_STATE.md) for the current baseline.
+
 ## Current handoff — payments-disabled staging preparation (2026-10-07)
 
 Supersedes earlier missing-resource/required-Stripe-for-staging assumptions; all previous local financial/DB/browser evidence retained. Branch feat/seed-data. Operator reports Neon PostgreSQL, Layerbase Redis, private Backblaze B2 and Mailtrap sandbox resources PREPARED. No hosted resource accessed/validated in this task. Stripe remains BLOCKED because legitimate account/TEST keys are unavailable; no fake account/credential/provider success. External payouts remain DISABLED.
