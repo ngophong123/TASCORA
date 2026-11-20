@@ -1,5 +1,7 @@
 # TASCORA Staging Setup Required
 
+> **Status: Historical / Superseded (2026-10-07).** Predates PR #4, PR #5, and PR #6 (KYC vault, ClamAV, 6 migrations). See [docs/PROJECT_CURRENT_STATE.md](./docs/PROJECT_CURRENT_STATE.md); a refreshed staging runbook is scheduled for Phase 4A.7.
+
 ## Current operator setup: non-payment Render staging
 
 This section supersedes earlier resource-creation/Stripe-unblocking steps below. PostgreSQL resource prepared: YES (Neon). Redis resource prepared: YES (Layerbase). Private S3-compatible storage prepared: YES (Backblaze B2). SMTP sandbox prepared: YES (Mailtrap Email Sandbox). These are operator-reported RESOURCE PREPARED facts, not HOSTED VALIDATION results. Hosted deployment validation: NOT YET RUN. Stripe provider validation: BLOCKED. External payouts: DISABLED. No resource connection or credential inspection performed in this task.
