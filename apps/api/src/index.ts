@@ -3,13 +3,14 @@ import { server, logger } from './server';
 import { initCronJobs, stopCronJobs } from './workers/cron';
 import { prisma } from './lib/prisma';
 import { redis } from './lib/redis';
+import { shouldEnableCron } from './lib/cron-config';
 import { KycHmacMigrationService } from './modules/kyc/kyc-hmac-migration.service';
 
 const PORT = process.env.PORT || 4000;
 
 async function bootstrap() {
   await KycHmacMigrationService.assertLegacyHmacRetirementAllowed();
-  if (process.env.ENABLE_CRON !== 'false') initCronJobs();
+  if (shouldEnableCron(process.env)) initCronJobs();
   server.listen(Number(PORT), '0.0.0.0', () => {
     logger.info(`Server is running on port ${PORT}`);
   });
