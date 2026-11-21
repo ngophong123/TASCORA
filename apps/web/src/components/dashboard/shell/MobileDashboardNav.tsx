@@ -62,7 +62,7 @@ const NAV_KEY_MAP: Record<string, string> = {
 export function MobileDashboardNav() {
   const pathname = usePathname()
   const t = useTranslations("dashboard")
-  const { role, toggleRole, isMobileDrawerOpen, setIsMobileDrawerOpen } = useDashboard()
+  const { role, account, toggleRole, isMobileDrawerOpen, setIsMobileDrawerOpen } = useDashboard()
 
   const navItems = role === "CLIENT" ? CLIENT_NAV_ITEMS : FREELANCER_NAV_ITEMS
   const bottomTabs = role === "CLIENT" ? CLIENT_BOTTOM_TABS : FREELANCER_BOTTOM_TABS
@@ -126,8 +126,9 @@ export function MobileDashboardNav() {
               <div className="p-4 border-b border-border-default bg-bg-surface">
                 <button
                   type="button"
+                  disabled={!account?.sellerProfile}
                   onClick={toggleRole}
-                  className="w-full flex items-center justify-between p-2.5 rounded-xl border border-[rgba(15,15,30,0.1)] bg-bg-subtle hover:bg-blue-50/50 hover:border-blue-200 transition-all text-left"
+                  className="w-full flex items-center justify-between p-2.5 rounded-xl border border-[rgba(15,15,30,0.1)] bg-bg-subtle hover:bg-blue-50/50 hover:border-blue-200 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <div className="flex items-center gap-2">
                     <ArrowRightLeft className="w-4 h-4 text-blue-600" />
@@ -135,7 +136,9 @@ export function MobileDashboardNav() {
                       <span className="text-xs font-bold text-foreground block">
                         {role === "CLIENT" ? t("modeClient") : t("modeFreelancer")}
                       </span>
-                      <span className="text-[10px] text-text-muted">Tap to switch</span>
+                      <span className="text-[10px] text-text-muted">
+                        {account?.sellerProfile ? "Tap to switch" : "Seller profile required"}
+                      </span>
                     </div>
                   </div>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-100 text-blue-800">
@@ -181,6 +184,31 @@ export function MobileDashboardNav() {
                     </Link>
                   )
                 })}
+                {account?.role === "ADMIN" && (
+                  <Link
+                    href="/dashboard/admin"
+                    aria-current={pathname.startsWith("/dashboard/admin") ? "page" : undefined}
+                    onClick={() => setIsMobileDrawerOpen(false)}
+                    className={cn(
+                      "flex items-center justify-between px-3.5 min-h-11 py-2.5 rounded-lg text-sm font-semibold transition-colors",
+                      pathname.startsWith("/dashboard/admin")
+                        ? "bg-blue-50 text-blue-900 border border-blue-200/60 font-bold"
+                        : "text-text-secondary hover:text-foreground hover:bg-bg-subtle"
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <ShieldCheck
+                        className={cn(
+                          "w-4 h-4",
+                          pathname.startsWith("/dashboard/admin")
+                            ? "text-blue-600"
+                            : "text-text-muted"
+                        )}
+                      />
+                      <span>Marketplace review</span>
+                    </div>
+                  </Link>
+                )}
 
                 {/* Mobile Drawer Language Switcher */}
                 <div className="pt-3 mt-3 border-t border-border-default flex items-center justify-between px-3">

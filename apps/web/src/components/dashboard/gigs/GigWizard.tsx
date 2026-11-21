@@ -212,14 +212,12 @@ export function GigWizard({ serviceId }: { serviceId?: string } = {}) {
       {/* Top Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[var(--border-subtle)]">
         <div className="flex items-center gap-3">
-          <Link href="/dashboard/gigs">
-            <button
-              type="button"
-              aria-label="Back to my services"
-              className="flex h-11 w-11 items-center justify-center text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--subtle)] rounded-xl transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </button>
+          <Link
+            href="/dashboard/gigs"
+            aria-label="Back to my services"
+            className="flex h-11 w-11 items-center justify-center text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--subtle)] rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2"
+          >
+            <ArrowLeft aria-hidden="true" className="h-4 w-4" />
           </Link>
           <div>
             <h1 className="text-xl font-semibold text-[var(--foreground)]">Create a New Service</h1>

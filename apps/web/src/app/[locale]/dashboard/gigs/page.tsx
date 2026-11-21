@@ -3,7 +3,6 @@
 import * as React from "react"
 import { Link } from "@/i18n/routing"
 import { Plus, Briefcase } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { GigsList } from "@/components/dashboard/gigs/GigsList"
 import type { DashboardGig, GigTier } from "@/data/dashboard/gigs"
 import { useApiResource } from "@/hooks/useApiResource"
@@ -80,11 +79,12 @@ export default function MyGigsPage() {
         </div>
 
         <div className="flex items-center gap-2.5">
-          <Link href="/dashboard/gigs/new">
-            <Button className="bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white font-medium text-sm shadow-sm h-11 px-4 rounded-xl flex items-center gap-1.5">
-              <Plus className="h-4 w-4" />
-              <span>Create New Gig</span>
-            </Button>
+          <Link
+            href="/dashboard/gigs/new"
+            className="inline-flex items-center justify-center gap-1.5 bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white font-medium text-sm shadow-sm h-11 px-4 rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2"
+          >
+            <Plus aria-hidden="true" className="h-4 w-4" />
+            <span>Create New Gig</span>
           </Link>
         </div>
       </div>

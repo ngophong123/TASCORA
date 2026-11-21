@@ -92,7 +92,14 @@ export default function DashboardOverviewPage() {
           Marketplace review
         </Link>
       )}
-      <ApiState loading={ordersLoading} error={ordersError} retry={reloadOrders} />
+      <ApiState
+        loading={ordersLoading}
+        error={ordersError || (isFreelancer ? services.error : "")}
+        retry={() => {
+          reloadOrders()
+          if (isFreelancer) services.reload()
+        }}
+      />
       {/* 1. Header Banner */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-border-default">
         <div>

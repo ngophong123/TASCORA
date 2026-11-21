@@ -86,3 +86,27 @@ None currently active on live routes (dead `/dashboard/wallet` CommandPalette ro
 - **Orphaned Components:** `32` total components with 0 callers (`7` legacy mock dashboard components including `ClientPaymentMethods.tsx`, `10` legacy landing sections, `15` unused UI/feedback primitives).
 - **Interactive / A11y Scan:** `11` nested `<Link><Button>` pairs on active routes/components (plus `8` in orphaned sections), `49` `<button>` elements missing explicit `type=`.
 - **Recommended FE.2 Scope:** Remediate all **P1** items (`FE-101` through `FE-109`) plus targeted **P2** (`FE-201`, `FE-202`, `FE-203`) and **P3** (`FE-301`, `FE-302`) items with regression tests, full lint/typecheck/unit/API/security/build verification, and `docs/FRONTEND_ARCHITECTURE.md`.
+
+---
+
+## 4. Phase FE.2 Remediation Tracking
+
+| Audit ID | Severity | Status (FE.2)                    | Verification Evidence                                                                                                      |
+| -------- | -------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `FE-101` | P1       | **FIXED (FE.2)**                 | `apps/web/src/app/[locale]/dashboard/orders/page.tsx`, `tests/unit/frontend-remediation.spec.ts`                           |
+| `FE-102` | P1       | **FIXED (FE.2)**                 | `apps/web/src/app/[locale]/dashboard/orders/page.tsx`, `tests/unit/frontend-remediation.spec.ts`                           |
+| `FE-103` | P1       | **FIXED (FE.2)**                 | `apps/web/src/lib/auth-redirect.ts`, `apps/web/src/app/[locale]/login/page.tsx`, `tests/unit/frontend-remediation.spec.ts` |
+| `FE-104` | P1       | **FIXED (FE.2)**                 | 7 orphaned mock dashboard components + 3 mock data files deleted; verified in `tests/unit/frontend-remediation.spec.ts`    |
+| `FE-105` | P1       | **FIXED (FE.2)**                 | `apps/web/src/app/[locale]/seller/dashboard/page.tsx`, `tests/unit/frontend-remediation.spec.ts`                           |
+| `FE-106` | P1       | **FIXED (FE.2)**                 | All 11 active `<Link><Button>` pairs replaced with styled `<Link>`; verified in `tests/unit/frontend-remediation.spec.ts`  |
+| `FE-107` | P1       | **FIXED (FE.2)**                 | Duplicate `handleDelete` pause button removed from `GigsList.tsx`; verified in `tests/unit/frontend-remediation.spec.ts`   |
+| `FE-108` | P1       | **FIXED (FE.2)**                 | `apps/web/src/app/[locale]/dashboard/admin/page.tsx`, `tests/unit/frontend-remediation.spec.ts`                            |
+| `FE-109` | P1       | **FIXED (FE.2)**                 | `apps/web/src/components/ui/button.tsx`, `tests/unit/frontend-remediation.spec.ts`                                         |
+| `FE-201` | P2       | **FIXED (FE.2)**                 | `apps/web/src/context/DashboardContext.tsx`, `tests/unit/frontend-remediation.spec.ts`                                     |
+| `FE-202` | P2       | **FIXED (FE.2)**                 | `DashboardSidebar.tsx`, `MobileDashboardNav.tsx`, `DashboardTopbar.tsx`, `tests/unit/frontend-remediation.spec.ts`         |
+| `FE-203` | P2       | **FIXED (FE.2)** (touched files) | `LiveEarnings.tsx`, `admin/page.tsx` (`ExploreClient.tsx` / `messages/page.tsx` remaining buttons deferred to follow-up)   |
+| `FE-204` | P2       | **DEFERRED**                     | Full `en`/`vi` translation of all 11 dashboard page bodies tracked as dedicated i18n follow-up                             |
+| `FE-205` | P2       | **DEFERRED**                     | 10 orphaned legacy landing sections tracked for dedicated marketing cleanup PR                                             |
+| `FE-301` | P3       | **FIXED (FE.2)**                 | `apps/web/messages/vi.json` (`freelancerProfile.directory`), `tests/unit/frontend-remediation.spec.ts`                     |
+| `FE-302` | P3       | **FIXED (FE.2)**                 | `apps/web/src/app/[locale]/dashboard/page.tsx` (`services.error` + retry wired to `ApiState`)                              |
+| `FE-303` | P3       | **DEFERRED**                     | Zeroed unused gig analytics fields remain hidden until backend gig analytics exist                                         |

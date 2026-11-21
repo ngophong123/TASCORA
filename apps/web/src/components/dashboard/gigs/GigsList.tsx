@@ -52,23 +52,6 @@ export function GigsList({ initialGigs }: GigsListProps) {
       })
     }
   }
-  const handleDelete = async (gigId: string, title: string) => {
-    void title
-    try {
-      await requestData(
-        `/api/v1/marketplace/services/${gigId}/status`,
-        jsonRequest("PUT", { status: "PAUSED" })
-      )
-      setGigs((prev) =>
-        prev.map((g) => (g.id === gigId ? { ...g, serverStatus: "PAUSED", status: "paused" } : g))
-      )
-    } catch (error) {
-      showToast({
-        title: error instanceof Error ? error.message : "Unable to pause service",
-        type: "error",
-      })
-    }
-  }
 
   const filteredGigs = gigs.filter((g) => {
     const matchesSearch =
@@ -131,14 +114,12 @@ export function GigsList({ initialGigs }: GigsListProps) {
             </div>
 
             {/* Create New Gig CTA */}
-            <Link href="/dashboard/gigs/new">
-              <Button
-                size="sm"
-                className="bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white font-medium text-sm shadow-sm h-11 px-3.5 rounded-xl flex items-center gap-1.5"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                <span>Create New Gig</span>
-              </Button>
+            <Link
+              href="/dashboard/gigs/new"
+              className="inline-flex items-center justify-center gap-1.5 bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white font-medium text-sm shadow-sm h-11 px-3.5 rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2"
+            >
+              <Plus aria-hidden="true" className="h-3.5 w-3.5" />
+              <span>Create New Gig</span>
             </Link>
           </div>
         </div>
@@ -182,10 +163,11 @@ export function GigsList({ initialGigs }: GigsListProps) {
               <p className="text-sm text-[var(--text-muted)]">
                 No services match your search or status filter.
               </p>
-              <Link href="/dashboard/gigs/new">
-                <Button variant="outline" size="sm" className="text-sm text-[var(--primary)]">
-                  Create a service
-                </Button>
+              <Link
+                href="/dashboard/gigs/new"
+                className="inline-flex items-center justify-center min-h-11 px-4 rounded-lg border border-border-default bg-transparent hover:bg-bg-subtle text-sm font-medium text-[var(--primary)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2"
+              >
+                Create a service
               </Link>
             </div>
           ) : (
@@ -240,19 +222,17 @@ export function GigsList({ initialGigs }: GigsListProps) {
 
                 {/* Right: Actions */}
                 <div className="flex items-center justify-end gap-1.5 shrink-0">
-                  <Link href={`/dashboard/gigs/${gig.id}/edit`}>
-                    <Button
-                      aria-label={`Edit ${gig.title}`}
-                      variant="outline"
-                      size="sm"
-                      className="h-11 px-3 text-sm text-[var(--text-secondary)] border-[var(--border)] hover:bg-[var(--subtle)] flex items-center gap-1"
-                    >
-                      <Edit3 className="h-3.5 w-3.5" />
-                      <span className="hidden sm:inline">Edit</span>
-                    </Button>
+                  <Link
+                    href={`/dashboard/gigs/${gig.id}/edit`}
+                    aria-label={`Edit ${gig.title}`}
+                    className="inline-flex items-center justify-center gap-1 h-11 px-3 rounded-lg text-sm font-medium text-[var(--text-secondary)] border border-[var(--border)] hover:bg-[var(--subtle)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2"
+                  >
+                    <Edit3 aria-hidden="true" className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Edit</span>
                   </Link>
 
                   <Button
+                    type="button"
                     onClick={() => void handleToggleStatus(gig.id)}
                     variant="outline"
                     size="sm"
@@ -266,38 +246,27 @@ export function GigsList({ initialGigs }: GigsListProps) {
                   >
                     {gig.status === "active" ? (
                       <>
-                        <PauseCircle className="h-3.5 w-3.5 text-amber-600" />
+                        <PauseCircle aria-hidden="true" className="h-3.5 w-3.5 text-amber-600" />
                         <span className="hidden sm:inline">Pause</span>
                       </>
                     ) : (
                       <>
-                        <PlayCircle className="h-3.5 w-3.5 text-emerald-600" />
+                        <PlayCircle aria-hidden="true" className="h-3.5 w-3.5 text-emerald-600" />
                         <span className="hidden sm:inline">Request review</span>
                       </>
                     )}
                   </Button>
 
-                  <Link href={`/services/${gig.slug}`} target="_blank" rel="noopener noreferrer">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-11 w-11 p-0 text-[var(--text-muted)] hover:text-[var(--foreground)]"
-                      aria-label={`View ${gig.title} in a new tab`}
-                      title="View Public Service Page"
-                    >
-                      <ArrowUpRight className="h-4 w-4" />
-                    </Button>
-                  </Link>
-
-                  <button
-                    type="button"
-                    aria-label={`Pause service ${gig.title}`}
-                    onClick={() => void handleDelete(gig.id, gig.title)}
-                    className="flex h-11 w-11 items-center justify-center text-[var(--text-muted)] hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors"
-                    title="Pause service"
+                  <Link
+                    href={`/services/${gig.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`View ${gig.title} in a new tab`}
+                    title="View Public Service Page"
+                    className="inline-flex items-center justify-center h-11 w-11 rounded-lg text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-primary-subtle transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2"
                   >
-                    <PauseCircle aria-hidden="true" className="h-4 w-4" />
-                  </button>
+                    <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
+                  </Link>
                 </div>
               </div>
             ))

@@ -21,8 +21,6 @@ export default function SellerDashboard() {
     let active = true
     async function loadMetrics() {
       try {
-        if (!localStorage.getItem("user"))
-          throw new Error("Sign in with a verified seller account to load your metrics.")
         const response = await apiFetch("/api/v1/analytics/seller/dashboard")
         if (!response.ok)
           throw new Error("Sign in with a verified seller account to load your metrics.")

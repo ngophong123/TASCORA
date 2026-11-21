@@ -7,16 +7,14 @@ import { useSearchParams } from "next/navigation"
 import { Eye, EyeOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AuthPanel, authInput, authLabel, authToggle } from "@/components/auth/AuthPanel"
-import { useTranslations } from "next-intl"
+import { resolvePostLoginRedirect } from "@/lib/auth-redirect"
+import { useLocale, useTranslations } from "next-intl"
 
 function LoginForm() {
   const t = useTranslations("auth")
+  const locale = useLocale()
   const searchParams = useSearchParams()
-  const requestedRedirect = searchParams.get("redirect") || "/dashboard"
-  const redirect =
-    /^\/(?![\/\\])/.test(requestedRedirect) && !/[\\\x00-\x1f]/.test(requestedRedirect)
-      ? requestedRedirect
-      : "/dashboard"
+  const requestedRedirect = searchParams.get("redirect")
 
   const [email, setEmail] = React.useState("")
   const [password, setPassword] = React.useState("")
@@ -48,11 +46,12 @@ function LoginForm() {
       localStorage.setItem("token", data.data.accessToken)
       localStorage.setItem("user", JSON.stringify(data.data.user))
 
-      // Redirect
-      window.location.href =
-        redirect === "/dashboard" && data.data.user.role === "SELLER"
-          ? "/seller/dashboard"
-          : redirect
+      // Redirect preserving active locale and open-redirect protection
+      window.location.href = resolvePostLoginRedirect(
+        requestedRedirect,
+        data.data.user.role,
+        locale
+      )
     } catch (err: unknown) {
       setError(
         err instanceof Error ? err.message : "Failed to sign in. Please verify your credentials."

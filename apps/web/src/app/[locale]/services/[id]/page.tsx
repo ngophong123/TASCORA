@@ -636,14 +636,12 @@ function ServiceDetailContent({ record }: { record: Service }) {
                 <ArrowRight className="h-4 w-4" />
               </Button>
 
-              <Link href={`/dashboard/messages?seller=${service.seller.id}`} className="block">
-                <Button
-                  variant="outline"
-                  className="w-full rounded-xl border-border bg-[var(--surface)] hover:bg-[var(--subtle)] text-text-primary text-sm gap-2"
-                >
-                  <MessageSquare className="h-3.5 w-3.5 text-[var(--primary)]" />
-                  <span>{t("contactSpecialist")}</span>
-                </Button>
+              <Link
+                href={`/dashboard/messages?seller=${service.seller.id}`}
+                className="w-full inline-flex items-center justify-center min-h-11 px-4 rounded-xl border border-border bg-[var(--surface)] hover:bg-[var(--subtle)] text-text-primary text-sm font-medium gap-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2"
+              >
+                <MessageSquare aria-hidden="true" className="h-3.5 w-3.5 text-[var(--primary)]" />
+                <span>{t("contactSpecialist")}</span>
               </Link>
             </div>
           </div>
@@ -669,15 +667,12 @@ function ServiceDetailContent({ record }: { record: Service }) {
         </div>
 
         <div className="flex items-center gap-2">
-          <Link href={`/dashboard/messages?seller=${service.seller.id}`}>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-11 w-11 p-0 rounded-xl border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 shrink-0"
-              aria-label="Contact Specialist"
-            >
-              <MessageSquare className="h-4 w-4" />
-            </Button>
+          <Link
+            href={`/dashboard/messages?seller=${service.seller.id}`}
+            aria-label="Contact Specialist"
+            className="inline-flex items-center justify-center h-11 w-11 p-0 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-bg-subtle shrink-0 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2"
+          >
+            <MessageSquare aria-hidden="true" className="h-4 w-4" />
           </Link>
           <Button
             onClick={handleStartOrder}

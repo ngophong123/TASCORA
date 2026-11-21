@@ -51,7 +51,7 @@ export function DashboardSidebar() {
   const reduced = useReducedMotion()
   const pathname = usePathname()
   const t = useTranslations("dashboard")
-  const { role, sidebarCollapsed, toggleSidebar } = useDashboard()
+  const { role, account, sidebarCollapsed, toggleSidebar } = useDashboard()
 
   const navItems = role === "CLIENT" ? CLIENT_NAV_ITEMS : FREELANCER_NAV_ITEMS
 
@@ -143,6 +143,30 @@ export function DashboardSidebar() {
             </Link>
           )
         })}
+        {account?.role === "ADMIN" && (
+          <Link
+            href="/dashboard/admin"
+            aria-current={pathname.startsWith("/dashboard/admin") ? "page" : undefined}
+            aria-label={sidebarCollapsed ? "Marketplace review" : undefined}
+            title={sidebarCollapsed ? "Marketplace review" : undefined}
+            className={cn(
+              "relative flex items-center gap-3 px-3 min-h-11 py-2.5 rounded-lg text-sm font-semibold transition-all group",
+              pathname.startsWith("/dashboard/admin")
+                ? "text-foreground font-bold bg-primary/10 border border-primary/25 rounded-xl"
+                : "text-text-secondary hover:text-foreground dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/60"
+            )}
+          >
+            <ShieldCheck
+              className={cn(
+                "w-4 h-4 shrink-0 transition-colors",
+                pathname.startsWith("/dashboard/admin")
+                  ? "text-primary"
+                  : "text-slate-400 group-hover:text-primary"
+              )}
+            />
+            {!sidebarCollapsed && <span className="truncate flex-1">Marketplace review</span>}
+          </Link>
+        )}
       </nav>
 
       {/* 3. Bottom Card (Role-Specific, hidden if collapsed) */}

@@ -246,7 +246,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
       reloadOrders()
       showToast({
         title: "Order updated",
-        message: "The server saved the order status. Financial settlement is unavailable.",
+        message: "The server saved the order status. External seller payouts remain unavailable.",
         type: "success",
       })
     },
