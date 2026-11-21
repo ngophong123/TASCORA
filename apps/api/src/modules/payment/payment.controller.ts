@@ -1,10 +1,20 @@
 import { Response, NextFunction, Request } from 'express';
 import { AuthRequest } from '../../middlewares/requireAuth';
 import { PaymentService } from './payment.service';
+import { StripeConnectService } from '../financial/stripe-connect.service';
 import Stripe from 'stripe';
 import { isProduction } from '../../lib/config';
 import { HttpError } from '../../lib/errors';
 import { assertPaymentsEnabled } from '../../lib/payment-provider';
+
+const CONNECT_WEBHOOK_TYPES = new Set([
+  'account.updated',
+  'charge.dispute.created',
+  'charge.dispute.updated',
+  'charge.dispute.closed',
+  'payout.paid',
+  'payout.failed',
+]);
 
 export const createIntent = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try { const result = await PaymentService.createPaymentIntent(req.user!.userId, req.body.orderId); res.json({ success: true, data: result }); }
@@ -26,7 +36,14 @@ export const handleWebhook = async (req: Request, res: Response, _next: NextFunc
     const expectsLive = /^(sk|rk)_live_/.test(process.env.STRIPE_SECRET_KEY || '');
     if (event.livemode !== expectsLive) throw new Error('Stripe mode mismatch');
   } catch { res.status(400).json({ success: false, error: 'Invalid webhook signature or payload' }); return; }
-  try { await PaymentService.handleWebhookEvent(event); res.json({ received: true }); }
+  try {
+    if (CONNECT_WEBHOOK_TYPES.has(event.type)) {
+      await StripeConnectService.handleConnectWebhookEvent(event);
+    } else {
+      await PaymentService.handleWebhookEvent(event);
+    }
+    res.json({ received: true });
+  }
   catch (error) {
     const status = error instanceof HttpError && error.status === 400 ? 400 : 500;
     res.status(status).json({ success: false, error: isProduction || !(error instanceof HttpError) ? 'Webhook processing failed' : error.message });
