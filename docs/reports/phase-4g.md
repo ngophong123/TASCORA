@@ -8,9 +8,14 @@
 
 ## 1. Local-Only Load Testing Script (`tests/load/k6-tascora-local.js`)
 
-- **Scenarios:** Public catalog search & recommendations (`ramping-vus` 1 -> 10 -> 25 -> 0) and `/health/live` + unauthenticated `/api/v1/orders` rejection boundary (`constant-vus: 5`).
+- **Scenarios:**
+  1. `catalog_and_detail_browse`: Marketplace catalog search (`/api/v1/services`), recommendations, and service detail (`/api/v1/services/:id`) (`ramping-vus` 1 -> 10 -> 25 -> 0).
+  2. `auth_analytics_payment_boundaries`: Login boundary (`/api/v1/auth/login`), seller analytics (`/api/v1/analytics/seller/dashboard`), and payment intent boundary (`/api/v1/payments/create-intent`).
+  3. `order_concurrency_idempotency`: 10 concurrent VUs sharing per-iteration idempotency keys against `POST /api/v1/orders`.
+  4. `realtime_and_rate_limit`: `/health/live`, `/health` (PostgreSQL + Redis readiness), and Engine.IO v4 Socket.IO polling handshake (`/socket.io/?EIO=4&transport=polling`).
+- **Metrics & Thresholds:** Configures `p(50)`, `p(95)`, `p(99)`, throughput (`http_reqs`), error rate (`http_req_failed`), rate-limit `429` tracking, and structured JSON `handleSummary` output.
 - **Safety Guard:** Explicitly throws on startup if `LOAD_TEST_BASE_URL` does not start with `http://127.0.0.1` or `http://localhost` (never targets production, Stripe, Mailtrap, or third-party hosts).
-- **Local Execution Status:** `NOT RUN LOCALLY` (`k6` CLI is not installed in the local dev environment).
+- **Local Execution Status:** `NOT RUN LOCALLY` (`k6` CLI is not installed in the local dev environment — zero fabricated latency numbers).
 - **Run Command (after starting local API & installing k6):**
   ```bash
   LOAD_TEST_BASE_URL="http://127.0.0.1:4000" k6 run tests/load/k6-tascora-local.js
@@ -47,5 +52,5 @@ Executed against the repository lockfile (`1,256` total dependencies):
 
 ## 4. Disposable Local Backup & Restore Script (`scripts/verify-local-backup-restore.ps1`)
 
-- Launches an ephemeral local `postgres:15-alpine` container (`tascora_backup_src`), deploys all `6` Prisma migrations, runs `pg_dump`, restores into `tascora_backup_restored`, verifies matching `public` schema table counts, and cleans up the container and temp dump file.
-- **Local Execution Status:** `BLOCKED` (Docker Desktop Linux engine daemon is not running in this environment; never targets hosted staging/production databases).
+- Launches an ephemeral local `postgres:15-alpine` container (`tascora_backup_src`), deploys all `6` Prisma migrations, seeds relational + financial ledger fixture rows (`users`, `seller_profiles`, `categories`, `services`, `service_packages`, `orders`, `transactions`, `escrows`, `financial_entries`), runs timed `pg_dump`, restores with timing into `tascora_backup_restored`, verifies matching `public` schema tables, `_prisma_migrations` count, zero invalid foreign keys, exact restored record counts (`2,1,1,2`), and ledger conservation (`SUM(pendingDelta + availableDelta + reservedDelta + paidDelta + feeDelta) == SUM(orders.amount)`), then tears down the container and temp dump file.
+- **Local Execution Status:** `BLOCKED` (Docker Desktop Linux engine daemon is not running locally; start Docker Desktop to execute. Never targets hosted staging/production databases).
