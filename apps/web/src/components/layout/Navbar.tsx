@@ -73,13 +73,15 @@ export function Navbar() {
     return () => wide.removeEventListener("change", resize)
   }, [])
 
+  const [logoutError, setLogoutError] = React.useState("")
   const handleLogout = async () => {
+    setLogoutError("")
     try {
       await logoutSession()
       setUser(null)
       window.location.replace("/")
     } catch {
-      window.alert("Unable to sign out. Please retry.")
+      setLogoutError("Unable to sign out. Please retry.")
     }
   }
   const handleNavAnchorClick = (event: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
@@ -110,6 +112,21 @@ export function Navbar() {
   ]
   return (
     <header ref={navRef} className="sticky top-0 z-50 border-b border-border-default bg-bg-base">
+      {logoutError && (
+        <div
+          role="alert"
+          className="border-b border-status-danger/30 bg-status-danger/10 px-4 py-2 text-center text-sm text-status-danger"
+        >
+          <span>{logoutError}</span>{" "}
+          <button
+            type="button"
+            onClick={() => setLogoutError("")}
+            className="ml-2 underline font-medium"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
       <div className="premium-container flex h-20 items-center justify-between gap-4">
         <Link
           href="/"
