@@ -5,9 +5,9 @@
 
 **A full-stack freelance services marketplace monorepo built with Next.js 16, Express, TypeScript, Prisma, PostgreSQL, Redis, Socket.IO, and ClamAV.**
 
-TASCORA implements service discovery, tiered package ordering, an append-only escrow ledger with Stripe payment-intent lifecycle hooks, real-time buyer-seller messaging, envelope-encrypted seller KYC workflows, and fail-closed malware scanning — verified across unit, API, security, Playwright E2E, disposable PostgreSQL, and live ClamAV CI suites.
+TASCORA implements service discovery, tiered package ordering, an append-only escrow ledger with Stripe test-mode payment & Connect lifecycle hooks, real-time buyer-seller messaging, envelope-encrypted seller KYC workflows, fail-closed malware scanning, distributed scaling primitives, ledger-backed KPI analytics, and AI hybrid semantic search with FinOps telemetry — verified across unit, API, security, Playwright E2E, disposable PostgreSQL, and live ClamAV CI suites.
 
-> **Demo & Payment Safety Disclaimer:** There is **no verified public staging or production deployment yet**. Payment integration runs strictly in **Stripe Test Mode** or **Disabled Mode** (`PAYMENTS_PROVIDER=disabled`). **No real money is processed, and external seller payouts remain intentionally disabled** (`unavailablePayoutProvider`) until a dedicated payout provider adapter and compliance workflow are verified.
+> **Demo & Payment Safety Disclaimer:** This is a portfolio demonstration project. Stripe test mode only. Uses sample/seed data. Not intended for real financial transactions. There is **no verified public staging or production deployment yet**. Payment integration runs strictly in **Stripe Test Mode** or **Disabled Mode** (`PAYMENTS_PROVIDER=disabled`), and **external seller payouts remain intentionally disabled** (`unavailablePayoutProvider`) by default.
 
 ---
 
@@ -48,6 +48,12 @@ TASCORA implements service discovery, tiered package ordering, an append-only es
 - **Solution:** CORS and Socket.IO handshakes enforce strict origin allowlists (with optional verified Vercel preview lookup with 2-second abort timeouts), derive message sender identity solely from the verified JWT session, check conversation membership before room joins/reads, and disconnect sockets immediately when a session is revoked or reaches absolute expiry.
 - **Evidence:** [apps/api/src/lib/origin-policy.ts](apps/api/src/lib/origin-policy.ts), [apps/api/src/lib/socket.ts](apps/api/src/lib/socket.ts), [tests/security/preview-origin-policy.spec.ts](tests/security/preview-origin-policy.spec.ts), [tests/security/socket-wire.spec.ts](tests/security/socket-wire.spec.ts).
 
+### 5. Automated Documentation-to-Code Truthfulness Gate
+
+- **Problem:** Portfolio documentation frequently drifts from real source code, citing removed endpoints, stale module counts, or overstated claims.
+- **Solution:** `tests/unit/docs-truthfulness.spec.ts` runs in every CI pipeline to verify exact env var names (`PAYMENTS_PROVIDER`), real health probe routes (`/health` and `/health/live`), actual backend module directory count (`21 domain modules`), installed UI primitives (`@base-ui/react`), zero broken relative Markdown links, and zero buzzwords in public portfolio documentation.
+- **Evidence:** [tests/unit/docs-truthfulness.spec.ts](tests/unit/docs-truthfulness.spec.ts), [docs/TASCORA_FINAL_ENGINEERING_REVIEW.md](docs/TASCORA_FINAL_ENGINEERING_REVIEW.md).
+
 ---
 
 ## System Architecture
@@ -59,11 +65,11 @@ flowchart LR
     Web -->|SSR Catalog Fetch| API
 
     API -->|Prisma ORM| PG[("PostgreSQL 15\nOrders, Ledger, KYC, Users")]
-    API -->|ioredis| Redis[("Redis 7\nCache & Health")]
+    API -->|ioredis| Redis[("Redis 7\nCache, Locks, Queues & Health")]
     API -->|S3 SDK| S3[("S3 / R2 Object Storage\nPublic Media & Private KYC")]
     API -->|TCP zINSTREAM :3310| ClamAV["ClamAV (clamd)\nFail-Closed Malware Scanner"]
     API -->|Test / Disabled Mode| Stripe["Stripe API & Signed Webhooks"]
-    API -->|Opt-In Single Owner| Workers["Scheduled Workers\ncron.ts / kyc-scan / reputation"]
+    API -->|Opt-In Single Owner| Workers["Scheduled & Queue Workers\ncron.ts / kyc-scan / reputation"]
 ```
 
 ---
@@ -145,27 +151,29 @@ NEXT_PUBLIC_API_URL=https://api.example.com NEXT_PUBLIC_WEB_URL=https://web.exam
 ## Documentation Index
 
 - [System Architecture](docs/ARCHITECTURE.md)
+- [Frontend Architecture](docs/FRONTEND_ARCHITECTURE.md)
 - [Financial & Escrow Architecture](docs/FINANCIAL_ARCHITECTURE.md)
 - [Implementation & Verification Status Matrix](docs/IMPLEMENTATION_STATUS.md)
 - [Known Limitations](docs/KNOWN_LIMITATIONS.md)
 - [Staging Runbook](docs/STAGING_RUNBOOK.md) & [Staging Readiness Report](docs/STAGING_READINESS_REPORT.md)
 - [Architecture Decision Records (ADRs)](docs/adr/)
 - [Employer 5-Minute Review Preview](docs/EMPLOYER_REVIEW_PREVIEW.md)
+- [Final Master Engineering Review](docs/TASCORA_FINAL_ENGINEERING_REVIEW.md)
 
 ---
 
 ## Known Limitations (Summary)
 
-- **External Seller Payouts Disabled:** `PayoutService.process` defaults to `unavailablePayoutProvider` (`503`) until an audited payout rail and reconciliation flow are implemented.
-- **No Hosted Staging Verification Yet:** Staging configuration and runbooks are tested locally and in CI, but live cloud deployment (Render, Vercel, managed PostgreSQL/Redis/S3/ClamAV) remains a manual owner step.
-- **Single-Replica Real-Time & Rate Limiting:** Socket.IO and `express-rate-limit` currently use in-memory state; horizontal multi-replica scaling requires Redis adapters (planned in a later milestone).
-- **Monorepo Naming & Empty Packages:** Root package is named `taskora` (API `@taskora/api`, Web `web`) while the product brand is `TASCORA`; `packages/ui`, `packages/types`, and `packages/config` are currently stubs.
+- **External Seller Payouts Disabled:** `PayoutService.process` defaults to `unavailablePayoutProvider` (`503`) by design; live real-money payouts are never enabled.
+- **No Hosted Staging Verification Yet:** Live cloud deployment (Render, Vercel, managed PostgreSQL/Redis/S3/Mailtrap/ClamAV) remains `BLOCKED` pending manual owner provisioning.
+- **Dependency Advisories Tracked:** `pnpm audit` advisories (including `next@16.3.5`) are triaged for a dedicated upgrade PR rather than bundled into unrelated feature work.
+- **Monorepo Naming & Empty Packages:** Root package is named `taskora` (API `@taskora/api`, Web `web`) while the product brand is `TASCORA`; `packages/ui`, `packages/types`, and `packages/config` remain stubs.
 
 See [docs/KNOWN_LIMITATIONS.md](docs/KNOWN_LIMITATIONS.md) for the complete list.
 
 ---
 
-## Roadmap
+## Roadmap Delivery Summary
 
-- **Batch 1 (Current):** Baseline audit, staging readiness guardrails, GitHub portfolio documentation, frontend audit & remediation.
-- **Planned Next:** Hosted staging verification, distributed Redis adapters for Socket.IO & rate limiting, dedicated background worker process, observability/alerting, and further feature hardening.
+- **Batch 1 (Merged into `main`, PRs `#7`–`#12`):** Baseline audit, staging readiness guardrails, GitHub portfolio foundation, frontend audit & remediation, and automated docs-truthfulness regression suite.
+- **Batch 2 (Delivered in PRs `#13`–`#20`, awaiting owner review & merge):** Hosted staging acceptance harness & honest blocker ledger (Phase 4A.8), marketplace E2E workflow map & IDOR suite (Phase 4B), Stripe Connect test-mode & read-only reconciliation (Phase 4C), distributed Redis Socket.IO/rate-limit/BullMQ/cron lock primitives (Phase 4D), ledger-backed KPI analytics (Phase 4E), hybrid semantic search & AI FinOps evaluation (Phase 4F), lightweight readiness tooling/audit/secret scan (Phase 4G), and Final Engineering Review (Phase 5B).
