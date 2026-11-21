@@ -19,7 +19,7 @@ This document lists verified engineering, operational, and product limitations o
 
 - **Missing Gig Analytics Metrics:** `apps/web/src/app/[locale]/dashboard/gigs/page.tsx` initializes `revenue`, `impressions`, `clicks`, and `conversionRate` to `0` because backend gig-level impression/click analytics aggregation is not implemented.
 - **Legacy Orphaned Dashboard Components:** Several static/mock dashboard components (including `ClientPaymentMethods.tsx`, `BalanceCards.tsx`, `RevenueBarChart.tsx`, `TransactionsTable.tsx`, `ProfileStrengthCard.tsx`, `RecommendedSpecialists.tsx`, `RevenueAreaChart.tsx`) remain in the repository with zero active route callers; full triage is scheduled in Phase FE.1 / FE.2.
-- **Authenticated Dashboard Screenshots Pending:** Repository visual assets currently include verified Marketplace Home, Service Detail, and Mobile Catalog screenshots. Authenticated Buyer/Seller Dashboard screenshots will be captured once staging or local seeded E2E capture is completed.
+- **Product UI Screenshots Pending:** Public `README.md` intentionally omits product screenshots (no placeholder, mockup, or fabricated images are included) until verified hosted staging captures are completed.
 
 ## 4. Monorepo & Repository Hygiene
 

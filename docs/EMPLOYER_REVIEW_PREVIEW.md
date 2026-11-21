@@ -4,7 +4,7 @@ This document simulates how a hiring manager or staff engineer inspects the TASC
 
 ## 0:00 – 0:30 — First Glance (`README.md`)
 
-- **What the reviewer sees:** Clear one-line description of what TASCORA is, live GitHub Actions badges for both `Quality & Testing Toolchain` and `Infrastructure Acceptance (PostgreSQL & ClamAV)`, real rendered desktop/mobile screenshots, and an immediate upfront disclaimer explaining that payments are Test/Disabled mode only and external payouts are intentionally disabled.
+- **What the reviewer sees:** Clear one-line description of what TASCORA is, live GitHub Actions badges for both `Quality & Testing Toolchain` and `Infrastructure Acceptance (PostgreSQL & ClamAV)`, and an immediate upfront disclaimer explaining that payments are Test/Disabled mode only and external payouts are intentionally disabled.
 - **Signal:** High credibility — no buzzwords ("Production-ready", "Enterprise-grade"), no fake live links, and clear separation between implemented/CI-verified work vs. unprovisioned cloud staging.
 
 ## 0:30 – 1:30 — Architecture & Engineering Depth (`PROBLEM -> SOLUTION -> EVIDENCE`)
@@ -25,6 +25,6 @@ This document simulates how a hiring manager or staff engineer inspects the TASC
 - **What the reviewer inspects:** `docs/KNOWN_LIMITATIONS.md`, `docs/adr/`, `docs/STAGING_RUNBOOK.md`, and recent PR/commit discipline.
 - **Honest Critique (Remaining Gaps a Senior Reviewer Will Notice):**
   1. **No Live Public Staging URL Yet:** Reviewers cannot click a live hosted app yet until the owner provisions Render/Vercel/managed PostgreSQL/Redis/S3 using `docs/internal/STAGING_MANUAL_STEPS.md`.
-  2. **Missing Authenticated Dashboard Screenshots:** README currently showcases public Marketplace Home, Service Detail, and Mobile Catalog screenshots; capturing Buyer/Seller Dashboard screenshots after staging setup will make the product walkthrough more complete.
+  2. **No Product UI Screenshots Included Yet:** Public `README.md` intentionally omits UI screenshots rather than using placeholders or unverified captures; verified product visuals can be added later after hosted staging acceptance.
   3. **Single-Replica Real-Time & Rate Limit State:** Socket.IO and `express-rate-limit` use in-memory state; horizontal scaling requires Redis adapters (tracked for a later milestone).
   4. **Monorepo Naming Drift (`taskora` vs `TASCORA`) & Stub Packages:** Minor workspace cleanup items documented transparently in `docs/KNOWN_LIMITATIONS.md`.
