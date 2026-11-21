@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import { HttpError } from '../../lib/errors';
 import { getIO } from '../../lib/socket';
 import { prisma } from '../../lib/prisma';
 
@@ -32,7 +33,7 @@ export class SessionService {
     });
 
     if (!session || session.userId !== userId) {
-      throw new Error('Session not found or unauthorized');
+      throw new HttpError(404, 'Session not found');
     }
 
     const result = await prisma.userSession.update({

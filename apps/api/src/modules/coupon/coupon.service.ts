@@ -1,16 +1,37 @@
 import { prisma } from '../../lib/prisma';
+import { HttpError } from '../../lib/errors';
 
 export class CouponService {
-  static async createCoupon(sellerUserId: string, data: { code: string; discountPercent: number; maxUses: number; expiresAt?: string }) {
+  static async createCoupon(
+    sellerUserId: string,
+    data: { code: string; discountPercent: number; maxUses: number; expiresAt?: string }
+  ) {
     const seller = await prisma.sellerProfile.findUnique({
-      where: { userId: sellerUserId }
+      where: { userId: sellerUserId },
+      select: { id: true, status: true },
     });
 
     if (!seller) {
-      throw new Error('Seller profile not found');
+      throw new HttpError(404, 'Seller profile not found');
+    }
+    if (seller.status !== 'APPROVED') {
+      throw new HttpError(403, 'Approved seller profile required to create coupons');
+    }
+    if (!Number.isFinite(data.discountPercent) || data.discountPercent < 1 || data.discountPercent > 90) {
+      throw new HttpError(400, 'Discount percent must be between 1 and 90');
+    }
+    if (!Number.isInteger(data.maxUses) || data.maxUses < 1 || data.maxUses > 10000) {
+      throw new HttpError(400, 'maxUses must be an integer between 1 and 10000');
     }
 
-    // code must be uppercase
+    let expiresAtDate: Date | null = null;
+    if (data.expiresAt) {
+      expiresAtDate = new Date(data.expiresAt);
+      if (Number.isNaN(expiresAtDate.getTime()) || expiresAtDate.getTime() <= Date.now()) {
+        throw new HttpError(400, 'expiresAt must be a valid future timestamp');
+      }
+    }
+
     const code = data.code.toUpperCase().trim();
 
     return prisma.coupon.create({
@@ -19,69 +40,65 @@ export class CouponService {
         sellerId: seller.id,
         discountPercent: data.discountPercent,
         maxUses: data.maxUses,
-        expiresAt: data.expiresAt ? new Date(data.expiresAt) : null
-      }
+        expiresAt: expiresAtDate,
+      },
     });
   }
 
   static async getSellerCoupons(sellerUserId: string) {
     const seller = await prisma.sellerProfile.findUnique({
-      where: { userId: sellerUserId }
+      where: { userId: sellerUserId },
+      select: { id: true },
     });
 
     if (!seller) {
-      throw new Error('Seller profile not found');
+      throw new HttpError(404, 'Seller profile not found');
     }
 
     return prisma.coupon.findMany({
       where: { sellerId: seller.id },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
   }
 
   static async validateCoupon(code: string, serviceId: string) {
-    code = code.toUpperCase().trim();
+    const normalizedCode = code.toUpperCase().trim();
 
-    // 1. Find service to get sellerId and price
     const service = await prisma.service.findUnique({
       where: { id: serviceId },
-      include: { packages: true }
+      select: { id: true, sellerProfileId: true, status: true },
     });
 
-    if (!service) {
-      throw new Error('Service not found');
+    if (!service || service.status !== 'PUBLISHED') {
+      throw new HttpError(400, 'Coupon is invalid or unavailable');
     }
 
-    // 2. Find coupon by code and sellerId
     const coupon = await prisma.coupon.findUnique({
       where: {
         sellerId_code: {
           sellerId: service.sellerProfileId,
-          code
-        }
-      }
+          code: normalizedCode,
+        },
+      },
     });
 
     if (!coupon) {
-      throw new Error('Invalid coupon code');
+      throw new HttpError(400, 'Coupon is invalid or unavailable');
     }
 
-    // 3. Check expiration
     if (coupon.expiresAt && new Date() > coupon.expiresAt) {
-      throw new Error('Coupon has expired');
+      throw new HttpError(400, 'Coupon has expired');
     }
 
-    // 4. Check usage limits
     if (coupon.usedCount >= coupon.maxUses) {
-      throw new Error('Coupon usage limit reached');
+      throw new HttpError(400, 'Coupon usage limit reached');
     }
 
-    // Return the discount percentage
     return {
       isValid: true,
       couponId: coupon.id,
       code: coupon.code,
-      discountPercent: coupon.discountPercent
+      discountPercent: coupon.discountPercent,
     };
   }
 }
