@@ -19,7 +19,7 @@ TASCORA/
 │   │       ├── server.ts    # Express app assembly, raw Stripe webhook mount, middlewares, routes
 │   │       ├── lib/         # Config, Prisma, Redis, Socket.IO, KYC crypto/keys, health, origin policy
 │   │       ├── middlewares/ # JWT cookie auth (requireAuth), Zod request validation (validate)
-│   │       ├── modules/     # 20 domain modules (route -> controller -> service -> Prisma)
+│   │       ├── modules/     # 21 domain modules (route -> controller -> service -> Prisma)
 │   │       └── workers/     # cron.ts, kyc-scan.worker.ts, kyc-hmac-migrate.ts, reputation.worker.ts
 │   └── web/                 # Next.js 16 App Router frontend (en/vi localization via next-intl)
 ├── prisma/                  # PostgreSQL schema and ordered SQL migrations
@@ -41,7 +41,7 @@ Incoming HTTP requests traverse middleware in strict order:
 3. **Trust Proxy (`apps/api/src/lib/trust-proxy.ts`)** — Explicit proxy hop configuration to avoid spoofed `X-Forwarded-For` client IPs.
 4. **Origin & CORS Policy (`apps/api/src/lib/origin-policy.ts`)** — `Vary: Origin`, strict allowlist checks, credentialed cookie support, and optional Vercel preview origin verification with a 2-second abort timeout.
 5. **JSON & URL-Encoded Body Parsers** — Standard API payload parsing.
-6. **Health & Readiness Probes (`/health`, `/ready`)** — Mounted **before** rate limiting so platform probes do not consume IP rate-limit buckets. `/ready` verifies live PostgreSQL (`SELECT 1`) and Redis (`PING`).
+6. **Health & Readiness Probes (`/health/live`, `/health`)** — Mounted **before** rate limiting so platform probes do not consume IP rate-limit buckets. `/health/live` confirms process liveness; `/health` verifies live PostgreSQL (`SELECT 1`) and Redis (`PING`) within a 4-second deadline and reports payment capability.
 7. **Rate Limiting (`express-rate-limit`)** — Global IP limit (`100` req / `15m`) plus stricter `/api/v1/auth` limit (`30` req / `15m`). Currently in-memory (single-replica scope).
 8. **Domain Routers (`/api/v1/*`)** — Authentication (`requireAuth`), Zod validation (`validate`), thin controllers, and transactional domain services.
 9. **Centralized Error Handler** — Logs structured error metadata via Pino without leaking secrets or stack traces in production (`5xx` masked to generic message when `NODE_ENV=production`).
@@ -77,11 +77,11 @@ Incoming HTTP requests traverse middleware in strict order:
 
 ## 6. External Infrastructure Boundaries
 
-| Dependency           | Usage                                                               | Failure Behavior                                                                                                                  |
-| -------------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| **PostgreSQL 15**    | Primary transactional datastore, advisory locks, ledger, migrations | `/ready` fails; API transactions fail closed                                                                                      |
-| **Redis 7**          | Health probe & caching primitives                                   | `/ready` fails when unreachable                                                                                                   |
-| **S3 / R2 Storage**  | Public service/avatar media & private KYC evidence objects          | Required in staging/production config validation; private KYC objects are isolated by prefix & purpose                            |
-| **ClamAV (`clamd`)** | TCP `zINSTREAM` malware scanning for KYC uploads                    | Fail-closed: unconfigured keeps `QUARANTINED`, unreachable/timeout/indeterminate marks `SCAN_FAILED`                              |
-| **Stripe**           | PaymentIntents & webhooks (`PAYMENT_PROVIDER=stripe` or `disabled`) | Live keys blocked in staging/test; `disabled` mode keeps checkout/payouts fail-closed (`503`) without breaking non-payment routes |
-| **SMTP**             | Verification & password reset emails                                | Sandbox SMTP required in staging; no real production mail sent during tests                                                       |
+| Dependency           | Usage                                                                | Failure Behavior                                                                                                                  |
+| -------------------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| **PostgreSQL 15**    | Primary transactional datastore, advisory locks, ledger, migrations  | `/health` returns `503`; API transactions fail closed                                                                             |
+| **Redis 7**          | Health probe & caching primitives                                    | `/health` returns `503` when unreachable                                                                                          |
+| **S3 / R2 Storage**  | Public service/avatar media & private KYC evidence objects           | Required in staging/production config validation; private KYC objects are isolated by prefix & purpose                            |
+| **ClamAV (`clamd`)** | TCP `zINSTREAM` malware scanning for KYC uploads                     | Fail-closed: unconfigured keeps `QUARANTINED`, unreachable/timeout/indeterminate marks `SCAN_FAILED`                              |
+| **Stripe**           | PaymentIntents & webhooks (`PAYMENTS_PROVIDER=stripe` or `disabled`) | Live keys blocked in staging/test; `disabled` mode keeps checkout/payouts fail-closed (`503`) without breaking non-payment routes |
+| **SMTP**             | Verification & password reset emails                                 | Sandbox SMTP required in staging; no real production mail sent during tests                                                       |

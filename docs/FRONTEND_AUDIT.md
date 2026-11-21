@@ -43,7 +43,7 @@
 
 ### P0 — Critical Functional / Security / Truthfulness Blockers
 
-None currently active on live routes (dead `/dashboard/wallet` CommandPalette route and fake `WithdrawDialog.tsx` were already remediated in Phase 0 / PR #7).
+None currently active on live routes (dead `/dashboard/gigs/create` CommandPalette route and fake `WithdrawDialog.tsx` were already remediated in Phase 0 / PR #7).
 
 ### P1 — High-Priority Functional, Truthfulness, Routing & Accessibility Defects
 

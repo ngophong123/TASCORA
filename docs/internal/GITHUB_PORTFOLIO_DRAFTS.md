@@ -9,7 +9,7 @@ This file contains ready-to-review drafts for GitHub repository settings, profil
 - **Suggested Description (<= 160 chars):**
   `Full-stack freelance marketplace (Next.js 16, Express, TypeScript, Prisma, PostgreSQL, Redis, Socket.IO, ClamAV) with append-only escrow ledger & encrypted KYC.`
 - **Suggested Website Field:**
-  Leave blank until a verified hosted staging URL exists (do **not** link an unverified or broken URL).
+  Currently set on GitHub to `https://tascora-staging.vercel.app` (Vercel Preview deploys are live on PRs, but hosted end-to-end staging is **not yet HOSTED VERIFIED**). Either clear this field until Phase 4A.8 Hosted Staging Acceptance passes, or keep it only after verifying the live staging app + API health.
 - **Suggested Topics (12 verified technologies/patterns present in repo):**
   `nextjs`, `typescript`, `expressjs`, `prisma`, `postgresql`, `redis`, `socketio`, `stripe`, `clamav`, `monorepo`, `pnpm`, `marketplace`
 
@@ -44,7 +44,7 @@ Full-stack freelance services marketplace monorepo (**Next.js 16, Express, TypeS
 ### A. Why I Built TASCORA
 
 - **Prompt to answer in 2–4 sentences:** What motivated you to go beyond a CRUD marketplace clone and tackle financial ledgers, KYC encryption, and upload malware scanning?
-- **Factual repo anchor:** Monorepo spans 20 backend modules (`apps/api/src/modules/`), 25 localized App Router pages (`apps/web/src/app/[locale]/`), and 4 test layers (`unit`, `api`, `security`, `database` + Playwright E2E).
+- **Factual repo anchor:** Monorepo spans 21 backend modules (`apps/api/src/modules/`), 25 localized App Router pages (`apps/web/src/app/[locale]/`), and 4 test layers (`unit`, `api`, `security`, `database` + Playwright E2E).
 
 ### B. What I Learned
 
@@ -59,7 +59,7 @@ Full-stack freelance services marketplace monorepo (**Next.js 16, Express, TypeS
 - **Prompt to pick 1–2 and describe your debugging process in your own words:**
   1. **GitHub Actions CI KYC Key Entropy Failure (Phase 4A.6.1):** Disposable PostgreSQL CI tests failed at `apps/api/src/lib/kyc-key.ts` (`insufficient byte diversity`) until CI generated masked 32-byte cryptographically random ephemeral keys with `>= 12` distinct bytes instead of static placeholder hex.
   2. **Database Acceptance Stripe & Index Verification Failures (Phase 4A.6.2):** Disposable PostgreSQL suite failed with `Payments are not configured` when `STRIPE_SECRET_KEY` was omitted in CI, and needed aligned migration/index checks under real PostgreSQL 15.
-  3. **Frontend Baseline Dead Route & Fake Payout Dialog (Phase 0):** `CommandPalette.tsx` pointed "Payments & Escrow" to a nonexistent `/dashboard/wallet` route, and an orphaned `WithdrawDialog.tsx` simulated a fake `setTimeout` withdrawal while backend external payouts were intentionally disabled.
+  3. **Frontend Baseline Dead Route & Fake Payout Dialog (Phase 0):** `CommandPalette.tsx` pointed `action-new-gig` to a nonexistent `/dashboard/gigs/create` route (and used `next/navigation` instead of locale-aware `@/i18n/routing`), and an orphaned `WithdrawDialog.tsx` simulated a fake `setTimeout` withdrawal while backend external payouts were intentionally disabled.
 
 ### D. What I Would Improve Next
 

@@ -5,7 +5,7 @@ This document lists verified engineering, operational, and product limitations o
 ## 1. Financial & Payment Boundaries
 
 - **External Seller Payouts Are Disabled:** `PayoutService.process` (`apps/api/src/modules/financial/payout.service.ts`) defaults to `unavailablePayoutProvider` and fails closed with `503 Payout provider validation required`. Sellers can request a ledger reservation when payments are enabled, but no external bank transfer or Stripe Connect disbursement is implemented.
-- **No Real Money Processing:** Stripe integration is restricted to Test Mode (`sk_test_*` / `rk_test_*`) or Disabled Mode (`PAYMENT_PROVIDER=disabled`). Live Stripe keys are actively rejected in `NODE_ENV=test` and `APP_ENV=staging`.
+- **No Real Money Processing:** Stripe integration is restricted to Test Mode (`sk_test_*` / `rk_test_*`) or Disabled Mode (`PAYMENTS_PROVIDER=disabled`). Live Stripe keys are actively rejected in `NODE_ENV=test` and `APP_ENV=staging`.
 - **Single Currency (`usd`):** Financial basis calculations (`apps/api/src/modules/financial/domain.ts`) enforce `order.currency === 'usd'` and reject multi-currency orders.
 
 ## 2. Deployment & Scaling Constraints

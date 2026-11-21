@@ -26,7 +26,7 @@ Conduct a comprehensive, strictly **read-only** audit of the TASCORA Next.js fro
 
 ## 5. Key Audit Findings
 
-- **P0:** `0` active blockers on live routes (Phase 0 already fixed `CommandPalette.tsx` `/dashboard/wallet` and deleted fake `WithdrawDialog.tsx`).
+- **P0:** `0` active blockers on live routes (Phase 0 already fixed `CommandPalette.tsx` `/dashboard/gigs/create` and deleted fake `WithdrawDialog.tsx`).
 - **P1 (`9` findings, `FE-101`–`FE-109`):**
   - `dashboard/orders/page.tsx`: ignores `?orderId=` deep-link parameter from Messages (`FE-101`) and Freelancer `"Create New Gig"` CTA links to `/dashboard/gigs` instead of `/dashboard/gigs/new` (`FE-102`).
   - `login/page.tsx`: post-login `window.location.href` drops the active locale prefix (`vi` users redirected to `/en`) (`FE-103`).

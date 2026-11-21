@@ -59,8 +59,8 @@ All commands executed inside `D:\duannuoiem\CV offline\TASCORA-worktrees\phase-4
 
 ## 7. Security & Financial Verification
 
-- Verified `assertProviderConfigured()` rejects `sk_live_*`, `rk_live_*`, and malformed keys in `APP_ENV=staging` while permitting `sk_test_*` / `rk_test_*` when `PAYMENT_PROVIDER=stripe`.
-- Verified `PAYMENT_PROVIDER=disabled` keeps checkout/payout endpoints fail-closed without blocking non-payment marketplace flows or `/ready`.
+- Verified `assertProviderConfigured()` rejects `sk_live_*`, `rk_live_*`, and malformed keys in `APP_ENV=staging` while permitting `sk_test_*` / `rk_test_*` when `PAYMENTS_PROVIDER=stripe`.
+- Verified `PAYMENTS_PROVIDER=disabled` keeps checkout/payout endpoints fail-closed without blocking non-payment marketplace flows or `/health`.
 - Verified `createDefaultMalwareScanner({ KYC_SCANNER_PROVIDER: 'disabled' })` fails closed to `scanStatus: 'QUARANTINED'` and `verdict: 'UNAVAILABLE'` (never promoting unscanned files to `VERIFIED_SAFE`).
 - Verified zero secrets, live credentials, or PII were added to `.env.staging.example`, docs, or tests.
 
