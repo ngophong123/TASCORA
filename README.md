@@ -11,20 +11,6 @@ TASCORA implements service discovery, tiered package ordering, an append-only es
 
 ---
 
-## Visual Overview
-
-Captured from the rendered Next.js frontend with seeded non-production catalog data (no personal PII or live credentials):
-
-| Marketplace Home (Desktop 1440px)                                               | Service Detail & Package Checkout Notice (Desktop 1440px)                   |
-| ------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| ![TASCORA Marketplace Home](docs/assets/portfolio/marketplace-home-desktop.png) | ![TASCORA Service Detail](docs/assets/portfolio/service-detail-desktop.png) |
-
-| Service Catalog (Mobile 390px)                                                      | Authenticated Dashboard Screenshots                                                           |
-| ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| ![TASCORA Mobile Service Catalog](docs/assets/portfolio/service-catalog-mobile.png) | Planned after hosted staging provisioning (see [STAGING_RUNBOOK.md](docs/STAGING_RUNBOOK.md)) |
-
----
-
 ## Verified Tech Stack
 
 | Layer                     | Technologies Used in Repository                                                                                                                                                                                     |
