@@ -1,5 +1,7 @@
 import { isAllowedOrigin, isProduction, trustProxy } from './lib/config';
 import { corsOriginCallback } from './lib/origin-policy';
+import { createDistributedRateLimitStore } from './lib/rate-limit-store';
+import { correlationIdMiddleware, type CorrelatedRequest } from './middlewares/correlationId';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -42,6 +44,7 @@ initSocket(server);
 
 // Security Middlewares
 app.use(helmet());
+app.use(correlationIdMiddleware);
 
 // --- RAW BODY PARSER FOR STRIPE WEBHOOK ---
 // Must be mounted before express.json()
@@ -63,12 +66,27 @@ app.use(express.urlencoded({ extended: true }));
 // Platform probes must not consume the public API rate limit.
 app.use(healthRouter({ database: () => prisma.$queryRaw`SELECT 1`, redis: () => redis.ping() }));
 
-// Rate Limiting
+// Rate Limiting (Redis-backed when REDIS_URL is configured; explicit fail-open vs fail-closed policy)
+const publicRateLimitStore = createDistributedRateLimitStore({
+  prefix: 'public',
+  windowMs: 15 * 60 * 1000,
+  limit: 100,
+  outagePolicy: 'fail-open',
+});
+const authRateLimitStore = createDistributedRateLimitStore({
+  prefix: 'auth',
+  windowMs: 15 * 60 * 1000,
+  limit: 30,
+  outagePolicy:
+    process.env.RATE_LIMIT_AUTH_FAIL_CLOSED === 'false' ? 'fail-open' : 'fail-closed',
+});
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   limit: 100, // Limit each IP to 100 requests per window
   standardHeaders: 'draft-7',
   legacyHeaders: false,
+  ...(publicRateLimitStore ? { store: publicRateLimitStore } : {}),
 });
 app.use(limiter);
 
@@ -77,7 +95,17 @@ app.use(limiter);
 
 // Routes
 app.use('/api/v1/uploads', uploadRouter());
-app.use('/api/v1/auth', rateLimit({ windowMs: 15 * 60 * 1000, limit: 30, standardHeaders: 'draft-7', legacyHeaders: false }), authRoutes);
+app.use(
+  '/api/v1/auth',
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 30,
+    standardHeaders: 'draft-7',
+    legacyHeaders: false,
+    ...(authRateLimitStore ? { store: authRateLimitStore } : {}),
+  }),
+  authRoutes
+);
 app.use('/api/v1/profile', profileRoutes);
 app.use('/api/v1/onboarding', onboardingRoutes);
 app.use('/api/v1/sessions', sessionRoutes);
@@ -97,8 +125,8 @@ app.use('/api/v1/marketplace', marketplaceRoutes);
 app.use('/api/v1/financial', financialRoutes);
 
 // Centralized error handler
-app.use((err: Error & { status?: number; code?: string }, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  logger.error({ type: err.name, status: err.status || 500 }, 'Request failed');
+app.use((err: Error & { status?: number; code?: string }, req: CorrelatedRequest, res: express.Response, _next: express.NextFunction) => {
+  logger.error({ type: err.name, status: err.status || 500, correlationId: req.correlationId }, 'Request failed');
   res.status(err.status || 500).json({
     success: false,
     error: {

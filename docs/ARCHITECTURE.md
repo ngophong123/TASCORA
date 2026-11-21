@@ -42,7 +42,7 @@ Incoming HTTP requests traverse middleware in strict order:
 4. **Origin & CORS Policy (`apps/api/src/lib/origin-policy.ts`)** — `Vary: Origin`, strict allowlist checks, credentialed cookie support, and optional Vercel preview origin verification with a 2-second abort timeout.
 5. **JSON & URL-Encoded Body Parsers** — Standard API payload parsing.
 6. **Health & Readiness Probes (`/health/live`, `/health`)** — Mounted **before** rate limiting so platform probes do not consume IP rate-limit buckets. `/health/live` confirms process liveness; `/health` verifies live PostgreSQL (`SELECT 1`) and Redis (`PING`) within a 4-second deadline and reports payment capability.
-7. **Rate Limiting (`express-rate-limit`)** — Global IP limit (`100` req / `15m`) plus stricter `/api/v1/auth` limit (`30` req / `15m`). Currently in-memory (single-replica scope).
+7. **Rate Limiting (`express-rate-limit` + `rate-limit-redis`)** — Global IP limit (`100` req / `15m`, fail-open on Redis outage) plus stricter `/api/v1/auth` limit (`30` req / `15m`, configurable fail-closed on Redis outage). See [DISTRIBUTED_SYSTEMS.md](DISTRIBUTED_SYSTEMS.md).
 8. **Domain Routers (`/api/v1/*`)** — Authentication (`requireAuth`), Zod validation (`validate`), thin controllers, and transactional domain services.
 9. **Centralized Error Handler** — Logs structured error metadata via Pino without leaking secrets or stack traces in production (`5xx` masked to generic message when `NODE_ENV=production`).
 
@@ -71,7 +71,8 @@ Incoming HTTP requests traverse middleware in strict order:
 - **`kyc-scan.worker.ts`:** Processes quarantined KYC evidence buffers against `ClamdMalwareScanner` (or fail-closed `UnavailableMalwareScanner`), never promoting files to `VERIFIED_SAFE` unless every slot returns an explicit `stream: OK` verdict.
 - **`kyc-hmac-migrate.ts`:** Offline CLI migration tool for rotating/backfilling KYC document HMAC blind indexes across key versions.
 - **`reputation.worker.ts`:** Recomputes seller rating/completion reputation metrics.
-- **Note on Docker Compose Worker:** `docker-compose.yml` currently defines the `worker` container as a placeholder (`tail -f /dev/null`); dedicated worker separation is tracked as a known limitation.
+- **`queues.ts` & `worker.ts`:** Dedicated BullMQ background worker process (`tascora-kyc-scan`, `tascora-email-delivery`, `tascora-reputation-update`) with retry, exponential backoff, deterministic `jobId` deduplication, failed-job dead-letter retention, and graceful `SIGTERM`/`SIGINT` shutdown. `docker-compose.yml` runs this worker process via `pnpm --filter @taskora/api dev:worker`.
+- **`distributed-lock.ts`:** Atomic Redis `SET NX PX` single-owner lease lock with token-checked Lua release protecting scheduled cron execution across replicas. See [DISTRIBUTED_SYSTEMS.md](DISTRIBUTED_SYSTEMS.md).
 
 ---
 

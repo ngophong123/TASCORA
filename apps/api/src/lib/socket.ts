@@ -1,6 +1,8 @@
-import { isAllowedOrigin } from './config';
+import { isAllowedOrigin, redisUrl } from './config';
 import { corsOriginCallback } from './origin-policy';
 import { Server } from 'socket.io';
+import { createAdapter } from '@socket.io/redis-adapter';
+import { Redis } from 'ioredis';
 import { Server as HttpServer } from 'http';
 import { authenticateAccess } from '../modules/auth/token';
 import { z } from 'zod';
@@ -8,6 +10,7 @@ import type { Message, Notification } from '@prisma/client';
 import { prisma } from './prisma';
 import { assertUsableNonKycUpload } from '../modules/upload/references';
 import { HttpError } from './errors';
+import { attachRedisDiagnostics, redisOptions } from './redis-connection';
 
 export interface ServerToClientEvents {
   new_message: (message: Message) => void;
@@ -33,15 +36,25 @@ export interface SocketData {
 }
 
 /**
- * Deployment topology constraint (SINGLE-INSTANCE SESSION REVOCATION ONLY):
- * Socket.IO uses the default in-memory adapter (`@socket.io/redis-adapter` is not installed).
- * Therefore `getIO().in('session_<id>').disconnectSockets(true)` (on logout, token reuse, or password reset)
- * immediately terminates WebSockets connected to the handling API instance only.
- * Sockets on other replicas would reject subsequent packets via `socket.use -> authenticateAccess`
- * rather than disconnecting while idle. Do NOT scale API replicas > 1 until Redis pub/sub adapter
- * and shared Redis rate-limiter stores are provisioned and tested against live Redis.
+ * Horizontal scaling support:
+ * When `ENABLE_SOCKET_REDIS_ADAPTER=true`, Socket.IO attaches `@socket.io/redis-adapter`
+ * with dedicated Redis pub/sub clients so rooms (`conv_<id>`, `user_<id>`, `session_<id>`)
+ * and cross-instance session revocations propagate across API replicas.
+ * In local/test runs without the flag, Socket.IO retains the lightweight in-memory adapter.
  */
 let io: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
+
+export function attachSocketRedisAdapter(
+  socketServer: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
+  connectionUrl = redisUrl
+): { pubClient: Redis; subClient: Redis } {
+  const pubClient = new Redis(connectionUrl, redisOptions(connectionUrl));
+  const subClient = pubClient.duplicate();
+  attachRedisDiagnostics(pubClient);
+  attachRedisDiagnostics(subClient);
+  socketServer.adapter(createAdapter(pubClient, subClient));
+  return { pubClient, subClient };
+}
 
 export const initSocket = (httpServer: HttpServer) => {
 
@@ -57,6 +70,10 @@ export const initSocket = (httpServer: HttpServer) => {
       credentials: true,
     },
   });
+
+  if (process.env.ENABLE_SOCKET_REDIS_ADAPTER === 'true' && process.env.NODE_ENV !== 'test') {
+    attachSocketRedisAdapter(io);
+  }
 
   // Authentication Middleware
   io.use(async (socket, next) => {
