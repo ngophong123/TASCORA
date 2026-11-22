@@ -176,14 +176,14 @@ export function evaluateCorsResponse(
   isNegativeProbe: boolean
 ): AcceptanceCheckResult {
   if (isNegativeProbe) {
-    const rejected = !allowedHeader || allowedHeader !== expectedOrigin;
+    const rejected = allowedHeader === null;
     return {
       id: 'cors-reject-untrusted',
       name: 'CORS Rejects Untrusted Origin',
       status: rejected ? 'PASS' : 'FAIL',
       detail: rejected
-        ? 'Untrusted origin was not echoed in Access-Control-Allow-Origin.'
-        : `Untrusted origin was reflected: ${allowedHeader}`,
+        ? 'Access-Control-Allow-Origin header was absent for untrusted origin.'
+        : `Untrusted origin probe received non-null Access-Control-Allow-Origin header: ${allowedHeader}`,
     };
   }
 

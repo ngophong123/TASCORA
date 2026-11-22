@@ -161,6 +161,13 @@ describe('Phase 4A.8 staging acceptance harness', () => {
       evaluateCorsResponse('https://untrusted.example', 'https://untrusted.example', 'true', true)
         .status
     ).toBe('FAIL');
+    expect(
+      evaluateCorsResponse('https://untrusted.example', 'https://other-origin.example', null, true)
+        .status
+    ).toBe('FAIL');
+    expect(
+      evaluateCorsResponse('https://untrusted.example', '*', null, true).status
+    ).toBe('FAIL');
     expect(evaluateAuthBoundary('auth', 'Auth', 401).status).toBe('PASS');
     expect(evaluateAuthBoundary('auth', 'Auth', 200).status).toBe('FAIL');
   });
