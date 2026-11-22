@@ -31,7 +31,7 @@ The harness (`scripts/verify-staging-acceptance.ts`) enforces strict guardrails:
 
 - Refuses missing targets (`BLOCKED`, exit code `2`).
 - Refuses non-HTTPS remote URLs and disallowed production hostnames.
-- Verifies `/health/live`, `/health` (database + redis probes and zero secret leakage), exact CORS allow/deny behavior with credentials, unauthenticated rejection (`401`/`403`) on `/api/v1/auth/me`, `/api/v1/admin/users`, and `/api/v1/uploads/kyc/*`, plus web reachability on `/en`.
+- Verifies `/health/live`, `/health` (`db="ok"`, `redis="ok"`, and zero secret leakage), exact CORS allow/deny behavior with credentials, unauthenticated rejection (`401`/`403`) on `/api/v1/sessions`, `/api/v1/admin/users`, and `/api/v1/uploads/kyc/:owner/:file`, plus web reachability on `/en`.
 
 ---
 

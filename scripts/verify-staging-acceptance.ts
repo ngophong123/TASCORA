@@ -122,18 +122,38 @@ export function evaluateHealthResponse(
   }
 
   try {
-    const parsed = JSON.parse(bodyText) as Record<string, unknown>;
+    const rawParsed: unknown = JSON.parse(bodyText);
+    if (!rawParsed || typeof rawParsed !== 'object' || Array.isArray(rawParsed)) {
+      return {
+        id,
+        name,
+        status: 'FAIL',
+        httpStatus: status,
+        detail: `${endpoint} returned non-object JSON payload.`,
+      };
+    }
+
+    const parsed = rawParsed as Record<string, unknown>;
+    if (parsed.status !== 'ok') {
+      return {
+        id,
+        name,
+        status: 'FAIL',
+        httpStatus: status,
+        detail: `${endpoint} expected status="ok", received status=${JSON.stringify(parsed.status)}.`,
+      };
+    }
+
     if (endpoint === '/health') {
-      const checks = (parsed.checks ?? parsed.dependencies ?? {}) as Record<string, unknown>;
-      const dbOk = checks.database === 'ok' || checks.database === 'healthy' || checks.database === true;
-      const redisOk = checks.redis === 'ok' || checks.redis === 'healthy' || checks.redis === true;
+      const dbOk = parsed.db === 'ok';
+      const redisOk = parsed.redis === 'ok';
       if (!dbOk || !redisOk) {
         return {
           id,
           name,
           status: 'FAIL',
           httpStatus: status,
-          detail: `Expected healthy database and redis probes; received checks=${JSON.stringify(checks)}.`,
+          detail: `Expected db="ok" and redis="ok" on /health; received db=${JSON.stringify(parsed.db)}, redis=${JSON.stringify(parsed.redis)}.`,
         };
       }
     }
@@ -273,18 +293,30 @@ export async function runStagingAcceptanceChecks(
     )
   );
 
-  // 5. Protected auth & admin routes reject anonymous callers
-  const meRes = await safeFetch(`${apiOrigin}/api/v1/auth/me`);
-  checks.push(evaluateAuthBoundary('auth-me-boundary', 'Unauthenticated /api/v1/auth/me Rejected', meRes.status));
+  // 5. Protected session, admin, and private KYC upload routes reject anonymous callers
+  const sessionsRes = await safeFetch(`${apiOrigin}/api/v1/sessions`);
+  checks.push(
+    evaluateAuthBoundary(
+      'sessions-auth-boundary',
+      'Unauthenticated /api/v1/sessions Rejected',
+      sessionsRes.status
+    )
+  );
 
   const adminRes = await safeFetch(`${apiOrigin}/api/v1/admin/users`);
   checks.push(
     evaluateAuthBoundary('admin-route-boundary', 'Unauthenticated Admin Endpoint Rejected', adminRes.status)
   );
 
-  const kycUploadRes = await safeFetch(`${apiOrigin}/api/v1/uploads/kyc/nonexistent-id`);
+  const kycUploadRes = await safeFetch(
+    `${apiOrigin}/api/v1/uploads/kyc/nonexistent-owner/nonexistent-file`
+  );
   checks.push(
-    evaluateAuthBoundary('private-kyc-boundary', 'Unauthenticated Private KYC Download Rejected', kycUploadRes.status)
+    evaluateAuthBoundary(
+      'private-kyc-boundary',
+      'Unauthenticated Private KYC Download Rejected',
+      kycUploadRes.status
+    )
   );
 
   // 6. Web storefront reachable
