@@ -3,11 +3,16 @@
 - **Branch:** `chore/phase-4a8-staging-acceptance`
 - **Base:** `origin/main` (`38abe5513772e1c806f7dd9f9eb20b5787899caf`)
 - **Hosted Staging Verification Status:** **`BLOCKED`** (requires owner-deployed HTTPS `STAGING_API_URL` and `STAGING_WEB_URL`)
+- **Production Ready:** **`NOT CLAIMED`**
 - **Acceptance Harness Verification Status:** **`CI VERIFIED`**
-  - **Verified Commit:** `4883b6050f55aba07e9a4a252e2cae53c8a1edae`
-  - **Infrastructure Acceptance (PostgreSQL & ClamAV):** successful (Run `44972413060`)
-  - **Quality & Testing Toolchain:** successful (Run `44972413130`)
-  - **Local `pnpm test:quick`:** successful (`typecheck`, `lint:strict`, `lint:api`, `17` unit files / `121` tests)
+  - **Verified Commit:** `173c3e7052963e3d63b553ed6738aadb7be786c3`
+  - **Infrastructure Acceptance (PostgreSQL & ClamAV):** Run `44973451108` — `SUCCESS` (`Real PostgreSQL Migrations & Live ClamAV Acceptance`: `SUCCESS`)
+  - **Quality & Testing Toolchain:** Run `44973451058` — `SUCCESS`
+    - **Lint & Typecheck:** `SUCCESS`
+    - **Lighthouse CI Audits:** `SUCCESS`
+    - **Playwright E2E Tests:** `SUCCESS`
+  - **Vercel Preview Comments:** `SUCCESS`
+  - **Local `pnpm test:quick`:** `SUCCESS` (`typecheck`, `lint:strict`, `lint:api`, `17` unit files / `121` tests)
 
 ---
 
