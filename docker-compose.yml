@@ -85,7 +85,7 @@ services:
     build:
       context: .
       dockerfile: docker/development/Dockerfile.dev
-    command: sh -c "echo 'Worker placeholder' && tail -f /dev/null"
+    command: sh -c "pnpm install --frozen-lockfile && pnpm db:generate && pnpm --filter @taskora/api dev:worker"
     volumes:
       - .:/app
       - /app/node_modules
