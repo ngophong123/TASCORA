@@ -54,6 +54,35 @@ router.put('/sellers/:id/review', validate(z.object({ params: z.object({ id: z.s
 });
 
 import { createAdminKycRouter } from '../kyc/kyc.route';
+import { finOpsTracker } from '../service/ai-finops';
+import { evaluateTrustSafetyAdvisory } from '../service/semantic-search.service';
+
+router.post(
+  '/ai/trust-safety/advisory',
+  validate(
+    z.object({
+      body: z
+        .object({
+          title: z.string().trim().min(3).max(200),
+          description: z.string().trim().min(5).max(2000),
+          priceUsd: z.number().min(0).max(100000).optional(),
+        })
+        .strict(),
+    })
+  ),
+  (req, res, next) => {
+    try {
+      const body = req.body as { title: string; description: string; priceUsd?: number };
+      res.json({ success: true, data: evaluateTrustSafetyAdvisory(body) });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.get('/ai/finops/summary', (_req, res) => {
+  res.json({ success: true, data: finOpsTracker.summary() });
+});
 
 router.use('/', createAdminKycRouter());
 
