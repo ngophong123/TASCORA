@@ -8,6 +8,8 @@ import { HttpError } from '../../lib/errors';
 import { PayoutService } from './payout.service';
 import { RefundService, requireFinancialAdmin } from './refund.service';
 import { DisputeService } from './dispute.service';
+import { StripeConnectService } from './stripe-connect.service';
+import { reconcileFinancialRecords } from './reconciliation.service';
 import { PaymentService, stripe, assertProviderConfigured } from '../payment/payment.service';
 import { entry, financialTx, lockOrder, requestKey, reasonSchema, financialRecordView, orderMutationView } from './domain';
 import { cents } from './money';
@@ -16,7 +18,11 @@ import crypto from 'node:crypto';
 const router = Router(); router.use(requireAuth);
 const idParams = z.object({ id: z.string().cuid() });
 const refundBody = z.object({ amount: z.string().regex(/^(?:0|[1-9]\d{0,7})(?:\.\d{1,2})?$/).optional(), reason: reasonSchema, idempotencyKey: requestKey }).strict();
+const onboardingLinkBody = z.object({ returnUrl: z.string().url(), refreshUrl: z.string().url() }).strict();
 router.get('/earnings', async (req: AuthRequest, res, next) => { try { res.json({ success: true, data: await PayoutService.summary(req.user!.userId) }); } catch (error) { next(error); } });
+router.get('/connect/eligibility', async (req: AuthRequest, res, next) => { try { res.json({ success: true, data: await StripeConnectService.getEligibility(req.user!.userId) }); } catch (error) { next(error); } });
+router.post('/connect/account', async (req: AuthRequest, res, next) => { try { res.status(201).json({ success: true, data: await StripeConnectService.createOrGetTestAccount(req.user!.userId) }); } catch (error) { next(error); } });
+router.post('/connect/onboarding-link', validate(z.object({ body: onboardingLinkBody })), async (req: AuthRequest, res, next) => { try { const body = req.body as z.infer<typeof onboardingLinkBody>; res.status(201).json({ success: true, data: await StripeConnectService.createOnboardingLink(req.user!.userId, body.returnUrl, body.refreshUrl) }); } catch (error) { next(error); } });
 router.post('/orders/:id/refunds', validate(z.object({ params: idParams, body: refundBody })), async (req: AuthRequest, res, next) => { try { const body = req.body as z.infer<typeof refundBody>; res.status(201).json({ success: true, data: financialRecordView(await RefundService.request(req.user!.userId, req.params.id!, body.amount, body.reason, body.idempotencyKey)) }); } catch (error) { next(error); } });
 router.post('/orders/:id/disputes', validate(z.object({ params: idParams, body: z.object({ category: z.enum(['DELIVERY', 'QUALITY', 'COMMUNICATION', 'OTHER']), description: reasonSchema }).strict() })), async (req: AuthRequest, res, next) => { try { res.status(201).json({ success: true, data: await DisputeService.open(req.user!.userId, req.params.id!, req.body.category as string, req.body.description as string) }); } catch (error) { next(error); } });
 router.post('/orders/:id/payouts', validate(z.object({ params: idParams, body: z.object({ idempotencyKey: requestKey }).strict() })), async (req: AuthRequest, res, next) => { try { res.status(201).json({ success: true, data: financialRecordView(await PayoutService.request(req.user!.userId, req.params.id!, req.body.idempotencyKey as string)) }); } catch (error) { next(error); } });
@@ -49,6 +55,45 @@ router.get('/admin/orders/:id/reconciliation', validate(z.object({ params: idPar
     await financialTx(async tx => { await lockOrder(tx, order.id); await entry(tx, order.id, 'RECONCILIATION_CHECK', `diagnostic:${crypto.randomUUID()}`, req.user!.userId); });
     const payouts = await prisma.payout.findMany({ where: { escrow: { orderId: order.id } }, select: { id: true, status: true, amount: true, updatedAt: true } });
     res.json({ success: true, data: { payments: diagnostics, payouts: payouts.map(payout => ({ ...payout, providerUnvalidated: true, requiresManualReconciliation: payout.status === 'PROCESSING' })) } });
+  } catch (error) { next(error); }
+});
+router.post('/admin/reconciliation/report', async (req: AuthRequest, res, next) => {
+  try {
+    await requireFinancialAdmin(req.user!.userId);
+    assertProviderConfigured();
+    const transactions = await prisma.transaction.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+      select: { id: true, orderId: true, stripePaymentId: true, amount: true, refundedAmount: true, currency: true, status: true },
+    });
+    const remotePayments = [];
+    for (const tx of transactions) {
+      if (!tx.stripePaymentId) continue;
+      const remote = await stripe.paymentIntents.retrieve(tx.stripePaymentId);
+      const refunds = await stripe.refunds.list({ payment_intent: tx.stripePaymentId, limit: 100 });
+      const refundedCents = refunds.data.filter(r => r.status === 'succeeded').reduce((sum, r) => sum + r.amount, 0);
+      remotePayments.push({
+        stripePaymentId: remote.id,
+        orderId: remote.metadata?.orderId,
+        amountCents: remote.amount,
+        refundedCents,
+        currency: remote.currency,
+        status: remote.status,
+      });
+    }
+    const report = reconcileFinancialRecords({
+      localPayments: transactions.map(tx => ({
+        transactionId: tx.id,
+        orderId: tx.orderId,
+        stripePaymentId: tx.stripePaymentId,
+        amountCents: cents(tx.amount),
+        refundedCents: cents(tx.refundedAmount, true),
+        currency: tx.currency,
+        status: tx.status,
+      })),
+      remotePayments,
+    });
+    res.json({ success: true, data: report });
   } catch (error) { next(error); }
 });
 export default router;
