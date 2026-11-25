@@ -314,7 +314,7 @@ export function AudienceTabs() {
                         <ArrowRight className="h-4 w-4" />
                       </Button>
                     </Link>
-                    <Link href="/seller-guide">
+                    <Link href="/#how-it-works">
                       <Button
                         variant="outline"
                         size="lg"

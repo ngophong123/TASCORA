@@ -76,15 +76,17 @@ Any transition outside `transitions[from]` throws `409 Conflict` (`transition(fr
 
 ---
 
-## 5. Seller Payout Boundary (Intentionally Disabled)
+## 5. Seller Payout & Stripe Connect Boundary (Test Mode Only)
 
 - **Seller Request (`PayoutService.request`):** When `PAYMENTS_PROVIDER` is enabled and an order is `COMPLETED` with released escrow, zero active refunds/disputes, and positive `available` balance, a seller can reserve available earnings into a `PENDING` `Payout` (`availableDelta: -amount`, `reservedDelta: +amount`) using a unique `requestKey`.
 - **External Disbursement (`PayoutService.process`):** Defaults to `unavailablePayoutProvider` (`available: false`), which fails closed with `503 Payout provider validation required`. Even with an injected test double in integration tests, `PayoutService.process` enforces strict reference/amount/currency matching and leaves ambiguous timeouts in `PROCESSING` / `reserved` until reconciled.
+- **Stripe Connect Test-Mode Flow (`StripeConnectService` in `apps/api/src/modules/financial/stripe-connect.service.ts`):** Exposes test-mode Express connected account creation (`/connect/account`), origin-validated onboarding links (`/connect/onboarding-link`), real KYC + dispute + seller eligibility checks (`/connect/eligibility`, keeping `eligibleForLivePayouts: false` unconditionally), idempotent `account.updated` / `charge.dispute.*` webhook handling, and an injectable test-mode transfer adapter that strictly rejects `sk_live_*`, `rk_live_*`, `livemode=true`, and `APP_ENV=production`.
+- **Read-Only Financial Reconciliation (`reconciliation.service.ts`):** Admin reconciliation (`POST /api/v1/financial/admin/reconciliation/report`) compares internal transactions and ledger invariants against Stripe test records to detect missing/duplicate transactions and amount/currency/status/refund/ledger mismatches without mutating historical ledger entries. See [STRIPE_CONNECT_TESTING.md](STRIPE_CONNECT_TESTING.md).
 
 ---
 
 ## 6. Verification Evidence
 
-- Unit tests: `tests/unit/financial-money.spec.ts`, `tests/unit/order-lifecycle.spec.ts`, `tests/unit/wallet-ledger.spec.ts`
-- API & security tests: `tests/api/payment-lifecycle.spec.ts`, `tests/api/payment-provider-disabled.spec.ts`, `tests/security/order-payment.spec.ts`
+- Unit tests: `tests/unit/financial-money.spec.ts`, `tests/unit/order-lifecycle.spec.ts`, `tests/unit/wallet-ledger.spec.ts`, `tests/unit/financial-reconciliation.spec.ts`
+- API & security tests: `tests/api/payment-lifecycle.spec.ts`, `tests/api/payment-provider-disabled.spec.ts`, `tests/api/stripe-connect-payouts.spec.ts`, `tests/security/order-payment.spec.ts`, `tests/security/stripe-connect-safety.spec.ts`
 - Disposable PostgreSQL concurrency & migration tests (CI verified in `infrastructure-acceptance.yml`): `tests/database/financial-system.spec.ts`, `tests/database/disposable-postgres.spec.ts`
