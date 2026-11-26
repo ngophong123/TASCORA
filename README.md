@@ -1,24 +1,23 @@
 # TASCORA
 
 [![Quality & Testing Toolchain](https://github.com/ngophong123/TASCORA/actions/workflows/quality.yml/badge.svg?branch=main)](https://github.com/ngophong123/TASCORA/actions/workflows/quality.yml)
-[![Infrastructure Acceptance (PostgreSQL & ClamAV)](https://github.com/ngophong123/TASCORA/actions/workflows/infrastructure-acceptance.yml/badge.svg?branch=main)](https://github.com/ngophong123/TASCORA/actions/workflows/infrastructure-acceptance.yml)
 
-**A full-stack freelance services marketplace monorepo built with Next.js 16, Express, TypeScript, Prisma, PostgreSQL, Redis, Socket.IO, and ClamAV.**
+**A full-stack freelance services marketplace monorepo built with Next.js 16, Express, TypeScript, Prisma, PostgreSQL, Redis, Socket.IO, BullMQ, and ClamAV.**
 
-TASCORA implements service discovery, tiered package ordering, an append-only escrow ledger with Stripe test-mode payment & Connect lifecycle hooks, real-time buyer-seller messaging, envelope-encrypted seller KYC workflows, fail-closed malware scanning, distributed scaling primitives, ledger-backed KPI analytics, and AI hybrid semantic search with FinOps telemetry — verified across unit, API, security, Playwright E2E, disposable PostgreSQL, and live ClamAV CI suites.
+TASCORA implements service discovery, tiered package ordering, an append-only escrow ledger with Stripe test-mode payment and Connect lifecycle hooks, real-time buyer-seller messaging, envelope-encrypted seller KYC workflows, fail-closed malware scanning, Redis-backed distributed scaling primitives, ledger-backed KPI analytics, and hybrid semantic search with AI FinOps telemetry — verified across unit, API, security, Playwright E2E, Lighthouse CI, disposable PostgreSQL 15, Redis 7, and live ClamAV CI suites.
 
-> **Demo & Payment Safety Disclaimer:** This is a portfolio demonstration project. Stripe test mode only. Uses sample/seed data. Not intended for real financial transactions. There is **no verified public staging or production deployment yet**. Payment integration runs strictly in **Stripe Test Mode** or **Disabled Mode** (`PAYMENTS_PROVIDER=disabled`), and **external seller payouts remain intentionally disabled** (`unavailablePayoutProvider`) by default.
+> **Demo & Payment Safety Disclaimer:** This is a portfolio demonstration project using sample/seed data and is not intended for real financial transactions. There is **no verified hosted staging or live deployment yet**. Payment integration runs strictly in **Stripe Test Mode** or **Disabled Mode** (`PAYMENTS_PROVIDER=disabled`), and **external seller payouts remain intentionally disabled** (`unavailablePayoutProvider`, `503`) by default.
 
 ---
 
 ## Verified Tech Stack
 
-| Layer                     | Technologies Used in Repository                                                                                                                                                                                     |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Frontend (`apps/web`)** | Next.js 16 (App Router, Turbopack), React 19, TypeScript, Tailwind CSS v4, next-intl (`en`/`vi`), `@base-ui/react`, Framer Motion, Lucide Icons, Socket.IO Client, `@stripe/stripe-js`                              |
-| **Backend (`apps/api`)**  | Node.js 22 (CI) / >=20, Express 4, TypeScript, Zod, Pino structured logging, Helmet, CORS, `express-rate-limit`, Socket.IO, `bcryptjs`, JWT + HTTP-only cookies                                                     |
-| **Data & Infra**          | Prisma 5 ORM, PostgreSQL 15, Redis 7 (`ioredis`), S3-compatible object storage (`@aws-sdk/client-s3`), ClamAV (`clamd` TCP `INSTREAM`), Stripe SDK (test/disabled modes)                                            |
-| **Testing & Quality**     | Vitest (unit, API contract, security audit, disposable PostgreSQL integration), Supertest, Playwright + `@axe-core/playwright`, Lighthouse CI, ESLint (strict zero-warning on web), Prettier, Husky + `lint-staged` |
+| Layer                     | Technologies Used in Repository                                                                                                                                                                                    |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Frontend (`apps/web`)** | Next.js `16.4.6` (App Router, Turbopack), React 19, TypeScript, Tailwind CSS v4, `next-intl` (`en`/`vi`), `@base-ui/react`, Framer Motion, Lucide Icons, Socket.IO Client, `@stripe/stripe-js`                     |
+| **Backend (`apps/api`)**  | Node.js 22 (CI) / `>=20`, Express 4 (`21` domain modules), TypeScript, Zod, Pino structured logging, Helmet, CORS, `express-rate-limit` (`rate-limit-redis`), Socket.IO (`@socket.io/redis-adapter`), BullMQ, JWT  |
+| **Data & Infra**          | Prisma 5 ORM, PostgreSQL 15, Redis 7 (`ioredis`), S3-compatible object storage (`@aws-sdk/client-s3`), ClamAV (`clamd` TCP `zINSTREAM`), Stripe SDK (Test / Disabled modes)                                        |
+| **Testing & Quality**     | Vitest (unit, API contract, security/IDOR, disposable PostgreSQL integration), Supertest, Playwright + `@axe-core/playwright`, Lighthouse CI, ESLint (strict zero-warning on web), Prettier, Husky + `lint-staged` |
 
 ---
 
@@ -26,32 +25,32 @@ TASCORA implements service discovery, tiered package ordering, an append-only es
 
 ### 1. Append-Only Financial Ledger, Idempotency & Advisory Order Locks
 
-- **Problem:** Concurrent webhook retries, duplicate buyer checkout clicks, and interleaved refund/completion requests can double-credit seller balances or corrupt order states if balances are mutated in place.
-- **Solution:** Financial state transitions serialize per order via PostgreSQL transaction-scoped advisory locks (`pg_advisory_xact_lock`), enforce explicit order state-machine transitions, deduplicate Stripe webhook payloads via SHA-256 hash checks in `ProviderEvent`, record integer-cent ledger movements in append-only `FinancialEntry` rows with unique `eventKey` constraints, and flush user notifications through a durable outbox outside the money transaction.
-- **Evidence:** [apps/api/src/modules/financial/domain.ts](apps/api/src/modules/financial/domain.ts), [apps/api/src/modules/payment/payment.service.ts](apps/api/src/modules/payment/payment.service.ts), [apps/api/src/modules/financial/refund.service.ts](apps/api/src/modules/financial/refund.service.ts), [tests/database/financial-system.spec.ts](tests/database/financial-system.spec.ts), [docs/FINANCIAL_ARCHITECTURE.md](docs/FINANCIAL_ARCHITECTURE.md).
+- **Problem:** Concurrent webhook retries, duplicate buyer checkout clicks, and interleaved refund or completion requests can double-credit seller balances or corrupt order states if balances are mutated in place.
+- **Solution:** Financial state transitions serialize per order via PostgreSQL transaction-scoped advisory locks (`pg_advisory_xact_lock`), enforce explicit order state-machine transitions, deduplicate Stripe webhook payloads via SHA-256 hash checks in `ProviderEvent`, record integer-cent movements in append-only `FinancialEntry` rows with unique `eventKey` constraints, and flush user notifications through a durable outbox outside the money transaction.
+- **Evidence:** [apps/api/src/modules/financial/domain.ts](apps/api/src/modules/financial/domain.ts), [apps/api/src/modules/payment/payment.service.ts](apps/api/src/modules/payment/payment.service.ts), [apps/api/src/modules/financial/refund.service.ts](apps/api/src/modules/financial/refund.service.ts), [apps/api/src/modules/financial/reconciliation.service.ts](apps/api/src/modules/financial/reconciliation.service.ts), [tests/database/financial-system.spec.ts](tests/database/financial-system.spec.ts), [docs/FINANCIAL_ARCHITECTURE.md](docs/FINANCIAL_ARCHITECTURE.md).
 
 ### 2. Envelope-Encrypted Seller KYC PII & Versioned HMAC Blind Index
 
 - **Problem:** Storing seller identity document numbers and dates of birth in plaintext exposes regulated PII on database compromise, while naive hashing breaks key rotation and duplicate-document detection.
-- **Solution:** Sensitive KYC fields are encrypted with AES-256-GCM using HKDF-SHA256 subkeys derived per key version (`v2:<keyId>:<iv>:<tag>:<ciphertext>`), while duplicate document detection uses a dedicated, key-separated HMAC-SHA256 blind index (`KYC_DOCUMENT_HMAC_KEY`) supporting active + rotated key lookups and an offline backfill worker (`kyc-hmac-migrate.ts`). Key material validation rejects weak entropy and key reuse at startup.
+- **Solution:** Sensitive KYC fields are encrypted with AES-256-GCM using HKDF-SHA256 subkeys derived per key version (`v2:<keyId>:<iv>:<tag>:<ciphertext>`), while duplicate document detection uses a dedicated, key-separated HMAC-SHA256 blind index (`KYC_DOCUMENT_HMAC_KEY`) supporting active and rotated key lookups plus an offline backfill worker. Startup validation rejects weak entropy and key reuse.
 - **Evidence:** [apps/api/src/lib/kyc-crypto.ts](apps/api/src/lib/kyc-crypto.ts), [apps/api/src/lib/kyc-key.ts](apps/api/src/lib/kyc-key.ts), [apps/api/src/modules/kyc/kyc-hmac-migration.service.ts](apps/api/src/modules/kyc/kyc-hmac-migration.service.ts), [tests/security/kyc-security.spec.ts](tests/security/kyc-security.spec.ts), [tests/security/kyc-hmac-migration.spec.ts](tests/security/kyc-hmac-migration.spec.ts).
 
-### 3. Fail-Closed Upload Isolation & Live ClamAV `INSTREAM` Scanning
+### 3. Fail-Closed Upload Isolation & Live ClamAV `zINSTREAM` Scanning
 
 - **Problem:** Allowing arbitrary uploaded URLs in chat, deliveries, or profiles can leak quarantined KYC identity documents across endpoints, and failing open when an antivirus daemon is unreachable silently promotes unscanned files.
-- **Solution:** Uploads are tracked with explicit ownership and purpose separation (blocking KYC, orphaned, replaced, infected, or unregistered objects from non-KYC endpoints). `ClamdMalwareScanner` streams 64 KiB chunks over TCP `zINSTREAM` with backpressure handling, bounded concurrency, connect/idle/overall deadlines, and strict reply parsing. Unconfigured or unreachable scanners fail closed to `QUARANTINED` or `SCAN_FAILED` — never `VERIFIED_SAFE`.
+- **Solution:** Uploads track explicit ownership and purpose separation (blocking KYC, orphaned, replaced, infected, or unregistered objects from non-KYC endpoints). `ClamdMalwareScanner` streams 64 KiB chunks over TCP `zINSTREAM` with backpressure handling, bounded concurrency, connect/idle/overall deadlines, and strict reply parsing. Unconfigured or unreachable scanners fail closed to `QUARANTINED` or `SCAN_FAILED` — never `VERIFIED_SAFE`.
 - **Evidence:** [apps/api/src/modules/kyc/malware-scanner.ts](apps/api/src/modules/kyc/malware-scanner.ts), [apps/api/src/modules/upload/references.ts](apps/api/src/modules/upload/references.ts), [tests/security/clamd-scanner-hardening.spec.ts](tests/security/clamd-scanner-hardening.spec.ts), [tests/security/upload-chat-isolation.spec.ts](tests/security/upload-chat-isolation.spec.ts), [.github/workflows/infrastructure-acceptance.yml](.github/workflows/infrastructure-acceptance.yml).
 
-### 4. Verified Origin Policy & Session-Revocation WebSocket Guardrails
+### 4. Verified Origin Policy, Distributed Scaling Primitives & WebSocket Guardrails
 
-- **Problem:** Wildcard CORS regexes or trusting client-supplied sender IDs on Socket.IO events can expose cookie-authenticated endpoints and private conversations to cross-origin spoofing or hijacked revoked sessions.
-- **Solution:** CORS and Socket.IO handshakes enforce strict origin allowlists (with optional verified Vercel preview lookup with 2-second abort timeouts), derive message sender identity solely from the verified JWT session, check conversation membership before room joins/reads, and disconnect sockets immediately when a session is revoked or reaches absolute expiry.
-- **Evidence:** [apps/api/src/lib/origin-policy.ts](apps/api/src/lib/origin-policy.ts), [apps/api/src/lib/socket.ts](apps/api/src/lib/socket.ts), [tests/security/preview-origin-policy.spec.ts](tests/security/preview-origin-policy.spec.ts), [tests/security/socket-wire.spec.ts](tests/security/socket-wire.spec.ts).
+- **Problem:** Wildcard CORS regexes, trusting client-supplied sender IDs on Socket.IO events, or running in-memory rate limits and cron jobs across multiple API instances exposes authenticated endpoints and creates duplicate background execution.
+- **Solution:** CORS and Socket.IO handshakes enforce strict origin allowlists (with optional verified Vercel preview lookups using 2-second abort timeouts), derive sender identity solely from verified JWT sessions, and disconnect sockets immediately on session revocation. Redis-backed primitives (`@socket.io/redis-adapter`, `rate-limit-redis` with fail-open/fail-closed outage policies, BullMQ queues with a dedicated worker entrypoint, and Redis `SET NX PX` + Lua cron locks) prepare horizontal scaling while preserving the modular monolith.
+- **Evidence:** [apps/api/src/lib/origin-policy.ts](apps/api/src/lib/origin-policy.ts), [apps/api/src/lib/socket.ts](apps/api/src/lib/socket.ts), [apps/api/src/lib/distributed-lock.ts](apps/api/src/lib/distributed-lock.ts), [apps/api/src/lib/rate-limit-store.ts](apps/api/src/lib/rate-limit-store.ts), [apps/api/src/workers/queues.ts](apps/api/src/workers/queues.ts), [tests/security/socket-wire.spec.ts](tests/security/socket-wire.spec.ts).
 
 ### 5. Automated Documentation-to-Code Truthfulness Gate
 
 - **Problem:** Portfolio documentation frequently drifts from real source code, citing removed endpoints, stale module counts, or overstated claims.
-- **Solution:** `tests/unit/docs-truthfulness.spec.ts` runs in every CI pipeline to verify exact env var names (`PAYMENTS_PROVIDER`), real health probe routes (`/health` and `/health/live`), actual backend module directory count (`21 domain modules`), installed UI primitives (`@base-ui/react`), zero broken relative Markdown links, and zero buzzwords in public portfolio documentation.
+- **Solution:** `tests/unit/docs-truthfulness.spec.ts` runs in CI to verify exact environment variable names (`PAYMENTS_PROVIDER`), real health routes (`/health` and `/health/live`), actual backend module directory count (`21 domain modules`), installed UI primitives (`@base-ui/react`), zero broken relative Markdown links, and zero prohibited buzzwords in public documentation.
 - **Evidence:** [tests/unit/docs-truthfulness.spec.ts](tests/unit/docs-truthfulness.spec.ts), [docs/TASCORA_FINAL_ENGINEERING_REVIEW.md](docs/TASCORA_FINAL_ENGINEERING_REVIEW.md).
 
 ---
@@ -69,7 +68,7 @@ flowchart LR
     API -->|S3 SDK| S3[("S3 / R2 Object Storage\nPublic Media & Private KYC")]
     API -->|TCP zINSTREAM :3310| ClamAV["ClamAV (clamd)\nFail-Closed Malware Scanner"]
     API -->|Test / Disabled Mode| Stripe["Stripe API & Signed Webhooks"]
-    API -->|Opt-In Single Owner| Workers["Scheduled & Queue Workers\ncron.ts / kyc-scan / reputation"]
+    API -->|Opt-In Single Owner| Workers["Scheduled & Queue Workers\ncron.ts / BullMQ worker"]
 ```
 
 ---
@@ -128,7 +127,9 @@ pnpm db:migrate:deploy
 pnpm dev
 ```
 
-### Verification Commands
+See [apps/web/README.md](apps/web/README.md) for frontend-specific commands and workspace notes.
+
+### Verification Commands & CI Coverage
 
 ```bash
 # Typecheck + strict lint + unit tests
@@ -140,25 +141,27 @@ pnpm test:api
 pnpm test:security
 pnpm run typecheck:tests:database
 
-# Production build (API + Web)
+# Build API and Web workspaces
 NEXT_PUBLIC_API_URL=https://api.example.com NEXT_PUBLIC_WEB_URL=https://web.example.com pnpm build
 ```
 
-> Disposable PostgreSQL integration tests (`vitest.database.config.mts`) and live ClamAV acceptance run automatically in GitHub Actions via [.github/workflows/infrastructure-acceptance.yml](.github/workflows/infrastructure-acceptance.yml).
+- **Main-branch Quality CI ([.github/workflows/quality.yml](.github/workflows/quality.yml)):** Runs on pushes to `main` and pull requests (`Lint & Typecheck`, `Playwright E2E Tests`, `Lighthouse CI Audits`). Verified green on `main` commit `9477e67` (Run `45601267339`).
+- **Infrastructure Acceptance CI ([.github/workflows/infrastructure-acceptance.yml](.github/workflows/infrastructure-acceptance.yml)):** Runs on pull requests to `main` and manual `workflow_dispatch` against disposable `postgres:15-alpine`, `redis:7-alpine`, and live `clamav/clamav:stable` containers (verified green on PR `#23` Run `45600525400`, plus PRs `#18`, `#19`, `#21`, and `#22`). Because this workflow does not trigger on `push` to `main`, its badge is omitted from this README so badges reflect live `main` workflow state accurately.
 
 ---
 
 ## Documentation Index
 
 - [System Architecture](docs/ARCHITECTURE.md)
-- [Frontend Architecture](docs/FRONTEND_ARCHITECTURE.md)
+- [Frontend Architecture](docs/FRONTEND_ARCHITECTURE.md) & [Web App README](apps/web/README.md)
 - [Financial & Escrow Architecture](docs/FINANCIAL_ARCHITECTURE.md)
 - [Implementation & Verification Status Matrix](docs/IMPLEMENTATION_STATUS.md)
 - [Known Limitations](docs/KNOWN_LIMITATIONS.md)
 - [Staging Runbook](docs/STAGING_RUNBOOK.md) & [Staging Readiness Report](docs/STAGING_READINESS_REPORT.md)
 - [Architecture Decision Records (ADRs)](docs/adr/)
-- [Employer 5-Minute Review Preview](docs/EMPLOYER_REVIEW_PREVIEW.md)
+- [Technical Reviewer Walkthrough](docs/EMPLOYER_REVIEW_PREVIEW.md)
 - [Final Master Engineering Review](docs/TASCORA_FINAL_ENGINEERING_REVIEW.md)
+- [Dependency Audit Record (2026-11-26)](docs/internal/audits/dependency-audit-2026-11-26.txt)
 
 ---
 
@@ -166,14 +169,14 @@ NEXT_PUBLIC_API_URL=https://api.example.com NEXT_PUBLIC_WEB_URL=https://web.exam
 
 - **External Seller Payouts Disabled:** `PayoutService.process` defaults to `unavailablePayoutProvider` (`503`) by design; live real-money payouts are never enabled.
 - **No Hosted Staging Verification Yet:** Live cloud deployment (Render, Vercel, managed PostgreSQL/Redis/S3/Mailtrap/ClamAV) remains `BLOCKED` pending manual owner provisioning.
-- **Dependency Advisories Tracked:** `pnpm audit` advisories (including `next@16.3.5`) are triaged for a dedicated upgrade PR rather than bundled into unrelated feature work.
-- **Monorepo Naming & Empty Packages:** Root package is named `taskora` (API `@taskora/api`, Web `web`) while the product brand is `TASCORA`; `packages/ui`, `packages/types`, and `packages/config` remain stubs.
+- **Remaining Dependency Advisories (`2026-11-26`):** After upgrading Next.js to `16.4.6` in PR `#23`, `pnpm audit` reports `11` total advisories (`0` Critical, `5` High, `5` Moderate, `1` Low; exit code `1`) and `pnpm audit --prod` reports `2` advisories (`0` Critical, `1` High `zod@3.25.76` requiring a breaking v4 migration, and `1` Moderate `minimatch@10.2.6` pulled via `@taskora/eslint-config` lint tooling). The remaining `9` advisories are dev-only transitive dependencies (`@lhci/cli`, `nodemon`, `typescript-eslint`). Full command output is archived in [docs/internal/audits/dependency-audit-2026-11-26.txt](docs/internal/audits/dependency-audit-2026-11-26.txt).
+- **Monorepo Naming & Stub Packages:** Root package is named `taskora` (API `@taskora/api`, Web `web`) while the product brand is `TASCORA`; `packages/ui`, `packages/types`, and `packages/config` remain stubs, and no `LICENSE` file has been added yet.
 
 See [docs/KNOWN_LIMITATIONS.md](docs/KNOWN_LIMITATIONS.md) for the complete list.
 
 ---
 
-## Roadmap Delivery Summary
+## Roadmap Delivery Summary (Merged into `main`)
 
-- **Batch 1 (Merged into `main`, PRs `#7`–`#12`):** Baseline audit, staging readiness guardrails, GitHub portfolio foundation, frontend audit & remediation, and automated docs-truthfulness regression suite.
-- **Batch 2 (Delivered in PRs `#13`–`#20`, awaiting owner review & merge):** Hosted staging acceptance harness & honest blocker ledger (Phase 4A.8), marketplace E2E workflow map & IDOR suite (Phase 4B), Stripe Connect test-mode & read-only reconciliation (Phase 4C), distributed Redis Socket.IO/rate-limit/BullMQ/cron lock primitives (Phase 4D), ledger-backed KPI analytics (Phase 4E), hybrid semantic search & AI FinOps evaluation (Phase 4F), lightweight readiness tooling/audit/secret scan (Phase 4G), and Final Engineering Review (Phase 5B).
+- **Batch 1 (Merged, PRs `#7`–`#12`):** Phase 0 baseline audit, staging readiness guardrails, repository documentation foundation, frontend audit and remediation, and automated docs-truthfulness regression suite.
+- **Batch 2 & Hardening (Merged into `main` through `9477e67`, PRs `#13`–`#23`):** Hosted staging acceptance harness (Phase 4A.8, `#13`), marketplace E2E workflow map and IDOR suite (Phase 4B, `#14`), Stripe Connect test mode and read-only reconciliation (Phase 4C, `#15`), ledger-backed KPI analytics (Phase 4E, `#16`), hybrid semantic search and AI FinOps evaluation (Phase 4F, `#17`), Redis distributed scaling primitives (Phase 4D, `#18`), readiness tooling and secret scanning (Phase 4G, `#19`), master engineering review (Phase 5B, `#20`), API security hardening (WS5, `#21`), frontend route integrity and alert fixes (WS6, `#22`), and dependency remediation upgrading Next.js to `16.4.6` (WS1, `#23`).
