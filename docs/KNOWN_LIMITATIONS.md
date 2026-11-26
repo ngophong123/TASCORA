@@ -1,6 +1,6 @@
 # TASCORA Known Limitations
 
-This document lists verified engineering, operational, dependency, and product limitations of the current `main` codebase (`9477e67`, reviewed `2026-11-26`) so reviewers and maintainers have an accurate picture of system boundaries.
+Verified engineering, operational, dependency, and product boundaries for `main` (`9477e67`, reviewed 2026-11-26).
 
 ## 1. Financial & Payment Boundaries
 
@@ -15,20 +15,20 @@ This document lists verified engineering, operational, dependency, and product l
 - **Multi-Instance Live Soak Pending:** Phase 4D (PR `#18`, merged `9a6293b` and CI-verified) adds `@socket.io/redis-adapter`, `rate-limit-redis`, BullMQ queues/worker, and Redis distributed cron locks, but multi-replica soak testing has not yet been executed on hosted cloud infrastructure.
 - **Local Load Test & Local Backup Restore Not Executed Locally:** Phase 4G (PR `#19`, merged `3633d34` and CI-verified) provides a localhost-guarded `k6` script and a disposable Docker PostgreSQL `pg_dump`/restore script, neither of which has been run in environments where `k6` or Docker Desktop is unavailable.
 
-## 3. Dependency Audit Status (`2026-11-26`, Post-PR `#23`)
+## 3. Dependency Audit Status (2026-11-26, Post-PR #23)
 
-PR `#23` (`3a57607`) upgraded Next.js from `16.3.5` to `16.4.6` and resolved prior lockfile advisories (including `proxy-addr` and `nodemailer`). A fresh workspace audit executed on `2026-11-26` (raw output archived in [docs/internal/audits/dependency-audit-2026-11-26.txt](internal/audits/dependency-audit-2026-11-26.txt)) shows the following remaining advisories:
+PR #23 (`3a57607`) upgraded Next.js from 16.3.5 to 16.4.6 and resolved prior lockfile advisories (including `proxy-addr` and `nodemailer`). A workspace audit run on 2026-11-26 (archived in [docs/internal/audits/dependency-audit-2026-11-26.txt](internal/audits/dependency-audit-2026-11-26.txt)) reports:
 
-- **Full Workspace (`pnpm audit`, exit code `1`):** `11` total advisories — `0` Critical, `5` High, `5` Moderate, `1` Low.
-- **Production Dependencies (`pnpm audit --prod`, exit code `1`):** `2` total advisories — `0` Critical, `1` High, `1` Moderate, `0` Low.
-- **Runtime / `--prod` Advisories (`2`):**
-  - `zod@3.25.76` (`High`, patched `>=4.6.6`): direct runtime dependency in `apps/api` (also transitive in `apps/web` and `packages/eslint-config`). Remediation requires a dedicated breaking Zod v3-to-v4 migration across validation schemas.
-  - `minimatch@10.2.6` (`Moderate`, patched `>=11.0.1`): surfaces under `--prod` because internal lint package `packages/eslint-config` declares `eslint-config-next` under `dependencies` instead of `devDependencies`, even though `@taskora/eslint-config` is lint-time tooling rather than API or Web runtime code.
-- **Dev & Tooling-Only Advisories (`9` additional in full workspace):** `extract-zip@2.0.1` (`2` High, no upstream patch available), `basic-ftp@5.3.1` (`1` High, `2` Moderate), `tmp@0.0.33` / `0.1.0` (`1` High, `1` Low), `ip-address@10.7.2` (`1` Moderate), and `uuid@8.3.2` (`1` Moderate) — all transitive dev-only dependencies via `@lhci/cli` (Lighthouse CI), along with `minimatch@10.2.6` via `nodemon` and `typescript-eslint`.
+- **Full Workspace (`pnpm audit`, exit code 1):** 11 total advisories — 0 Critical, 5 High, 5 Moderate, 1 Low.
+- **Production Dependencies (`pnpm audit --prod`, exit code 1):** 2 total advisories — 0 Critical, 1 High, 1 Moderate, 0 Low.
+- **Findings Reported by `--prod` (2):**
+  - `zod@3.25.76` (High, patched `>=4.6.6`): direct runtime dependency in `apps/api` (also transitive in `apps/web` and `packages/eslint-config`). Remediation requires a breaking Zod v3-to-v4 migration across validation schemas.
+  - `minimatch@10.2.6` (Moderate, patched `>=11.0.1`): reported by `--prod` only because `packages/eslint-config` declares `eslint-config-next` under `dependencies` instead of `devDependencies`, not because it is an application runtime dependency.
+- **Additional Dev & Tooling Findings (9 in full workspace):** `extract-zip@2.0.1` (2 High, no upstream patch available), `basic-ftp@5.3.1` (1 High, 2 Moderate), `tmp@0.0.33` / `0.1.0` (1 High, 1 Low), `ip-address@10.7.2` (1 Moderate), and `uuid@8.3.2` (1 Moderate) — all transitive dev-only dependencies via `@lhci/cli` (Lighthouse CI), along with `minimatch@10.2.6` via `nodemon` and `typescript-eslint`.
 
 ## 4. Product, Analytics & AI Boundaries
 
-- **Profile View Telemetry Uninstrumented:** Analytics endpoints explicitly return `profileViews: null` rather than fabricated numbers until real view-event ingestion is implemented.
+- **Profile View Telemetry Uninstrumented:** Analytics endpoints return `profileViews: null` until view-event ingestion is implemented.
 - **AI Search Uses Deterministic Zero-Key Fallback:** Phase 4F (PR `#17`, merged `056cab2`) uses concept-expanded hashed vector embeddings plus caching for reproducible CI without external LLM keys; `pgvector` and hosted embedding providers are deferred until catalog scale justifies them.
 - **Product UI Screenshots Intentionally Omitted:** Public `README.md` omits product screenshots rather than including placeholders, mockups, or unverified images.
 - **Legacy Unused Dashboard Components:** Several older static/mock dashboard components remain unused in active routes; active pages consume real API/fixture contracts.

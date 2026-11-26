@@ -1,10 +1,10 @@
-# TASCORA — Final Master Engineering Review
+# TASCORA Engineering Review
 
-- **Review Date:** `2026-11-26`
+- **Review Date:** 2026-11-26
 - **Repository:** `ngophong123/TASCORA`
-- **Verified `main` Baseline:** `9477e67f583c010ede30ad6ea937f7a53e94b6c6` (PRs `#7`–`#23` merged into `main`, `0` open PRs at baseline)
-- **CI Evidence at Baseline:** `Quality & Testing Toolchain` Run `45601267339` (`completed / success` on `main` @ `9477e67`); `Infrastructure Acceptance (PostgreSQL & ClamAV)` Run `45600525400` (`completed / success` on PR `#23` @ `5cd9dee`)
-- **Portfolio Verdict:** **`Portfolio Ready with Known Limitations`** (Explicitly **NOT** claiming hosted staging or live deployment readiness)
+- **Verified `main` Baseline:** `9477e67f583c010ede30ad6ea937f7a53e94b6c6` (PRs #7–#23 merged into `main`, 0 open PRs at baseline)
+- **CI Evidence at Baseline:** `Quality & Testing Toolchain` Run `45601267339` (`completed / success` on `main` @ `9477e67`); `Infrastructure Acceptance (PostgreSQL & ClamAV)` Run `45600525400` (`completed / success` on PR #23 @ `5cd9dee`)
+- **Deployment Scope:** Local and CI-verified repository; hosted staging and live deployment are not verified.
 
 ---
 
@@ -53,7 +53,7 @@ All Batch 1 (`#7`–`#12`) and Batch 2 / Hardening (`#13`–`#23`) pull requests
 
 ---
 
-## 4. Technical Interview Reference (Core Design Decisions)
+## 4. Key Design Decisions
 
 1. **Modular Monolith vs. Microservices:** Single-database ACID transactions across Orders, Escrow, `FinancialEntry`, and Disputes (`apps/api/src/modules/financial/domain.ts`, [ADR-001](adr/001-modular-monolith-pnpm-workspaces.md)), with BullMQ background processing isolated in a dedicated worker entrypoint (`apps/api/src/workers/worker.ts`).
 2. **Checkout & Delivery Idempotency:** Composite unique idempotency keys (`buyerId_checkoutKey`, `orderId_requestKey`) inside transaction advisory locks; identical payloads return idempotently while altered payloads return `409 Conflict` (`apps/api/src/modules/order/order.service.ts`).
@@ -64,15 +64,15 @@ All Batch 1 (`#7`–`#12`) and Batch 2 / Hardening (`#13`–`#23`) pull requests
 7. **Authentication & WebSocket Revocation:** HTTP-only refresh cookies with DB session tracking, atomic single-use `PasswordResetToken` consumption revoking active sessions, and immediate Socket.IO `session_<id>` disconnect on revocation (`apps/api/src/lib/socket.ts`).
 8. **Horizontal Scaling Primitives:** `@socket.io/redis-adapter`, `rate-limit-redis` with fail-open (public reads) vs fail-closed (auth mutations) outage policies, BullMQ queues, and Redis `SET NX PX` + Lua-verified cron locks (`apps/api/src/lib/distributed-lock.ts`).
 9. **Marketplace KPI Separation & AI FinOps:** Ledger-derived GMV vs Platform Revenue vs Seller Earnings (`docs/KPI_DEFINITIONS.md`), PII/KYC redaction guardrails (`ai-finops.ts`), deterministic zero-key hybrid search fallback, and repeatable 20-query Recall@3/MRR evaluation (`docs/AI_EVALUATION.md`).
-10. **Documentation-to-Code CI Gate:** `tests/unit/docs-truthfulness.spec.ts` asserts exact env var names (`PAYMENTS_PROVIDER`), real health routes (`/health`, `/health/live`), actual module directory count (`21`), `@base-ui/react`, zero broken relative links, and zero prohibited buzzwords.
+10. **Documentation-to-Code CI Gate:** `tests/unit/docs-truthfulness.spec.ts` validates exact env var names (`PAYMENTS_PROVIDER`), active health routes (`/health`, `/health/live`), actual module directory count (`21`), `@base-ui/react`, relative Markdown links, and prohibited terminology rules.
 
 ---
 
-## 5. Verification Verdict & Outstanding Blockers
+## 5. Outstanding Blockers & Unverified Scope
 
-- **Current Verdict:** **`Portfolio Ready with Known Limitations`** — core backend, frontend, financial ledger, KYC encryption, malware scanning, distributed scaling primitives, analytics, and AI FinOps modules are merged on `main` (`9477e67`) and backed by automated CI runs.
-- **Explicitly Unverified / Blocked:**
-  1. Hosted staging deployment and live cloud smoke verification (`BLOCKED` on owner infrastructure provisioning).
-  2. Multi-instance hosted Redis/Socket.IO/BullMQ soak test (`BLOCKED` on hosted staging).
-  3. Real-money payment processing and external seller payouts (intentionally disabled by design).
-  4. Breaking Zod v4 major upgrade (`zod@3.25.76` High advisory) and `@taskora/eslint-config` `devDependencies` cleanup (`minimatch@10.2.6`).
+Core backend, frontend, financial ledger, KYC encryption, malware scanning, distributed scaling primitives, analytics, and AI FinOps modules are merged on `main` (`9477e67`) and covered by automated CI runs. The following items remain unverified or blocked:
+
+1. Hosted staging deployment and live cloud smoke verification (`BLOCKED` on owner infrastructure provisioning).
+2. Multi-instance hosted Redis/Socket.IO/BullMQ soak test (`BLOCKED` on hosted staging).
+3. Real-money payment processing and external seller payouts (disabled by design).
+4. Breaking Zod v4 major upgrade (`zod@3.25.76` High advisory) and `@taskora/eslint-config` `devDependencies` cleanup (`minimatch@10.2.6`).
