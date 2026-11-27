@@ -5,6 +5,7 @@ import { balances, basis, entry, financialTx, requestKey } from './domain';
 import { cents, money } from './money';
 import { requireFinancialAdmin } from './refund.service';
 import { assertPaymentsEnabled } from '../../lib/payment-provider';
+import { evaluateSellerPayoutEligibility } from '../kyc/payout-eligibility';
 
 // No real payout implementation exists. Only a configured, independently
 // validated adapter may supply authoritative external outcomes.
@@ -22,6 +23,25 @@ export class PayoutService {
       if (order.seller.userId !== sellerUserId) throw new HttpError(404, 'Order not found');
       const priorKey = await tx.financialEntry.findUnique({ where: { eventKey: `payout-request:${orderId}:${key}` } });
       if (priorKey?.payoutId) return tx.payout.findUniqueOrThrow({ where: { id: priorKey.payoutId } });
+      const seller = await tx.sellerProfile.findUnique({
+        where: { id: order.sellerId },
+        select: { status: true, verificationStatus: true, stripeAccountId: true, user: { select: { status: true } } },
+      });
+      if (!seller) throw new HttpError(403, 'Seller profile required');
+      const eligibility = evaluateSellerPayoutEligibility({
+        sellerStatus: seller.status,
+        verificationStatus: seller.verificationStatus,
+        accountStatus: seller.user.status,
+        hasStripeAccountId: Boolean(seller.stripeAccountId),
+      });
+      const blockingReasons = eligibility.blockingReasons.filter(reason => reason !== 'PAYOUT_PROVIDER_DISABLED');
+      if (blockingReasons.length > 0) {
+        throw new HttpError(
+          403,
+          `Seller is not eligible to request payout: ${blockingReasons.join(', ')}`,
+          'SELLER_PAYOUT_INELIGIBLE'
+        );
+      }
       basis(order);
       if (order.status !== 'COMPLETED' || !order.escrow?.released || order.refunds.some(r => ['PENDING', 'PROCESSING'].includes(r.status)) || (order.dispute && ['OPEN', 'UNDER_REVIEW'].includes(order.dispute.status))) throw new HttpError(409, 'Only completed undisputed available earnings can be requested');
       const existing = await tx.payout.findUnique({ where: { escrowId: order.escrow.id } });
@@ -43,7 +63,26 @@ export class PayoutService {
       const order = await OrderService.load(tx, found.escrow.orderId);
       const payout = await tx.payout.findUniqueOrThrow({ where: { id: payoutId } });
       if (['COMPLETED', 'FAILED'].includes(payout.status)) return { order, payout, submit: false };
-      if (order.status !== 'COMPLETED' || order.refunds.some(r => ['PENDING', 'PROCESSING'].includes(r.status))) throw new HttpError(409, 'Payout frozen');
+      if (order.status !== 'COMPLETED' || order.refunds.some(r => ['PENDING', 'PROCESSING'].includes(r.status)) || (order.dispute && ['OPEN', 'UNDER_REVIEW'].includes(order.dispute.status))) throw new HttpError(409, 'Payout frozen');
+      const seller = await tx.sellerProfile.findUnique({
+        where: { id: payout.sellerProfileId },
+        select: { status: true, verificationStatus: true, stripeAccountId: true, user: { select: { status: true } } },
+      });
+      if (!seller) throw new HttpError(403, 'Seller profile required');
+      const eligibility = evaluateSellerPayoutEligibility({
+        sellerStatus: seller.status,
+        verificationStatus: seller.verificationStatus,
+        accountStatus: seller.user.status,
+        hasStripeAccountId: Boolean(seller.stripeAccountId),
+      });
+      const blockingReasons = eligibility.blockingReasons.filter(reason => reason !== 'PAYOUT_PROVIDER_DISABLED');
+      if (blockingReasons.length > 0) {
+        throw new HttpError(
+          403,
+          `Seller is not eligible for payout processing: ${blockingReasons.join(', ')}`,
+          'SELLER_PAYOUT_INELIGIBLE'
+        );
+      }
       if (payout.status === 'PENDING') {
         await tx.payout.update({ where: { id: payoutId }, data: { status: 'PROCESSING' } });
         await entry(tx, order.id, 'PAYOUT_PROCESSING', `payout:${payoutId}:${payout.attempt}:processing`, adminId, { payoutId, notifyUserId: order.seller.userId });

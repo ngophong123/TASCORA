@@ -9,7 +9,7 @@ import { PayoutService } from './payout.service';
 import { RefundService, requireFinancialAdmin } from './refund.service';
 import { DisputeService } from './dispute.service';
 import { StripeConnectService } from './stripe-connect.service';
-import { reconcileFinancialRecords } from './reconciliation.service';
+import { runAdminReconciliationReport } from './reconciliation.service';
 import { PaymentService, stripe, assertProviderConfigured } from '../payment/payment.service';
 import { entry, financialTx, lockOrder, requestKey, reasonSchema, financialRecordView, orderMutationView } from './domain';
 import { cents } from './money';
@@ -38,6 +38,7 @@ router.get('/admin/queue', async (_req, res, next) => {
 router.get('/admin/orders/:id', validate(z.object({ params: idParams })), async (req: AuthRequest, res, next) => { try { res.json({ success: true, data: await DisputeService.evidence(req.user!.userId, req.params.id!) }); } catch (error) { next(error); } });
 router.post('/admin/orders/:id/resolve', validate(z.object({ params: idParams, body: z.object({ outcome: z.enum(['BUYER', 'SELLER']), reason: reasonSchema }).strict() })), async (req: AuthRequest, res, next) => { try { res.json({ success: true, data: await DisputeService.resolve(req.user!.userId, req.params.id!, req.body.outcome as 'BUYER' | 'SELLER', req.body.reason as string) }); } catch (error) { next(error); } });
 router.post('/admin/refunds/:id/process', validate(z.object({ params: idParams })), async (req: AuthRequest, res, next) => { try { res.json({ success: true, data: await RefundService.process(req.user!.userId, req.params.id!) }); } catch (error) { next(error); } });
+router.post('/admin/refunds/:id/retry', validate(z.object({ params: idParams, body: z.object({ idempotencyKey: requestKey }).strict() })), async (req: AuthRequest, res, next) => { try { res.status(201).json({ success: true, data: financialRecordView(await RefundService.retry(req.user!.userId, req.params.id!, req.body.idempotencyKey as string)) }); } catch (error) { next(error); } });
 router.post('/admin/payouts/:id/process', validate(z.object({ params: idParams })), async (req: AuthRequest, res, next) => { try { res.json({ success: true, data: await PayoutService.process(req.user!.userId, req.params.id!) }); } catch (error) { next(error); } });
 router.get('/admin/orders/:id/reconciliation', validate(z.object({ params: idParams })), async (req: AuthRequest, res, next) => {
   try {
@@ -57,41 +58,28 @@ router.get('/admin/orders/:id/reconciliation', validate(z.object({ params: idPar
     res.json({ success: true, data: { payments: diagnostics, payouts: payouts.map(payout => ({ ...payout, providerUnvalidated: true, requiresManualReconciliation: payout.status === 'PROCESSING' })) } });
   } catch (error) { next(error); }
 });
-router.post('/admin/reconciliation/report', async (req: AuthRequest, res, next) => {
+const reconciliationReportBody = z.object({
+  limit: z.number().int().min(1).max(200).optional(),
+  cursor: z.string().cuid().optional(),
+  stripeStartingAfter: z.string().min(1).max(255).optional(),
+  createdFrom: z.string().datetime().optional(),
+  createdTo: z.string().datetime().optional(),
+  maxStripePages: z.number().int().min(1).max(20).optional(),
+  maxRefundPagesPerPayment: z.number().int().min(1).max(20).optional(),
+}).strict();
+router.post('/admin/reconciliation/report', validate(z.object({ body: reconciliationReportBody.optional() })), async (req: AuthRequest, res, next) => {
   try {
     await requireFinancialAdmin(req.user!.userId);
     assertProviderConfigured();
-    const transactions = await prisma.transaction.findMany({
-      orderBy: { createdAt: 'desc' },
-      take: 50,
-      select: { id: true, orderId: true, stripePaymentId: true, amount: true, refundedAmount: true, currency: true, status: true },
-    });
-    const remotePayments = [];
-    for (const tx of transactions) {
-      if (!tx.stripePaymentId) continue;
-      const remote = await stripe.paymentIntents.retrieve(tx.stripePaymentId);
-      const refunds = await stripe.refunds.list({ payment_intent: tx.stripePaymentId, limit: 100 });
-      const refundedCents = refunds.data.filter(r => r.status === 'succeeded').reduce((sum, r) => sum + r.amount, 0);
-      remotePayments.push({
-        stripePaymentId: remote.id,
-        orderId: remote.metadata?.orderId,
-        amountCents: remote.amount,
-        refundedCents,
-        currency: remote.currency,
-        status: remote.status,
-      });
-    }
-    const report = reconcileFinancialRecords({
-      localPayments: transactions.map(tx => ({
-        transactionId: tx.id,
-        orderId: tx.orderId,
-        stripePaymentId: tx.stripePaymentId,
-        amountCents: cents(tx.amount),
-        refundedCents: cents(tx.refundedAmount, true),
-        currency: tx.currency,
-        status: tx.status,
-      })),
-      remotePayments,
+    const body = (req.body || {}) as z.infer<typeof reconciliationReportBody>;
+    const report = await runAdminReconciliationReport({
+      limit: body.limit,
+      cursor: body.cursor,
+      stripeStartingAfter: body.stripeStartingAfter,
+      createdFrom: body.createdFrom ? new Date(body.createdFrom) : undefined,
+      createdTo: body.createdTo ? new Date(body.createdTo) : undefined,
+      maxStripePages: body.maxStripePages,
+      maxRefundPagesPerPayment: body.maxRefundPagesPerPayment,
     });
     res.json({ success: true, data: report });
   } catch (error) { next(error); }
