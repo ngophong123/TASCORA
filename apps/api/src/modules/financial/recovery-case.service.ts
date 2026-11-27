@@ -304,15 +304,28 @@ export class RecoveryCaseService {
         : {}),
     };
 
-    const [total, allSummaryRows, availableAdmins] = await Promise.all([
+    const [
+      total,
+      overviewAggregate,
+      statusGroups,
+      unassignedCount,
+      activeFinancialHoldCount,
+      availableAdmins,
+    ] = await Promise.all([
       prisma.financialRecoveryCase.count({ where }),
-      prisma.financialRecoveryCase.findMany({
-        select: {
-          status: true,
-          recoveryAmount: true,
-          assignedAdminId: true,
-          dispute: { select: { recoveryRequired: true } },
-        },
+      prisma.financialRecoveryCase.aggregate({
+        _count: { _all: true },
+        _sum: { recoveryAmount: true },
+      }),
+      prisma.financialRecoveryCase.groupBy({
+        by: ['status'],
+        _count: { _all: true },
+      }),
+      prisma.financialRecoveryCase.count({
+        where: { assignedAdminId: null },
+      }),
+      prisma.financialRecoveryCase.count({
+        where: { dispute: { recoveryRequired: true } },
       }),
       prisma.user.findMany({
         where: { role: 'ADMIN', status: 'ACTIVE' },
@@ -410,21 +423,19 @@ export class RecoveryCaseService {
       AWAITING_EVIDENCE: 0,
       PENDING_VERIFICATION: 0,
     };
-    let unassignedCount = 0;
-    let activeFinancialHoldCount = 0;
-    for (const row of allSummaryRows) {
-      if (row.status in countsByStatus) {
-        countsByStatus[row.status as RecoveryCaseStatus] += 1;
+    for (const group of statusGroups) {
+      if (group.status in countsByStatus) {
+        countsByStatus[group.status as RecoveryCaseStatus] = group._count._all;
       }
-      if (!row.assignedAdminId) unassignedCount += 1;
-      if (row.dispute.recoveryRequired) activeFinancialHoldCount += 1;
     }
 
-    const totalRecoveryCents = aggregateRecoveryAmountsCents(allSummaryRows);
+    const totalRecoveryCents = overviewAggregate._sum.recoveryAmount
+      ? cents(overviewAggregate._sum.recoveryAmount, true)
+      : 0;
 
     return {
       overview: {
-        totalCases: allSummaryRows.length,
+        totalCases: overviewAggregate._count._all,
         totalRecoveryAmount: money(totalRecoveryCents).toFixed(2),
         currency: 'usd',
         countsByStatus,

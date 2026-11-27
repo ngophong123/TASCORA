@@ -874,12 +874,46 @@ it('Admin Financial Recovery Case: lifecycle, backfill idempotency, constraints,
   await expect(prisma.$executeRawUnsafe(`DELETE FROM "financial_recovery_events" WHERE "id" = $1`, savedEvent.id)).rejects.toThrow(/append-only/i);
   await expect(prisma.$executeRawUnsafe(`TRUNCATE TABLE "financial_recovery_events" CASCADE`)).rejects.toThrow(/append-only/i);
 
-  // 5. Financial safety proofs: ledger untouched, recoveryRequired still true, payouts still blocked.
+  // 5. Verify database-side overview aggregations match real PostgreSQL records accurately under filtering & pagination.
+  await RecoveryCaseService.assignAdmin(admin, recoveryCase.id, { assignedAdminId: admin });
+  await RecoveryCaseService.updateStatus(admin, backfilled.id, { status: 'AWAITING_EVIDENCE', reason: 'Awaiting legacy carrier receipt' });
+  const pgDbCases = await prisma.financialRecoveryCase.findMany({
+    select: { status: true, recoveryAmount: true, assignedAdminId: true, dispute: { select: { recoveryRequired: true } } },
+  });
+  const expectedTotalCents = pgDbCases.reduce((sum, row) => sum + Math.round(Number(row.recoveryAmount) * 100), 0);
+  const expectedCounts = { OPEN: 0, INVESTIGATING: 0, AWAITING_EVIDENCE: 0, PENDING_VERIFICATION: 0 };
+  for (const row of pgDbCases) expectedCounts[row.status as keyof typeof expectedCounts] += 1;
+
+  const pgFilteredList = await request(app)
+    .get('/financial/admin/recovery-cases?status=INVESTIGATING&limit=1&page=1')
+    .set('Authorization', `Bearer ${adminToken}`);
+  expect(pgFilteredList.status).toBe(200);
+  expect(pgFilteredList.body.data.overview).toEqual({
+    totalCases: pgDbCases.length,
+    totalRecoveryAmount: (expectedTotalCents / 100).toFixed(2),
+    currency: 'usd',
+    countsByStatus: expectedCounts,
+    unassignedCount: pgDbCases.filter(r => r.assignedAdminId === null).length,
+    activeFinancialHoldCount: pgDbCases.filter(r => r.dispute.recoveryRequired).length,
+    externalPayoutsDisabled: true,
+  });
+  expect(pgFilteredList.body.data.items).toHaveLength(1);
+  expect(pgFilteredList.body.data.items[0].status).toBe('INVESTIGATING');
+  expect(pgFilteredList.body.data.meta.total).toBe(expectedCounts.INVESTIGATING);
+
+  // 6. Financial safety proofs: ledger untouched, recoveryRequired still true, payouts still blocked.
   expect(await balance(recOrder.id)).toEqual(balanceBefore);
   expect(await prisma.financialEntry.count({ where: { orderId: recOrder.id } })).toBe(entriesBefore);
   expect((await prisma.marketplaceDispute.findUniqueOrThrow({ where: { id: recDispute.id } })).recoveryRequired).toBe(true);
   await expect(PayoutService.process(admin, recPayout.id, provider('PAID'))).rejects.toThrow(/recovery/i);
 
-  // Cleanup test fixture recoveryRequired flags so subsequent tests remain isolated.
+  // Cleanup test fixture recoveryRequired flags so subsequent tests remain isolated, and verify activeFinancialHoldCount drops accordingly.
   await prisma.marketplaceDispute.updateMany({ where: { id: { in: [recDispute.id, preDispute.id] } }, data: { recoveryRequired: false } });
+  const afterHoldDrop = await request(app)
+    .get('/financial/admin/recovery-cases')
+    .set('Authorization', `Bearer ${adminToken}`);
+  expect(afterHoldDrop.status).toBe(200);
+  expect(afterHoldDrop.body.data.overview.activeFinancialHoldCount).toBe(
+    pgDbCases.filter(r => r.dispute.recoveryRequired).length - 2
+  );
 });

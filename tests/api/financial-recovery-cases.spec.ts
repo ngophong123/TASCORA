@@ -59,7 +59,15 @@ function resetState() {
   });
 }
 
-function seedRecoveryCase(overrides: { amount?: string; status?: string; assignedAdminId?: string | null; providerDisputeId?: string } = {}) {
+function seedRecoveryCase(
+  overrides: {
+    amount?: string;
+    status?: string;
+    assignedAdminId?: string | null;
+    providerDisputeId?: string;
+    recoveryRequired?: boolean;
+  } = {}
+) {
   const orderId = nextId('cord');
   const disputeId = nextId('cdsp');
   const caseId = `frc_${disputeId}`;
@@ -93,7 +101,7 @@ function seedRecoveryCase(overrides: { amount?: string; status?: string; assigne
     lastProviderEventId: `evt_${state.seq}`,
     lastProviderEventType: 'charge.dispute.closed',
     lastProviderEventCreated: 1_700_000_900,
-    recoveryRequired: true,
+    recoveryRequired: overrides.recoveryRequired ?? true,
     createdAt: now,
     updatedAt: now,
   });
@@ -282,8 +290,30 @@ vi.mock('../../apps/api/src/lib/prisma', () => {
       }),
     },
     financialRecoveryCase: {
-      count: vi.fn(async ({ where }: { where?: Record<string, unknown> }) => {
-        return filterCases(where).length;
+      count: vi.fn(async (args?: { where?: Record<string, unknown> }) => {
+        return filterCases(args?.where).length;
+      }),
+      aggregate: vi.fn(async (args?: { where?: Record<string, unknown> }) => {
+        const list = filterCases(args?.where);
+        const sum =
+          list.length > 0
+            ? list.reduce((acc, item) => acc.add(item.recoveryAmount), new Prisma.Decimal(0))
+            : null;
+        return {
+          _count: { _all: list.length },
+          _sum: { recoveryAmount: sum },
+        };
+      }),
+      groupBy: vi.fn(async (args?: { by: string[]; where?: Record<string, unknown> }) => {
+        const list = filterCases(args?.where);
+        const buckets = new Map<string, number>();
+        for (const item of list) {
+          buckets.set(item.status, (buckets.get(item.status) ?? 0) + 1);
+        }
+        return [...buckets.entries()].map(([status, count]) => ({
+          status,
+          _count: { _all: count },
+        }));
       }),
       findMany: vi.fn(async (args?: { where?: Record<string, unknown>; skip?: number; take?: number; orderBy?: Array<Record<string, 'asc' | 'desc'>> }) => {
         let list = filterCases(args?.where).map(hydrateCase);
@@ -356,6 +386,14 @@ vi.mock('../../apps/api/src/lib/prisma', () => {
         if (typeof where.assignedAdminId === 'string' && c.assignedAdminId !== where.assignedAdminId) return false;
       }
       if (typeof where.sellerProfileId === 'string' && c.sellerProfileId !== where.sellerProfileId) return false;
+      if (where.dispute && typeof where.dispute === 'object') {
+        const dispFilter = where.dispute as { recoveryRequired?: boolean; is?: { recoveryRequired?: boolean } };
+        const expectedRecoveryRequired = dispFilter.recoveryRequired ?? dispFilter.is?.recoveryRequired;
+        if (typeof expectedRecoveryRequired === 'boolean') {
+          const disp = state.disputes.get(c.disputeId);
+          if (!disp || disp.recoveryRequired !== expectedRecoveryRequired) return false;
+        }
+      }
       if (Array.isArray(where.OR)) {
         const q = String((where.OR[0] as { id?: { contains?: string } })?.id?.contains ?? '').toLowerCase();
         const disp = state.disputes.get(c.disputeId);
@@ -386,6 +424,7 @@ vi.mock('../../apps/api/src/middlewares/requireAuth', () => ({
 
 import financialRouter from '../../apps/api/src/modules/financial/financial.route';
 import { PayoutService } from '../../apps/api/src/modules/financial/payout.service';
+import { prisma } from '../../apps/api/src/lib/prisma';
 
 const app = express();
 app.use(express.json());
@@ -593,5 +632,77 @@ describe('Admin Financial Recovery Cases API & Financial Safety Boundaries', () 
       .set('Authorization', 'Bearer admin1')
       .send({});
     expect(procRes.status).toBe(503);
+  });
+
+  it('computes overview statistics via database-side aggregations without an unbounded findMany', async () => {
+    // Empty state returns exact zeroes when aggregate sum is null.
+    const emptyRes = await request(app)
+      .get('/api/v1/financial/admin/recovery-cases')
+      .set('Authorization', 'Bearer admin1');
+    expect(emptyRes.status).toBe(200);
+    expect(emptyRes.body.data.overview).toEqual({
+      totalCases: 0,
+      totalRecoveryAmount: '0.00',
+      currency: 'usd',
+      countsByStatus: {
+        OPEN: 0,
+        INVESTIGATING: 0,
+        AWAITING_EVIDENCE: 0,
+        PENDING_VERIFICATION: 0,
+      },
+      unassignedCount: 0,
+      activeFinancialHoldCount: 0,
+      externalPayoutsDisabled: true,
+    });
+
+    // Seed mixed statuses, assignment states, fractional cent amounts, and one non-hold dispute.
+    seedRecoveryCase({ amount: '0.10', status: 'OPEN', assignedAdminId: null, recoveryRequired: true });
+    seedRecoveryCase({ amount: '0.20', status: 'OPEN', assignedAdminId: 'admin1', recoveryRequired: true });
+    seedRecoveryCase({ amount: '120.05', status: 'INVESTIGATING', assignedAdminId: 'admin2', recoveryRequired: true });
+    seedRecoveryCase({ amount: '80.50', status: 'AWAITING_EVIDENCE', assignedAdminId: null, recoveryRequired: true });
+    seedRecoveryCase({ amount: '49.15', status: 'PENDING_VERIFICATION', assignedAdminId: 'admin1', recoveryRequired: false });
+
+    const findManyMock = vi.mocked(prisma.financialRecoveryCase.findMany);
+    const aggregateMock = vi.mocked(prisma.financialRecoveryCase.aggregate);
+    const groupByMock = vi.mocked(prisma.financialRecoveryCase.groupBy);
+    const countMock = vi.mocked(prisma.financialRecoveryCase.count);
+    findManyMock.mockClear();
+    aggregateMock.mockClear();
+    groupByMock.mockClear();
+    countMock.mockClear();
+
+    const filteredRes = await request(app)
+      .get('/api/v1/financial/admin/recovery-cases?status=OPEN&limit=1&page=2&sortBy=recoveryAmount&sortOrder=asc')
+      .set('Authorization', 'Bearer admin1');
+    expect(filteredRes.status).toBe(200);
+
+    // Overview retains global statistics across all 5 cases with exact integer-cent sum (0.10 + 0.20 + 120.05 + 80.50 + 49.15 = 250.00).
+    expect(filteredRes.body.data.overview).toEqual({
+      totalCases: 5,
+      totalRecoveryAmount: '250.00',
+      currency: 'usd',
+      countsByStatus: {
+        OPEN: 2,
+        INVESTIGATING: 1,
+        AWAITING_EVIDENCE: 1,
+        PENDING_VERIFICATION: 1,
+      },
+      unassignedCount: 2,
+      activeFinancialHoldCount: 4,
+      externalPayoutsDisabled: true,
+    });
+
+    // Filtering and pagination apply strictly to items + meta.
+    expect(filteredRes.body.data.items).toHaveLength(1);
+    expect(filteredRes.body.data.items[0].status).toBe('OPEN');
+    expect(filteredRes.body.data.items[0].recoveryAmount).toBe('0.20');
+    expect(filteredRes.body.data.meta).toEqual({ total: 2, page: 2, limit: 1, totalPages: 2 });
+
+    // Exactly ONE bounded findMany (with explicit skip/take) for the current page; overview uses aggregate/groupBy/count.
+    expect(findManyMock).toHaveBeenCalledTimes(1);
+    expect(findManyMock).toHaveBeenCalledWith(expect.objectContaining({ skip: 1, take: 1 }));
+    expect(aggregateMock).toHaveBeenCalledTimes(1);
+    expect(groupByMock).toHaveBeenCalledTimes(1);
+    expect(countMock).toHaveBeenCalledTimes(3);
   });
 });
