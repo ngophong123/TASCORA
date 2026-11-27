@@ -849,12 +849,14 @@ it('Admin Financial Recovery Case: lifecycle, backfill idempotency, constraints,
   );
   expect(new Set(concurrentEvents.map(e => e.id)).size).toBe(1);
 
-  // Concurrent status transitions OPEN -> INVESTIGATING vs OPEN -> AWAITING_EVIDENCE: exactly one wins.
+  // Concurrent racing OPEN -> INVESTIGATING transitions serialize via lockOrder: exactly one succeeds and the second rejects with 409.
   const statusRace = await Promise.allSettled([
     RecoveryCaseService.updateStatus(admin, recoveryCase.id, { status: 'INVESTIGATING', reason: 'Investigator A started review' }),
-    RecoveryCaseService.updateStatus(admin, recoveryCase.id, { status: 'AWAITING_EVIDENCE', reason: 'Investigator B requested docs' }),
+    RecoveryCaseService.updateStatus(admin, recoveryCase.id, { status: 'INVESTIGATING', reason: 'Investigator B started review concurrently' }),
   ]);
   expect(statusRace.filter(r => r.status === 'fulfilled')).toHaveLength(1);
+  expect(statusRace.filter(r => r.status === 'rejected')).toHaveLength(1);
+  expect(await prisma.financialRecoveryEvent.count({ where: { recoveryCaseId: recoveryCase.id, type: 'STATUS_CHANGED' } })).toBe(1);
 
   // Rollback verification: failed transaction leaves no partial event or status change.
   const statusBeforeRollback = (await prisma.financialRecoveryCase.findUniqueOrThrow({ where: { id: recoveryCase.id } })).status;
