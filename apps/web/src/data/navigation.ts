@@ -50,7 +50,7 @@ export const EXPLORE_SERVICES_MENU: MegaMenuColumn[] = [
         title: "Autonomous AI Agents",
         description: "Custom LangChain, AutoGen, and tool-augmented agent workflows.",
         href: "/explore?category=ai",
-        iconName: "Sparkles",
+        iconName: "Bot",
         badge: "Hot",
       },
       {

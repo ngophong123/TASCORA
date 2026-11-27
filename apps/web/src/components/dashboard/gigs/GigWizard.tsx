@@ -6,7 +6,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
-  Sparkles,
+  FileCheck,
   Layers,
   DollarSign,
   FileText,
@@ -984,7 +984,7 @@ export function GigWizard({ serviceId }: { serviceId?: string } = {}) {
               ) : (
                 <>
                   <span>Save draft for review</span>
-                  <Sparkles className="h-3.5 w-3.5" />
+                  <FileCheck className="h-3.5 w-3.5" />
                 </>
               )}
             </Button>

@@ -8,7 +8,7 @@ import {
   ShoppingBag,
   MessageSquare,
   CreditCard,
-  Sparkles,
+  Info,
   ExternalLink,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -45,7 +45,7 @@ export function NotificationsPopover() {
         return <CreditCard className="w-3.5 h-3.5 text-emerald-600" />
       case "system":
       default:
-        return <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+        return <Info className="w-3.5 h-3.5 text-blue-600" />
     }
   }
 
