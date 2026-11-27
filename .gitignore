@@ -23,6 +23,10 @@ test-results-*/
 playwright-report/
 .lighthouseci/
 blob-report/
+# Raw Playwright page context recordings (preserves canonical named QA videos)
+docs/qa/recordings/archive/page@*.webm
+docs/qa/page@*.webm
+**/page@*.webm
 
 
 # Environment variants may contain credentials

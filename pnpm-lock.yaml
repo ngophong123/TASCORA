@@ -463,7 +463,7 @@ importers:
   packages/config: {}
 
   packages/eslint-config:
-    dependencies:
+    devDependencies:
       eslint:
         specifier: ^9.0.0
         version: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
