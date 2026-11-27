@@ -5,7 +5,7 @@ import { prisma } from '../../lib/prisma';
 import { HttpError } from '../../lib/errors';
 import { stripe, assertProviderConfigured } from '../payment/payment.service';
 import { OrderService } from '../order/order.service';
-import { basis, balances, entry, financialTx, requestKey, reasonSchema, type Tx } from './domain';
+import { basis, balances, entry, financialTx, isDefiniteStripeRejection, requestKey, reasonSchema, type Tx } from './domain';
 import { cents, money, split } from './money';
 import { assertPaymentsEnabled } from '../../lib/payment-provider';
 
@@ -62,8 +62,51 @@ export class RefundService {
     if (!reserved.transaction) return reserved.refund;
     if (!reserved.refund.stripeRefundId && Date.now() - reserved.refund.createdAt.getTime() > 23 * 3600000) throw new HttpError(409, 'Old unbound refund requires provider reconciliation');
     // Timeouts/unknown provider outcomes leave PROCESSING and keep earnings frozen.
-    const provider = reserved.refund.stripeRefundId ? await stripe.refunds.retrieve(reserved.refund.stripeRefundId) : await stripe.refunds.create({ payment_intent: reserved.transaction.stripePaymentId!, amount: cents(reserved.refund.amount), reason: 'requested_by_customer', metadata: { refundId, orderId: reserved.refund.orderId } }, { idempotencyKey: `refund:${refundId}` });
+    // Definite 4xx provider rejections before a refund ID is bound transition to FAILED
+    // so administrators can safely retry without wedging refunds or disputes.
+    let provider: Stripe.Refund;
+    if (reserved.refund.stripeRefundId) {
+      provider = await stripe.refunds.retrieve(reserved.refund.stripeRefundId);
+    } else {
+      try {
+        provider = await stripe.refunds.create(
+          { payment_intent: reserved.transaction.stripePaymentId!, amount: cents(reserved.refund.amount), reason: 'requested_by_customer', metadata: { refundId, orderId: reserved.refund.orderId } },
+          { idempotencyKey: `refund:${refundId}` }
+        );
+      } catch (error) {
+        if (isDefiniteStripeRejection(error)) {
+          await financialTx(async tx => {
+            const order = await OrderService.load(tx, reserved.refund.orderId);
+            const current = await tx.refund.findUniqueOrThrow({ where: { id: refundId } });
+            if (current.status === 'PROCESSING' && !current.stripeRefundId) {
+              await tx.refund.update({ where: { id: refundId }, data: { status: 'FAILED' } });
+              await entry(tx, order.id, 'REFUND_FAILED', `refund:${refundId}:FAILED`, adminId, {
+                refundId,
+                reason: error instanceof Error ? error.message.slice(0, 500) : 'Provider rejected refund request',
+                notifyUserId: order.buyerId,
+              });
+            }
+          }, reserved.refund.orderId);
+        }
+        throw error;
+      }
+    }
     return financialTx(tx => this.apply(tx, providerRefund.parse(provider)), reserved.refund.orderId);
+  }
+  static async retry(adminId: string, failedRefundId: string, newKey: string) {
+    await requireFinancialAdmin(adminId);
+    assertPaymentsEnabled();
+    requestKey.parse(newKey);
+    const failed = await prisma.refund.findUnique({ where: { id: failedRefundId } });
+    if (!failed) throw new HttpError(404, 'Refund not found');
+    return financialTx(async tx => {
+      await OrderService.load(tx, failed.orderId);
+      const current = await tx.refund.findUniqueOrThrow({ where: { id: failedRefundId } });
+      if (!['FAILED', 'CANCELLED'].includes(current.status)) {
+        throw new HttpError(409, 'Only failed or cancelled refunds can be retried');
+      }
+      return this.reserve(tx, adminId, current.orderId, cents(current.amount), current.reason, newKey, true);
+    }, failed.orderId);
   }
   static async apply(tx: Tx, provider: z.infer<typeof providerRefund>) {
     assertPaymentsEnabled();

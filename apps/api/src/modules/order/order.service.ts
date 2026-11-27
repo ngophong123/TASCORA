@@ -125,9 +125,22 @@ export class OrderService {
       if (order.status === 'CANCELLED') return order;
       if (order.status !== 'PENDING') throw new HttpError(409, 'Paid cancellation requires a refund request or dispute');
       // Once an intent is reserved/created, cancellation must be reconciled with
-      // provider cancellation first. Never race an in-flight charge locally.
-      const attempts = await tx.transaction.count({ where: { orderId, status: { notIn: ['CANCELLED'] } } });
+      // provider cancellation first. Unbound FAILED attempts that were definitively
+      // rejected before provider creation do not block local cancellation.
+      const attempts = await tx.transaction.count({
+        where: {
+          orderId,
+          OR: [
+            { status: { notIn: ['CANCELLED', 'FAILED'] } },
+            { status: 'FAILED', stripePaymentId: { not: null } },
+          ],
+        },
+      });
       if (attempts) throw new HttpError(409, 'Cancel the pending payment through provider reconciliation first');
+      await tx.transaction.updateMany({
+        where: { orderId, status: 'FAILED', stripePaymentId: null },
+        data: { status: 'CANCELLED' },
+      });
       await entry(tx, orderId, 'ORDER_CANCELLED', `order:${orderId}:cancelled`, userId, { notifyUserId: order.seller.userId });
       return tx.order.update({ where: { id: orderId }, data: { status: 'CANCELLED', activities: { create: { type: 'STATUS_UPDATE', description: 'Buyer cancelled unpaid order' } } } });
     }, orderId);

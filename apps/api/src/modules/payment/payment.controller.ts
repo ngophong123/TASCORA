@@ -9,9 +9,6 @@ import { assertPaymentsEnabled } from '../../lib/payment-provider';
 
 const CONNECT_WEBHOOK_TYPES = new Set([
   'account.updated',
-  'charge.dispute.created',
-  'charge.dispute.updated',
-  'charge.dispute.closed',
   'payout.paid',
   'payout.failed',
 ]);

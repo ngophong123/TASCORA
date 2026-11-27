@@ -14,8 +14,36 @@ export const transitions: Partial<Record<OrderStatus, OrderStatus[]>> = {
   PENDING: ['PAID', 'CANCELLED'], PAID: ['IN_PROGRESS', 'REFUNDED', 'DISPUTED'],
   IN_PROGRESS: ['DELIVERED', 'DISPUTED'], IN_REVISION: ['IN_PROGRESS', 'DELIVERED', 'DISPUTED'],
   DELIVERED: ['IN_REVISION', 'COMPLETED', 'DISPUTED'], DISPUTED: ['COMPLETED', 'REFUNDED'],
-  COMPLETED: ['REFUNDED'], CANCELLED: ['REFUNDED'],
+  COMPLETED: ['REFUNDED', 'DISPUTED'], CANCELLED: ['REFUNDED'],
 };
+
+const DEFINITE_STRIPE_REJECTION_TYPES = new Set([
+  'StripeInvalidRequestError',
+  'StripeCardError',
+  'StripePermissionError',
+  'StripeAuthenticationError',
+]);
+
+/**
+ * Returns true only when Stripe definitively rejected a write request before creating
+ * a provider-side object (4xx non-rate-limit / non-conflict client errors). Network
+ * errors, timeouts, 429s, and 5xx responses are treated as ambiguous so callers retain
+ * durable idempotency state for safe retry or reconciliation.
+ */
+export function isDefiniteStripeRejection(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+  const candidate = error as { statusCode?: unknown; type?: unknown; raw?: { statusCode?: unknown } };
+  if (typeof candidate.type === 'string' && DEFINITE_STRIPE_REJECTION_TYPES.has(candidate.type)) {
+    return true;
+  }
+  const statusCode =
+    typeof candidate.statusCode === 'number'
+      ? candidate.statusCode
+      : typeof candidate.raw?.statusCode === 'number'
+        ? candidate.raw.statusCode
+        : null;
+  return statusCode !== null && statusCode >= 400 && statusCode < 500 && statusCode !== 408 && statusCode !== 409 && statusCode !== 429;
+}
 export function transition(from: OrderStatus, to: OrderStatus) {
   if (!transitions[from]?.includes(to)) throw new HttpError(409, `Invalid order status transition from ${from} to ${to}`);
 }

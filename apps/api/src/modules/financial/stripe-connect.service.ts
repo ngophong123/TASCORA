@@ -277,11 +277,13 @@ export class StripeConnectService {
       throw new HttpError(400, 'Live Stripe events are strictly rejected in test-mode Connect workflows');
     }
 
+    if (event.type.startsWith('charge.dispute.')) {
+      const { DisputeService } = await import('./dispute.service');
+      return DisputeService.handleProviderDisputeEvent(event);
+    }
+
     const supportedTypes = new Set([
       'account.updated',
-      'charge.dispute.created',
-      'charge.dispute.updated',
-      'charge.dispute.closed',
       'payout.paid',
       'payout.failed',
     ]);
@@ -337,32 +339,6 @@ export class StripeConnectService {
               },
             },
           });
-        }
-      }
-
-      if (event.type.startsWith('charge.dispute.')) {
-        const dispute = event.data.object as Stripe.Dispute;
-        const paymentIntentId =
-          typeof dispute.payment_intent === 'string'
-            ? dispute.payment_intent
-            : dispute.payment_intent?.id;
-        if (paymentIntentId) {
-          const transaction = await tx.transaction.findUnique({
-            where: { stripePaymentId: paymentIntentId },
-            select: { orderId: true, order: { select: { buyerId: true, seller: { select: { userId: true } } } } },
-          });
-          if (transaction) {
-            await tx.financialEntry.create({
-              data: {
-                orderId: transaction.orderId,
-                type: `PROVIDER_DISPUTE_${event.type.split('.').pop()?.toUpperCase() || 'EVENT'}`,
-                eventKey: `stripe-dispute:${event.id}`,
-                providerId: dispute.id,
-                reason: `${dispute.reason || 'provider_dispute'} (${dispute.status})`,
-                notifyUserId: transaction.order.seller.userId,
-              },
-            });
-          }
         }
       }
 
