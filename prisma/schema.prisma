@@ -147,6 +147,8 @@ model User {
   kycReviewHistory     KycReviewHistory[]     @relation("KycReviewActor")
   adminAuditLogs       AdminAuditLog[]        @relation("AdminAuditActor")
   uploadObjects        UploadObject[]         @relation("UploadObjects")
+  assignedRecoveryCases FinancialRecoveryCase[] @relation("AssignedRecoveryCases")
+  recoveryEventsAuthored FinancialRecoveryEvent[] @relation("RecoveryEventActor")
 
   @@map("users")
 }
@@ -266,6 +268,7 @@ model SellerProfile {
   payouts              Payout[]              
   reviews              Review[]              
   coupons              Coupon[]
+  recoveryCases        FinancialRecoveryCase[]
 
   @@map("seller_profiles")
 }
@@ -566,6 +569,7 @@ model Order {
   financialEntries FinancialEntry[]
   refunds         Refund[]
   dispute         MarketplaceDispute?
+  recoveryCase    FinancialRecoveryCase?
 
   @@unique([buyerId, checkoutKey])
   @@index([status, lastDeliveredAt])
@@ -869,8 +873,57 @@ model MarketplaceDispute {
   createdAt                DateTime @default(now())
   updatedAt                DateTime @updatedAt
   order                    Order @relation(fields: [orderId], references: [id])
+  recoveryCase             FinancialRecoveryCase?
   @@index([status, createdAt])
   @@map("marketplace_disputes")
+}
+
+// Separate administrative case management for unresolved financial recoveries.
+// Does NOT modify balances; FinancialEntry remains the sole authoritative ledger.
+model FinancialRecoveryCase {
+  id              String                   @id @default(cuid())
+  disputeId       String                   @unique
+  orderId         String                   @unique
+  sellerProfileId String
+  assignedAdminId String?
+  status          String                   @default("OPEN")
+  recoveryAmount  Decimal                  @db.Decimal(10, 2)
+  currency        String                   @default("usd")
+  lastActivityAt  DateTime                 @default(now())
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+
+  dispute         MarketplaceDispute       @relation(fields: [disputeId], references: [id], onDelete: Restrict)
+  order           Order                    @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  seller          SellerProfile            @relation(fields: [sellerProfileId], references: [id], onDelete: Restrict)
+  assignedAdmin   User?                    @relation("AssignedRecoveryCases", fields: [assignedAdminId], references: [id], onDelete: SetNull)
+  events          FinancialRecoveryEvent[]
+
+  @@index([status, lastActivityAt])
+  @@index([sellerProfileId, status])
+  @@index([assignedAdminId, status])
+  @@map("financial_recovery_cases")
+}
+
+model FinancialRecoveryEvent {
+  id              String                @id @default(cuid())
+  recoveryCaseId  String
+  eventKey        String?               @unique
+  actorId         String?
+  type            String
+  previousStatus  String?
+  nextStatus      String?
+  assignedAdminId String?
+  note            String?
+  evidenceRef     String?
+  metadata        Json?
+  createdAt       DateTime              @default(now())
+
+  recoveryCase    FinancialRecoveryCase @relation(fields: [recoveryCaseId], references: [id], onDelete: Restrict)
+  actor           User?                 @relation("RecoveryEventActor", fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([recoveryCaseId, createdAt])
+  @@map("financial_recovery_events")
 }
 
 model ProviderEvent {
