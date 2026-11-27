@@ -14,12 +14,14 @@ const mocks = vi.hoisted(() => {
     update: vi.fn(),
   });
   return {
+    $queryRaw: vi.fn(),
     sellerProfile: model(),
     marketplaceDispute: model(),
     providerEvent: model(),
     notification: model(),
-    transaction: model(),
-    financialEntry: model(),
+    order: model(),
+    transaction: { ...model(), findUniqueOrThrow: vi.fn() },
+    financialEntry: { ...model(), aggregate: vi.fn() },
     user: model(),
     events: new Map<string, { id: string; type: string; payloadHash: string }>(),
   };
@@ -253,10 +255,34 @@ describe('Phase 4C Stripe Connect Test-Mode Workflows', () => {
     expect(mocks.notification.create).toHaveBeenCalledTimes(1);
 
     mocks.transaction.findUnique.mockResolvedValueOnce({
+      id: 'tx_dispute_1',
       orderId: 'ord_dispute_1',
-      order: { buyerId: 'buyer', seller: { userId: 'seller' } },
     });
+    mocks.transaction.findUniqueOrThrow.mockResolvedValueOnce({
+      id: 'tx_dispute_1',
+      orderId: 'ord_dispute_1',
+      amount: '100.00',
+      refundedAmount: '0.00',
+      currency: 'usd',
+      status: 'SUCCEEDED',
+    });
+    mocks.order.findUnique.mockResolvedValueOnce({
+      id: 'ord_dispute_1',
+      buyerId: 'buyer',
+      sellerId: 'sp_1',
+      status: 'PAID',
+      platformFeeBps: 1000,
+      seller: { userId: 'seller' },
+      escrow: { id: 'esc_1', released: false, transactionId: 'tx_dispute_1' },
+      dispute: null,
+      deliveries: [],
+      revisions: [],
+      refunds: [],
+    });
+    mocks.financialEntry.findMany.mockResolvedValue([]);
     mocks.financialEntry.create.mockResolvedValueOnce({ id: 'fe_dispute_1' });
+    mocks.marketplaceDispute.create.mockResolvedValueOnce({ id: 'disp_1', status: 'OPEN' });
+    mocks.order.update.mockResolvedValueOnce({ id: 'ord_dispute_1', status: 'DISPUTED' });
     const disputeEvent = {
       id: 'evt_disp_1',
       type: 'charge.dispute.created',
@@ -266,6 +292,21 @@ describe('Phase 4C Stripe Connect Test-Mode Workflows', () => {
 
     const disputeRes = await StripeConnectService.handleConnectWebhookEvent(disputeEvent);
     expect(disputeRes).toMatchObject({ handled: true, deduplicated: false });
+    expect(mocks.marketplaceDispute.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          orderId: 'ord_dispute_1',
+          category: 'PAYMENT_CHARGEBACK',
+          status: 'OPEN',
+        }),
+      })
+    );
+    expect(mocks.order.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'ord_dispute_1' },
+        data: expect.objectContaining({ status: 'DISPUTED' }),
+      })
+    );
     expect(mocks.financialEntry.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({

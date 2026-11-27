@@ -1,6 +1,15 @@
 import { prisma } from '../../lib/prisma';
 import { Prisma, WalletTransactionType } from '@prisma/client';
 
+/**
+ * LEGACY / DISCONNECTED WALLET SERVICE
+ *
+ * Authoritative financial balances, escrow releases, refunds, chargebacks, and
+ * payout reservations live exclusively in the append-only `FinancialEntry` ledger
+ * (`GET /api/v1/financial/earnings`). `Wallet` and `WalletTransaction` are retained
+ * non-destructively for historical compatibility and are NOT updated by marketplace
+ * order/payment flows. Do not introduce a new ledger or write marketplace earnings here.
+ */
 export class WalletService {
   static async getWallet(userId: string) {
     let wallet = await prisma.wallet.findUnique({

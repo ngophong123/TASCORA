@@ -40,6 +40,32 @@ describe('Admin audit log immutability and tamper resistance', () => {
     );
   });
 
+  it('blocks update, updateMany, upsert, delete, and deleteMany on FinancialEntry at the application Prisma layer', async () => {
+    await expect(
+      prisma.financialEntry.update({ where: { id: 'fe-1' }, data: { amount: 1 } })
+    ).rejects.toThrow('append-only and immutable');
+    await expect(
+      prisma.financialEntry.updateMany({ where: {}, data: { amount: 1 } })
+    ).rejects.toThrow('append-only and immutable');
+    await expect(
+      prisma.financialEntry.upsert({
+        where: { id: 'fe-1' },
+        update: { amount: 1 },
+        create: {
+          orderId: 'ord-1',
+          type: 'ADJUSTMENT',
+          eventKey: 'fe-upsert-1',
+        },
+      })
+    ).rejects.toThrow('append-only and immutable');
+    await expect(prisma.financialEntry.delete({ where: { id: 'fe-1' } })).rejects.toThrow(
+      'append-only and immutable'
+    );
+    await expect(prisma.financialEntry.deleteMany({ where: {} })).rejects.toThrow(
+      'append-only and immutable'
+    );
+  });
+
   it('strips secrets, tokens, and identity numbers from persisted audit metadata', async () => {
     const createSpy = vi.fn().mockImplementation(async args => ({ id: 'audit-created', ...args.data }));
     const mockDb = { adminAuditLog: { create: createSpy } } as unknown as Parameters<typeof AuditService.record>[0];

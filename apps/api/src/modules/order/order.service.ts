@@ -81,6 +81,7 @@ export class OrderService {
   }
   static async complete(tx: Tx, order: Awaited<ReturnType<typeof OrderService.load>>, actor: string | null, automatic = false, adminResolution = false) {
     if (order.status === 'COMPLETED') return order;
+    if (order.dispute?.recoveryRequired) throw new HttpError(409, 'Financial recovery required before completing order');
     if (order.dispute && ['OPEN', 'UNDER_REVIEW'].includes(order.dispute.status) && !adminResolution) throw new HttpError(409, 'Dispute blocks completion');
     if (order.status !== 'DELIVERED' && !(adminResolution && order.status === 'DISPUTED')) throw new HttpError(409, 'Invalid order status transition');
     if (order.refunds.some(r => ['PENDING', 'PROCESSING'].includes(r.status))) throw new HttpError(409, 'Refund processing blocks completion');
@@ -125,9 +126,22 @@ export class OrderService {
       if (order.status === 'CANCELLED') return order;
       if (order.status !== 'PENDING') throw new HttpError(409, 'Paid cancellation requires a refund request or dispute');
       // Once an intent is reserved/created, cancellation must be reconciled with
-      // provider cancellation first. Never race an in-flight charge locally.
-      const attempts = await tx.transaction.count({ where: { orderId, status: { notIn: ['CANCELLED'] } } });
+      // provider cancellation first. Unbound FAILED attempts that were definitively
+      // rejected before provider creation do not block local cancellation.
+      const attempts = await tx.transaction.count({
+        where: {
+          orderId,
+          OR: [
+            { status: { notIn: ['CANCELLED', 'FAILED'] } },
+            { status: 'FAILED', stripePaymentId: { not: null } },
+          ],
+        },
+      });
       if (attempts) throw new HttpError(409, 'Cancel the pending payment through provider reconciliation first');
+      await tx.transaction.updateMany({
+        where: { orderId, status: 'FAILED', stripePaymentId: null },
+        data: { status: 'CANCELLED' },
+      });
       await entry(tx, orderId, 'ORDER_CANCELLED', `order:${orderId}:cancelled`, userId, { notifyUserId: order.seller.userId });
       return tx.order.update({ where: { id: orderId }, data: { status: 'CANCELLED', activities: { create: { type: 'STATUS_UPDATE', description: 'Buyer cancelled unpaid order' } } } });
     }, orderId);
