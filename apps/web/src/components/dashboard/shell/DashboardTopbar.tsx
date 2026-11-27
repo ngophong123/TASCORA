@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { logoutSession } from "@/lib/auth-client"
 import * as React from "react"

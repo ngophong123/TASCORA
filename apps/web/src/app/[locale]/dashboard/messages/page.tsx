@@ -12,7 +12,6 @@ import {
   ArrowLeft,
   ShoppingBag,
   Clock,
-  Sparkles,
   FileCode,
   FileText,
   Archive,
@@ -749,7 +748,7 @@ function MessagesContent() {
                       title="Insert quick response"
                       className="flex h-11 w-11 items-center justify-center text-[#6B6B7B] hover:text-[#0A0A23] hover:bg-[#EFEFF4] rounded-lg transition-colors"
                     >
-                      <Sparkles className="h-4 w-4 text-blue-600" />
+                      <FileText className="h-4 w-4 text-blue-600" />
                     </button>
 
                     <button

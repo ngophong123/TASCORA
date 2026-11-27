@@ -142,12 +142,18 @@ test('each storytelling scene responds to scrolling with live service links pres
   await expect(page.getByTestId('service-title')).toHaveText(marketplace.services[0]!.title);
 });
 
-test('motion is progressive enhancement with JavaScript disabled', async ({ browser }) => {
-  const context = await browser.newContext({ javaScriptEnabled: false });
+test('motion is progressive enhancement with JavaScript disabled', async ({ browser, baseURL }) => {
+  if (!baseURL) {
+    throw new Error('Playwright baseURL must be configured');
+  }
+  const allowedHosts = new Set(['localhost', '127.0.0.1', new URL(baseURL).hostname]);
+  const context = await browser.newContext({ baseURL, javaScriptEnabled: false });
   try {
     const page = await context.newPage();
-    await page.route('**/*', route => ['localhost', '127.0.0.1'].includes(new URL(route.request().url()).hostname) ? route.continue() : route.abort());
-    await page.goto('http://localhost:3210/en');
+    await page.route('**/*', route => allowedHosts.has(new URL(route.request().url()).hostname) ? route.continue() : route.abort());
+    const response = await page.goto('/en');
+    expect(response?.ok()).toBe(true);
+    expect(new URL(page.url()).origin).toBe(new URL(baseURL).origin);
     await expect(page.locator('h1')).toBeVisible();
     await expect(page.locator('#how-it-works li')).toHaveCount(3);
     await expect(page.locator('#how-it-works h2')).toBeVisible();
