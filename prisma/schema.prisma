@@ -656,6 +656,8 @@ model Transaction {
   refunds         Refund[]
   financialEntries FinancialEntry[]
 
+  @@index([orderId])
+  @@index([createdAt])
   @@map("transactions")
 }
 
@@ -844,6 +846,7 @@ model Refund {
   financialEntries FinancialEntry[]
   @@unique([orderId, requestKey])
   @@index([status])
+  @@index([transactionId])
   @@map("refunds")
 }
 
