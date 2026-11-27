@@ -66,6 +66,32 @@ describe('Admin audit log immutability and tamper resistance', () => {
     );
   });
 
+  it('blocks update, updateMany, upsert, delete, and deleteMany on FinancialRecoveryEvent at the application Prisma layer', async () => {
+    await expect(
+      prisma.financialRecoveryEvent.update({ where: { id: 'fre-1' }, data: { note: 'tampered' } })
+    ).rejects.toThrow('append-only and immutable');
+    await expect(
+      prisma.financialRecoveryEvent.updateMany({ where: {}, data: { note: 'tampered' } })
+    ).rejects.toThrow('append-only and immutable');
+    await expect(
+      prisma.financialRecoveryEvent.upsert({
+        where: { id: 'fre-1' },
+        update: { note: 'tampered' },
+        create: {
+          recoveryCaseId: 'frc-1',
+          type: 'NOTE_ADDED',
+          note: 'attempt',
+        },
+      })
+    ).rejects.toThrow('append-only and immutable');
+    await expect(prisma.financialRecoveryEvent.delete({ where: { id: 'fre-1' } })).rejects.toThrow(
+      'append-only and immutable'
+    );
+    await expect(prisma.financialRecoveryEvent.deleteMany({ where: {} })).rejects.toThrow(
+      'append-only and immutable'
+    );
+  });
+
   it('strips secrets, tokens, and identity numbers from persisted audit metadata', async () => {
     const createSpy = vi.fn().mockImplementation(async args => ({ id: 'audit-created', ...args.data }));
     const mockDb = { adminAuditLog: { create: createSpy } } as unknown as Parameters<typeof AuditService.record>[0];

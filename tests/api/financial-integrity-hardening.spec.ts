@@ -82,6 +82,8 @@ const store = vi.hoisted(() => ({
   payouts: new Map<string, PayoutRec>(),
   entries: new Map<string, EntryRec>(),
   events: new Map<string, { id: string; type: string; objectId: string; payloadHash: string }>(),
+  recoveryCases: new Map<string, { id: string; disputeId: string; orderId: string; sellerProfileId: string; status: string; recoveryAmount: Prisma.Decimal }>(),
+  recoveryEvents: new Map<string, { id: string; recoveryCaseId: string; eventKey: string | null; type: string }>(),
 }));
 
 function resetStore() {
@@ -96,6 +98,8 @@ function resetStore() {
   store.payouts.clear();
   store.entries.clear();
   store.events.clear();
+  store.recoveryCases.clear();
+  store.recoveryEvents.clear();
   store.users.set('buyer', { id: 'buyer', role: 'BUYER', status: 'ACTIVE' });
   store.users.set('seller', { id: 'seller', role: 'SELLER', status: 'ACTIVE' });
   store.users.set('admin', { id: 'admin', role: 'ADMIN', status: 'ACTIVE' });
@@ -454,6 +458,36 @@ vi.mock('../../apps/api/src/lib/prisma', () => {
       create: vi.fn(async ({ data }: { data: { id: string; type: string; objectId: string; payloadHash: string } }) => {
         store.events.set(data.id, data);
         return data;
+      }),
+    },
+    financialRecoveryCase: {
+      findUnique: vi.fn(async ({ where }: { where: { disputeId?: string; id?: string } }) => {
+        if (where.id) return store.recoveryCases.get(where.id) ?? null;
+        if (where.disputeId) return [...store.recoveryCases.values()].find(c => c.disputeId === where.disputeId) ?? null;
+        return null;
+      }),
+      create: vi.fn(async ({ data }: { data: { disputeId: string; orderId: string; sellerProfileId: string; status?: string; recoveryAmount: Prisma.Decimal } }) => {
+        const rec = {
+          id: nextId('cfrc'),
+          disputeId: data.disputeId,
+          orderId: data.orderId,
+          sellerProfileId: data.sellerProfileId,
+          status: data.status ?? 'OPEN',
+          recoveryAmount: new Prisma.Decimal(data.recoveryAmount),
+        };
+        store.recoveryCases.set(rec.id, rec);
+        return rec;
+      }),
+    },
+    financialRecoveryEvent: {
+      findUnique: vi.fn(async ({ where }: { where: { eventKey?: string } }) => {
+        if (!where.eventKey) return null;
+        return [...store.recoveryEvents.values()].find(e => e.eventKey === where.eventKey) ?? null;
+      }),
+      create: vi.fn(async ({ data }: { data: { recoveryCaseId: string; eventKey?: string; type: string } }) => {
+        const rec = { id: nextId('cfre'), recoveryCaseId: data.recoveryCaseId, eventKey: data.eventKey ?? null, type: data.type };
+        store.recoveryEvents.set(rec.id, rec);
+        return rec;
       }),
     },
     notification: {

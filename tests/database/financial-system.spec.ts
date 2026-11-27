@@ -7,6 +7,7 @@ import { PaymentService, stripe } from '../../apps/api/src/modules/payment/payme
 import { OrderService } from '../../apps/api/src/modules/order/order.service';
 import { RefundService } from '../../apps/api/src/modules/financial/refund.service';
 import { DisputeService } from '../../apps/api/src/modules/financial/dispute.service';
+import { RecoveryCaseService } from '../../apps/api/src/modules/financial/recovery-case.service';
 import { PayoutService, type PayoutProvider } from '../../apps/api/src/modules/financial/payout.service';
 import { balances, flushFinancialNotices } from '../../apps/api/src/modules/financial/domain';
 import express from 'express';
@@ -763,4 +764,120 @@ it('PR #27 follow-up: prevents out-of-order stale dispute reopening and enforces
   await expect(PayoutService.request(seller, siblingCompleted.id, `payout_pg_sib_${siblingCompleted.id}`)).rejects.toThrow(/recovery/i);
   // Clean up recovery flag on test fixture seller so test database remains clean for any subsequent assertions.
   await prisma.marketplaceDispute.update({ where: { id: resDispute.id }, data: { recoveryRequired: false } });
+});
+
+it('Admin Financial Recovery Case: lifecycle, backfill idempotency, constraints, concurrency, append-only triggers, and financial hold invariants on PostgreSQL', async () => {
+  const adminToken = await token(admin);
+  const buyerToken = await token(buyer);
+
+  // 1. Trigger a real chargeback loss on reserved funds -> automatically opens FinancialRecoveryCase + CASE_OPENED event.
+  const recOrder = await delivered();
+  await OrderService.operate(buyer, recOrder.id, 'accept');
+  const recPayout = await PayoutService.request(seller, recOrder.id, `payout_rec_case_${recOrder.id}`);
+  await PaymentService.handleWebhookEvent({
+    id: `evt_pg_rec_case_${recOrder.id}`,
+    object: 'event',
+    type: 'charge.dispute.closed',
+    created: 1_700_200_100,
+    livemode: false,
+    data: { object: { id: `dp_pg_rec_${recOrder.id}`, object: 'dispute', amount: 10000, currency: 'usd', payment_intent: `pi_${recOrder.id}`, reason: 'fraudulent', status: 'lost' } },
+  } as unknown as Stripe.Event);
+
+  const recDispute = await prisma.marketplaceDispute.findUniqueOrThrow({ where: { orderId: recOrder.id } });
+  const recoveryCase = await prisma.financialRecoveryCase.findUniqueOrThrow({ where: { disputeId: recDispute.id } });
+  expect(recoveryCase.status).toBe('OPEN');
+  expect(recoveryCase.recoveryAmount.toFixed(2)).toBe('100.00');
+
+  // Unique constraint prevents duplicate recovery case per dispute/order.
+  await expect(
+    prisma.financialRecoveryCase.create({
+      data: { disputeId: recDispute.id, orderId: recOrder.id, sellerProfileId: sellerId, recoveryAmount: '100.00' },
+    })
+  ).rejects.toMatchObject({ code: 'P2002' });
+
+  // Foreign key RESTRICT blocks deleting the underlying dispute while case exists.
+  await expect(prisma.marketplaceDispute.delete({ where: { id: recDispute.id } })).rejects.toMatchObject({ code: 'P2003' });
+
+  // 2. Verify idempotent backfill SQL handles pre-existing recoveryRequired=true disputes cleanly.
+  const preExistingOrder = await delivered();
+  const preDispute = await prisma.marketplaceDispute.create({
+    data: {
+      orderId: preExistingOrder.id,
+      openedBy: buyer,
+      category: 'PAYMENT_CHARGEBACK',
+      description: 'Legacy pre-migration recovery dispute',
+      status: 'UNDER_REVIEW',
+      recoveryRequired: true,
+    },
+  });
+  const backfillCaseSql = `
+    INSERT INTO "financial_recovery_cases" ("id","disputeId","orderId","sellerProfileId","status","recoveryAmount","currency","lastActivityAt","createdAt","updatedAt")
+    SELECT 'frc_' || d."id", d."id", d."orderId", o."sellerId", 'OPEN', o."amount", 'usd', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM "marketplace_disputes" d JOIN "orders" o ON o."id" = d."orderId"
+    WHERE d."id" = $1 AND d."recoveryRequired" = true
+    ON CONFLICT ("disputeId") DO NOTHING
+  `;
+  await prisma.$executeRawUnsafe(backfillCaseSql, preDispute.id);
+  await prisma.$executeRawUnsafe(backfillCaseSql, preDispute.id);
+  const backfilled = await prisma.financialRecoveryCase.findUniqueOrThrow({ where: { disputeId: preDispute.id } });
+  expect(backfilled.id).toBe(`frc_${preDispute.id}`);
+  expect(backfilled.recoveryAmount.toFixed(2)).toBe('100.00');
+
+  // 3. Verify REST API authorization & investigation workflow + balance immutability.
+  const balanceBefore = await balance(recOrder.id);
+  const entriesBefore = await prisma.financialEntry.count({ where: { orderId: recOrder.id } });
+
+  expect((await request(app).get('/financial/admin/recovery-cases').set('Authorization', `Bearer ${buyerToken}`)).status).toBe(403);
+  const listRes = await request(app).get('/financial/admin/recovery-cases').set('Authorization', `Bearer ${adminToken}`);
+  expect(listRes.status).toBe(200);
+  expect(listRes.body.data.overview.totalCases).toBeGreaterThanOrEqual(2);
+
+  const detailRes = await request(app).get(`/financial/admin/recovery-cases/${recoveryCase.id}`).set('Authorization', `Bearer ${adminToken}`);
+  expect(detailRes.status).toBe(200);
+  expect(detailRes.body.data.balances.reserved).toBe('90.00');
+
+  // Concurrent identical event requests with same idempotency key append once.
+  const concurrentEvents = await Promise.all(
+    Array.from({ length: 4 }, () =>
+      RecoveryCaseService.addEvent(admin, recoveryCase.id, {
+        type: 'EVIDENCE_ATTACHED',
+        note: 'Uploaded carrier confirmation and Stripe dispute receipt',
+        evidenceRef: 'ref:pg-recovery-evidence-01',
+        idempotencyKey: `pg_ev_idemp_${recOrder.id}`,
+      })
+    )
+  );
+  expect(new Set(concurrentEvents.map(e => e.id)).size).toBe(1);
+
+  // Concurrent status transitions OPEN -> INVESTIGATING vs OPEN -> AWAITING_EVIDENCE: exactly one wins.
+  const statusRace = await Promise.allSettled([
+    RecoveryCaseService.updateStatus(admin, recoveryCase.id, { status: 'INVESTIGATING', reason: 'Investigator A started review' }),
+    RecoveryCaseService.updateStatus(admin, recoveryCase.id, { status: 'AWAITING_EVIDENCE', reason: 'Investigator B requested docs' }),
+  ]);
+  expect(statusRace.filter(r => r.status === 'fulfilled')).toHaveLength(1);
+
+  // Rollback verification: failed transaction leaves no partial event or status change.
+  const statusBeforeRollback = (await prisma.financialRecoveryCase.findUniqueOrThrow({ where: { id: recoveryCase.id } })).status;
+  await expect(
+    prisma.$transaction(async tx => {
+      await tx.financialRecoveryCase.update({ where: { id: recoveryCase.id }, data: { status: 'PENDING_VERIFICATION' } });
+      throw new Error('Simulated rollback');
+    })
+  ).rejects.toThrow('Simulated rollback');
+  expect((await prisma.financialRecoveryCase.findUniqueOrThrow({ where: { id: recoveryCase.id } })).status).toBe(statusBeforeRollback);
+
+  // 4. Append-only PostgreSQL immutability on financial_recovery_events (UPDATE, DELETE, TRUNCATE CASCADE).
+  const savedEvent = await prisma.financialRecoveryEvent.findFirstOrThrow({ where: { recoveryCaseId: recoveryCase.id } });
+  await expect(prisma.$executeRawUnsafe(`UPDATE "financial_recovery_events" SET "note" = 'tamper' WHERE "id" = $1`, savedEvent.id)).rejects.toThrow(/append-only/i);
+  await expect(prisma.$executeRawUnsafe(`DELETE FROM "financial_recovery_events" WHERE "id" = $1`, savedEvent.id)).rejects.toThrow(/append-only/i);
+  await expect(prisma.$executeRawUnsafe(`TRUNCATE TABLE "financial_recovery_events" CASCADE`)).rejects.toThrow(/append-only/i);
+
+  // 5. Financial safety proofs: ledger untouched, recoveryRequired still true, payouts still blocked.
+  expect(await balance(recOrder.id)).toEqual(balanceBefore);
+  expect(await prisma.financialEntry.count({ where: { orderId: recOrder.id } })).toBe(entriesBefore);
+  expect((await prisma.marketplaceDispute.findUniqueOrThrow({ where: { id: recDispute.id } })).recoveryRequired).toBe(true);
+  await expect(PayoutService.process(admin, recPayout.id, provider('PAID'))).rejects.toThrow(/recovery/i);
+
+  // Cleanup test fixture recoveryRequired flags so subsequent tests remain isolated.
+  await prisma.marketplaceDispute.updateMany({ where: { id: { in: [recDispute.id, preDispute.id] } }, data: { recoveryRequired: false } });
 });
