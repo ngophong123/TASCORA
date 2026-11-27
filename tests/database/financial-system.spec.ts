@@ -623,7 +623,14 @@ it('multiple live attempts require reconciliation before intent creation or canc
 it('PR #27: enforces financial_entries BEFORE TRUNCATE, non-negative feeDelta, and validated CHECK constraints on PostgreSQL', async () => {
   const created = await order();
   await fund(created.id);
-  await expect(prisma.$executeRawUnsafe(`TRUNCATE TABLE "financial_entries"`)).rejects.toThrow(/append-only/i);
+  await expect(prisma.$executeRawUnsafe(`TRUNCATE TABLE "financial_entries" CASCADE`)).rejects.toThrow(/append-only/i);
+  const triggers = await prisma.$queryRaw<{ tgname: string }[]>`
+    SELECT t.tgname FROM pg_trigger t JOIN pg_class c ON c.oid = t.tgrelid
+    WHERE NOT t.tgisinternal AND c.relname = 'financial_entries'
+  `;
+  expect(triggers.map(t => t.tgname)).toEqual(
+    expect.arrayContaining(['financial_entries_immutable', 'financial_entries_no_truncate', 'financial_entries_balances'])
+  );
   await expect(
     prisma.financialEntry.create({
       data: { orderId: created.id, type: 'BAD_FEE', eventKey: `bad_fee_${created.id}`, feeDelta: -20 },
