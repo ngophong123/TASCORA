@@ -8,6 +8,15 @@ import { HttpError } from '../../lib/errors';
 import { PayoutService } from './payout.service';
 import { RefundService, requireFinancialAdmin } from './refund.service';
 import { DisputeService } from './dispute.service';
+import {
+  RecoveryCaseService,
+  addRecoveryEventBodySchema,
+  assignRecoveryCaseBodySchema,
+  listRecoveryCasesQuerySchema,
+  recoveryCaseIdSchema,
+  updateRecoveryStatusBodySchema,
+} from './recovery-case.service';
+import { resolveCorrelationId } from '../audit/audit.service';
 import { StripeConnectService } from './stripe-connect.service';
 import { runAdminReconciliationReport } from './reconciliation.service';
 import { PaymentService, stripe, assertProviderConfigured } from '../payment/payment.service';
@@ -82,6 +91,74 @@ router.post('/admin/reconciliation/report', validate(z.object({ body: reconcilia
       maxRefundPagesPerPayment: body.maxRefundPagesPerPayment,
     });
     res.json({ success: true, data: report });
+  } catch (error) { next(error); }
+});
+const recoveryCaseParams = z.object({ id: recoveryCaseIdSchema });
+const auditContextFromReq = (req: AuthRequest) => ({
+  correlationId: resolveCorrelationId(req.headers['x-correlation-id']),
+  ipAddress: req.ip,
+  userAgent: typeof req.headers['user-agent'] === 'string' ? req.headers['user-agent'] : undefined,
+});
+router.get('/admin/recovery-cases', validate(z.object({ query: listRecoveryCasesQuerySchema })), async (req: AuthRequest, res, next) => {
+  try {
+    res.json({
+      success: true,
+      data: await RecoveryCaseService.listCases(
+        req.user!.userId,
+        req.query as unknown as z.input<typeof listRecoveryCasesQuerySchema>
+      ),
+    });
+  } catch (error) { next(error); }
+});
+router.get('/admin/recovery-cases/:id', validate(z.object({ params: recoveryCaseParams })), async (req: AuthRequest, res, next) => {
+  try {
+    res.json({
+      success: true,
+      data: await RecoveryCaseService.getCaseDetail(
+        req.user!.userId,
+        req.params.id!,
+        auditContextFromReq(req)
+      ),
+    });
+  } catch (error) { next(error); }
+});
+router.post('/admin/recovery-cases/:id/events', validate(z.object({ params: recoveryCaseParams, body: addRecoveryEventBodySchema })), async (req: AuthRequest, res, next) => {
+  try {
+    res.status(201).json({
+      success: true,
+      data: await RecoveryCaseService.addEvent(
+        req.user!.userId,
+        req.params.id!,
+        req.body as z.input<typeof addRecoveryEventBodySchema>,
+        auditContextFromReq(req)
+      ),
+    });
+  } catch (error) { next(error); }
+});
+router.patch('/admin/recovery-cases/:id/status', validate(z.object({ params: recoveryCaseParams, body: updateRecoveryStatusBodySchema })), async (req: AuthRequest, res, next) => {
+  try {
+    res.json({
+      success: true,
+      data: await RecoveryCaseService.updateStatus(
+        req.user!.userId,
+        req.params.id!,
+        req.body as z.input<typeof updateRecoveryStatusBodySchema>,
+        auditContextFromReq(req)
+      ),
+    });
+  } catch (error) { next(error); }
+});
+router.patch('/admin/recovery-cases/:id/assign', validate(z.object({ params: recoveryCaseParams, body: assignRecoveryCaseBodySchema })), async (req: AuthRequest, res, next) => {
+  try {
+    res.json({
+      success: true,
+      data: await RecoveryCaseService.assignAdmin(
+        req.user!.userId,
+        req.params.id!,
+        req.body as z.input<typeof assignRecoveryCaseBodySchema>,
+        auditContextFromReq(req)
+      ),
+    });
   } catch (error) { next(error); }
 });
 export default router;

@@ -7,6 +7,7 @@ import { OrderService } from '../order/order.service';
 import { balances, basis, entry, financialTx, reasonSchema } from './domain';
 import { cents, money, split } from './money';
 import { RefundService, requireFinancialAdmin } from './refund.service';
+import { RecoveryCaseService } from './recovery-case.service';
 import { assertPaymentsEnabled } from '../../lib/payment-provider';
 
 const providerDisputeSchema = z.object({
@@ -431,30 +432,41 @@ export class DisputeService {
               : `Stripe partial chargeback ${dispute.id} closed (lost ${money(lossAmount).toFixed(2)} of ${money(gross).toFixed(2)} USD)`;
           const resolvedAt = recoveryRequired ? null : new Date();
 
-          if (order.dispute) {
-            await tx.marketplaceDispute.update({
-              where: { id: order.dispute.id },
-              data: {
-                status: disputeStatus,
-                resolutionReason,
-                resolvedAt,
-                recoveryRequired,
-                ...orderingMeta,
-              },
-            });
-          } else {
-            await tx.marketplaceDispute.create({
-              data: {
-                orderId: order.id,
-                openedBy: order.buyerId,
-                category: 'PAYMENT_CHARGEBACK',
-                description: resolutionReason,
-                status: disputeStatus,
-                resolutionReason,
-                resolvedAt,
-                recoveryRequired,
-                ...orderingMeta,
-              },
+          const persistedDispute = order.dispute
+            ? await tx.marketplaceDispute.update({
+                where: { id: order.dispute.id },
+                data: {
+                  status: disputeStatus,
+                  resolutionReason,
+                  resolvedAt,
+                  recoveryRequired,
+                  ...orderingMeta,
+                },
+              })
+            : await tx.marketplaceDispute.create({
+                data: {
+                  orderId: order.id,
+                  openedBy: order.buyerId,
+                  category: 'PAYMENT_CHARGEBACK',
+                  description: resolutionReason,
+                  status: disputeStatus,
+                  resolutionReason,
+                  resolvedAt,
+                  recoveryRequired,
+                  ...orderingMeta,
+                },
+              });
+
+          if (recoveryRequired) {
+            const recoveryCents = lossAmount > 0 ? lossAmount : gross;
+            await RecoveryCaseService.ensureCaseInTx(tx, {
+              disputeId: persistedDispute.id,
+              orderId: order.id,
+              sellerProfileId: order.sellerId,
+              recoveryAmountCents: recoveryCents,
+              currency: transaction.currency,
+              providerDisputeId: dispute.id,
+              note: `Recovery case opened automatically after Stripe chargeback ${dispute.id} lost while funds were reserved or paid`,
             });
           }
 
