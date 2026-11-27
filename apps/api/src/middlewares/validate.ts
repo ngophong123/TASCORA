@@ -1,7 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
-import { AnyZodObject } from 'zod';
+import { z } from 'zod';
 
-export const validate = (schema: AnyZodObject) => 
+type RequestValidationSchema = z.ZodType<{
+  body?: unknown;
+  query?: unknown;
+  params?: unknown;
+}>;
+
+export const validate = (schema: RequestValidationSchema) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const parsed = await schema.parseAsync({
@@ -9,11 +15,17 @@ export const validate = (schema: AnyZodObject) =>
         query: req.query,
         params: req.params,
       });
-      req.body = parsed.body;
-      req.query = parsed.query || req.query;
-      req.params = parsed.params || req.params;
+      if (parsed.body !== undefined) {
+        req.body = parsed.body;
+      }
+      if (parsed.query !== undefined) {
+        req.query = parsed.query as Request['query'];
+      }
+      if (parsed.params !== undefined) {
+        req.params = parsed.params as Request['params'];
+      }
       return next();
     } catch (error) {
-      return res.status(400).json({ success: false, error: error });
+      return res.status(400).json({ success: false, error });
     }
   };
