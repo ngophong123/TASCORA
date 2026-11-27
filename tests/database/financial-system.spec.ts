@@ -25,7 +25,7 @@ beforeAll(async () => {
   buyer = (await prisma.user.create({ data: { email: 'finance-buyer@test.invalid', password: 'unused', status: 'ACTIVE' } })).id;
   admin = (await prisma.user.create({ data: { email: 'finance-admin@test.invalid', password: 'unused', role: 'ADMIN', status: 'ACTIVE' } })).id;
   outsider = (await prisma.user.create({ data: { email: 'finance-outsider@test.invalid', password: 'unused', status: 'ACTIVE' } })).id;
-  const account = await prisma.user.create({ data: { email: 'finance-seller@test.invalid', password: 'unused', status: 'ACTIVE', role: 'SELLER', sellerProfile: { create: { status: 'APPROVED', skills: [], languages: [] } } }, include: { sellerProfile: true } }); seller = account.id; sellerId = account.sellerProfile!.id;
+  const account = await prisma.user.create({ data: { email: 'finance-seller@test.invalid', password: 'unused', status: 'ACTIVE', role: 'SELLER', sellerProfile: { create: { status: 'APPROVED', verificationStatus: 'APPROVED', stripeAccountId: 'acct_test_finance_seller', skills: [], languages: [] } } }, include: { sellerProfile: true } }); seller = account.id; sellerId = account.sellerProfile!.id;
   const category = await prisma.category.create({ data: { name: 'Financial validation', slug: 'financial-validation' } });
   const service = await prisma.service.create({ data: { sellerProfileId: sellerId, categoryId: category.id, title: 'Trusted financial service', description: 'Disposable financial fixture', status: 'PUBLISHED', packages: { create: { type: 'BASIC', title: 'Trusted package', description: 'Fixture', price: '100.00', deliveryDays: 2, revisions: 1, features: [] } } }, include: { packages: true } }); serviceId = service.id; packageId = service.packages[0]!.id;
 });
@@ -618,4 +618,78 @@ it('multiple live attempts require reconciliation before intent creation or canc
   await expect(PaymentService.cancelPayment(buyer, created.id)).rejects.toThrow('Multiple payment attempts');
   expect(create).not.toHaveBeenCalled(); expect(retrieve).not.toHaveBeenCalled();
   expect((await prisma.order.findUniqueOrThrow({ where: { id: created.id } })).status).toBe('PENDING');
+});
+
+it('PR #27: enforces financial_entries BEFORE TRUNCATE, non-negative feeDelta, and validated CHECK constraints on PostgreSQL', async () => {
+  const created = await order();
+  await fund(created.id);
+  await expect(prisma.$executeRawUnsafe(`TRUNCATE TABLE "financial_entries"`)).rejects.toThrow(/append-only/i);
+  await expect(
+    prisma.financialEntry.create({
+      data: { orderId: created.id, type: 'BAD_FEE', eventKey: `bad_fee_${created.id}`, feeDelta: -20 },
+    })
+  ).rejects.toThrow(/negative/i);
+  const checks = await prisma.$queryRaw<{ conname: string; convalidated: boolean }[]>`
+    SELECT conname, convalidated FROM pg_constraint
+    WHERE conname IN ('orders_financial_amount_check', 'transactions_refund_bounds_check', 'payouts_positive_check')
+  `;
+  expect(checks).toHaveLength(3);
+  expect(checks.every(c => c.convalidated)).toBe(true);
+});
+
+it('PR #27: handles Stripe chargeback created/updated/closed, failed PI cancel/retry, dispute refund retry, and payout eligibility guards on PostgreSQL', async () => {
+  // 1. Chargeback created -> updated -> closed (lost) on real Postgres.
+  const cbOrder = await delivered();
+  await OrderService.operate(buyer, cbOrder.id, 'accept');
+  await PaymentService.handleWebhookEvent({
+    id: `evt_pg_cb_created_${cbOrder.id}`,
+    object: 'event',
+    type: 'charge.dispute.created',
+    livemode: false,
+    data: { object: { id: `dp_pg_${cbOrder.id}`, object: 'dispute', amount: 10000, currency: 'usd', payment_intent: `pi_${cbOrder.id}`, reason: 'fraudulent', status: 'needs_response' } },
+  } as unknown as Stripe.Event);
+  expect((await prisma.order.findUniqueOrThrow({ where: { id: cbOrder.id } })).status).toBe('DISPUTED');
+  await expect(PayoutService.request(seller, cbOrder.id, `payout_cb_blocked_${cbOrder.id}`)).rejects.toThrow('undisputed');
+  await PaymentService.handleWebhookEvent({
+    id: `evt_pg_cb_lost_${cbOrder.id}`,
+    object: 'event',
+    type: 'charge.dispute.closed',
+    livemode: false,
+    data: { object: { id: `dp_pg_${cbOrder.id}`, object: 'dispute', amount: 10000, currency: 'usd', payment_intent: `pi_${cbOrder.id}`, reason: 'fraudulent', status: 'lost' } },
+  } as unknown as Stripe.Event);
+  expect((await prisma.order.findUniqueOrThrow({ where: { id: cbOrder.id } })).status).toBe('REFUNDED');
+  expect((await balance(cbOrder.id)).available).toBe(0);
+
+  // 2. Definite Stripe PI creation failure unlocks clean cancellation.
+  const failedPiOrder = await order();
+  vi.spyOn(stripe.paymentIntents, 'create').mockRejectedValueOnce(
+    Object.assign(new Error('Invalid Stripe request'), { statusCode: 400, type: 'StripeInvalidRequestError' })
+  );
+  await expect(PaymentService.createPaymentIntent(buyer, failedPiOrder.id)).rejects.toThrow('Invalid Stripe request');
+  const cancelled = await PaymentService.cancelPayment(buyer, failedPiOrder.id);
+  expect(cancelled.status).toBe('CANCELLED');
+
+  // 3. Dispute resolution unlocks retry after Stripe refund failure.
+  const disputeOrder = await delivered();
+  await DisputeService.open(buyer, disputeOrder.id, 'QUALITY', 'Retry refund verification');
+  await DisputeService.resolve(admin, disputeOrder.id, 'BUYER', 'Initial buyer refund');
+  const firstRefund = await prisma.refund.findFirstOrThrow({ where: { orderId: disputeOrder.id } });
+  vi.spyOn(stripe.refunds, 'create').mockResolvedValueOnce(mockRefund(firstRefund, 'failed'));
+  await RefundService.process(admin, firstRefund.id);
+  await DisputeService.resolve(admin, disputeOrder.id, 'BUYER', 'Retry buyer refund');
+  const refunds = await prisma.refund.findMany({ where: { orderId: disputeOrder.id }, orderBy: { createdAt: 'asc' } });
+  expect(refunds).toHaveLength(2);
+  vi.spyOn(stripe.refunds, 'create').mockResolvedValueOnce(mockRefund(refunds[1]!, 'succeeded'));
+  await RefundService.process(admin, refunds[1]!.id);
+  expect((await prisma.order.findUniqueOrThrow({ where: { id: disputeOrder.id } })).status).toBe('REFUNDED');
+
+  // 4. Payout eligibility guard blocks unverified seller even on COMPLETED order.
+  const payoutOrder = await delivered();
+  await OrderService.operate(buyer, payoutOrder.id, 'accept');
+  await prisma.sellerProfile.update({ where: { id: sellerId }, data: { verificationStatus: 'PENDING' } });
+  try {
+    await expect(PayoutService.request(seller, payoutOrder.id, `payout_kyc_pending_${payoutOrder.id}`)).rejects.toThrow('KYC_NOT_APPROVED');
+  } finally {
+    await prisma.sellerProfile.update({ where: { id: sellerId }, data: { verificationStatus: 'APPROVED' } });
+  }
 });
