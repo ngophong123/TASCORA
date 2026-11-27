@@ -43,6 +43,15 @@ export class PayoutService {
         );
       }
       basis(order);
+      if (order.dispute?.recoveryRequired) {
+        throw new HttpError(409, 'Financial recovery required before payout');
+      }
+      const unresolvedSellerRecoveries = await tx.marketplaceDispute.count({
+        where: { order: { sellerId: order.sellerId }, recoveryRequired: true },
+      });
+      if (unresolvedSellerRecoveries > 0) {
+        throw new HttpError(409, 'Financial recovery required on disputed seller funds before payout');
+      }
       if (order.status !== 'COMPLETED' || !order.escrow?.released || order.refunds.some(r => ['PENDING', 'PROCESSING'].includes(r.status)) || (order.dispute && ['OPEN', 'UNDER_REVIEW'].includes(order.dispute.status))) throw new HttpError(409, 'Only completed undisputed available earnings can be requested');
       const existing = await tx.payout.findUnique({ where: { escrowId: order.escrow.id } });
       if (existing && existing.status !== 'FAILED') throw new HttpError(409, 'Payout already reserved or paid');
@@ -63,6 +72,11 @@ export class PayoutService {
       const order = await OrderService.load(tx, found.escrow.orderId);
       const payout = await tx.payout.findUniqueOrThrow({ where: { id: payoutId } });
       if (['COMPLETED', 'FAILED'].includes(payout.status)) return { order, payout, submit: false };
+      if (order.dispute?.recoveryRequired) throw new HttpError(409, 'Payout frozen: financial recovery required');
+      const unresolvedSellerRecoveries = await tx.marketplaceDispute.count({
+        where: { order: { sellerId: payout.sellerProfileId }, recoveryRequired: true },
+      });
+      if (unresolvedSellerRecoveries > 0) throw new HttpError(409, 'Payout frozen: financial recovery required');
       if (order.status !== 'COMPLETED' || order.refunds.some(r => ['PENDING', 'PROCESSING'].includes(r.status)) || (order.dispute && ['OPEN', 'UNDER_REVIEW'].includes(order.dispute.status))) throw new HttpError(409, 'Payout frozen');
       const seller = await tx.sellerProfile.findUnique({
         where: { id: payout.sellerProfileId },

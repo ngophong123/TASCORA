@@ -700,3 +700,67 @@ it('PR #27: handles Stripe chargeback created/updated/closed, failed PI cancel/r
     await prisma.sellerProfile.update({ where: { id: sellerId }, data: { verificationStatus: 'APPROVED' } });
   }
 });
+
+it('PR #27 follow-up: prevents out-of-order stale dispute reopening and enforces partial chargeback & recovery-required semantics on PostgreSQL', async () => {
+  // 1. Stale updated event arriving after closed (won) cannot reopen terminal dispute or order.
+  const wonOrder = await delivered();
+  await OrderService.operate(buyer, wonOrder.id, 'accept');
+  await PaymentService.handleWebhookEvent({
+    id: `evt_pg_won_${wonOrder.id}`,
+    object: 'event',
+    type: 'charge.dispute.closed',
+    created: 1_700_100_200,
+    livemode: false,
+    data: { object: { id: `dp_pg_won_${wonOrder.id}`, object: 'dispute', amount: 10000, currency: 'usd', payment_intent: `pi_${wonOrder.id}`, reason: 'fraudulent', status: 'won' } },
+  } as unknown as Stripe.Event);
+  await PaymentService.handleWebhookEvent({
+    id: `evt_pg_stale_${wonOrder.id}`,
+    object: 'event',
+    type: 'charge.dispute.updated',
+    created: 1_700_100_100,
+    livemode: false,
+    data: { object: { id: `dp_pg_won_${wonOrder.id}`, object: 'dispute', amount: 10000, currency: 'usd', payment_intent: `pi_${wonOrder.id}`, reason: 'fraudulent', status: 'under_review' } },
+  } as unknown as Stripe.Event);
+  expect((await prisma.order.findUniqueOrThrow({ where: { id: wonOrder.id } })).status).toBe('COMPLETED');
+  expect((await prisma.marketplaceDispute.findUniqueOrThrow({ where: { orderId: wonOrder.id } })).status).toBe('RESOLVED_SELLER');
+
+  // 2. Partial chargeback loss marks Transaction PARTIALLY_REFUNDED but keeps Order DISPUTED (not REFUNDED).
+  const partialOrder = await delivered();
+  await OrderService.operate(buyer, partialOrder.id, 'accept');
+  await PaymentService.handleWebhookEvent({
+    id: `evt_pg_partial_${partialOrder.id}`,
+    object: 'event',
+    type: 'charge.dispute.closed',
+    created: 1_700_100_300,
+    livemode: false,
+    data: { object: { id: `dp_pg_partial_${partialOrder.id}`, object: 'dispute', amount: 4000, currency: 'usd', payment_intent: `pi_${partialOrder.id}`, reason: 'general', status: 'lost' } },
+  } as unknown as Stripe.Event);
+  expect((await prisma.order.findUniqueOrThrow({ where: { id: partialOrder.id } })).status).toBe('DISPUTED');
+  const partialTx = await prisma.transaction.findFirstOrThrow({ where: { orderId: partialOrder.id } });
+  expect(partialTx.status).toBe('PARTIALLY_REFUNDED');
+  expect(partialTx.refundedAmount.toFixed(2)).toBe('40.00');
+  expect((await balance(partialOrder.id)).available).toBe(5400);
+
+  // 3. Chargeback loss on reserved funds flags recoveryRequired and blocks payout processing & other seller payouts.
+  const reservedOrder = await delivered();
+  await OrderService.operate(buyer, reservedOrder.id, 'accept');
+  const reservedPayout = await PayoutService.request(seller, reservedOrder.id, `payout_pg_res_${reservedOrder.id}`);
+  await PaymentService.handleWebhookEvent({
+    id: `evt_pg_res_lost_${reservedOrder.id}`,
+    object: 'event',
+    type: 'charge.dispute.closed',
+    created: 1_700_100_400,
+    livemode: false,
+    data: { object: { id: `dp_pg_res_${reservedOrder.id}`, object: 'dispute', amount: 10000, currency: 'usd', payment_intent: `pi_${reservedOrder.id}`, reason: 'fraudulent', status: 'lost' } },
+  } as unknown as Stripe.Event);
+  const resDispute = await prisma.marketplaceDispute.findUniqueOrThrow({ where: { orderId: reservedOrder.id } });
+  expect(resDispute.recoveryRequired).toBe(true);
+  expect(resDispute.status).toBe('UNDER_REVIEW');
+  expect((await prisma.order.findUniqueOrThrow({ where: { id: reservedOrder.id } })).status).toBe('DISPUTED');
+  await expect(PayoutService.process(admin, reservedPayout.id, provider('PAID'))).rejects.toThrow(/recovery/i);
+  const siblingCompleted = await delivered();
+  await OrderService.operate(buyer, siblingCompleted.id, 'accept');
+  await expect(PayoutService.request(seller, siblingCompleted.id, `payout_pg_sib_${siblingCompleted.id}`)).rejects.toThrow(/recovery/i);
+  // Clean up recovery flag on test fixture seller so test database remains clean for any subsequent assertions.
+  await prisma.marketplaceDispute.update({ where: { id: resDispute.id }, data: { recoveryRequired: false } });
+});

@@ -81,6 +81,7 @@ export class OrderService {
   }
   static async complete(tx: Tx, order: Awaited<ReturnType<typeof OrderService.load>>, actor: string | null, automatic = false, adminResolution = false) {
     if (order.status === 'COMPLETED') return order;
+    if (order.dispute?.recoveryRequired) throw new HttpError(409, 'Financial recovery required before completing order');
     if (order.dispute && ['OPEN', 'UNDER_REVIEW'].includes(order.dispute.status) && !adminResolution) throw new HttpError(409, 'Dispute blocks completion');
     if (order.status !== 'DELIVERED' && !(adminResolution && order.status === 'DISPUTED')) throw new HttpError(409, 'Invalid order status transition');
     if (order.refunds.some(r => ['PENDING', 'PROCESSING'].includes(r.status))) throw new HttpError(409, 'Refund processing blocks completion');

@@ -29,7 +29,23 @@ type TxRec = {
   createdAt: Date;
 };
 type EscrowRec = { id: string; orderId: string; transactionId: string; amount: Prisma.Decimal; released: boolean; releasedAt: Date | null };
-type DisputeRec = { id: string; orderId: string; openedBy: string; category: string; description: string; status: string; resolvedBy: string | null; resolutionReason: string | null; resolvedAt: Date | null };
+type DisputeRec = {
+  id: string;
+  orderId: string;
+  openedBy: string;
+  category: string;
+  description: string;
+  status: string;
+  resolvedBy: string | null;
+  resolutionReason: string | null;
+  resolvedAt: Date | null;
+  providerDisputeId: string | null;
+  providerStatus: string | null;
+  lastProviderEventId: string | null;
+  lastProviderEventType: string | null;
+  lastProviderEventCreated: number | null;
+  recoveryRequired: boolean;
+};
 type RefundRec = { id: string; orderId: string; transactionId: string; requestKey: string; actorId: string; reason: string; amount: Prisma.Decimal; status: TransactionStatus; stripeRefundId: string | null; createdAt: Date };
 type PayoutRec = { id: string; escrowId: string; sellerProfileId: string; amount: Prisma.Decimal; status: PayoutStatus; requestKey: string | null; stripePayoutId: string | null; failureReason: string | null; attempt: number; createdAt: Date };
 type EntryRec = {
@@ -253,6 +269,16 @@ vi.mock('../../apps/api/src/lib/prisma', () => {
       }),
     },
     marketplaceDispute: {
+      count: vi.fn(async ({ where }: { where?: { order?: { sellerId?: string }; recoveryRequired?: boolean } }) => {
+        return [...store.disputes.values()].filter(d => {
+          if (where?.recoveryRequired !== undefined && d.recoveryRequired !== where.recoveryRequired) return false;
+          if (where?.order?.sellerId) {
+            const ord = store.orders.get(d.orderId);
+            if (!ord || ord.sellerId !== where.order.sellerId) return false;
+          }
+          return true;
+        }).length;
+      }),
       create: vi.fn(async ({ data }: { data: Partial<DisputeRec> & { orderId: string; openedBy: string; category: string; description: string } }) => {
         const rec: DisputeRec = {
           id: nextId('cdsp'),
@@ -264,6 +290,12 @@ vi.mock('../../apps/api/src/lib/prisma', () => {
           resolvedBy: data.resolvedBy ?? null,
           resolutionReason: data.resolutionReason ?? null,
           resolvedAt: data.resolvedAt ?? null,
+          providerDisputeId: data.providerDisputeId ?? null,
+          providerStatus: data.providerStatus ?? null,
+          lastProviderEventId: data.lastProviderEventId ?? null,
+          lastProviderEventType: data.lastProviderEventType ?? null,
+          lastProviderEventCreated: data.lastProviderEventCreated ?? null,
+          recoveryRequired: data.recoveryRequired ?? false,
         };
         store.disputes.set(rec.id, rec);
         return rec;
@@ -673,6 +705,222 @@ describe('PR #27 F-01: Stripe Chargeback Lifecycle', () => {
       .filter(e => e.orderId === order.id)
       .reduce((acc, e) => acc.add(e.pendingDelta), new Prisma.Decimal(0));
     expect(pendingSum.toFixed(2)).toBe('0.00');
+  });
+
+  it('ignores stale out-of-order dispute webhooks after closed-won, closed-lost, and newer active updates', async () => {
+    // 1. closed (won) followed by stale updated and stale created must NOT reopen dispute or re-freeze order.
+    const wonOrder = seedFundedOrder({ status: 'COMPLETED', released: true });
+    await PaymentService.handleWebhookEvent({
+      id: 'evt_won_first_1',
+      object: 'event',
+      type: 'charge.dispute.closed',
+      created: 1_700_000_200,
+      livemode: false,
+      data: { object: { id: 'dp_won_oob', object: 'dispute', amount: 10000, currency: 'usd', payment_intent: wonOrder.paymentId, reason: 'fraudulent', status: 'won' } },
+    } as unknown as Stripe.Event);
+    const wonDispute = [...store.disputes.values()].find(d => d.orderId === wonOrder.order.id)!;
+    expect(wonDispute.status).toBe('RESOLVED_SELLER');
+    expect(wonDispute.providerStatus).toBe('won');
+    expect(wonDispute.lastProviderEventCreated).toBe(1_700_000_200);
+    expect(store.orders.get(wonOrder.order.id)!.status).toBe('COMPLETED');
+
+    await PaymentService.handleWebhookEvent({
+      id: 'evt_won_stale_updated_1',
+      object: 'event',
+      type: 'charge.dispute.updated',
+      created: 1_700_000_150,
+      livemode: false,
+      data: { object: { id: 'dp_won_oob', object: 'dispute', amount: 10000, currency: 'usd', payment_intent: wonOrder.paymentId, reason: 'fraudulent', status: 'under_review' } },
+    } as unknown as Stripe.Event);
+    await PaymentService.handleWebhookEvent({
+      id: 'evt_won_stale_created_1',
+      object: 'event',
+      type: 'charge.dispute.created',
+      created: 1_700_000_100,
+      livemode: false,
+      data: { object: { id: 'dp_won_oob', object: 'dispute', amount: 10000, currency: 'usd', payment_intent: wonOrder.paymentId, reason: 'fraudulent', status: 'needs_response' } },
+    } as unknown as Stripe.Event);
+    // Exact duplicate of stale event is deduplicated cleanly.
+    await PaymentService.handleWebhookEvent({
+      id: 'evt_won_stale_updated_1',
+      object: 'event',
+      type: 'charge.dispute.updated',
+      created: 1_700_000_150,
+      livemode: false,
+      data: { object: { id: 'dp_won_oob', object: 'dispute', amount: 10000, currency: 'usd', payment_intent: wonOrder.paymentId, reason: 'fraudulent', status: 'under_review' } },
+    } as unknown as Stripe.Event);
+    expect(wonDispute.status).toBe('RESOLVED_SELLER');
+    expect(wonDispute.providerStatus).toBe('won');
+    expect(store.orders.get(wonOrder.order.id)!.status).toBe('COMPLETED');
+    expect([...store.entries.values()].filter(e => e.orderId === wonOrder.order.id && e.type === 'PROVIDER_DISPUTE_STALE_IGNORED')).toHaveLength(2);
+
+    // 2. closed (lost) followed by stale updated must NOT reopen dispute or alter REFUNDED state.
+    const lostOrder = seedFundedOrder({ status: 'PAID', released: false });
+    await PaymentService.handleWebhookEvent({
+      id: 'evt_lost_first_1',
+      object: 'event',
+      type: 'charge.dispute.closed',
+      created: 1_700_000_300,
+      livemode: false,
+      data: { object: { id: 'dp_lost_oob', object: 'dispute', amount: 10000, currency: 'usd', payment_intent: lostOrder.paymentId, reason: 'product_not_received', status: 'lost' } },
+    } as unknown as Stripe.Event);
+    await PaymentService.handleWebhookEvent({
+      id: 'evt_lost_stale_updated_1',
+      object: 'event',
+      type: 'charge.dispute.updated',
+      created: 1_700_000_250,
+      livemode: false,
+      data: { object: { id: 'dp_lost_oob', object: 'dispute', amount: 10000, currency: 'usd', payment_intent: lostOrder.paymentId, reason: 'product_not_received', status: 'under_review' } },
+    } as unknown as Stripe.Event);
+    const lostDispute = [...store.disputes.values()].find(d => d.orderId === lostOrder.order.id)!;
+    expect(lostDispute.status).toBe('RESOLVED_BUYER');
+    expect(lostDispute.providerStatus).toBe('lost');
+    expect(store.orders.get(lostOrder.order.id)!.status).toBe('REFUNDED');
+    expect([...store.entries.values()].filter(e => e.orderId === lostOrder.order.id && e.type === 'PROVIDER_DISPUTE_STALE_IGNORED')).toHaveLength(1);
+
+    // 3. Active dispute preserves legitimate forward update, rejects older timestamp regression.
+    const activeOrder = seedFundedOrder({ status: 'PAID', released: false });
+    await PaymentService.handleWebhookEvent({
+      id: 'evt_act_newer_1',
+      object: 'event',
+      type: 'charge.dispute.updated',
+      created: 1_700_000_500,
+      livemode: false,
+      data: { object: { id: 'dp_act_1', object: 'dispute', amount: 10000, currency: 'usd', payment_intent: activeOrder.paymentId, reason: 'general', status: 'under_review' } },
+    } as unknown as Stripe.Event);
+    await PaymentService.handleWebhookEvent({
+      id: 'evt_act_older_1',
+      object: 'event',
+      type: 'charge.dispute.created',
+      created: 1_700_000_400,
+      livemode: false,
+      data: { object: { id: 'dp_act_1', object: 'dispute', amount: 10000, currency: 'usd', payment_intent: activeOrder.paymentId, reason: 'general', status: 'needs_response' } },
+    } as unknown as Stripe.Event);
+    const actDispute = [...store.disputes.values()].find(d => d.orderId === activeOrder.order.id)!;
+    expect(actDispute.status).toBe('UNDER_REVIEW');
+    expect(actDispute.lastProviderEventCreated).toBe(1_700_000_500);
+  });
+
+  it('maps partial chargeback loss to Transaction=PARTIALLY_REFUNDED while keeping Order=DISPUTED (never REFUNDED)', async () => {
+    const { order, tx, paymentId } = seedFundedOrder({ status: 'COMPLETED', released: true, amount: '100.00' });
+    await PaymentService.handleWebhookEvent({
+      id: 'evt_partial_cb_1',
+      object: 'event',
+      type: 'charge.dispute.closed',
+      created: 1_700_000_600,
+      livemode: false,
+      data: { object: { id: 'dp_partial_1', object: 'dispute', amount: 4000, currency: 'usd', payment_intent: paymentId, reason: 'general', status: 'lost' } },
+    } as unknown as Stripe.Event);
+
+    expect(store.transactions.get(tx.id)!.status).toBe('PARTIALLY_REFUNDED');
+    expect(store.transactions.get(tx.id)!.refundedAmount.toFixed(2)).toBe('40.00');
+    expect(store.orders.get(order.id)!.status).toBe('DISPUTED');
+    expect(store.orders.get(order.id)!.status).not.toBe('REFUNDED');
+    const dispute = [...store.disputes.values()].find(d => d.orderId === order.id)!;
+    expect(dispute.status).toBe('RESOLVED_BUYER');
+    expect(dispute.recoveryRequired).toBe(false);
+    // Remaining available balance = 90.00 - 36.00 = 54.00; fee = 10.00 - 4.00 = 6.00.
+    const availableSum = [...store.entries.values()]
+      .filter(e => e.orderId === order.id)
+      .reduce((acc, e) => acc.add(e.availableDelta), new Prisma.Decimal(0));
+    const feeSum = [...store.entries.values()]
+      .filter(e => e.orderId === order.id)
+      .reduce((acc, e) => acc.add(e.feeDelta), new Prisma.Decimal(0));
+    expect(availableSum.toFixed(2)).toBe('54.00');
+    expect(feeSum.toFixed(2)).toBe('6.00');
+    // Order remains DISPUTED so remaining funds are NOT blindly paid out.
+    await expect(PayoutService.request('seller', order.id, 'payout_after_partial_cb_1')).rejects.toThrow();
+  });
+
+  it('handles chargeback loss when funds are reserved or already paid by flagging CHARGEBACK_RECOVERY_REQUIRED and blocking payouts', async () => {
+    // Case A: Funds already reserved for payout.
+    const reservedCase = seedFundedOrder({ status: 'COMPLETED', released: true, amount: '100.00' });
+    const reservedPayout = await PayoutService.request('seller', reservedCase.order.id, 'payout_before_cb_reserved_1');
+    expect(reservedPayout.status).toBe('PENDING');
+
+    await PaymentService.handleWebhookEvent({
+      id: 'evt_cb_reserved_lost_1',
+      object: 'event',
+      type: 'charge.dispute.closed',
+      created: 1_700_000_700,
+      livemode: false,
+      data: { object: { id: 'dp_reserved_1', object: 'dispute', amount: 10000, currency: 'usd', payment_intent: reservedCase.paymentId, reason: 'fraudulent', status: 'lost' } },
+    } as unknown as Stripe.Event);
+
+    expect(store.orders.get(reservedCase.order.id)!.status).toBe('DISPUTED');
+    expect(store.transactions.get(reservedCase.tx.id)!.status).toBe('SUCCEEDED');
+    const reservedDispute = [...store.disputes.values()].find(d => d.orderId === reservedCase.order.id)!;
+    expect(reservedDispute.status).toBe('UNDER_REVIEW');
+    expect(reservedDispute.recoveryRequired).toBe(true);
+    expect([...store.entries.values()].filter(e => e.orderId === reservedCase.order.id && e.type === 'CHARGEBACK_RECOVERY_REQUIRED')).toHaveLength(1);
+    // Reserved payout is frozen even with a test provider.
+    await expect(
+      PayoutService.process('admin', reservedPayout.id, {
+        available: true,
+        submit: async input => ({ ...input, providerId: 'po_should_not_run', status: 'PAID' }),
+      })
+    ).rejects.toThrow(/recovery/i);
+    // Admin cannot release seller funds via DisputeService.resolve while recovery is unresolved.
+    await expect(DisputeService.resolve('admin', reservedCase.order.id, 'SELLER', 'Attempt bypass')).rejects.toThrow(/recovery/i);
+    // Stale updated webhook after recovery-required lost closure is ignored without clearing recoveryRequired.
+    await PaymentService.handleWebhookEvent({
+      id: 'evt_cb_reserved_stale_1',
+      object: 'event',
+      type: 'charge.dispute.updated',
+      created: 1_700_000_650,
+      livemode: false,
+      data: { object: { id: 'dp_reserved_1', object: 'dispute', amount: 10000, currency: 'usd', payment_intent: reservedCase.paymentId, reason: 'fraudulent', status: 'needs_response' } },
+    } as unknown as Stripe.Event);
+    expect(reservedDispute.recoveryRequired).toBe(true);
+    expect(reservedDispute.providerStatus).toBe('lost');
+
+    // Unrelated completed order for the SAME seller is ALSO blocked from payout while recovery is unresolved!
+    const otherCompleted = seedFundedOrder({ status: 'COMPLETED', released: true, amount: '50.00' });
+    await expect(PayoutService.request('seller', otherCompleted.order.id, 'payout_blocked_by_recovery_1')).rejects.toThrow(/recovery/i);
+
+    // Case B: Funds already PAID out.
+    resetStore();
+    const paidCase = seedFundedOrder({ status: 'COMPLETED', released: true, amount: '100.00' });
+    const paidEntryId = nextId('cfe');
+    store.entries.set(paidEntryId, {
+      id: paidEntryId,
+      eventKey: `payout:${paidCase.order.id}:paid-seed`,
+      orderId: paidCase.order.id,
+      type: 'PAYOUT_PAID',
+      actorId: 'admin',
+      amount: new Prisma.Decimal('90.00'),
+      pendingDelta: new Prisma.Decimal(0),
+      availableDelta: new Prisma.Decimal('-90.00'),
+      reservedDelta: new Prisma.Decimal(0),
+      paidDelta: new Prisma.Decimal('90.00'),
+      feeDelta: new Prisma.Decimal(0),
+      transactionId: paidCase.tx.id,
+      refundId: null,
+      payoutId: null,
+      providerId: 'po_paid_seed',
+      reason: null,
+      notifyUserId: null,
+      createdAt: new Date(),
+    });
+
+    await PaymentService.handleWebhookEvent({
+      id: 'evt_cb_paid_lost_1',
+      object: 'event',
+      type: 'charge.dispute.closed',
+      created: 1_700_000_800,
+      livemode: false,
+      data: { object: { id: 'dp_paid_1', object: 'dispute', amount: 10000, currency: 'usd', payment_intent: paidCase.paymentId, reason: 'fraudulent', status: 'lost' } },
+    } as unknown as Stripe.Event);
+
+    expect(store.orders.get(paidCase.order.id)!.status).toBe('DISPUTED');
+    expect(store.transactions.get(paidCase.tx.id)!.status).toBe('SUCCEEDED');
+    const paidDispute = [...store.disputes.values()].find(d => d.orderId === paidCase.order.id)!;
+    expect(paidDispute.status).toBe('UNDER_REVIEW');
+    expect(paidDispute.recoveryRequired).toBe(true);
+    expect([...store.entries.values()].filter(e => e.orderId === paidCase.order.id && e.type === 'CHARGEBACK_RECOVERY_REQUIRED')).toHaveLength(1);
+
+    const anotherOrder = seedFundedOrder({ status: 'COMPLETED', released: true, amount: '75.00' });
+    await expect(PayoutService.request('seller', anotherOrder.order.id, 'payout_blocked_paid_recovery_1')).rejects.toThrow(/recovery/i);
   });
 });
 

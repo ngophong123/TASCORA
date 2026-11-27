@@ -27,6 +27,99 @@ const ACTIVE_PROVIDER_DISPUTE_STATUSES = new Set([
   'under_review',
 ]);
 
+const TERMINAL_PROVIDER_DISPUTE_STATUSES = new Set([
+  'won',
+  'lost',
+  'warning_closed',
+]);
+
+const TERMINAL_DISPUTE_STATES = new Set([
+  'RESOLVED_SELLER',
+  'RESOLVED_BUYER',
+  'CLOSED',
+]);
+
+function providerDisputeStageRank(eventType: string, status: string): number {
+  if (eventType === 'charge.dispute.closed' || TERMINAL_PROVIDER_DISPUTE_STATUSES.has(status)) return 3;
+  if (status === 'under_review' || status === 'warning_under_review') return 2;
+  if (eventType === 'charge.dispute.updated') return 1;
+  if (eventType === 'charge.dispute.created') return 0;
+  return 1;
+}
+
+type PersistedDisputeOrdering = {
+  status: string;
+  providerDisputeId: string | null;
+  providerStatus: string | null;
+  lastProviderEventType: string | null;
+  lastProviderEventCreated: number | null;
+  recoveryRequired: boolean;
+};
+
+function isStaleProviderDisputeEvent(
+  existing: PersistedDisputeOrdering | null,
+  incoming: {
+    disputeId: string;
+    eventType: string;
+    status: string;
+    created: number | null;
+  }
+): { stale: boolean; reason?: string } {
+  if (!existing) return { stale: false };
+
+  const incomingRank = providerDisputeStageRank(incoming.eventType, incoming.status);
+  const existingProviderTerminal =
+    Boolean(existing.providerStatus && TERMINAL_PROVIDER_DISPUTE_STATUSES.has(existing.providerStatus)) ||
+    existing.lastProviderEventType === 'charge.dispute.closed';
+  const existingMarketplaceTerminal = TERMINAL_DISPUTE_STATES.has(existing.status);
+  const sameProviderDispute = !existing.providerDisputeId || existing.providerDisputeId === incoming.disputeId;
+
+  // Never allow a stale created/updated webhook to reopen an already terminal dispute.
+  if (sameProviderDispute && (existingProviderTerminal || existingMarketplaceTerminal)) {
+    if (incomingRank < 3) {
+      return {
+        stale: true,
+        reason: `Dispute ${incoming.disputeId} is already in terminal state (${existing.providerStatus ?? existing.status}); ignoring ${incoming.eventType} (${incoming.status})`,
+      };
+    }
+    if (existingProviderTerminal) {
+      return {
+        stale: true,
+        reason: `Dispute ${incoming.disputeId} already processed terminal closure (${existing.providerStatus ?? existing.lastProviderEventType}); ignoring duplicate/conflicting ${incoming.eventType} (${incoming.status})`,
+      };
+    }
+  }
+
+  // Enforce monotonic Stripe event.created ordering for the same provider dispute.
+  if (sameProviderDispute && existing.lastProviderEventType) {
+    const existingRank = providerDisputeStageRank(
+      existing.lastProviderEventType,
+      existing.providerStatus ?? ''
+    );
+    if (incoming.created !== null && existing.lastProviderEventCreated !== null) {
+      if (incoming.created < existing.lastProviderEventCreated) {
+        return {
+          stale: true,
+          reason: `Event timestamp ${incoming.created} precedes last accepted provider event ${existing.lastProviderEventCreated}`,
+        };
+      }
+      if (incoming.created === existing.lastProviderEventCreated && incomingRank < existingRank) {
+        return {
+          stale: true,
+          reason: `Event stage ${incoming.eventType}/${incoming.status} regresses same-timestamp stage ${existing.lastProviderEventType}/${existing.providerStatus ?? 'unknown'}`,
+        };
+      }
+    } else if (incomingRank < existingRank) {
+      return {
+        stale: true,
+        reason: `Event stage ${incoming.eventType}/${incoming.status} regresses accepted stage ${existing.lastProviderEventType}/${existing.providerStatus ?? 'unknown'}`,
+      };
+    }
+  }
+
+  return { stale: false };
+}
+
 export class DisputeService {
   static async open(buyerId: string, orderId: string, category: string, description: string) {
     reasonSchema.parse(description);
@@ -66,6 +159,9 @@ export class DisputeService {
       const failedRefundsCount = order.refunds.filter(refund => ['FAILED', 'CANCELLED'].includes(refund.status)).length;
       const isRetry = Boolean(dispute.resolvedBy);
       if (outcome === 'SELLER') {
+        if (dispute.recoveryRequired) {
+          throw new HttpError(409, 'Financial recovery required before releasing seller funds');
+        }
         await OrderService.complete(tx, order, adminId, false, true);
         const eventKey = isRetry
           ? `dispute:${dispute.id}:resolution:seller:${failedRefundsCount}`
@@ -127,10 +223,42 @@ export class DisputeService {
         if (seen.type !== event.type || seen.payloadHash !== payloadHash) {
           throw new HttpError(409, 'Conflicting Stripe webhook event replay detected');
         }
-        return { handled: true, deduplicated: true, type: event.type, objectId: dispute.id, orderId: order.id };
+        return { handled: true, deduplicated: true, staleIgnored: false, type: event.type, objectId: dispute.id, orderId: order.id };
       }
 
       const transaction = await tx.transaction.findUniqueOrThrow({ where: { id: lookupTx.id } });
+      const incomingCreated =
+        typeof event.created === 'number' && Number.isInteger(event.created) && event.created > 0
+          ? event.created
+          : null;
+
+      const staleness = isStaleProviderDisputeEvent(order.dispute, {
+        disputeId: dispute.id,
+        eventType: event.type,
+        status: dispute.status,
+        created: incomingCreated,
+      });
+
+      if (staleness.stale) {
+        await entry(tx, order.id, 'PROVIDER_DISPUTE_STALE_IGNORED', `stripe-dispute:${event.id}`, null, {
+          transactionId: transaction.id,
+          providerId: dispute.id,
+          reason: staleness.reason,
+        });
+        await tx.providerEvent.create({
+          data: { id: event.id, type: event.type, objectId: dispute.id, payloadHash },
+        });
+        return { handled: true, deduplicated: false, staleIgnored: true, type: event.type, objectId: dispute.id, orderId: order.id };
+      }
+
+      const orderingMeta = {
+        providerDisputeId: dispute.id,
+        providerStatus: dispute.status,
+        lastProviderEventId: event.id,
+        lastProviderEventType: event.type,
+        lastProviderEventCreated: incomingCreated,
+      };
+
       const suffix = event.type.split('.').pop()?.toUpperCase() || 'EVENT';
       const detailReason = `${dispute.reason || 'provider_dispute'} (${dispute.status})`;
       await entry(tx, order.id, `PROVIDER_DISPUTE_${suffix}`, `stripe-dispute:${event.id}`, null, {
@@ -152,15 +280,17 @@ export class DisputeService {
               category: 'PAYMENT_CHARGEBACK',
               description,
               status: nextDisputeStatus,
+              ...orderingMeta,
             },
           });
-        } else if (order.dispute.status !== 'RESOLVED_BUYER') {
+        } else {
           await tx.marketplaceDispute.update({
             where: { id: order.dispute.id },
             data: {
               status: nextDisputeStatus,
               description,
               resolvedAt: null,
+              ...orderingMeta,
             },
           });
         }
@@ -184,7 +314,12 @@ export class DisputeService {
           if (order.dispute) {
             await tx.marketplaceDispute.update({
               where: { id: order.dispute.id },
-              data: { status: 'RESOLVED_SELLER', resolutionReason, resolvedAt: new Date() },
+              data: {
+                status: 'RESOLVED_SELLER',
+                resolutionReason,
+                resolvedAt: new Date(),
+                ...orderingMeta,
+              },
             });
           } else {
             await tx.marketplaceDispute.create({
@@ -196,10 +331,11 @@ export class DisputeService {
                 status: 'RESOLVED_SELLER',
                 resolutionReason,
                 resolvedAt: new Date(),
+                ...orderingMeta,
               },
             });
           }
-          if (order.status === 'DISPUTED') {
+          if (order.status === 'DISPUTED' && !order.dispute?.recoveryRequired) {
             const restoredStatus = order.escrow?.released
               ? 'COMPLETED'
               : order.deliveries.length > 0
@@ -219,11 +355,92 @@ export class DisputeService {
             });
           }
         } else if (dispute.status === 'lost') {
-          const resolutionReason = `Stripe dispute ${dispute.id} closed (lost)`;
+          const gross = cents(transaction.amount);
+          const alreadyRefunded = cents(transaction.refundedAmount, true);
+          const remaining = Math.max(0, gross - alreadyRefunded);
+          const lossAmount = dispute.amount !== undefined ? Math.min(dispute.amount, remaining) : remaining;
+          const totalAfterLoss = alreadyRefunded + lossAmount;
+          const isFullLoss = totalAfterLoss === gross && gross > 0;
+
+          const lossEventKey = `chargeback-loss:${dispute.id}`;
+          const existingLossEntry = await tx.financialEntry.findUnique({ where: { eventKey: lossEventKey } });
+
+          let recoveryRequired = false;
+          let appliedFullRefund = false;
+
+          if (!existingLossEntry) {
+            if (lossAmount === 0) {
+              appliedFullRefund = alreadyRefunded === gross && gross > 0;
+            } else if (order.platformFeeBps === null || order.platformFeeBps === undefined) {
+              recoveryRequired = true;
+              await entry(tx, order.id, 'CHARGEBACK_RECOVERY_REQUIRED', lossEventKey, null, {
+                amount: lossAmount,
+                transactionId: transaction.id,
+                providerId: dispute.id,
+                reason: `Stripe dispute ${dispute.id} closed (lost); missing platform fee basis requires financial recovery`,
+                notifyUserId: order.seller.userId,
+              });
+            } else {
+              const oldSplit = split(gross - alreadyRefunded, order.platformFeeBps);
+              const newSplit = split(gross - totalAfterLoss, order.platformFeeBps);
+              const reversal = oldSplit.earning - newSplit.earning;
+              const balance = await balances(tx, order.id);
+              const targetBucket = order.escrow?.released ? balance.available : balance.pending;
+              if (balance.reserved === 0 && balance.paid === 0 && targetBucket >= reversal) {
+                await entry(tx, order.id, 'CHARGEBACK_LOST', lossEventKey, null, {
+                  amount: lossAmount,
+                  pending: order.escrow?.released ? 0 : -reversal,
+                  available: order.escrow?.released ? -reversal : 0,
+                  fee: newSplit.fee - oldSplit.fee,
+                  transactionId: transaction.id,
+                  providerId: dispute.id,
+                  reason: isFullLoss
+                    ? `Stripe dispute ${dispute.id} closed (lost; full refund)`
+                    : `Stripe partial chargeback ${dispute.id} closed (lost ${money(lossAmount).toFixed(2)} of ${money(gross).toFixed(2)} USD)`,
+                  notifyUserId: order.seller.userId,
+                });
+                await tx.transaction.update({
+                  where: { id: transaction.id },
+                  data: {
+                    refundedAmount: money(totalAfterLoss),
+                    status: isFullLoss ? 'REFUNDED' : 'PARTIALLY_REFUNDED',
+                  },
+                });
+                appliedFullRefund = isFullLoss;
+              } else {
+                recoveryRequired = true;
+                await entry(tx, order.id, 'CHARGEBACK_RECOVERY_REQUIRED', lossEventKey, null, {
+                  amount: lossAmount,
+                  transactionId: transaction.id,
+                  providerId: dispute.id,
+                  reason: `Stripe dispute ${dispute.id} closed (lost ${money(lossAmount).toFixed(2)} USD); financial recovery required (reserved=${balance.reserved}c, paid=${balance.paid}c)`,
+                  notifyUserId: order.seller.userId,
+                });
+              }
+            }
+          } else {
+            recoveryRequired = existingLossEntry.type === 'CHARGEBACK_RECOVERY_REQUIRED';
+            appliedFullRefund = !recoveryRequired && cents(transaction.refundedAmount, true) === gross && gross > 0;
+          }
+
+          const disputeStatus = recoveryRequired ? 'UNDER_REVIEW' : 'RESOLVED_BUYER';
+          const resolutionReason = recoveryRequired
+            ? `Stripe dispute ${dispute.id} closed (lost); financial recovery required`
+            : appliedFullRefund
+              ? `Stripe dispute ${dispute.id} closed (lost; full refund)`
+              : `Stripe partial chargeback ${dispute.id} closed (lost ${money(lossAmount).toFixed(2)} of ${money(gross).toFixed(2)} USD)`;
+          const resolvedAt = recoveryRequired ? null : new Date();
+
           if (order.dispute) {
             await tx.marketplaceDispute.update({
               where: { id: order.dispute.id },
-              data: { status: 'RESOLVED_BUYER', resolutionReason, resolvedAt: new Date() },
+              data: {
+                status: disputeStatus,
+                resolutionReason,
+                resolvedAt,
+                recoveryRequired,
+                ...orderingMeta,
+              },
             });
           } else {
             await tx.marketplaceDispute.create({
@@ -232,64 +449,43 @@ export class DisputeService {
                 openedBy: order.buyerId,
                 category: 'PAYMENT_CHARGEBACK',
                 description: resolutionReason,
-                status: 'RESOLVED_BUYER',
+                status: disputeStatus,
                 resolutionReason,
-                resolvedAt: new Date(),
+                resolvedAt,
+                recoveryRequired,
+                ...orderingMeta,
               },
             });
           }
-          const lossEventKey = `chargeback-loss:${dispute.id}`;
-          const alreadyReversed = await tx.financialEntry.findUnique({ where: { eventKey: lossEventKey } });
-          if (!alreadyReversed && order.platformFeeBps !== null && order.platformFeeBps !== undefined) {
-            const gross = cents(transaction.amount);
-            const alreadyRefunded = cents(transaction.refundedAmount, true);
-            const remaining = Math.max(0, gross - alreadyRefunded);
-            const lossAmount = dispute.amount ? Math.min(dispute.amount, remaining) : remaining;
-            if (lossAmount > 0) {
-              const total = alreadyRefunded + lossAmount;
-              const oldSplit = split(gross - alreadyRefunded, order.platformFeeBps);
-              const newSplit = split(gross - total, order.platformFeeBps);
-              const reversal = oldSplit.earning - newSplit.earning;
-              const balance = await balances(tx, order.id);
-              const targetBucket = order.escrow?.released ? balance.available : balance.pending;
-              if (!balance.reserved && !balance.paid && targetBucket >= reversal) {
-                await entry(tx, order.id, 'CHARGEBACK_LOST', lossEventKey, null, {
-                  amount: lossAmount,
-                  pending: order.escrow?.released ? 0 : -reversal,
-                  available: order.escrow?.released ? -reversal : 0,
-                  fee: newSplit.fee - oldSplit.fee,
-                  transactionId: transaction.id,
-                  providerId: dispute.id,
-                  reason: resolutionReason,
-                  notifyUserId: order.seller.userId,
-                });
-                await tx.transaction.update({
-                  where: { id: transaction.id },
-                  data: {
-                    refundedAmount: money(total),
-                    status: total === gross ? 'REFUNDED' : 'PARTIALLY_REFUNDED',
+
+          if (appliedFullRefund && !recoveryRequired) {
+            if (order.status !== 'REFUNDED') {
+              await tx.order.update({
+                where: { id: order.id },
+                data: {
+                  status: 'REFUNDED',
+                  activities: {
+                    create: {
+                      type: 'CHARGEBACK_LOST',
+                      description: `Stripe full chargeback ${dispute.id} lost; order refunded`,
+                    },
                   },
-                });
-              } else {
-                await entry(tx, order.id, 'CHARGEBACK_RECOVERY_REQUIRED', lossEventKey, null, {
-                  amount: lossAmount,
-                  transactionId: transaction.id,
-                  providerId: dispute.id,
-                  reason: `${resolutionReason}; payout recovery required`,
-                  notifyUserId: order.seller.userId,
-                });
-              }
+                },
+              });
             }
-          }
-          if (order.status !== 'REFUNDED') {
+          } else {
+            const activityType = recoveryRequired ? 'CHARGEBACK_RECOVERY_REQUIRED' : 'CHARGEBACK_PARTIAL_LOST';
+            const activityDescription = recoveryRequired
+              ? `Stripe chargeback ${dispute.id} lost while funds were reserved or paid; financial recovery required`
+              : `Stripe partial chargeback ${dispute.id} lost (${money(lossAmount).toFixed(2)} of ${money(gross).toFixed(2)} USD); transaction partially refunded, order remains DISPUTED`;
             await tx.order.update({
               where: { id: order.id },
               data: {
-                status: 'REFUNDED',
+                status: 'DISPUTED',
                 activities: {
                   create: {
-                    type: 'CHARGEBACK_LOST',
-                    description: `Stripe chargeback ${dispute.id} lost`,
+                    type: activityType,
+                    description: activityDescription,
                   },
                 },
               },
@@ -298,7 +494,12 @@ export class DisputeService {
         } else if (order.dispute && ['OPEN', 'UNDER_REVIEW'].includes(order.dispute.status)) {
           await tx.marketplaceDispute.update({
             where: { id: order.dispute.id },
-            data: { status: 'CLOSED', resolutionReason: `Stripe dispute ${dispute.id} closed (${dispute.status})`, resolvedAt: new Date() },
+            data: {
+              status: 'CLOSED',
+              resolutionReason: `Stripe dispute ${dispute.id} closed (${dispute.status})`,
+              resolvedAt: new Date(),
+              ...orderingMeta,
+            },
           });
         }
       }
@@ -306,7 +507,7 @@ export class DisputeService {
       await tx.providerEvent.create({
         data: { id: event.id, type: event.type, objectId: dispute.id, payloadHash },
       });
-      return { handled: true, deduplicated: false, type: event.type, objectId: dispute.id, orderId: order.id };
+      return { handled: true, deduplicated: false, staleIgnored: false, type: event.type, objectId: dispute.id, orderId: order.id };
     }, lookupTx.orderId);
   }
   static async evidence(adminId: string, orderId: string) {
