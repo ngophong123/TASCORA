@@ -85,8 +85,35 @@ Any transition outside `transitions[from]` throws `409 Conflict` (`transition(fr
 
 ---
 
-## 6. Verification Evidence
+## 6. Admin Financial Recovery Case Management
 
-- Unit tests: `tests/unit/financial-money.spec.ts`, `tests/unit/order-lifecycle.spec.ts`, `tests/unit/wallet-ledger.spec.ts`, `tests/unit/financial-reconciliation.spec.ts`
-- API & security tests: `tests/api/payment-lifecycle.spec.ts`, `tests/api/payment-provider-disabled.spec.ts`, `tests/api/stripe-connect-payouts.spec.ts`, `tests/security/order-payment.spec.ts`, `tests/security/stripe-connect-safety.spec.ts`
+When an external provider chargeback or dispute (`charge.dispute.*`) impacts an order whose seller earnings were already `reserved` or `paid`, `DisputeService.handleProviderDisputeEvent` flags `MarketplaceDispute.recoveryRequired = true` and automatically ensures a linked `FinancialRecoveryCase` record exists inside the same locked transaction (`RecoveryCaseService.ensureCaseInTx`). See [ADR 005](adr/005-admin-financial-recovery-case-management.md).
+
+- **Recovery Case Lifecycle:** Cases follow an investigation-only state machine defined in `apps/api/src/modules/financial/recovery-case.service.ts`:
+  - `OPEN` -> `INVESTIGATING` or `AWAITING_EVIDENCE`
+  - `INVESTIGATING` -> `AWAITING_EVIDENCE` or `PENDING_VERIFICATION`
+  - `AWAITING_EVIDENCE` -> `INVESTIGATING` or `PENDING_VERIFICATION`
+  - `PENDING_VERIFICATION` -> `INVESTIGATING` or `AWAITING_EVIDENCE`
+  - There is intentionally **no** `RESOLVED`, `SETTLED`, or `CLOSED` status in this workflow because no verified settlement/clawback mechanism exists yet. Invalid transitions fail with `409 Conflict`.
+- **Data Model:**
+  - `FinancialRecoveryCase` (`financial_recovery_cases`): 1:1 unique link to `MarketplaceDispute` (`disputeId` unique) and `Order` (`orderId` unique), linked to `SellerProfile`, optional `assignedAdminId` (`User`), `status`, positive USD `recoveryAmount`, `currency`, and `lastActivityAt`. Enforced by PostgreSQL `CHECK` constraints (`status` domain, `recoveryAmount > 0 AND currency = 'usd'`) and `ON DELETE RESTRICT` foreign keys (`SET NULL` on `assignedAdminId`).
+  - `FinancialRecoveryEvent` (`financial_recovery_events`): Append-only chronological investigation history (`CASE_OPENED`, `ASSIGNED`, `NOTE_ADDED`, `EVIDENCE_ATTACHED`, `EVIDENCE_REQUESTED`, `STATUS_CHANGED`) with optional unique `eventKey` deduplication and immutable PostgreSQL `BEFORE UPDATE OR DELETE` and `BEFORE TRUNCATE` triggers plus Prisma client immutability middleware (`apps/api/src/lib/prisma.ts`).
+- **API Endpoints (`apps/api/src/modules/financial/financial.route.ts`):**
+  - `GET /api/v1/financial/admin/recovery-cases`: Paginated queue with `status`, `assignedAdminId` (including `unassigned`), `sellerProfileId`, `search`, `sortBy` (`lastActivityAt`, `createdAt`, `recoveryAmount`), `sortOrder`, and integer-cent aggregate overview metrics.
+  - `GET /api/v1/financial/admin/recovery-cases/:id`: Case detail including dispute metadata, order financial snapshot, integer-cent ledger balances (`pending`, `available`, `reserved`, `paid`, `fee`), chronological ledger entries, transactions, refunds, payouts, and append-only investigation timeline.
+  - `POST /api/v1/financial/admin/recovery-cases/:id/events`: Appends `NOTE_ADDED`, `EVIDENCE_ATTACHED` (validated safe `upload:`, `ref:`, or `https://` reference), or `EVIDENCE_REQUESTED` with optional `idempotencyKey`.
+  - `PATCH /api/v1/financial/admin/recovery-cases/:id/status`: Advances case status along permitted transitions with a mandatory reason and optional `idempotencyKey`.
+  - `PATCH /api/v1/financial/admin/recovery-cases/:id/assign`: Assigns or unassigns an active `ADMIN` account (`assignedAdminId`) with optional `idempotencyKey`.
+- **Authorization Rules:** Every endpoint requires `requireAuth`, `requireAdminRole`, and `requireFinancialAdmin` (which re-verifies the caller's live database row is `role === 'ADMIN'` and `status === 'ACTIVE'`). Non-admins, unauthenticated callers, and suspended admins are rejected (`401`/`403`). Responses expose only operational identifiers (admin name/id, seller display name/id, order/dispute IDs) and omit unnecessary user PII (such as buyer/seller emails or KYC identity data).
+- **Investigation Workflow & Audit History:** All mutations acquire `lockOrder(tx, caseRow.orderId)` inside `financialTx`, append an immutable `FinancialRecoveryEvent`, update `FinancialRecoveryCase.lastActivityAt`, and write an append-only `AdminAuditLog` record (`RECOVERY_CASE_VIEWED`, `RECOVERY_CASE_ASSIGNED`, `RECOVERY_CASE_EVENT_ADDED`, `RECOVERY_CASE_STATUS_CHANGED`).
+- **Financial Safety Boundaries & Payout Restrictions:** Admin investigation endpoints **never** write to `FinancialEntry`, **never** mutate `MarketplaceDispute.recoveryRequired`, **never** release `Escrow`, and **never** initiate payouts or refunds. Sellers with any `MarketplaceDispute.recoveryRequired = true` remain blocked from payout requests and Stripe Connect payout eligibility (`eligibleForLivePayouts: false`), and external seller payouts remain disabled (`unavailablePayoutProvider`, `503`).
+- **Migration & Backfill Behavior:** Additive migration `prisma/migrations/20261127150000_financial_recovery_cases/migration.sql` creates both tables, indexes, foreign keys, `CHECK` constraints, append-only triggers, and performs an idempotent SQL backfill (`ON CONFLICT DO NOTHING`) that opens a `FinancialRecoveryCase` (`frc_<disputeId>`) and initial `CASE_OPENED` event for every pre-existing `MarketplaceDispute` row with `recoveryRequired = true`.
+- **Operational Limitations:** This workflow provides visibility, assignment, structured evidence/notes, and auditability for manual recovery review. Clearing `recoveryRequired`, executing automated clawbacks, or posting compensating ledger entries requires a future verified settlement and reconciliation design.
+
+---
+
+## 7. Verification Evidence
+
+- Unit tests: `tests/unit/financial-money.spec.ts`, `tests/unit/order-lifecycle.spec.ts`, `tests/unit/wallet-ledger.spec.ts`, `tests/unit/financial-reconciliation.spec.ts`, `tests/unit/financial-recovery-case.spec.ts`
+- API & security tests: `tests/api/payment-lifecycle.spec.ts`, `tests/api/payment-provider-disabled.spec.ts`, `tests/api/stripe-connect-payouts.spec.ts`, `tests/api/financial-integrity-hardening.spec.ts`, `tests/api/financial-recovery-cases.spec.ts`, `tests/security/order-payment.spec.ts`, `tests/security/stripe-connect-safety.spec.ts`, `tests/security/admin-audit-integrity.spec.ts`
 - Disposable PostgreSQL concurrency & migration tests (CI verified in `infrastructure-acceptance.yml`): `tests/database/financial-system.spec.ts`, `tests/database/disposable-postgres.spec.ts`

@@ -2,7 +2,12 @@ import { PrismaClient } from '@prisma/client';
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-const IMMUTABLE_MODELS = new Set(['AdminAuditLog', 'KycReviewHistory', 'FinancialEntry']);
+const IMMUTABLE_MODELS = new Set([
+  'AdminAuditLog',
+  'KycReviewHistory',
+  'FinancialEntry',
+  'FinancialRecoveryEvent',
+]);
 const MUTATING_ACTIONS = new Set(['update', 'updateMany', 'upsert', 'delete', 'deleteMany']);
 
 function createConfiguredPrismaClient() {

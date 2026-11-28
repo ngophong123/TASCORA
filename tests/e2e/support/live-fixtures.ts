@@ -122,6 +122,24 @@ export const test = base.extend<{ marketplace: ReturnType<typeof createStore> }>
       if (path.startsWith('/financial/orders/') && path.endsWith('/disputes')) { const order = state.orders.find(o => o.id === path.split('/')[3]); if (!order) { await send(null,404); return; } order.dispute = { id: cuid(98000), status: 'OPEN', description: body.description }; order.status = 'DISPUTED'; await send(order.dispute,201); return; }
       if (path.startsWith('/financial/orders/') && path.endsWith('/refunds')) { const order = state.orders.find(o => o.id === path.split('/')[3]); if (!order) { await send(null,404); return; } const refund = { id: cuid(99000+state.refundRequests.length), orderId: order.id, amount: body.amount, status: 'PENDING', reason: body.reason }; state.refundRequests.push(refund); (order.refunds ||= []).push(refund); await send(refund,201); return; }
       if (path === '/financial/admin/queue') { await send({ disputes: state.orders.filter(o => o.dispute?.status === 'OPEN').map(o => ({ ...o.dispute, orderId: o.id })), refunds: state.refundRequests.filter(r => r.status === 'PENDING'), payouts: state.payouts }); return; }
+      if (path === '/financial/admin/recovery-cases' && method === 'GET') {
+        if (me.role !== 'ADMIN') { await send(null, 403); return; }
+        await send({
+          overview: {
+            totalCases: 0,
+            totalRecoveryAmount: '0.00',
+            currency: 'usd',
+            countsByStatus: { OPEN: 0, INVESTIGATING: 0, AWAITING_EVIDENCE: 0, PENDING_VERIFICATION: 0 },
+            unassignedCount: 0,
+            activeFinancialHoldCount: 0,
+            externalPayoutsDisabled: true,
+          },
+          items: [],
+          meta: { total: 0, page: 1, limit: 10, totalPages: 1 },
+          availableAdmins: [{ id: 'admin', role: 'ADMIN' }],
+        });
+        return;
+      }
       if (path.startsWith('/financial/admin/orders/') && path.endsWith('/resolve')) { const order = state.orders.find(o => o.id === path.split('/')[4]); if (!order?.dispute) { await send(null,404); return; } order.dispute.status = body.outcome === 'SELLER' ? 'RESOLVED_SELLER' : 'UNDER_REVIEW'; if (body.outcome === 'SELLER') order.status = 'COMPLETED'; else { const refund = { id: cuid(99000+state.refundRequests.length), orderId: order.id, amount: order.amount, status: 'PENDING', reason: body.reason }; state.refundRequests.push(refund); (order.refunds ||= []).push(refund); } await send(order.dispute); return; }
       if (path.startsWith('/financial/admin/refunds/') && path.endsWith('/process')) { const refund = state.refundRequests.find(r => r.id === path.split('/')[4]); if (!refund) { await send(null,404); return; } refund.status = 'SUCCEEDED'; const order = state.orders.find(o => o.id === refund.orderId)!; order.status = 'REFUNDED'; if (order.dispute) order.dispute.status = 'RESOLVED_BUYER'; await send(refund); return; }
       if (path === '/orders/my-purchases') { await send(state.orders.filter(o => o.buyerId === me.id)); return; }
