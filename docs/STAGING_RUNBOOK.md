@@ -19,7 +19,7 @@ Verified directly against root `package.json` and `apps/api/package.json`:
   pnpm --filter @taskora/api start
   ```
 - **Bind Address:** `0.0.0.0:${PORT}` (`apps/api/src/index.ts`)
-- **Replica Count:** **`1` replica strictly** (Socket.IO uses in-memory adapter and `express-rate-limit` uses process-local memory until distributed coordination is implemented).
+- **Replica Count:** Start at **`1` replica** in staging. Socket.IO defaults to the in-memory adapter (`ENABLE_SOCKET_REDIS_ADAPTER=false`). Setting `ENABLE_SOCKET_REDIS_ADAPTER=true` enables `@socket.io/redis-adapter` Pub/Sub across replicas sharing a reachable `REDIS_URL`, but keep `replicas = 1` until every distributed dependency (Redis adapter, rate limiting, cron locks, and background workers) has been verified on hosted infrastructure. Enabling the adapter alone does not prove complete multi-instance readiness.
 - **Proxy Topology:** Set `TRUST_PROXY=1` for single-hop Render ingress (`apps/api/src/lib/trust-proxy.ts`). Never set `TRUST_PROXY=true`.
 - **Health Check Path:** `/health` (checks real PostgreSQL `SELECT 1` + Redis `PING` within a 4s deadline; `/health/live` is liveness-only).
 
@@ -29,7 +29,7 @@ Verified directly against root `package.json` and `apps/api/package.json`:
 
 Verified directly against root `package.json`, `apps/web/package.json`, and `apps/web/next.config.ts`:
 
-- **Framework Preset:** Next.js (`16.3.5`)
+- **Framework Preset:** Next.js (`16.4.6`, verified in `apps/web/package.json` and `pnpm-lock.yaml`)
 - **Root Directory:** `apps/web`
 - **Build Command:** `pnpm --filter web build` (or `next build` inside `apps/web`)
 - **Mandatory Build-Time Public Env Vars (`apps/web/next.config.ts` fail-fast on `NODE_ENV=production`):**
@@ -50,6 +50,7 @@ Verified directly against root `package.json`, `apps/web/package.json`, and `app
 
 - Use native `rediss://` protocol in `REDIS_URL` with **no query parameters or URL fragments** (`apps/api/src/lib/redis.ts` rejects query/fragment overrides).
 - `apps/api/src/lib/redis-connection.ts` automatically sets TLS SNI `servername` from the DNS hostname and keeps `rejectUnauthorized: true`.
+- **Socket.IO Redis Adapter (`ENABLE_SOCKET_REDIS_ADAPTER`):** Defaults to `false` (retains the in-memory adapter in `apps/api/src/lib/socket.ts`). Set `ENABLE_SOCKET_REDIS_ADAPTER=true` only when multiple API replicas share the same reachable `REDIS_URL`; keep `false` for conservative single-replica staging deployments. Enabling this flag alone does not prove complete multi-instance readiness.
 
 ---
 
@@ -70,16 +71,17 @@ Verified directly against root `package.json`, `apps/web/package.json`, and `app
 
 ## 7. Stripe Test Mode & Disabled Mode
 
-Staging supports two explicit modes (`apps/api/src/lib/config.ts` & `apps/api/src/lib/payment-provider.ts`):
+TASCORA supports two explicit payment modes across both staging and production (`apps/api/src/lib/config.ts` & `apps/api/src/lib/payment-provider.ts`):
 
 1. **Stripe Test Mode (`PAYMENTS_PROVIDER=stripe` or omitted):**
    - Requires `STRIPE_SECRET_KEY` matching `/^(sk|rk)_test_[A-Za-z0-9]+$/` and `STRIPE_WEBHOOK_SECRET` matching `/^whsec_[A-Za-z0-9]+$/`.
-   - Live credentials (`sk_live_*`, `rk_live_*`) are strictly rejected at boot (`Staging requires Stripe TEST credentials`).
-   - Live webhook events (`event.livemode === true`) are strictly rejected (`apps/api/src/modules/payment/payment.controller.ts:25`).
-2. **Non-Payment Staging Mode (`APP_ENV=staging` + `NODE_ENV=production` + `PAYMENTS_PROVIDER=disabled`):**
-   - Requires no Stripe keys; payment/refund/payout endpoints fail closed with `HTTP 503` / `PAYMENT_PROVIDER_UNAVAILABLE` and UI hides checkout/Stripe.js cleanly.
+   - Live credentials (`sk_live_*`, `rk_live_*`) are strictly rejected in **every** environment (`development`, `test`, `staging`, and `production`).
+   - Live webhook events (`event.livemode === true`) and events with missing or non-boolean `livemode` are strictly rejected unconditionally after signature verification (`apps/api/src/modules/payment/payment.controller.ts`).
+2. **Disabled Payment Mode (`PAYMENTS_PROVIDER=disabled` with `NODE_ENV=production` and explicit `APP_ENV=staging` or `APP_ENV=production`):**
+   - Requires no Stripe keys; payment intent creation, cancellation, refunds, webhooks, and payouts fail closed with `HTTP 503` / `PAYMENT_PROVIDER_UNAVAILABLE`, and the UI hides checkout/Stripe.js cleanly.
+   - All other mandatory infrastructure requirements (PostgreSQL, Redis, S3 storage, KYC encryption & HMAC keys, SMTP, exact HTTPS origins, strong `JWT_ACCESS_SECRET`) remain enforced.
 
-- **External Seller Payouts:** Disabled in all environments (`externalPayoutsAvailable: false`).
+- **External Seller Payouts:** Disabled in all environments (`externalPayoutsAvailable: false`, `HTTP 503`).
 
 ---
 
@@ -137,7 +139,7 @@ Staging supports two explicit modes (`apps/api/src/lib/config.ts` & `apps/api/sr
    pnpm db:migrate:deploy
    pnpm db:migrate:status
    ```
-5. Verify `Database schema is up to date!` and verify `6` migrations applied cleanly.
+5. Verify `Database schema is up to date!` and verify `9` migrations applied cleanly (`prisma/migrations/`).
 
 ### Rollback / Forward-Recovery Plan
 
