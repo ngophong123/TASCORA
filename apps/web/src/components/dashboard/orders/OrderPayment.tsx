@@ -76,7 +76,7 @@ export function OrderPayment({ orderId, refresh }: { orderId: string; refresh: (
     }
   }
   if (!payments.available) return <p role="status">{payments.message}</p>
-  if (!/^pk_(test|live)_/.test(key)) return <p role="status">{paymentsUnavailableMessage}</p>
+  if (!/^pk_test_/.test(key)) return <p role="status">{paymentsUnavailableMessage}</p>
   return (
     <div className="space-y-2">
       <p role="status">{status}</p>

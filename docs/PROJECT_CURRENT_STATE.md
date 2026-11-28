@@ -6,7 +6,7 @@
 - **Architecture:** Modular Monolith (`pnpm` Workspaces)
 - **Target Mode:** Portfolio / Demo / Stripe Test Mode only (no live production payouts)
 
-> **Historical Baseline Notice:** This file is preserved as the Phase 0 baseline snapshot captured on `2026-11-20` at commit `a6501f380a00f38cf5e1d4e9b05720eb5e8a90d2`. For the current post-merge repository state on `main` (`9477e67f583c010ede30ad6ea937f7a53e94b6c6`, PRs `#7`–`#23` merged, reviewed `2026-11-26`), see [README.md](../README.md), [docs/IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md), [docs/TASCORA_FINAL_ENGINEERING_REVIEW.md](TASCORA_FINAL_ENGINEERING_REVIEW.md), and [docs/KNOWN_LIMITATIONS.md](KNOWN_LIMITATIONS.md).
+> **Historical Baseline Notice:** This file is preserved as the Phase 0 baseline snapshot captured on `2026-11-20` at commit `a6501f380a00f38cf5e1d4e9b05720eb5e8a90d2`. For the current post-PR #28 repository state on `main` (`d7e851dc924accd30b7bcf9be84836ad9badcd04`, PRs `#7`–`#28` merged, updated `2026-11-28`), see [README.md](../README.md), [docs/IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md), [docs/TASCORA_FINAL_ENGINEERING_REVIEW.md](TASCORA_FINAL_ENGINEERING_REVIEW.md), and [docs/KNOWN_LIMITATIONS.md](KNOWN_LIMITATIONS.md).
 
 ---
 

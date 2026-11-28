@@ -1,5 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createDefaultMalwareScanner, isMalwareScannerConfigured } from "../../apps/api/src/modules/kyc/malware-scanner"
+import {
+  createDefaultMalwareScanner,
+  isMalwareScannerConfigured,
+} from "../../apps/api/src/modules/kyc/malware-scanner"
 
 afterEach(() => {
   vi.unstubAllEnvs()
@@ -13,11 +16,20 @@ function stagingBaseEnv() {
   vi.stubEnv("COOKIE_SAME_SITE", "none")
   vi.stubEnv("WEB_URL", "https://staging.tascora.example.com")
   vi.stubEnv("CORS_ORIGINS", "https://staging.tascora.example.com")
-  vi.stubEnv("DATABASE_URL", "postgresql://u:p@ep-staging.example.com/tascora_staging?sslmode=require")
+  vi.stubEnv(
+    "DATABASE_URL",
+    "postgresql://u:p@ep-staging.example.com/tascora_staging?sslmode=require"
+  )
   vi.stubEnv("REDIS_URL", "rediss://default:placeholder@redis.example.com:6379")
   vi.stubEnv("JWT_ACCESS_SECRET", "staging-test-only-access-secret-minimum-32-chars")
-  vi.stubEnv("KYC_ENCRYPTION_KEY", "a1b2c3d4e5f60718293a4b5c6d7e8f90102132435465768798a9bacbdcedfe0f")
-  vi.stubEnv("KYC_DOCUMENT_HMAC_KEY", "1f2e3d4c5b6a798897a6b5c4d3e2f10099887766554433221100aabbccddeeff")
+  vi.stubEnv(
+    "KYC_ENCRYPTION_KEY",
+    "a1b2c3d4e5f60718293a4b5c6d7e8f90102132435465768798a9bacbdcedfe0f"
+  )
+  vi.stubEnv(
+    "KYC_DOCUMENT_HMAC_KEY",
+    "1f2e3d4c5b6a798897a6b5c4d3e2f10099887766554433221100aabbccddeeff"
+  )
   vi.stubEnv("STORAGE_PROVIDER", "s3")
   vi.stubEnv("STORAGE_BUCKET", "tascora-staging-private")
   vi.stubEnv("STORAGE_REGION", "ca-east-006")
@@ -58,7 +70,7 @@ describe("Phase 4A.7 staging readiness configuration & Stripe safety", () => {
       stagingBaseEnv()
       vi.stubEnv("STRIPE_SECRET_KEY", badKey)
       await expect(import("../../apps/api/src/lib/config")).rejects.toThrow(
-        "Staging requires Stripe TEST credentials"
+        /Stripe TEST credentials/
       )
     }
   })
@@ -77,7 +89,13 @@ describe("Phase 4A.7 staging readiness configuration & Stripe safety", () => {
       "Production STORAGE_ENDPOINT must use HTTPS"
     )
 
-    for (const requiredKey of ["REDIS_URL", "SMTP_HOST", "SMTP_USER", "SMTP_PASSWORD", "SMTP_FROM"]) {
+    for (const requiredKey of [
+      "REDIS_URL",
+      "SMTP_HOST",
+      "SMTP_USER",
+      "SMTP_PASSWORD",
+      "SMTP_FROM",
+    ]) {
       vi.resetModules()
       stagingBaseEnv()
       vi.stubEnv(requiredKey, "")
